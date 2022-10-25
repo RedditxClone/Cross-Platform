@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import '../../helper/dio.dart';
 
 class Signup extends StatefulWidget {
   const Signup({super.key});
@@ -13,6 +15,9 @@ class _SignupState extends State<Signup> {
   var emailController = TextEditingController();
   var usernameController = TextEditingController();
   var passwordController = TextEditingController();
+
+  GoogleSignInAccount? _currentUser;
+
   void togglePasswordVisible() {
     passwordVisible = !passwordVisible;
   }

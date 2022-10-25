@@ -24,13 +24,14 @@ class GoogleSignInModel {
         ? Data.fromJson(json['data'])
         : Data(
             user: User(
-                userId: '',
-                firstName: '',
-                lastName: '',
-                email: '',
-                imageUrl: '',
-                address: '',
-                role: ''),
+              userId: '',
+              firstName: '',
+              lastName: '',
+              email: '',
+              imageUrl: '',
+              address: '',
+              role: '',
+            ),
             accessToken: '',
             refreshToken: '',
           );
@@ -121,7 +122,7 @@ class User {
     _lastName = json['lastName'];
     _email = json['email'];
     _imageUrl = json['imageUrl'];
-    _address = json['address'];
-    _role = json['role'];
+    // _address = json['address'];
+    // _role = json['role'];
   }
 }
