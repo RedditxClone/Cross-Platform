@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 
-class SignUp {
+class Signup extends StatefulWidget {
+  const Signup({super.key});
+
+  @override
+  State<Signup> createState() => _SignupState();
+}
+
+class _SignupState extends State<Signup> {
   bool passwordVisible = true;
   var emailController = TextEditingController();
   var usernameController = TextEditingController();
@@ -169,13 +176,21 @@ class SignUp {
                       height: 80,
                       padding: const EdgeInsets.all(15),
                       color: Theme.of(context).scaffoldBackgroundColor,
-                      child: RaisedButton(
+                      child: ElevatedButton(
                         onPressed: () => setState(() {
                           signUpContinue();
                         }),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(80.0)),
-                        padding: const EdgeInsets.all(0.0),
+                        style: const ButtonStyle(
+                          shape: MaterialStatePropertyAll(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(25),
+                              ),
+                            ),
+                          ),
+                          padding:
+                              MaterialStatePropertyAll(EdgeInsets.all(0.0)),
+                        ),
                         child: Ink(
                           decoration: const BoxDecoration(
                             gradient: LinearGradient(
@@ -206,5 +221,14 @@ class SignUp {
             );
           });
         });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: ElevatedButton(
+          onPressed: () => openBottomSheet(context),
+          child: const Text("Sign Up")),
+    );
   }
 }
