@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:reddit/constants/strings.dart';
+import 'package:reddit/presentation/screens/account_settings_screen.dart';
 
 class AppRouter {
   // declare repository and cubit objects
@@ -26,6 +28,8 @@ class AppRouter {
           ),
         );
       */
+      case accountSettingsRoute:
+        return MaterialPageRoute(builder: (_) => AccountSettingsScreen());
       default:
         return null;
     }
