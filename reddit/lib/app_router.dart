@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/presentation/screens/account_settings_screen.dart';
+import 'package:reddit/presentation/screens/change_password_screen.dart';
+import 'package:reddit/presentation/screens/manage_notifications_screen.dart';
+import 'package:reddit/presentation/screens/update_email_address_screen.dart';
 
 class AppRouter {
   // declare repository and cubit objects
@@ -34,6 +37,8 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => UpdateEmailAddressScreen());
       case changePasswordRoute:
         return MaterialPageRoute(builder: (_) => changePasswordScreen());
+      case manageNotificationsRoute:
+        return MaterialPageRoute(builder: (_) => ManageNotificationsScreen());
       default:
         return null;
     }
