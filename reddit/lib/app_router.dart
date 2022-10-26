@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:reddit/constants/strings.dart';
+import 'package:reddit/presentation/screens/recaptcha.dart';
 
 class AppRouter {
   // declare repository and cubit objects
@@ -8,7 +10,8 @@ class AppRouter {
   Route? generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case '/':
-        return MaterialPageRoute(builder: (_) => Scaffold(
+        return MaterialPageRoute(
+            builder: (_) => Scaffold(
                   appBar: AppBar(),
                   body: Container(),
                 ));
@@ -25,6 +28,8 @@ class AppRouter {
           ),
         );
       */
+      case recaptchaRoute:
+        return MaterialPageRoute(builder: (_) => RecaptchaScreen());
       default:
         return null;
     }

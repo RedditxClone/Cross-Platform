@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>reCAPTCHA</title>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+</head>
+
+<body>
+    <div style='height: 400px;'></div>
+    <form action="?" method="POST">
+        <div class="g-recaptcha" data-sitekey="6LcvmLYiAAAAAB7i2TZANIGdAkzOO1CtG2V_ubQn"
+            data-callback="captchaCallback">
+        </div>
+
+    </form>
+    <script>
+        function captchaCallback(response) {
+            console.log(response);
+            if (typeof Captcha !== "undefined") {
+                Captcha.postMessage(response);
+            }
+        }
+    </script>
+</body>
+
+</html>
