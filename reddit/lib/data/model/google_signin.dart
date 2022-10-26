@@ -122,7 +122,7 @@ class User {
     _lastName = json['lastName'];
     _email = json['email'];
     _imageUrl = json['imageUrl'];
-    // _address = json['address'];
-    // _role = json['role'];
+    _address = json['address'];
+    _role = json['role'];
   }
 }

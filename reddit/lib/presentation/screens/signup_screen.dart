@@ -64,28 +64,31 @@ class _SignupState extends State<Signup> {
   }
 
   void openBottomSheet(BuildContext ctx) {
+    var appBar = AppBar(
+      leading: const CloseButton(),
+      centerTitle: true,
+      title: Logo(Logos.reddit),
+      actions: [
+        TextButton(
+            onPressed: () {},
+            child: const Text("Log in", style: TextStyle(fontSize: 20)))
+      ],
+    );
+    bool emailCorrect = false;
     showModalBottomSheet(
         isScrollControlled: true,
         enableDrag: false,
         constraints: BoxConstraints(
             maxHeight: MediaQuery.of(ctx).size.height -
-                MediaQuery.of(ctx).padding.top),
+                MediaQuery.of(ctx).padding.top -
+                appBar.preferredSize
+                    .height), //the page height - appbar height - status bar height
         context: ctx,
         builder: (_) {
           return StatefulBuilder(
               builder: (BuildContext context, StateSetter setState) {
             return Scaffold(
-              appBar: AppBar(
-                leading: const CloseButton(),
-                centerTitle: true,
-                title: Logo(Logos.reddit),
-                actions: [
-                  TextButton(
-                      onPressed: () {},
-                      child:
-                          const Text("Log in", style: TextStyle(fontSize: 20)))
-                ],
-              ),
+              appBar: appBar,
               body: SingleChildScrollView(
                 child: Column(
                   children: [
@@ -132,15 +135,33 @@ class _SignupState extends State<Signup> {
                             ]),
                             const SizedBox(height: 10),
                             TextField(
-                                controller: emailController,
-                                style: const TextStyle(fontSize: 18),
-                                keyboardType: TextInputType.emailAddress,
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(25)),
-                                  contentPadding: const EdgeInsets.all(15),
-                                  hintText: 'Email',
-                                )),
+                              controller: emailController,
+                              style: const TextStyle(fontSize: 18),
+                              keyboardType: TextInputType.emailAddress,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(25),
+                                ),
+                                contentPadding: const EdgeInsets.all(15),
+                                hintText: 'Email',
+                                suffixIcon: emailController.text.isEmpty
+                                    ? null
+                                    : emailCorrect
+                                        ? const Icon(
+                                            IconData(0xf635,
+                                                fontFamily: 'MaterialIcons'),
+                                          )
+                                        : const Icon(Icons.close),
+                              ),
+                              onChanged: (value) {
+                                setState(() {
+                                  int index = value.indexOf('@');
+                                  if (index != -1) {
+                                    emailCorrect = value.contains('.', index);
+                                  }
+                                });
+                              },
+                            ),
                             const SizedBox(height: 10),
                             TextField(
                                 controller: usernameController,

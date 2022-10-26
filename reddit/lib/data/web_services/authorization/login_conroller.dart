@@ -14,8 +14,12 @@ import '../../../helper/utils/shared_keys.dart';
 
 GoogleSignIn _googleSignIn = GoogleSignIn(
   scopes: [
-    'email',
-    'https://www.googleapis.com/auth/contacts.readonly',
+    "id",
+    "email",
+    "firstName",
+    "lastName",
+    "picture",
+    'https://lavie.orangedigitalcenteregypt.com/api/v1/docs#/auth/googleAuth',
   ],
 );
 Future<void> _handleSignIn() async {
