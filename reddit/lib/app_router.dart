@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:reddit/constants/strings.dart';
+import 'package:reddit/presentation/screens/Web/account_settings_screen_web.dart';
 import 'package:reddit/presentation/screens/account_settings_screen.dart';
 import 'package:reddit/presentation/screens/change_password_screen.dart';
 import 'package:reddit/presentation/screens/country_screen.dart';
@@ -8,6 +10,10 @@ import 'package:reddit/presentation/screens/manage_notifications_screen.dart';
 import 'package:reddit/presentation/screens/update_email_address_screen.dart';
 
 class AppRouter {
+  // platform
+  bool get isMobile =>
+      defaultTargetPlatform == TargetPlatform.iOS ||
+      defaultTargetPlatform == TargetPlatform.android;
   // declare repository and cubit objects
   AppRouter() {
     // initialise repository and cubit objects
@@ -34,7 +40,10 @@ class AppRouter {
         );
       */
       case accountSettingsRoute:
-        return MaterialPageRoute(builder: (_) => AccountSettingsScreen());
+        return MaterialPageRoute(
+            builder: (_) => isMobile
+                ? AccountSettingsScreen()
+                : AccountSettingsScreenWeb());
       case updateEmailAddressRoute:
         return MaterialPageRoute(builder: (_) => UpdateEmailAddressScreen());
       case changePasswordRoute:
