@@ -30,6 +30,10 @@ class AppRouter {
       */
       case accountSettingsRoute:
         return MaterialPageRoute(builder: (_) => AccountSettingsScreen());
+      case updateEmailAddressRoute:
+        return MaterialPageRoute(builder: (_) => UpdateEmailAddressScreen());
+      case changePasswordRoute:
+        return MaterialPageRoute(builder: (_) => changePasswordScreen());
       default:
         return null;
     }
