@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -15,9 +14,9 @@ class ProfileSetting {
       final image = await ImagePicker().pickImage(source: src);
       if (image == null) return;
       final imageTemp = File(image.path);
-      this.img = imageTemp;
+      img = imageTemp;
     } on PlatformException catch (e) {
-      print('failed to pick image');
+      print(e);
     }
   }
 
@@ -103,37 +102,14 @@ class ProfileSetting {
                 children: [
                   Stack(clipBehavior: Clip.none, children: [
                     //------------- Change Cover Photo --------------
-                    // ElevatedButton(
-                    //     onPressed: () {
-                    //       chooseCoverPhotoBottomSheet(ctx);
-                    //     },
-                    //     style: ElevatedButton.styleFrom(
-                    //       primary: const Color.fromRGBO(30, 30, 30, 100),
-                    //     ),
-                    //     child: Container(
-                    //       alignment: Alignment.center,
-                    //       padding: const EdgeInsets.symmetric(
-                    //           vertical: 50, horizontal: 100),
-                    //       //child: const Icon(Icons.add_a_photo_outlined),
-                    //       child: Image.asset(
-                    //         "assets/images/img.png",
-                    //         width: 100,
-                    //         height: 50,
-                    //         fit: BoxFit.cover,
-                    //       ),
-                    //     )),
-
                     InkWell(
                       onTap: () => chooseCoverPhotoBottomSheet(ctx),
                       child: Container(
                           width: MediaQuery.of(ctx).size.width,
                           height: 130,
-                          // decoration: const BoxDecoration(
-                          //     color: const Color.fromRGBO(30, 30, 30, 100),
-                          //     image: DecorationImage(
-                          //       image:
-                          //       fit: BoxFit.cover,
-                          //     )),
+                          decoration: const BoxDecoration(
+                            color: Color.fromRGBO(30, 30, 30, 100),
+                          ),
                           child: img != null
                               ? Image.file(
                                   img!,
@@ -147,7 +123,7 @@ class ProfileSetting {
                       left: 20,
                       child: ElevatedButton(
                           onPressed: () {
-                            chooseCoverPhotoBottomSheet(ctx);
+                            //chooseCoverPhotoBottomSheet(ctx);
                           },
                           style: ElevatedButton.styleFrom(
                             primary: Colors.white,

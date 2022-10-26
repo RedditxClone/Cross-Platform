@@ -9,7 +9,7 @@ class Home extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(),
       body: ElevatedButton(
-          onPressed: () => ProfileSetting().openBottomSheet(context),
+          onPressed: () => ProfileSetting(),
           child: const Text("Profile Settings")),
     );
   }
