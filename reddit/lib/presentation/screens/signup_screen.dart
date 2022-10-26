@@ -150,14 +150,22 @@ class _SignupState extends State<Signup> {
                                         ? const Icon(
                                             IconData(0xf635,
                                                 fontFamily: 'MaterialIcons'),
+                                            color: Colors.green,
                                           )
-                                        : const Icon(Icons.close),
+                                        : const Icon(
+                                            IconData(0xf713,
+                                                fontFamily: 'MaterialIcons'),
+                                            color: Colors.red,
+                                          ),
                               ),
+                              maxLines: 1,
                               onChanged: (value) {
                                 setState(() {
                                   int index = value.indexOf('@');
                                   if (index != -1) {
-                                    emailCorrect = value.contains('.', index);
+                                    emailCorrect =
+                                        value.contains('.', index + 2) &&
+                                            value[value.length - 1] != '.';
                                   }
                                 });
                               },
