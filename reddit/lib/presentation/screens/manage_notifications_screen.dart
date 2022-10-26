@@ -10,6 +10,7 @@ class ManageNotificationsScreen extends StatefulWidget {
 }
 
 class _ManageNotificationsScreenState extends State<ManageNotificationsScreen> {
+  // TODO: Get these values from web services
   // Messages
   bool _inboxMessage = true;
   bool _chatMessage = true;

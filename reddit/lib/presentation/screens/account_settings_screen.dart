@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:reddit/constants/strings.dart';
 
@@ -11,21 +12,20 @@ class AccountSettingsScreen extends StatefulWidget {
 class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
   bool _allowPeopleToFollowYou = true;
   bool _isMan = true;
+  final String _country = "Egypt";
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Account settings")),
-      body: SingleChildScrollView(
-        child: Container(
-          color: Colors.black,
-          child: Column(
-            children: [
-              _basicSettingsWidget(),
-              _connectedAccountsSettingsWidget(),
-              _blockingAndPermissionsSettingsWidget(),
-            ],
-          ),
+      body: Container(
+        color: Colors.black,
+        child: ListView(
+          children: [
+            _basicSettingsWidget(),
+            _connectedAccountsSettingsWidget(),
+            _blockingAndPermissionsSettingsWidget(),
+          ],
         ),
       ),
     );
@@ -52,7 +52,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
           ),
 
           // TODO: Get email from api
-          _basicSettingsbutton(
+          _basicSettingsButton(
             "Update email address",
             "bemoi.erian@gmail.com",
             Icons.settings,
@@ -60,7 +60,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               Navigator.pushNamed(context, updateEmailAddressRoute);
             },
           ),
-          _basicSettingsbutton(
+          _basicSettingsButton(
             "Change password",
             "",
             Icons.settings,
@@ -68,7 +68,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               Navigator.pushNamed(context, changePasswordRoute);
             },
           ),
-          _basicSettingsbutton(
+          _basicSettingsButton(
             "Manage notifications",
             "",
             Icons.notifications,
@@ -79,11 +79,14 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
           _genderSettingsButton(Icons.person),
           // TODO: add a link to learn more
           // TODO: add the selected country name at the end of the button
-          _basicSettingsbutton(
-              "Country",
-              "This is your primary location, Learn more",
-              Icons.location_on_outlined,
-              () {}),
+          _countryButton(
+            "Country",
+            "This is your primary location,",
+            Icons.location_on_outlined,
+            () {
+              Navigator.pushNamed(context, countryRoute);
+            },
+          ),
         ],
       ),
     );
@@ -139,10 +142,14 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
           ),
 
           // TODO: Get email from api
-          _basicSettingsbutton(
-              "Manage blocked accounts", "", Icons.block, () {}),
-          _basicSettingsbutton(
-              "Chat and messaging permissions", "", Icons.chat_outlined, () {}),
+          _basicSettingsButton(
+            "Manage blocked accounts",
+            "",
+            Icons.block,
+            () {
+              Navigator.pushNamed(context, manageBlockedAccountsRoute);
+            },
+          ),
           _toggleSettingsButton(
               "Allow people to follow you",
               "Followers will be notified about posts you make to your profile and see them in their home feed.",
@@ -152,7 +159,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
     );
   }
 
-  Widget _basicSettingsbutton(title, subtitle, prefixIcon, onPressedFunc) {
+  Widget _basicSettingsButton(title, subtitle, prefixIcon, onPressedFunc) {
     // TODO: subtitle text style
     return TextButton(
       onPressed: onPressedFunc,
@@ -182,6 +189,68 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                           style: TextStyle(color: Colors.grey.shade500),
                         )
                       ]),
+              ),
+            ),
+            Expanded(
+              flex: 1,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: const [
+                  Icon(Icons.arrow_forward),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _countryButton(title, subtitle, prefixIcon, onPressedFunc) {
+    // TODO: subtitle text style
+    return TextButton(
+      onPressed: onPressedFunc,
+      child: Container(
+        child: Row(
+          children: [
+            Expanded(
+              flex: 1,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(prefixIcon),
+                ],
+              ),
+            ),
+            Expanded(
+              flex: 8,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title),
+                  RichText(
+                    text: TextSpan(children: [
+                      TextSpan(
+                          text: subtitle,
+                          style: TextStyle(color: Colors.grey.shade500)),
+                      TextSpan(
+                          text: " Learn more",
+                          style: const TextStyle(color: Colors.blue),
+                          // TODO: on tap not working because it is the child of a button
+                          recognizer: TapGestureRecognizer()..onTap = () {}),
+                    ]),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              flex: 2,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(_country),
+                ],
               ),
             ),
             Expanded(
@@ -363,24 +432,31 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                AppBar(
-                  title: const Text("Select gender"),
-                  centerTitle: true,
-                  automaticallyImplyLeading: false,
-                  backgroundColor: Colors.transparent,
-                  shadowColor: Colors.transparent,
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        // set gender
-                        Navigator.pop(context);
-                      },
-                      child: const Text("Done"),
-                    ),
-                  ],
+                PreferredSize(
+                  preferredSize: AppBar().preferredSize,
+                  child: AppBar(
+                    title: const Text("Select gender"),
+                    centerTitle: true,
+                    automaticallyImplyLeading: false,
+                    backgroundColor: Colors.grey.shade900,
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(25.0),
+                      topRight: Radius.circular(25.0),
+                    )),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          // set gender
+                          Navigator.pop(context);
+                        },
+                        child: const Text("Done"),
+                      ),
+                    ],
+                  ),
                 ),
                 Card(
-                  color: Colors.transparent,
+                  color: Colors.grey.shade900,
                   child: ListTile(
                     title: const Text("Man"),
                     leading: _isMan
@@ -395,7 +471,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                   ),
                 ),
                 Card(
-                  color: Colors.transparent,
+                  color: Colors.grey.shade900,
                   child: ListTile(
                     title: const Text("Woman"),
                     leading: !_isMan
