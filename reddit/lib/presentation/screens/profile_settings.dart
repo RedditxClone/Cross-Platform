@@ -7,20 +7,30 @@ class ProfileSetting {
   bool contentVisibility = true;
   bool showActiveCommunities = true;
   bool isCoverPhotoExist = false;
-  File? img;
+  File? imgCover;
+  File? imgProfile;
 
-  Future pickImage(ImageSource src) async {
+  Future pickImage(ImageSource src, String dest) async {
     try {
       final image = await ImagePicker().pickImage(source: src);
       if (image == null) return;
       final imageTemp = File(image.path);
-      img = imageTemp;
+      switch (dest) {
+        case 'cover':
+          imgCover = imageTemp;
+          break;
+        case 'profile':
+          imgProfile = imageTemp;
+          break;
+        default:
+          break;
+      }
     } on PlatformException catch (e) {
       print(e);
     }
   }
 
-  void chooseCoverPhotoBottomSheet(BuildContext ctx) {
+  void chooseProfilePhotoBottomSheet(BuildContext ctx) {
     showModalBottomSheet(
         context: ctx,
         builder: (_) {
@@ -30,7 +40,7 @@ class ProfileSetting {
             child: Column(
               children: [
                 TextButton(
-                    onPressed: () => pickImage(ImageSource.camera),
+                    onPressed: () => pickImage(ImageSource.camera, 'profile'),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: const [
@@ -44,7 +54,7 @@ class ProfileSetting {
                       ],
                     )),
                 TextButton(
-                    onPressed: () => pickImage(ImageSource.gallery),
+                    onPressed: () => pickImage(ImageSource.gallery, 'profile'),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: const [
@@ -67,7 +77,64 @@ class ProfileSetting {
                     ),
                     child: const Center(
                       child: Text(
-                        " Close",
+                        "Close",
+                        style: TextStyle(fontSize: 15, color: Colors.grey),
+                      ),
+                    )),
+              ],
+            ),
+          );
+        });
+  }
+
+  void chooseCoverPhotoBottomSheet(BuildContext ctx) {
+    showModalBottomSheet(
+        context: ctx,
+        builder: (_) {
+          return Container(
+            height: 170,
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              children: [
+                TextButton(
+                    onPressed: () => pickImage(ImageSource.camera, 'cover'),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: const [
+                        Icon(
+                          Icons.camera_alt_outlined,
+                          color: Colors.white,
+                        ),
+                        SizedBox(width: 20),
+                        Text("Camera",
+                            style: TextStyle(fontSize: 20, color: Colors.white))
+                      ],
+                    )),
+                TextButton(
+                    onPressed: () => pickImage(ImageSource.gallery, 'cover'),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: const [
+                        Icon(
+                          Icons.photo_library_outlined,
+                          color: Colors.white,
+                        ),
+                        SizedBox(width: 20),
+                        Text("Library",
+                            style: TextStyle(fontSize: 20, color: Colors.white))
+                      ],
+                    )),
+                ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      primary: Color.fromRGBO(90, 90, 90, 100),
+                      onPrimary: Colors.grey,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0)),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        "Close",
                         style: TextStyle(fontSize: 15, color: Colors.grey),
                       ),
                     )),
@@ -110,9 +177,9 @@ class ProfileSetting {
                           decoration: const BoxDecoration(
                             color: Color.fromRGBO(30, 30, 30, 100),
                           ),
-                          child: img != null
+                          child: imgCover != null
                               ? Image.file(
-                                  img!,
+                                  imgCover!,
                                   fit: BoxFit.cover,
                                 )
                               : const Icon(Icons.add_a_photo_outlined)),
@@ -121,37 +188,54 @@ class ProfileSetting {
                     Positioned(
                       top: 90,
                       left: 20,
-                      child: ElevatedButton(
-                          onPressed: () {
-                            //chooseCoverPhotoBottomSheet(ctx);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            primary: Colors.white,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(40.0)),
-                          ),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 20, horizontal: 5),
-                            child: const Icon(
-                              Icons.person,
-                              color: Colors.black,
-                            ),
-                          )),
+                      child: Container(
+                          decoration:
+                              const BoxDecoration(shape: BoxShape.circle),
+                          child: imgProfile != null
+                              ? ClipOval(
+                                  child: Image.file(
+                                    imgProfile!,
+                                    width: 80,
+                                    height: 80,
+                                    fit: BoxFit.fill,
+                                  ),
+                                )
+                              : ElevatedButton(
+                                  onPressed: () =>
+                                      pickImage(ImageSource.gallery, 'profile'),
+                                  style: ElevatedButton.styleFrom(
+                                    primary: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(80.0)),
+                                  ),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 20, horizontal: 5),
+                                    child: const Icon(
+                                      Icons.person,
+                                      size: 40,
+                                      color: Colors.black,
+                                    ),
+                                  ))),
                     ),
                     Positioned(
-                        top: 130,
-                        left: 70,
+                        top: 140,
+                        left: 80,
                         child: Container(
                           padding: const EdgeInsets.all(4),
                           decoration: const BoxDecoration(
                             shape: BoxShape.circle,
                             color: Color.fromRGBO(100, 100, 100, 1),
                           ),
-                          child: const Icon(
-                            Icons.add_a_photo_outlined,
-                            color: Colors.white,
-                            size: 20,
+                          child: InkWell(
+                            onTap: () =>
+                                pickImage(ImageSource.gallery, 'profile'),
+                            child: const Icon(
+                              Icons.add_a_photo_outlined,
+                              color: Colors.white,
+                              size: 20,
+                            ),
                           ),
                         ))
                   ]),
