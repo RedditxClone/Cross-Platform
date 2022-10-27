@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:reddit/presentation/screens/profile_settings_web.dart';
+import 'package:reddit/presentation/screens/profile_settings_screen.dart';
+// import 'package:reddit/presentation/screens/profile_settings_web.dart';
 
 class AppRouter {
   // declare repository and cubit objects
@@ -9,7 +10,7 @@ class AppRouter {
   Route? generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case '/':
-        return MaterialPageRoute(builder: (_) => ProfileSettingsWeb());
+        return MaterialPageRoute(builder: (_) => const ProfileSettings());
       /*
       case example:
       case '/':

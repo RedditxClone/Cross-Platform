@@ -1,15 +1,25 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
+import 'dart:io';
 import 'package:flutter/services.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:image_picker/image_picker.dart';
 
-class ProfileSetting {
+class ProfileSettings extends StatefulWidget {
+  const ProfileSettings({Key? key}) : super(key: key);
+
+  @override
+  State<ProfileSettings> createState() => _ProfileSettingsState();
+}
+
+class _ProfileSettingsState extends State<ProfileSettings> {
   bool contentVisibility = true;
   bool showActiveCommunities = true;
-  bool isCoverPhotoExist = false;
   File? imgCover;
   File? imgProfile;
 
+  /// ## Parameters
+  /// ### src : the image source can be ImageSource.gallery or ImageSource.camera
+  /// ### dest : the image destination can be 'cover' for cover photo or 'profile' fom profile photo
   Future pickImage(ImageSource src, String dest) async {
     try {
       final image = await ImagePicker().pickImage(source: src);
@@ -70,7 +80,7 @@ class ProfileSetting {
                 ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
-                      primary: Color.fromRGBO(90, 90, 90, 100),
+                      primary: const Color.fromRGBO(90, 90, 90, 100),
                       onPrimary: Colors.grey,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20.0)),
@@ -127,7 +137,7 @@ class ProfileSetting {
                 ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
-                      primary: Color.fromRGBO(90, 90, 90, 100),
+                      primary: const Color.fromRGBO(90, 90, 90, 100),
                       onPrimary: Colors.grey,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20.0)),
@@ -139,6 +149,64 @@ class ProfileSetting {
                       ),
                     )),
               ],
+            ),
+          );
+        });
+  }
+
+  Widget linkButton(Widget icon, String lable) {
+    return ElevatedButton(
+        onPressed: () => addLinks(context),
+        style: ElevatedButton.styleFrom(
+          primary: Colors.white,
+          onPrimary: Colors.black,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(40.0)),
+        ),
+        child: Row(
+          children: [
+            icon,
+            const SizedBox(width: 10),
+            Text(
+              lable,
+              style: const TextStyle(fontSize: 14, color: Colors.black),
+            )
+          ],
+        ));
+  }
+
+  void addLinks(BuildContext ctx) {
+    showModalBottomSheet(
+        context: ctx,
+        builder: (_) {
+          return Scaffold(
+            appBar: AppBar(
+                leading: const CloseButton(),
+                centerTitle: true,
+                title: const Text('Add Social Link')),
+            body: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: GridView(
+                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 186,
+                  childAspectRatio: 3 / 1,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                ),
+                children: [
+                  linkButton(Logo(Logos.reddit, size: 15), 'Reddit'),
+                  linkButton(Logo(Logos.facebook_f, size: 15), 'Facebook'),
+                  linkButton(Logo(Logos.whatsapp, size: 15), 'Whatsapp'),
+                  linkButton(Logo(Logos.youtube, size: 15), 'Youtube'),
+                  linkButton(Logo(Logos.instagram, size: 15), 'Instagram'),
+                  linkButton(Logo(Logos.twitter, size: 15), 'Twitter'),
+                  linkButton(Logo(Logos.discord, size: 15), 'Discord'),
+                  linkButton(Logo(Logos.spotify, size: 15), 'Spotify'),
+                  linkButton(Logo(Logos.paypal, size: 15), 'Paypal'),
+                  linkButton(Logo(Logos.twitch, size: 15), 'Twitch'),
+                  linkButton(Logo(Logos.tumblr, size: 15), 'Tumblr'),
+                ],
+              ),
             ),
           );
         });
@@ -297,7 +365,7 @@ class ProfileSetting {
                           width: 90,
                           height: 40,
                           child: ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () => addLinks(context),
                               style: ElevatedButton.styleFrom(
                                 primary: Colors.white,
                                 onPrimary: Colors.black,
@@ -320,32 +388,41 @@ class ProfileSetting {
                   ),
                   //------------- Content Visibility --------------
                   const SizedBox(height: 20),
-                  SwitchListTile(
-                    activeColor: Colors.blue,
-                    value: contentVisibility,
-                    onChanged: (newValue) {
-                      contentVisibility = newValue;
-                    },
-                    title: const Text('Content visibility',
-                        style: TextStyle(fontSize: 17)),
-                    subtitle: const Text(
-                        '\nPosts to this profile can appear in r/all and your profile can be discovered on r/users',
-                        style: TextStyle(fontSize: 15, color: Colors.grey)),
-                  ),
+
+                  StatefulBuilder(builder: (BuildContext context, setState) {
+                    return SwitchListTile(
+                      activeColor: Colors.blue,
+                      value: contentVisibility,
+                      onChanged: (newValue) {
+                        setState(() {
+                          contentVisibility = newValue;
+                        });
+                      },
+                      title: const Text('Content visibility',
+                          style: TextStyle(fontSize: 17)),
+                      subtitle: const Text(
+                          '\nPosts to this profile can appear in r/all and your profile can be discovered on r/users',
+                          style: TextStyle(fontSize: 15, color: Colors.grey)),
+                    );
+                  }),
                   //------------- Show active Communities --------------
                   const SizedBox(height: 20),
-                  SwitchListTile(
-                    activeColor: Colors.blue,
-                    value: showActiveCommunities,
-                    onChanged: (newValue) {
-                      showActiveCommunities = newValue;
-                    },
-                    title: const Text('Show active communities',
-                        style: TextStyle(fontSize: 17)),
-                    subtitle: const Text(
-                        '\nDecide whether to show the coomunities you are active in on your profile.',
-                        style: TextStyle(fontSize: 15, color: Colors.grey)),
-                  ),
+                  StatefulBuilder(builder: (BuildContext context, setState) {
+                    return SwitchListTile(
+                      activeColor: Colors.blue,
+                      value: showActiveCommunities,
+                      onChanged: (newValue) {
+                        setState(() {
+                          showActiveCommunities = newValue;
+                        });
+                      },
+                      title: const Text('Show active communities',
+                          style: TextStyle(fontSize: 17)),
+                      subtitle: const Text(
+                          '\nDecide whether to show the coomunities you are active in on your profile.',
+                          style: TextStyle(fontSize: 15, color: Colors.grey)),
+                    );
+                  }),
                   const SizedBox(height: 20),
                   //----------------------------------------------------
                 ],
@@ -353,5 +430,15 @@ class ProfileSetting {
             ),
           );
         });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(),
+      body: ElevatedButton(
+          onPressed: () => editProfileBottomSheet(context),
+          child: const Text("Profile Settings")),
+    );
   }
 }

@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ProfileSettingsWeb extends StatefulWidget {
-  ProfileSettingsWeb({Key? key}) : super(key: key);
+  const ProfileSettingsWeb({Key? key}) : super(key: key);
 
   @override
   State<ProfileSettingsWeb> createState() => _ProfileSettingsWebState();
@@ -22,6 +22,9 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
   Uint8List webImgCover = Uint8List(8);
   Uint8List webImgProfile = Uint8List(8);
 
+  /// ## Parameters
+  /// ### src : the image source can be ImageSource.gallery or ImageSource.camera
+  /// ### dest : the image destination can be 'cover' for cover photo or 'profile' fom profile photo
   Future pickImage(ImageSource src, String dest) async {
     try {
       final image = await ImagePicker().pickImage(source: src);
