@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reddit/presentation/screens/signup_page.dart';
 import 'package:reddit/presentation/screens/signup_screen.dart';
 
 class AppRouter {
@@ -10,10 +11,7 @@ class AppRouter {
     switch (settings.name) {
       case '/':
         return MaterialPageRoute(
-          builder: (_) => Scaffold(
-            appBar: AppBar(),
-            body: const Signup(),
-          ),
+          builder: (_) => const SignupWeb(),
         );
       /*
       case example:

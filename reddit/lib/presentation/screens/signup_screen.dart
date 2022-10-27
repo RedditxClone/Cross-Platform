@@ -3,20 +3,30 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import '../../helper/dio.dart';
 
-class Signup extends StatefulWidget {
-  const Signup({super.key});
+class SignupMobile extends StatefulWidget {
+  const SignupMobile({super.key});
 
   @override
-  State<Signup> createState() => _SignupState();
+  State<SignupMobile> createState() => _SignupMobileState();
 }
 
-class _SignupState extends State<Signup> {
+class _SignupMobileState extends State<SignupMobile> {
   bool passwordVisible = true;
   var emailController = TextEditingController();
   var usernameController = TextEditingController();
   var passwordController = TextEditingController();
 
-  GoogleSignInAccount? _currentUser;
+  GoogleSignIn? _currentUser;
+  @override
+  void initState() {
+    super.initState();
+    _currentUser = GoogleSignIn(
+      scopes: [
+        'profile',
+        'email',
+      ],
+    );
+  }
 
   void togglePasswordVisible() {
     passwordVisible = !passwordVisible;
