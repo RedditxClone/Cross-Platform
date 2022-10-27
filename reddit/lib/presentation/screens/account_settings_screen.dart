@@ -12,6 +12,7 @@ class AccountSettingsScreen extends StatefulWidget {
 }
 
 class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
+  // get this value from api
   bool _allowPeopleToFollowYou = true;
   bool _isMan = true;
   // TODO: Get country from api
@@ -91,15 +92,12 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
             "This is your primary location,",
             Icons.location_on_outlined,
             () async {
-              _countryCode = await Navigator.pushNamed(context, countryRoute,
-                  arguments: {"code": _countryCode}) as String;
-              for (var map in countryNamesMap) {
-                if (map["code"] == _countryCode) {
-                  setState(() {
-                    _country = map["name"]!;
-                  });
-                }
-              }
+              var countryMap = await Navigator.pushNamed(context, countryRoute,
+                  arguments: {"code": _countryCode}) as Map<String, String>;
+              _countryCode = countryMap["code"] ?? _countryCode;
+              setState(() {
+                _country = countryMap["name"] ?? _country;
+              });
             },
           ),
         ],

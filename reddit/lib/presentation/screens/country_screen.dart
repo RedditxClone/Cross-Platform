@@ -29,7 +29,7 @@ class CountryScreen extends StatelessWidget {
                         : const Icon(Icons.circle_outlined),
                     title: Text(e["name"]!),
                     onTap: () {
-                      Navigator.pop(context, e["code"]!);
+                      Navigator.pop(context, e);
                     },
                   ),
                 ),
