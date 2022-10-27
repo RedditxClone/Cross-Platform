@@ -270,6 +270,9 @@ class _SignupMobileState extends State<SignupMobile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Sign Up'),
+      ),
       body: ElevatedButton(
           onPressed: () => openBottomSheet(context),
           child: const Text("Sign Up")),

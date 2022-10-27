@@ -11,7 +11,7 @@ class AppRouter {
     switch (settings.name) {
       case '/':
         return MaterialPageRoute(
-          builder: (_) => const SignupWeb(),
+          builder: (_) => const SignupMobile(),
         );
       /*
       case example:
