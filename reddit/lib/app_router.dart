@@ -10,7 +10,11 @@ class AppRouter {
   Route? generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case '/':
-        return MaterialPageRoute(builder: (_) => const ProfileSettings());
+        return MaterialPageRoute(
+            builder: (_) => Scaffold(
+                  appBar: AppBar(),
+                  body: Container(),
+                ));
       /*
       case example:
       case '/':

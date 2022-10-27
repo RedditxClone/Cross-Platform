@@ -19,10 +19,6 @@ class MyApp extends StatelessWidget {
         // This is the theme of your application.
         primarySwatch: Colors.blue,
       ),
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-      ),
-      themeMode: ThemeMode.dark,
       debugShowCheckedModeBanner: false,
       onGenerateRoute: appRouter.generateRoute,
     );
