@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:reddit/constants/strings.dart';
 
 class AccountSettingsScreen extends StatefulWidget {
-  AccountSettingsScreen({Key? key}) : super(key: key);
+  const AccountSettingsScreen({Key? key}) : super(key: key);
 
   @override
   State<AccountSettingsScreen> createState() => _AccountSettingsScreenState();

@@ -49,6 +49,7 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
   }
 
   Widget _accountPreferencesWidget() {
+    // ignore: sized_box_for_whitespace
     return Container(
       width: double.infinity,
       child: Column(
@@ -104,6 +105,7 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
   }
 
   Widget _connectedAccountsWidget() {
+    // ignore: sized_box_for_whitespace
     return Container(
       width: double.infinity,
       child: Column(
@@ -145,6 +147,7 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
   }
 
   Widget _deleteAccountWidget() {
+    // ignore: sized_box_for_whitespace
     return Container(
       width: double.infinity,
       child: Column(
@@ -226,6 +229,7 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
   }
 
   Widget _rounderButton(title, onPressedFunc) {
+    // ignore: sized_box_for_whitespace
     return Container(
       width: 85,
       height: 30,
@@ -235,7 +239,7 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
             shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                 RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(18.0),
-          side: BorderSide(color: Colors.white),
+          side: const BorderSide(color: Colors.white),
         ))),
         child: Text(title),
       ),
@@ -243,6 +247,7 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
   }
 
   Widget _genderDropDown() {
+    // ignore: sized_box_for_whitespace
     return Container(
       width: 80,
       child: DropdownButtonHideUnderline(
@@ -277,7 +282,7 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
                 },
               );
             },
-            hint: Text("Select item")),
+            hint: const Text("Select item")),
       ),
     );
   }

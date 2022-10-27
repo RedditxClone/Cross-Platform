@@ -19,6 +19,7 @@ class AppRouter {
     // initialise repository and cubit objects
   }
   Route? generateRoute(RouteSettings settings) {
+    final arguments = settings.arguments;
     switch (settings.name) {
       case '/':
         return MaterialPageRoute(
@@ -42,18 +43,21 @@ class AppRouter {
       case accountSettingsRoute:
         return MaterialPageRoute(
             builder: (_) => isMobile
-                ? AccountSettingsScreen()
-                : AccountSettingsScreenWeb());
+                ? const AccountSettingsScreen()
+                : const AccountSettingsScreenWeb());
       case updateEmailAddressRoute:
-        return MaterialPageRoute(builder: (_) => UpdateEmailAddressScreen());
+        return MaterialPageRoute(
+            builder: (_) => UpdateEmailAddressScreen(arguments));
       case changePasswordRoute:
-        return MaterialPageRoute(builder: (_) => changePasswordScreen());
+        return MaterialPageRoute(
+            builder: (_) => ChangePasswordScreen(arguments));
       case manageNotificationsRoute:
         return MaterialPageRoute(builder: (_) => ManageNotificationsScreen());
       case countryRoute:
-        return MaterialPageRoute(builder: (_) => CountryScreen());
+        return MaterialPageRoute(builder: (_) => CountryScreen(arguments));
       case manageBlockedAccountsRoute:
-        return MaterialPageRoute(builder: (_) => ManageBlockedAccountsScreen());
+        return MaterialPageRoute(
+            builder: (_) => const ManageBlockedAccountsScreen());
       default:
         return null;
     }

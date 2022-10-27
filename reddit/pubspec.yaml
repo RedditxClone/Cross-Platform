@@ -37,6 +37,7 @@ dependencies:
   dio: ^4.0.6
   flutter_bloc: ^8.1.1
   dartdoc: ^6.1.2
+  url_launcher: ^6.1.6
 
 dev_dependencies:
   flutter_test:

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:reddit/constants/strings.dart';
 
 class ManageNotificationsScreen extends StatefulWidget {
   ManageNotificationsScreen({Key? key}) : super(key: key);
@@ -258,7 +257,6 @@ class _ManageNotificationsScreenState extends State<ManageNotificationsScreen> {
       required prefixIcon,
       required toggleValue,
       required onChangedFunc}) {
-    // TODO: subtitle text style
     return Container(
       padding: const EdgeInsets.all(8.0),
       child: Row(

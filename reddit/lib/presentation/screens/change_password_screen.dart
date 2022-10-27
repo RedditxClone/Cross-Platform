@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 
-class changePasswordScreen extends StatelessWidget {
+class ChangePasswordScreen extends StatelessWidget {
   final _currentPasswordController = TextEditingController();
   final _newPasswordController = TextEditingController();
   final _confirmNewPasswordController = TextEditingController();
-  changePasswordScreen({Key? key}) : super(key: key);
+  late final String _email;
+  late final String _username;
+  final Object? arguments;
+  ChangePasswordScreen(this.arguments, {Key? key}) : super(key: key) {
+    Map<String, String> argMap = arguments as Map<String, String>;
+    _email = argMap["email"] ?? "";
+    _username = argMap["username"] ?? "";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,13 +43,12 @@ class changePasswordScreen extends StatelessWidget {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  // TODO: get email and username from variables
-                  children: const [
+                  children: [
                     Text(
-                      "u/bemoierian",
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      "u/$_username",
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    Text("bemoi.erian@gmail.com"),
+                    Text(_email),
                   ],
                 )
               ],

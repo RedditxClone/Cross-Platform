@@ -3,7 +3,14 @@ import 'package:flutter/material.dart';
 class UpdateEmailAddressScreen extends StatelessWidget {
   final _emailAddressController = TextEditingController();
   final _redditPasswordController = TextEditingController();
-  UpdateEmailAddressScreen({Key? key}) : super(key: key);
+  late final String _email;
+  late final String _username;
+  final Object? arguments;
+  UpdateEmailAddressScreen(this.arguments, {Key? key}) : super(key: key) {
+    Map<String, String> argMap = arguments as Map<String, String>;
+    _email = argMap["email"] ?? "";
+    _username = argMap["username"] ?? "";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,13 +42,12 @@ class UpdateEmailAddressScreen extends StatelessWidget {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  // TODO: get email and username from variables
-                  children: const [
+                  children: [
                     Text(
-                      "u/bemoierian",
+                      "u/$_username",
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    Text("bemoi.erian@gmail.com"),
+                    Text(_email),
                   ],
                 )
               ],
