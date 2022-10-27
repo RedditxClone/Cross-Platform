@@ -21,6 +21,7 @@ class _RecaptchaScreenState extends State<RecaptchaScreen> {
           JavascriptChannel(
               name: "Captcha",
               onMessageReceived: (JavascriptMessage msg) {
+                // Replace the route here with the route you wish to go
                 Navigator.pushReplacementNamed(context, '/');
               })
         },

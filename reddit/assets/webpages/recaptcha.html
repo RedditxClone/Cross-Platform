@@ -18,7 +18,10 @@
     <script>
         function captchaCallback(response) {
             console.log(response);
+            // Web callback
+            window.parent.postMessage(response, "*");
             if (typeof Captcha !== "undefined") {
+                // mobile callback
                 Captcha.postMessage(response);
             }
         }
