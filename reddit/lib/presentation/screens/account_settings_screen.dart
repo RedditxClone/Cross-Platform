@@ -1,6 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:reddit/constants/strings.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../../constants/country_names.dart';
 
 class AccountSettingsScreen extends StatefulWidget {
   const AccountSettingsScreen({Key? key}) : super(key: key);
@@ -12,7 +14,14 @@ class AccountSettingsScreen extends StatefulWidget {
 class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
   bool _allowPeopleToFollowYou = true;
   bool _isMan = true;
-  final String _country = "Egypt";
+  // TODO: Get country from api
+  String _country = "Egypt";
+  String _countryCode = "EG";
+  // TODO: Get email from api
+  final String _email = "bemoi.erian@gmail.com";
+  final String _username = "bemoierian";
+  final Uri _countryLearnMoreUrl =
+      Uri.parse('https://reddithelp.com/hc/en-us/articles/360062429491');
 
   @override
   Widget build(BuildContext context) {
@@ -50,14 +59,13 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               ),
             ),
           ),
-
-          // TODO: Get email from api
           _basicSettingsButton(
             "Update email address",
-            "bemoi.erian@gmail.com",
+            _email,
             Icons.settings,
             () {
-              Navigator.pushNamed(context, updateEmailAddressRoute);
+              Navigator.pushNamed(context, updateEmailAddressRoute,
+                  arguments: {"email": _email, "username": _username});
             },
           ),
           _basicSettingsButton(
@@ -65,7 +73,8 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
             "",
             Icons.settings,
             () {
-              Navigator.pushNamed(context, changePasswordRoute);
+              Navigator.pushNamed(context, changePasswordRoute,
+                  arguments: {"email": _email, "username": _username});
             },
           ),
           _basicSettingsButton(
@@ -77,14 +86,20 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
             },
           ),
           _genderSettingsButton(Icons.person),
-          // TODO: add a link to learn more
-          // TODO: add the selected country name at the end of the button
           _countryButton(
             "Country",
             "This is your primary location,",
             Icons.location_on_outlined,
-            () {
-              Navigator.pushNamed(context, countryRoute);
+            () async {
+              _countryCode = await Navigator.pushNamed(context, countryRoute,
+                  arguments: {"code": _countryCode}) as String;
+              for (var map in countryNamesMap) {
+                if (map["code"] == _countryCode) {
+                  setState(() {
+                    _country = map["name"]!;
+                  });
+                }
+              }
             },
           ),
         ],
@@ -111,10 +126,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               ),
             ),
           ),
-          // TODO: Get username from api
-          // TODO: Get username from api
           _connectedAccountsButton("Google", Icons.android),
-          // TODO: Get email from api
           _connectedAccountsButton("Facebook", Icons.facebook),
         ],
       ),
@@ -141,7 +153,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
             ),
           ),
 
-          // TODO: Get email from api
+          // TODO: Get list of blocked from api
           _basicSettingsButton(
             "Manage blocked accounts",
             "",
@@ -160,116 +172,118 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
   }
 
   Widget _basicSettingsButton(title, subtitle, prefixIcon, onPressedFunc) {
-    // TODO: subtitle text style
     return TextButton(
       onPressed: onPressedFunc,
-      child: Container(
-        child: Row(
-          children: [
-            Expanded(
-              flex: 1,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Icon(prefixIcon),
-                ],
-              ),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 1,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(prefixIcon),
+              ],
             ),
-            Expanded(
-              flex: 10,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: (subtitle == ""
-                    ? [Text(title)]
-                    : [
-                        Text(title),
-                        Text(
-                          subtitle,
-                          style: TextStyle(color: Colors.grey.shade500),
-                        )
-                      ]),
-              ),
+          ),
+          Expanded(
+            flex: 10,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: (subtitle == ""
+                  ? [Text(title)]
+                  : [
+                      Text(title),
+                      Text(
+                        subtitle,
+                        style: TextStyle(color: Colors.grey.shade500),
+                      )
+                    ]),
             ),
-            Expanded(
-              flex: 1,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: const [
-                  Icon(Icons.arrow_forward),
-                ],
-              ),
+          ),
+          Expanded(
+            flex: 1,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: const [
+                Icon(Icons.arrow_forward),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _countryButton(title, subtitle, prefixIcon, onPressedFunc) {
-    // TODO: subtitle text style
     return TextButton(
       onPressed: onPressedFunc,
-      child: Container(
-        child: Row(
-          children: [
-            Expanded(
-              flex: 1,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Icon(prefixIcon),
-                ],
-              ),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 1,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(prefixIcon),
+              ],
             ),
-            Expanded(
-              flex: 8,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title),
-                  RichText(
-                    text: TextSpan(children: [
-                      TextSpan(
-                          text: subtitle,
-                          style: TextStyle(color: Colors.grey.shade500)),
-                      TextSpan(
-                          text: " Learn more",
-                          style: const TextStyle(color: Colors.blue),
-                          // TODO: on tap not working because it is the child of a button
-                          recognizer: TapGestureRecognizer()..onTap = () {}),
-                    ]),
-                  ),
-                ],
-              ),
+          ),
+          Expanded(
+            flex: 8,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title),
+                RichText(
+                  text: TextSpan(children: [
+                    TextSpan(
+                        text: subtitle,
+                        style: TextStyle(color: Colors.grey.shade500)),
+                    TextSpan(
+                      text: " Learn more",
+                      style: const TextStyle(color: Colors.blue),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          _launchUrl(_countryLearnMoreUrl);
+                        },
+                    ),
+                  ]),
+                ),
+              ],
             ),
-            Expanded(
-              flex: 2,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text(_country),
-                ],
-              ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(_country),
+              ],
             ),
-            Expanded(
-              flex: 1,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: const [
-                  Icon(Icons.arrow_forward),
-                ],
-              ),
+          ),
+          Expanded(
+            flex: 1,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: const [
+                Icon(Icons.arrow_forward),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
+  Future<void> _launchUrl(url) async {
+    if (!await launchUrl(url)) {
+      throw 'Could not launch $url';
+    }
+  }
+
   Widget _connectedAccountsButton(title, prefixIcon) {
-    // TODO: subtitle text style
     return Container(
       padding: const EdgeInsets.all(8.0),
       child: Row(
@@ -314,7 +328,6 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
   }
 
   Widget _toggleSettingsButton(title, subtitle, prefixIcon) {
-    // TODO: subtitle text style
     return Container(
       padding: const EdgeInsets.all(8.0),
       child: Row(
@@ -368,46 +381,43 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
   }
 
   Widget _genderSettingsButton(prefixIcon) {
-    // TODO: subtitle text style
     return TextButton(
       onPressed: _genderBottomSheet,
-      child: Container(
-        child: Row(
-          children: [
-            Expanded(
-              flex: 1,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Icon(prefixIcon),
-                ],
-              ),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 1,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(prefixIcon),
+              ],
             ),
-            Expanded(
-              flex: 10,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text("Gender"),
-                  Text(
-                    _isMan ? "Man" : "Woman",
-                    style: TextStyle(color: Colors.grey.shade500),
-                  )
-                ],
-              ),
+          ),
+          Expanded(
+            flex: 10,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text("Gender"),
+                Text(
+                  _isMan ? "Man" : "Woman",
+                  style: TextStyle(color: Colors.grey.shade500),
+                )
+              ],
             ),
-            Expanded(
-              flex: 1,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: const [
-                  Icon(Icons.keyboard_arrow_down),
-                ],
-              ),
+          ),
+          Expanded(
+            flex: 1,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: const [
+                Icon(Icons.keyboard_arrow_down),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
