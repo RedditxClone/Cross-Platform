@@ -31,9 +31,6 @@ class _SignupMobileState extends State<SignupMobile> {
     //     'email',
     //   ],
     // );
-    emailController.text = "";
-    usernameController.text = "";
-    passwordController.text = "";
   }
 
   void togglePasswordVisible() {
@@ -113,7 +110,10 @@ class _SignupMobileState extends State<SignupMobile> {
         ),
       ],
     );
-
+    //initialize the textfields
+    emailController.text = "";
+    usernameController.text = "";
+    passwordController.text = "";
     showModalBottomSheet(
         isScrollControlled: true,
         enableDrag: false,
@@ -220,18 +220,18 @@ class _SignupMobileState extends State<SignupMobile> {
                                 contentPadding: const EdgeInsets.all(15),
                                 hintText: 'Username',
                                 errorText: usernameError
-                                    ? 'Username already exists'
+                                    ? "Letters, numbers, dashes, and underscores only. Please try again without symbols."
                                     : null,
                               ),
                               // inputFormatters: [
                               //   FilteringTextInputFormatter.allow(
-                              //       RegExp(r'[a-zA-Z0-9_]')),
+                              //       RegExp(r'[a-zA-Z0-9_-]')),
+                              //   FilteringTextInputFormatter.
                               // ],
-                              onChanged: (value) {
-                                setState(() {
-                                  usernameError = false;
-                                });
-                              },
+                              onChanged: (value) => setState(() {
+                                usernameError =
+                                    value.contains(RegExp(r'[^a-zA-Z0-9_-]'));
+                              }),
                             ),
                             const SizedBox(height: 10),
                             TextField(
