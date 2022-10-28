@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:reddit/business_logic/cubit/cubit/settings_cubit.dart';
-import 'package:reddit/data/model/profile_settings.dart';
+import 'package:reddit/data/model/user_settings.dart';
 
 class ProfileSettingsWeb extends StatefulWidget {
   const ProfileSettingsWeb({Key? key}) : super(key: key);
@@ -22,7 +22,7 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
   // bool contentVisibility = true;
   bool isThereImageCover = false;
   bool isThereImageProfile = false;
-  late ProfileSettings profileSettings;
+  late Settings profileSettings;
   Uint8List webImgCover = Uint8List(8);
   Uint8List webImgProfile = Uint8List(8);
   @override
@@ -48,9 +48,7 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
           isThereImageCover = true;
         }
       });
-    } on PlatformException catch (e) {
-      print(e);
-    }
+    } on PlatformException catch (e) {}
   }
 
   Widget addImageButton(double topCorner, double leftCorner) {

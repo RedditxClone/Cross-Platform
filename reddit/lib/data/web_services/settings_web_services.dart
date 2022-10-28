@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:reddit/constants/strings.dart';
-import 'package:reddit/data/model/profile_settings.dart';
+import 'package:reddit/data/model/user_settings.dart';
 
 class SettingsWebServices {
   late Dio dio;
@@ -14,14 +14,16 @@ class SettingsWebServices {
 
     dio = Dio(options);
   }
+
+  /// ### Returns all user settings
+  /// Performs get request to the endpoint /prefs to get all user settings from the API
   Future<dynamic> getProfileSettings() async {
     try {
       Response response = await dio.get('prefs');
-      // print(response.data);
       return response.data;
     } catch (e) {
       print(e.toString());
-      return ProfileSettings();
+      return Settings();
     }
   }
 }

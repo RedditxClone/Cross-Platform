@@ -1,10 +1,11 @@
-class ProfileSettings {
+/// # Settings data model
+class Settings {
   late String cover;
   late bool nsfw;
   late bool allowPeopleToFollowYou;
   late bool activeInCommunitiesVisibility;
   late bool contentVisibility;
-  ProfileSettings() {
+  Settings() {
     cover = '';
     nsfw = false;
     allowPeopleToFollowYou = false;
@@ -12,7 +13,8 @@ class ProfileSettings {
     contentVisibility = false;
   }
 
-  ProfileSettings.fromjson(Map<String, dynamic> json) {
+  /// ### Transform the data from json to Settings Class object
+  Settings.fromjson(Map<String, dynamic> json) {
     cover = json['cover'];
     nsfw = json['nsfw'];
     allowPeopleToFollowYou = json['allowPeopleToFollowYou'];

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:reddit/business_logic/cubit/cubit/settings_cubit.dart';
+import 'package:reddit/data/model/user_settings.dart';
 
 class ProfileSettings extends StatefulWidget {
   const ProfileSettings({Key? key}) : super(key: key);
@@ -12,14 +15,59 @@ class ProfileSettings extends StatefulWidget {
 }
 
 class _ProfileSettingsState extends State<ProfileSettings> {
+  late Settings profileSettings;
   bool contentVisibility = true;
   bool showActiveCommunities = true;
   File? imgCover;
   File? imgProfile;
+  @override
+  void initState() {
+    super.initState();
+    profileSettings = BlocProvider.of<SettingsCubit>(context).getUserSettings();
+  }
 
-  /// ## Parameters
-  /// ### src : the image source can be ImageSource.gallery or ImageSource.camera
-  /// ### dest : the image destination can be 'cover' for cover photo or 'profile' fom profile photo
+  void displayMsg(
+      BuildContext context, Color color, String title, String subtitle) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Container(
+          padding: const EdgeInsets.all(5),
+          decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.all(Radius.circular(10))),
+          height: 70,
+          child: Row(
+            children: [
+              Container(
+                margin: const EdgeInsets.only(right: 10),
+                decoration: BoxDecoration(
+                    color: color,
+                    borderRadius: BorderRadius.all(Radius.circular(10))),
+                width: 7,
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(fontSize: 20, color: color),
+                  ),
+                  Text(
+                    subtitle,
+                    style: TextStyle(fontSize: 13, color: color),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ],
+          )),
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+    ));
+  }
+
   Future pickImage(ImageSource src, String dest) async {
     try {
       final image = await ImagePicker().pickImage(source: src);
@@ -36,7 +84,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
           break;
       }
     } on PlatformException catch (e) {
-      print(e);
+      displayMsg(context, Colors.red, 'Error', 'Could not load image');
     }
   }
 
@@ -222,213 +270,217 @@ class _ProfileSettingsState extends State<ProfileSettings> {
         context: ctx,
         builder: (_) {
           return Scaffold(
-            appBar: AppBar(
-              leading: const CloseButton(),
-              centerTitle: true,
-              title: const Text('Edit Profile'),
-              actions: [
-                TextButton(
-                    onPressed: () {},
-                    child: const Text('Save', style: TextStyle(fontSize: 20)))
-              ],
-            ),
-            body: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Stack(clipBehavior: Clip.none, children: [
-                    //------------- Change Cover Photo --------------
-                    InkWell(
-                      onTap: () => chooseCoverPhotoBottomSheet(ctx),
-                      child: Container(
-                          width: MediaQuery.of(ctx).size.width,
-                          height: 130,
-                          decoration: const BoxDecoration(
-                            color: Color.fromRGBO(30, 30, 30, 100),
-                          ),
-                          child: imgCover != null
-                              ? Image.file(
-                                  imgCover!,
-                                  fit: BoxFit.cover,
-                                )
-                              : const Icon(Icons.add_a_photo_outlined)),
-                    ),
-                    //------------- Change Profile Photo --------------
-                    Positioned(
-                      top: 90,
-                      left: 20,
-                      child: Container(
-                          decoration:
-                              const BoxDecoration(shape: BoxShape.circle),
-                          child: imgProfile != null
-                              ? ClipOval(
-                                  child: Image.file(
-                                    imgProfile!,
-                                    width: 80,
-                                    height: 80,
-                                    fit: BoxFit.fill,
-                                  ),
-                                )
-                              : ElevatedButton(
-                                  onPressed: () =>
-                                      pickImage(ImageSource.gallery, 'profile'),
-                                  style: ElevatedButton.styleFrom(
-                                    primary: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(80.0)),
-                                  ),
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 20, horizontal: 5),
-                                    child: const Icon(
-                                      Icons.person,
-                                      size: 40,
-                                      color: Colors.black,
-                                    ),
-                                  ))),
-                    ),
-                    Positioned(
-                        top: 140,
-                        left: 80,
-                        child: Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Color.fromRGBO(100, 100, 100, 1),
-                          ),
-                          child: InkWell(
-                            onTap: () =>
-                                pickImage(ImageSource.gallery, 'profile'),
-                            child: const Icon(
-                              Icons.add_a_photo_outlined,
-                              color: Colors.white,
-                              size: 20,
-                            ),
-                          ),
-                        ))
-                  ]),
-                  //---------------------------------------------------
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        //------------- Display Name--------------
-                        const SizedBox(height: 30),
-                        const Text('Display name (optional)',
-                            style: TextStyle(fontSize: 17)),
-                        const SizedBox(height: 10),
-                        TextField(
-                            maxLength: 30,
-                            style: const TextStyle(fontSize: 18),
-                            keyboardType: TextInputType.text,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(3)),
-                              contentPadding: const EdgeInsets.all(15),
-                              hintText: 'Shown on your profile page',
-                            )),
-                        const Text(
-                          'This will be displayed to viewrs of your profile page and does not change your username.',
-                          style: TextStyle(fontSize: 15, color: Colors.grey),
-                        ),
-                        //---------------- About ----------------
-                        const SizedBox(height: 30),
-                        const Text(
-                          'About (optional)',
-                          style: TextStyle(fontSize: 17),
-                        ),
-                        const SizedBox(height: 10),
-                        TextField(
-                            minLines: 5,
-                            maxLines: 20,
-                            maxLength: 200,
-                            style: const TextStyle(fontSize: 18),
-                            keyboardType: TextInputType.text,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(3)),
-                              contentPadding: const EdgeInsets.all(15),
-                              hintText: 'A little description of yourself',
-                            )),
-                        //------------- Social Links --------------
-                        const SizedBox(height: 30),
-                        const Text('Social Links (5 Max)',
-                            style: TextStyle(fontSize: 17)),
-                        const SizedBox(height: 10),
-                        const Text(
-                          'Peaple who visit your Reddit profile will see your social links.',
-                          style: TextStyle(fontSize: 15, color: Colors.grey),
-                        ),
-                        const SizedBox(height: 10),
-                        SizedBox(
-                          width: 90,
-                          height: 40,
-                          child: ElevatedButton(
-                              onPressed: () => addLinks(context),
-                              style: ElevatedButton.styleFrom(
-                                primary: Colors.white,
-                                onPrimary: Colors.black,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20.0)),
-                              ),
-                              child: Row(
-                                children: const [
-                                  Icon(Icons.add),
-                                  Text(
-                                    " Add",
-                                    style: TextStyle(
-                                        fontSize: 15, color: Colors.black),
-                                  )
-                                ],
-                              )),
-                        ),
-                      ],
-                    ),
-                  ),
-                  //------------- Content Visibility --------------
-                  const SizedBox(height: 20),
-
-                  StatefulBuilder(builder: (BuildContext context, setState) {
-                    return SwitchListTile(
-                      activeColor: Colors.blue,
-                      value: contentVisibility,
-                      onChanged: (newValue) {
-                        setState(() {
-                          contentVisibility = newValue;
-                        });
+              appBar: AppBar(
+                leading: const CloseButton(),
+                centerTitle: true,
+                title: const Text('Edit Profile'),
+                actions: [
+                  TextButton(
+                      onPressed: () {
+                        displayMsg(ctx, Colors.green, 'Success',
+                            'Your settings has been saved');
                       },
-                      title: const Text('Content visibility',
-                          style: TextStyle(fontSize: 17)),
-                      subtitle: const Text(
-                          '\nPosts to this profile can appear in r/all and your profile can be discovered on r/users',
-                          style: TextStyle(fontSize: 15, color: Colors.grey)),
-                    );
-                  }),
-                  //------------- Show active Communities --------------
-                  const SizedBox(height: 20),
-                  StatefulBuilder(builder: (BuildContext context, setState) {
-                    return SwitchListTile(
-                      activeColor: Colors.blue,
-                      value: showActiveCommunities,
-                      onChanged: (newValue) {
-                        setState(() {
-                          showActiveCommunities = newValue;
-                        });
-                      },
-                      title: const Text('Show active communities',
-                          style: TextStyle(fontSize: 17)),
-                      subtitle: const Text(
-                          '\nDecide whether to show the coomunities you are active in on your profile.',
-                          style: TextStyle(fontSize: 15, color: Colors.grey)),
-                    );
-                  }),
-                  const SizedBox(height: 20),
-                  //----------------------------------------------------
+                      child: const Text('Save', style: TextStyle(fontSize: 20)))
                 ],
               ),
-            ),
-          );
+              body: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Stack(clipBehavior: Clip.none, children: [
+                      //------------- Change Cover Photo --------------
+                      InkWell(
+                        onTap: () => chooseCoverPhotoBottomSheet(ctx),
+                        child: Container(
+                            width: MediaQuery.of(ctx).size.width,
+                            height: 130,
+                            decoration: const BoxDecoration(
+                              color: Color.fromRGBO(30, 30, 30, 100),
+                            ),
+                            child: imgCover != null
+                                ? Image.file(
+                                    imgCover!,
+                                    fit: BoxFit.cover,
+                                  )
+                                : const Icon(Icons.add_a_photo_outlined)),
+                      ),
+                      //------------- Change Profile Photo --------------
+                      Positioned(
+                        top: 90,
+                        left: 20,
+                        child: Container(
+                            decoration:
+                                const BoxDecoration(shape: BoxShape.circle),
+                            child: imgProfile != null
+                                ? ClipOval(
+                                    child: Image.file(
+                                      imgProfile!,
+                                      width: 80,
+                                      height: 80,
+                                      fit: BoxFit.fill,
+                                    ),
+                                  )
+                                : ElevatedButton(
+                                    onPressed: () => pickImage(
+                                        ImageSource.gallery, 'profile'),
+                                    style: ElevatedButton.styleFrom(
+                                      primary: Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(80.0)),
+                                    ),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 20, horizontal: 5),
+                                      child: const Icon(
+                                        Icons.person,
+                                        size: 40,
+                                        color: Colors.black,
+                                      ),
+                                    ))),
+                      ),
+                      Positioned(
+                          top: 140,
+                          left: 80,
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Color.fromRGBO(100, 100, 100, 1),
+                            ),
+                            child: InkWell(
+                              onTap: () =>
+                                  pickImage(ImageSource.gallery, 'profile'),
+                              child: const Icon(
+                                Icons.add_a_photo_outlined,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                            ),
+                          ))
+                    ]),
+                    //---------------------------------------------------
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          //------------- Display Name--------------
+                          const SizedBox(height: 30),
+                          const Text('Display name (optional)',
+                              style: TextStyle(fontSize: 17)),
+                          const SizedBox(height: 10),
+                          TextField(
+                              maxLength: 30,
+                              style: const TextStyle(fontSize: 18),
+                              keyboardType: TextInputType.text,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(3)),
+                                contentPadding: const EdgeInsets.all(15),
+                                hintText: 'Shown on your profile page',
+                              )),
+                          const Text(
+                            'This will be displayed to viewrs of your profile page and does not change your username.',
+                            style: TextStyle(fontSize: 15, color: Colors.grey),
+                          ),
+                          //---------------- About ----------------
+                          const SizedBox(height: 30),
+                          const Text(
+                            'About (optional)',
+                            style: TextStyle(fontSize: 17),
+                          ),
+                          const SizedBox(height: 10),
+                          TextField(
+                              minLines: 5,
+                              maxLines: 20,
+                              maxLength: 200,
+                              style: const TextStyle(fontSize: 18),
+                              keyboardType: TextInputType.text,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(3)),
+                                contentPadding: const EdgeInsets.all(15),
+                                hintText: 'A little description of yourself',
+                              )),
+                          //------------- Social Links --------------
+                          const SizedBox(height: 30),
+                          const Text('Social Links (5 Max)',
+                              style: TextStyle(fontSize: 17)),
+                          const SizedBox(height: 10),
+                          const Text(
+                            'Peaple who visit your Reddit profile will see your social links.',
+                            style: TextStyle(fontSize: 15, color: Colors.grey),
+                          ),
+                          const SizedBox(height: 10),
+                          SizedBox(
+                            width: 90,
+                            height: 40,
+                            child: ElevatedButton(
+                                onPressed: () => addLinks(context),
+                                style: ElevatedButton.styleFrom(
+                                  primary: Colors.white,
+                                  onPrimary: Colors.black,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(20.0)),
+                                ),
+                                child: Row(
+                                  children: const [
+                                    Icon(Icons.add),
+                                    Text(
+                                      " Add",
+                                      style: TextStyle(
+                                          fontSize: 15, color: Colors.black),
+                                    )
+                                  ],
+                                )),
+                          ),
+                        ],
+                      ),
+                    ),
+                    //------------- Content Visibility --------------
+                    const SizedBox(height: 20),
+
+                    StatefulBuilder(builder: (BuildContext context, setState) {
+                      return SwitchListTile(
+                        activeColor: Colors.blue,
+                        value: profileSettings.contentVisibility,
+                        onChanged: (newValue) {
+                          setState(() {
+                            profileSettings.contentVisibility = newValue;
+                          });
+                        },
+                        title: const Text('Content visibility',
+                            style: TextStyle(fontSize: 17)),
+                        subtitle: const Text(
+                            '\nPosts to this profile can appear in r/all and your profile can be discovered on r/users',
+                            style: TextStyle(fontSize: 15, color: Colors.grey)),
+                      );
+                    }),
+                    //------------- Show active Communities --------------
+                    const SizedBox(height: 20),
+                    StatefulBuilder(builder: (BuildContext context, setState) {
+                      return SwitchListTile(
+                        activeColor: Colors.blue,
+                        value: profileSettings.activeInCommunitiesVisibility,
+                        onChanged: (newValue) {
+                          setState(() {
+                            profileSettings.activeInCommunitiesVisibility =
+                                newValue;
+                          });
+                        },
+                        title: const Text('Show active communities',
+                            style: TextStyle(fontSize: 17)),
+                        subtitle: const Text(
+                            '\nDecide whether to show the coomunities you are active in on your profile.',
+                            style: TextStyle(fontSize: 15, color: Colors.grey)),
+                      );
+                    }),
+                    const SizedBox(height: 20),
+                    //----------------------------------------------------
+                  ],
+                ),
+              ));
         });
   }
 
@@ -436,9 +488,16 @@ class _ProfileSettingsState extends State<ProfileSettings> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: ElevatedButton(
-          onPressed: () => editProfileBottomSheet(context),
-          child: const Text("Profile Settings")),
+      body: BlocBuilder<SettingsCubit, SettingsState>(builder: (_, state) {
+        if (state is SettingsAvailable) {
+          profileSettings = state.profileSettings;
+          return ElevatedButton(
+              onPressed: () => editProfileBottomSheet(context),
+              child: const Text("Profile Settings"));
+        } else {
+          return Text('error');
+        }
+      }),
     );
   }
 }
