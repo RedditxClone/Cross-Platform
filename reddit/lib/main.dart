@@ -21,10 +21,13 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       darkTheme: ThemeData(
-          brightness: Brightness.dark,
-          textButtonTheme: TextButtonThemeData(
-              style: ButtonStyle(
-                  foregroundColor: MaterialStateProperty.all(Colors.white)))),
+        brightness: Brightness.dark,
+        textButtonTheme: TextButtonThemeData(
+          style: ButtonStyle(
+            foregroundColor: MaterialStateProperty.all(Colors.white),
+          ),
+        ),
+      ),
       themeMode: ThemeMode.dark,
       debugShowCheckedModeBanner: false,
       onGenerateRoute: appRouter.generateRoute,

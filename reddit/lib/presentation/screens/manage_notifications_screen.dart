@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ManageNotificationsScreen extends StatefulWidget {
   ManageNotificationsScreen({Key? key}) : super(key: key);
@@ -9,22 +10,90 @@ class ManageNotificationsScreen extends StatefulWidget {
 }
 
 class _ManageNotificationsScreenState extends State<ManageNotificationsScreen> {
-  // TODO: Get these values from web services
   // Messages
-  bool _inboxMessage = true;
-  bool _chatMessage = true;
-  bool _chatRequest = true;
+  bool? _inboxMessage;
+  bool? _chatMessage;
+  bool? _chatRequest;
   // Activity
-  bool _mentions = true;
-  bool _commentsOnPosts = true;
-  bool _upvotesOnPosts = true;
-  bool _upvotesOnComments = true;
-  bool _repliesToComments = true;
-  bool _newFollowers = true;
+  bool? _mentions;
+  bool? _commentsOnPosts;
+  bool? _upvotesOnPosts;
+  bool? _upvotesOnComments;
+  bool? _repliesToComments;
+  bool? _newFollowers;
   // Updates
-  bool _cakeDay = true;
+  bool? _cakeDay;
   // Moderation
-  bool _modNotifications = true;
+  bool? _modNotifications;
+  // Obtain shared preferences.
+  SharedPreferences? prefs;
+  Future<void> getSharedPrefsInstance() async {
+    prefs = await SharedPreferences.getInstance();
+  }
+
+  Future<void> _setVarsFromSharedPreferences() async {
+    if (prefs == null) {
+      await getSharedPrefsInstance();
+    }
+    _initSharedPreferencesIfNull();
+    _inboxMessage = prefs!.getBool('inboxMessage');
+    _chatMessage = prefs!.getBool('chatMessage');
+    _chatRequest = prefs!.getBool('chatRequest');
+    // Activity
+    _mentions = prefs!.getBool('mentions');
+    _commentsOnPosts = prefs!.getBool('commentsOnPosts');
+    _upvotesOnPosts = prefs!.getBool('upvotesOnPosts');
+    _upvotesOnComments = prefs!.getBool('upvotesOnComments');
+    _repliesToComments = prefs!.getBool('repliesToComments');
+    _newFollowers = prefs!.getBool('newFollowers');
+    // Updates
+    _cakeDay = prefs!.getBool('cakeDay');
+    // Moderation
+    _modNotifications = prefs!.getBool('modNotifications');
+    setState(() {});
+  }
+
+  Future<void> _initSharedPreferencesIfNull() async {
+    if (prefs!.getBool('inboxMessage') == null) {
+      await prefs!.setBool('inboxMessage', true);
+    }
+    if (prefs!.getBool('chatMessage') == null) {
+      await prefs!.setBool('chatMessage', true);
+    }
+    if (prefs!.getBool('chatRequest') == null) {
+      await prefs!.setBool('chatRequest', true);
+    }
+    if (prefs!.getBool('mentions') == null) {
+      await prefs!.setBool('mentions', true);
+    }
+    if (prefs!.getBool('commentsOnPosts') == null) {
+      await prefs!.setBool('commentsOnPosts', true);
+    }
+    if (prefs!.getBool('upvotesOnPosts') == null) {
+      await prefs!.setBool('upvotesOnPosts', true);
+    }
+    if (prefs!.getBool('upvotesOnComments') == null) {
+      await prefs!.setBool('upvotesOnComments', true);
+    }
+    if (prefs!.getBool('repliesToComments') == null) {
+      await prefs!.setBool('repliesToComments', true);
+    }
+    if (prefs!.getBool('newFollowers') == null) {
+      await prefs!.setBool('newFollowers', true);
+    }
+    if (prefs!.getBool('cakeDay') == null) {
+      await prefs!.setBool('cakeDay', true);
+    }
+    if (prefs!.getBool('modNotifications') == null) {
+      await prefs!.setBool('modNotifications', true);
+    }
+  }
+
+  @override
+  initState() {
+    super.initState();
+    _setVarsFromSharedPreferences();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +141,7 @@ class _ManageNotificationsScreenState extends State<ManageNotificationsScreen> {
             onChangedFunc: (value) {
               setState(() {
                 _inboxMessage = value;
+                prefs!.setBool('inboxMessage', _inboxMessage!);
               });
             },
           ),
@@ -82,6 +152,7 @@ class _ManageNotificationsScreenState extends State<ManageNotificationsScreen> {
             onChangedFunc: (value) {
               setState(() {
                 _chatMessage = value;
+                prefs!.setBool('chatMessage', _chatMessage!);
               });
             },
           ),
@@ -92,6 +163,7 @@ class _ManageNotificationsScreenState extends State<ManageNotificationsScreen> {
             onChangedFunc: (value) {
               setState(() {
                 _chatRequest = value;
+                prefs!.setBool('chatRequest', _chatRequest!);
               });
             },
           ),
@@ -126,6 +198,7 @@ class _ManageNotificationsScreenState extends State<ManageNotificationsScreen> {
             onChangedFunc: (value) {
               setState(() {
                 _mentions = value;
+                prefs!.setBool('mentions', _mentions!);
               });
             },
           ),
@@ -136,6 +209,7 @@ class _ManageNotificationsScreenState extends State<ManageNotificationsScreen> {
             onChangedFunc: (value) {
               setState(() {
                 _commentsOnPosts = value;
+                prefs!.setBool('commentsOnPosts', _commentsOnPosts!);
               });
             },
           ),
@@ -146,6 +220,7 @@ class _ManageNotificationsScreenState extends State<ManageNotificationsScreen> {
             onChangedFunc: (value) {
               setState(() {
                 _upvotesOnPosts = value;
+                prefs!.setBool('upvotesOnPosts', _upvotesOnPosts!);
               });
             },
           ),
@@ -156,6 +231,7 @@ class _ManageNotificationsScreenState extends State<ManageNotificationsScreen> {
             onChangedFunc: (value) {
               setState(() {
                 _upvotesOnComments = value;
+                prefs!.setBool('upvotesOnComments', _upvotesOnComments!);
               });
             },
           ),
@@ -166,6 +242,7 @@ class _ManageNotificationsScreenState extends State<ManageNotificationsScreen> {
             onChangedFunc: (value) {
               setState(() {
                 _repliesToComments = value;
+                prefs!.setBool('repliesToComments', _repliesToComments!);
               });
             },
           ),
@@ -176,6 +253,7 @@ class _ManageNotificationsScreenState extends State<ManageNotificationsScreen> {
             onChangedFunc: (value) {
               setState(() {
                 _newFollowers = value;
+                prefs!.setBool('newFollowers', _newFollowers!);
               });
             },
           ),
@@ -210,6 +288,7 @@ class _ManageNotificationsScreenState extends State<ManageNotificationsScreen> {
             onChangedFunc: (value) {
               setState(() {
                 _cakeDay = value;
+                prefs!.setBool('cakeDay', _cakeDay!);
               });
             },
           ),
@@ -244,6 +323,7 @@ class _ManageNotificationsScreenState extends State<ManageNotificationsScreen> {
             onChangedFunc: (value) {
               setState(() {
                 _modNotifications = value;
+                prefs!.setBool('modNotifications', _modNotifications!);
               });
             },
           ),

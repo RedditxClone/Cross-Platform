@@ -38,6 +38,7 @@ dependencies:
   flutter_bloc: ^8.1.1
   dartdoc: ^6.1.2
   url_launcher: ^6.1.6
+  shared_preferences: ^2.0.15
 
 dev_dependencies:
   flutter_test:

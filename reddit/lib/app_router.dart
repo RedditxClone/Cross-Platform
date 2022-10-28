@@ -1,6 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reddit/business_logic/cubit/cubit/account_settings_cubit.dart';
 import 'package:reddit/constants/strings.dart';
+import 'package:reddit/data/repository/account_settings_repository.dart';
+import 'package:reddit/data/web_services/account_settings_web_services.dart';
 import 'package:reddit/presentation/screens/Web/account_settings_screen_web.dart';
 import 'package:reddit/presentation/screens/account_settings_screen.dart';
 import 'package:reddit/presentation/screens/change_password_screen.dart';
@@ -15,8 +19,13 @@ class AppRouter {
       defaultTargetPlatform == TargetPlatform.iOS ||
       defaultTargetPlatform == TargetPlatform.android;
   // declare repository and cubit objects
+  late AccountSettingsRepository accountSettingsRepository;
+  late AccountSettingsCubit accountSettingsCubit;
   AppRouter() {
     // initialise repository and cubit objects
+    accountSettingsRepository =
+        AccountSettingsRepository(AccountSettingsWebServices());
+    accountSettingsCubit = AccountSettingsCubit(accountSettingsRepository);
   }
   Route? generateRoute(RouteSettings settings) {
     final arguments = settings.arguments;
@@ -43,7 +52,10 @@ class AppRouter {
       case accountSettingsRoute:
         return MaterialPageRoute(
             builder: (_) => isMobile
-                ? const AccountSettingsScreen()
+                ? BlocProvider(
+                    create: (context) => accountSettingsCubit,
+                    child: const AccountSettingsScreen(),
+                  )
                 : const AccountSettingsScreenWeb());
       case updateEmailAddressRoute:
         return MaterialPageRoute(
