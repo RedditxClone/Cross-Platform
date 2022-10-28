@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reddit/presentation/screens/home.dart';
 import 'package:reddit/presentation/screens/signup_page.dart';
 import 'package:reddit/presentation/screens/signup_screen.dart';
 
@@ -12,6 +13,10 @@ class AppRouter {
       case '/':
         return MaterialPageRoute(
           builder: (_) => const SignupMobile(),
+        );
+      case 'Home':
+        return MaterialPageRoute(
+          builder: (_) => const Home(),
         );
       /*
       case example:

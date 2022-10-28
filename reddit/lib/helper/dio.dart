@@ -6,7 +6,7 @@ class DioHelper {
   static init() {
     dio = Dio(
       BaseOptions(
-        baseUrl: 'https://lavie.orangedigitalcenteregypt.com/api/',
+        baseUrl: 'http://localhost:3000/',
         receiveDataWhenStatusError: true,
         sendTimeout: 5000,
         receiveTimeout: 5000,
@@ -19,7 +19,7 @@ class DioHelper {
     required Map<String, dynamic> query,
   }) async {
     var response = await dio.get(url, queryParameters: query);
-    return response.data;
+    return response;
   }
 
   static Future getDataWithHeaders({
@@ -32,7 +32,7 @@ class DioHelper {
       queryParameters: query,
       options: Options(headers: headers),
     );
-    return response.data;
+    return response;
   }
 
   static Future postData({
@@ -40,7 +40,7 @@ class DioHelper {
     required Map<String, dynamic> data,
   }) async {
     var response = await dio.post(url, data: data);
-    return response.data;
+    return response;
   }
 
   static Future postDataWithHeaders({
@@ -53,6 +53,6 @@ class DioHelper {
       data: data,
       options: Options(headers: headers),
     );
-    return response.data;
+    return response;
   }
 }

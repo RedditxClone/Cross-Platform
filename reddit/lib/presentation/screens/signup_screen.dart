@@ -1,7 +1,9 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import '../../helper/dio.dart';
+import 'home.dart';
 
 class SignupMobile extends StatefulWidget {
   const SignupMobile({super.key});
@@ -12,20 +14,23 @@ class SignupMobile extends StatefulWidget {
 
 class _SignupMobileState extends State<SignupMobile> {
   bool passwordVisible = true;
-  var emailController = TextEditingController();
+  var emailController = TextEditingController(text: '');
   var usernameController = TextEditingController();
   var passwordController = TextEditingController();
-
+  bool usernameError = false;
   GoogleSignIn? _currentUser;
   @override
   void initState() {
     super.initState();
-    _currentUser = GoogleSignIn(
-      scopes: [
-        'profile',
-        'email',
-      ],
-    );
+    // _currentUser = GoogleSignIn(
+    //   scopes: [
+    //     'profile',
+    //     'email',
+    //   ],
+    // );
+    emailController.text = "";
+    usernameController.text = "";
+    passwordController.text = "";
   }
 
   void togglePasswordVisible() {
@@ -33,7 +38,20 @@ class _SignupMobileState extends State<SignupMobile> {
   }
 
   void signUpContinue() {
-    print("Email : ${emailController.text}");
+    Response res = DioHelper.postData(url: '/api/auth/signup', data: {
+      "email": emailController.text,
+      "password": passwordController.text,
+      "name": usernameController.text,
+      "birthdate": "2022-10-27T18:44:44.105Z",
+      "image": "null"
+    }) as Response;
+    if (res.statusCode == 201) {
+      Navigator.pushNamed(context, 'Home', arguments: res.data);
+    } else {
+      setState(() {
+        usernameError = true;
+      });
+    }
   }
 
   TextSpan createTextSpan(String txt, bool isUrl) {
@@ -49,28 +67,27 @@ class _SignupMobileState extends State<SignupMobile> {
 
   Widget createContinueWithButton(String lable) {
     return OutlinedButton(
-        onPressed: () {
-          //GoogleSignIn().signIn();
-        },
-        style: OutlinedButton.styleFrom(
-          side: const BorderSide(color: Colors.blue, width: 1),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+      onPressed: () {
+        //GoogleSignIn().signIn();
+      },
+      style: OutlinedButton.styleFrom(
+        side: const BorderSide(color: Colors.blue, width: 1),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+      ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 15),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            lable == 'google'
+                ? Logo(Logos.google, size: 20)
+                : Logo(Logos.facebook_f, size: 20),
+            Text("Continue with $lable", style: const TextStyle(fontSize: 19)),
+            const SizedBox(width: 20),
+          ],
         ),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 15),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              lable == 'google'
-                  ? Logo(Logos.google, size: 20)
-                  : Logo(Logos.facebook_f, size: 20),
-              Text("Continue with $lable",
-                  style: const TextStyle(fontSize: 19)),
-              const SizedBox(width: 20),
-            ],
-          ),
-        ));
+      ),
+    );
   }
 
   void openBottomSheet(BuildContext ctx) {
@@ -80,8 +97,12 @@ class _SignupMobileState extends State<SignupMobile> {
       title: Logo(Logos.reddit),
       actions: [
         TextButton(
-            onPressed: () {},
-            child: const Text("Log in", style: TextStyle(fontSize: 20)))
+          onPressed: () {},
+          child: const Text(
+            "Log in",
+            style: TextStyle(fontSize: 20, color: Colors.white),
+          ),
+        ),
       ],
     );
     bool emailCorrect = false;
@@ -193,24 +214,37 @@ class _SignupMobileState extends State<SignupMobile> {
                                 )),
                             const SizedBox(height: 10),
                             TextField(
-                                controller: passwordController,
-                                style: const TextStyle(fontSize: 18),
-                                obscureText: passwordVisible,
-                                keyboardType: TextInputType.visiblePassword,
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(25)),
-                                  contentPadding: const EdgeInsets.all(15),
-                                  suffixIcon: IconButton(
-                                      onPressed: () => setState(() {
-                                            passwordVisible = !passwordVisible;
-                                          }),
-                                      icon: Icon(passwordVisible
-                                          ? Icons.visibility
-                                          : Icons.visibility_off)),
-                                  hintText: 'Password',
-                                )),
-                            const SizedBox(height: 10),
+                              controller: passwordController,
+                              style: const TextStyle(fontSize: 18),
+                              obscureText: passwordVisible,
+                              keyboardType: TextInputType.visiblePassword,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(25)),
+                                contentPadding: const EdgeInsets.all(15),
+                                suffixIcon: IconButton(
+                                  onPressed: () => setState(() {
+                                    passwordVisible = !passwordVisible;
+                                  }),
+                                  icon: Icon(passwordVisible
+                                      ? Icons.visibility
+                                      : Icons.visibility_off),
+                                ),
+                                hintText: 'Password',
+                              ),
+                            ),
+                            SizedBox(
+                                height: MediaQuery.of(ctx).size.height * 0.005),
+                            Text(
+                              usernameError
+                                  ? "This user name is already taken"
+                                  : "",
+                              style: const TextStyle(
+                                color: Colors.red,
+                              ),
+                            ),
+                            SizedBox(
+                                height: MediaQuery.of(ctx).size.height * 0.005),
                           ],
                         ),
                       ),
@@ -221,9 +255,7 @@ class _SignupMobileState extends State<SignupMobile> {
                       padding: const EdgeInsets.all(15),
                       color: Theme.of(context).scaffoldBackgroundColor,
                       child: ElevatedButton(
-                        onPressed: () => setState(() {
-                          signUpContinue();
-                        }),
+                        onPressed: signUpContinue,
                         style: const ButtonStyle(
                           shape: MaterialStatePropertyAll(
                             RoundedRectangleBorder(
@@ -273,9 +305,11 @@ class _SignupMobileState extends State<SignupMobile> {
       appBar: AppBar(
         title: const Text('Sign Up'),
       ),
-      body: ElevatedButton(
-          onPressed: () => openBottomSheet(context),
-          child: const Text("Sign Up")),
+      body: Center(
+        child: ElevatedButton(
+            onPressed: () => openBottomSheet(context),
+            child: const Text("Sign Up")),
+      ),
     );
   }
 }

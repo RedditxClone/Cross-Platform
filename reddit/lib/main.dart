@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'app_router.dart';
+import 'helper/dio.dart';
+import 'helper/utils/shared_pref.dart';
 
 void main() {
   runApp(MyApp(appRouter: AppRouter()));
+  DioHelper.init();
+  PreferenceUtils.init();
 }
 
 class MyApp extends StatelessWidget {
@@ -21,10 +25,10 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       onGenerateRoute: appRouter.generateRoute,
-      // darkTheme: ThemeData(
-      //   brightness: Brightness.dark,
-      // ),
-      // themeMode: ThemeMode.dark,
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+      ),
+      themeMode: ThemeMode.dark,
     );
   }
 }
