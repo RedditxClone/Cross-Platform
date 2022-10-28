@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import '../../helper/dio.dart';
@@ -18,6 +19,8 @@ class _SignupMobileState extends State<SignupMobile> {
   var usernameController = TextEditingController();
   var passwordController = TextEditingController();
   bool usernameError = false;
+  bool emailCorrect = false;
+  bool passwordCorrect = false;
   GoogleSignIn? _currentUser;
   @override
   void initState() {
@@ -37,8 +40,9 @@ class _SignupMobileState extends State<SignupMobile> {
     passwordVisible = !passwordVisible;
   }
 
-  void signUpContinue() {
-    Response res = DioHelper.postData(url: '/api/auth/signup', data: {
+  void signUpContinue(BuildContext ctx) async {
+    if (emailCorrect && !usernameError) {}
+    var res = await DioHelper.postData(url: '/api/auth/signup', data: {
       "email": emailController.text,
       "password": passwordController.text,
       "name": usernameController.text,
@@ -46,7 +50,11 @@ class _SignupMobileState extends State<SignupMobile> {
       "image": "null"
     }) as Response;
     if (res.statusCode == 201) {
-      Navigator.pushNamed(context, 'Home', arguments: res.data);
+      print(res.data);
+      Navigator.of(ctx).pushNamed(
+        "Home",
+        arguments: res.data,
+      );
     } else {
       setState(() {
         usernameError = true;
@@ -105,7 +113,7 @@ class _SignupMobileState extends State<SignupMobile> {
         ),
       ],
     );
-    bool emailCorrect = false;
+
     showModalBottomSheet(
         isScrollControlled: true,
         enableDrag: false,
@@ -203,15 +211,28 @@ class _SignupMobileState extends State<SignupMobile> {
                             ),
                             const SizedBox(height: 10),
                             TextField(
-                                controller: usernameController,
-                                style: const TextStyle(fontSize: 18),
-                                keyboardType: TextInputType.text,
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(25)),
-                                  contentPadding: const EdgeInsets.all(15),
-                                  hintText: 'Username',
-                                )),
+                              controller: usernameController,
+                              style: const TextStyle(fontSize: 18),
+                              keyboardType: TextInputType.text,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(25)),
+                                contentPadding: const EdgeInsets.all(15),
+                                hintText: 'Username',
+                                errorText: usernameError
+                                    ? 'Username already exists'
+                                    : null,
+                              ),
+                              // inputFormatters: [
+                              //   FilteringTextInputFormatter.allow(
+                              //       RegExp(r'[a-zA-Z0-9_]')),
+                              // ],
+                              onChanged: (value) {
+                                setState(() {
+                                  usernameError = false;
+                                });
+                              },
+                            ),
                             const SizedBox(height: 10),
                             TextField(
                               controller: passwordController,
@@ -230,21 +251,43 @@ class _SignupMobileState extends State<SignupMobile> {
                                       ? Icons.visibility
                                       : Icons.visibility_off),
                                 ),
+                                prefixIcon: passwordController.text.isEmpty
+                                    ? null
+                                    : passwordCorrect
+                                        ? const Icon(
+                                            IconData(0xf635,
+                                                fontFamily: 'MaterialIcons'),
+                                            color: Colors.green,
+                                          )
+                                        : const Icon(
+                                            IconData(0xf713,
+                                                fontFamily: 'MaterialIcons'),
+                                            color: Colors.red,
+                                          ),
                                 hintText: 'Password',
+                                errorText: passwordCorrect ||
+                                        passwordController.text.isEmpty
+                                    ? null
+                                    : "Password must be at least 8 characters",
                               ),
+                              onChanged: (value) {
+                                setState(() {
+                                  passwordCorrect = value.length >= 8;
+                                });
+                              },
                             ),
-                            SizedBox(
-                                height: MediaQuery.of(ctx).size.height * 0.005),
-                            Text(
-                              usernameError
-                                  ? "This user name is already taken"
-                                  : "",
-                              style: const TextStyle(
-                                color: Colors.red,
-                              ),
-                            ),
-                            SizedBox(
-                                height: MediaQuery.of(ctx).size.height * 0.005),
+                            // SizedBox(
+                            //     height: MediaQuery.of(ctx).size.height * 0.005),
+                            // Text(
+                            //   usernameError
+                            //       ? "This user name is already taken"
+                            //       : "",
+                            //   style: const TextStyle(
+                            //     color: Colors.red,
+                            //   ),
+                            // ),
+                            // SizedBox(
+                            //     height: MediaQuery.of(ctx).size.height * 0.005),
                           ],
                         ),
                       ),
@@ -255,7 +298,7 @@ class _SignupMobileState extends State<SignupMobile> {
                       padding: const EdgeInsets.all(15),
                       color: Theme.of(context).scaffoldBackgroundColor,
                       child: ElevatedButton(
-                        onPressed: signUpContinue,
+                        onPressed: () => signUpContinue(context),
                         style: const ButtonStyle(
                           shape: MaterialStatePropertyAll(
                             RoundedRectangleBorder(

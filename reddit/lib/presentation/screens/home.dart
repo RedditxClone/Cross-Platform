@@ -6,9 +6,16 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final mapRoute = (ModalRoute.of(context)?.settings.arguments ??
+        {
+          "reference": "null",
+          "status": "null",
+        }) as Map<String, Object>;
     return Scaffold(
-      appBar: AppBar(),
-      body: const Text('Welcome'),
+      appBar: AppBar(
+        title: const Text("Home"),
+      ),
+      body: Center(child: Text('${mapRoute['reference']}')),
     );
   }
 }
