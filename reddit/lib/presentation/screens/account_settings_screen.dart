@@ -28,7 +28,6 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
   final Uri _countryLearnMoreUrl =
       Uri.parse('https://reddithelp.com/hc/en-us/articles/360062429491');
 
-
   @override
   void initState() {
     super.initState();
@@ -169,8 +168,8 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               ),
             ),
           ),
-          _connectedAccountsButton("Google", Icons.android),
-          _connectedAccountsButton("Facebook", Icons.facebook),
+          _connectedAccountsButton("Google"),
+          _connectedAccountsButton("Facebook"),
         ],
       ),
     );
@@ -326,7 +325,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
     }
   }
 
-  Widget _connectedAccountsButton(title, prefixIcon) {
+  Widget _connectedAccountsButton(title) {
     return Container(
       padding: const EdgeInsets.all(8.0),
       child: Row(
@@ -336,7 +335,11 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(prefixIcon),
+                title == "Google"
+                    ? Image.network(
+                        'http://pngimg.com/uploads/google/google_PNG19635.png',
+                        fit: BoxFit.cover)
+                    : const Icon(Icons.facebook),
               ],
             ),
           ),

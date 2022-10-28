@@ -51,12 +51,16 @@ class AppRouter {
       */
       case accountSettingsRoute:
         return MaterialPageRoute(
-            builder: (_) => isMobile
-                ? BlocProvider(
-                    create: (context) => accountSettingsCubit,
-                    child: const AccountSettingsScreen(),
-                  )
-                : const AccountSettingsScreenWeb());
+          builder: (_) => isMobile
+              ? BlocProvider(
+                  create: (context) => accountSettingsCubit,
+                  child: const AccountSettingsScreen(),
+                )
+              : BlocProvider(
+                  create: (context) => accountSettingsCubit,
+                  child: const AccountSettingsScreenWeb(),
+                ),
+        );
       case updateEmailAddressRoute:
         return MaterialPageRoute(
             builder: (_) => UpdateEmailAddressScreen(arguments));

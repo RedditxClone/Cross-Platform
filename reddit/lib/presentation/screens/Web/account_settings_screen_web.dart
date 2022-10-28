@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../business_logic/cubit/cubit/account_settings_cubit.dart';
+import '../../../constants/country_names.dart';
+import '../../../data/model/account_settings_model.dart';
 
 class AccountSettingsScreenWeb extends StatefulWidget {
   const AccountSettingsScreenWeb({Key? key}) : super(key: key);
@@ -9,6 +14,12 @@ class AccountSettingsScreenWeb extends StatefulWidget {
 }
 
 class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
+  AccountSettingsModel? accountSettings;
+  bool _allowPeopleToFollowYou = true;
+  // get this value from api
+  bool _isMan = true;
+  String _country = "";
+  String _countryCode = "";
   // TODO: make it responsive
   final titleColor = const Color.fromRGBO(215, 218, 220, 1);
 
@@ -17,35 +28,55 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
   final backgroundColor = const Color.fromRGBO(26, 26, 27, 1);
   var _isMale = 0;
   @override
+  void initState() {
+    super.initState();
+    BlocProvider.of<AccountSettingsCubit>(context).getAccountSettings();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: backgroundColor,
-      body: Container(
-        padding: const EdgeInsets.fromLTRB(50, 50, 40, 0),
-        constraints: const BoxConstraints(maxWidth: 800),
-        child: ListView(
-          children: [
-            // title
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
-              child: Text(
-                "Account Settings",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w500,
-                  color: titleColor,
-                ),
+        backgroundColor: backgroundColor,
+        body: BlocBuilder<AccountSettingsCubit, AccountSettingsState>(
+            builder: (context, state) {
+          if (state is AccountSettingsLoaded) {
+            accountSettings = state.accSettings;
+            _countryCode = accountSettings!.countryCode;
+            _allowPeopleToFollowYou = accountSettings!.enableFollowers;
+            for (var map in countryNamesMap) {
+              if (map["code"] == _countryCode) {
+                _country = map["name"]!;
+              }
+            }
+            return Container(
+              padding: const EdgeInsets.fromLTRB(50, 50, 40, 0),
+              constraints: const BoxConstraints(maxWidth: 800),
+              child: ListView(
+                children: [
+                  // title
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+                    child: Text(
+                      "Account Settings",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        color: titleColor,
+                      ),
+                    ),
+                  ),
+                  // subtitle
+                  _accountPreferencesWidget(),
+                  _connectedAccountsWidget(),
+                  _deleteAccountWidget()
+                  //
+                ],
               ),
-            ),
-            // subtitle
-            _accountPreferencesWidget(),
-            _connectedAccountsWidget(),
-            _deleteAccountWidget()
-            //
-          ],
-        ),
-      ),
-    );
+            );
+          } else {
+            return Container();
+          }
+        }));
   }
 
   Widget _accountPreferencesWidget() {
@@ -77,7 +108,116 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
             "bemoi.erian@gmail.com",
             _rounderButton(
               "Change",
-              () {},
+              () {
+                showDialog(
+                  context: context,
+                  builder: (context) => Dialog(
+                    child: Container(
+                      color: backgroundColor,
+                      width: 450,
+                      height: 370,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.all(20.0),
+                            child: Row(
+                              children: const [
+                                Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Icon(Icons.mail),
+                                ),
+                                Text(
+                                  "Update your email",
+                                  style: TextStyle(
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                          ),
+                          // ignore: prefer_const_constructors
+                          Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: const Text(
+                              "Update your email below. There will be a new verification email sent that you will need to use to verify this new email.",
+                              style: TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          // ignore: prefer_const_constructors
+                          Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: TextField(
+                              decoration: InputDecoration(
+                                hintText: "Password",
+                                border: OutlineInputBorder(
+                                    borderSide: const BorderSide(
+                                        width: 0, color: Colors.transparent),
+                                    borderRadius: BorderRadius.circular(5.0)),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                      width: 0, color: Colors.transparent),
+                                  borderRadius: BorderRadius.circular(5.0),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                    borderSide: const BorderSide(
+                                        width: 0, color: Colors.transparent),
+                                    borderRadius: BorderRadius.circular(5.0)),
+                                filled: true,
+                                fillColor: Colors.grey.shade800,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(10.0),
+                            child: TextField(
+                              decoration: InputDecoration(
+                                hintText: "New email",
+                                border: OutlineInputBorder(
+                                    borderSide: const BorderSide(
+                                        width: 0, color: Colors.transparent),
+                                    borderRadius: BorderRadius.circular(5.0)),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                      width: 0, color: Colors.transparent),
+                                  borderRadius: BorderRadius.circular(5.0),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                    borderSide: const BorderSide(
+                                        width: 0, color: Colors.transparent),
+                                    borderRadius: BorderRadius.circular(5.0)),
+                                filled: true,
+                                fillColor: Colors.grey.shade800,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Container(
+                                  // padding: const EdgeInsets.all(10),
+                                  color: Colors.white,
+                                  child: TextButton(
+                                    onPressed: () {},
+                                    child: const Text(
+                                      "Save",
+                                      style: TextStyle(color: Colors.grey),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
           ),
           // TODO: change password pop up
@@ -139,7 +279,26 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
             "Connect account to log in to Reddit with Google",
             null,
           ),
+          DropdownButton(
+            // Initial Value
+            value: _countryCode,
 
+            // Array list of items
+            items: countryNamesMap.map((e) {
+              return DropdownMenuItem(
+                value: e["code"]!,
+                child: Text(e["name"]!),
+              );
+            }).toList(),
+
+            // After selecting the desired option,it will
+            // change button value to selected value
+            onChanged: (String? newValue) {
+              accountSettings!.countryCode = newValue!;
+              BlocProvider.of<AccountSettingsCubit>(context)
+                  .updateAccountSettings(accountSettings!);
+            },
+          )
           // TODO: country dropdown list
         ],
       ),
