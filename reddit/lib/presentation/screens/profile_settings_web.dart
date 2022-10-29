@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:reddit/business_logic/cubit/cubit/settings_cubit.dart';
+import 'package:reddit/business_logic/cubit/settings/settings_cubit.dart';
 import 'package:reddit/data/model/user_settings.dart';
 
 class ProfileSettingsWeb extends StatefulWidget {
@@ -184,33 +184,52 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
                             Container(
                               decoration:
                                   const BoxDecoration(shape: BoxShape.circle),
-                              child: !isThereImageProfile
-                                  ? ElevatedButton(
-                                      onPressed: () => pickImage(
+                              child: (profileSettings.profile != '' &&
+                                      !isThereImageProfile)
+                                  ? GestureDetector(
+                                      onTap: () => pickImage(
                                           ImageSource.gallery, 'profile'),
-                                      style: ElevatedButton.styleFrom(
-                                        primary: Colors.white,
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(80.0)),
-                                      ),
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 20, horizontal: 5),
-                                        child: const Icon(
-                                          Icons.person,
-                                          size: 80,
-                                          color: Colors.black,
+                                      child: ClipOval(
+                                        child: Image.network(
+                                          profileSettings.profile,
+                                          width: 120,
+                                          height: 120,
+                                          fit: BoxFit.cover,
                                         ),
-                                      ))
-                                  : ClipOval(
-                                      child: Image.memory(
-                                        webImgProfile,
-                                        width: 120,
-                                        height: 120,
-                                        fit: BoxFit.fill,
                                       ),
-                                    ),
+                                    )
+                                  : isThereImageProfile
+                                      ? GestureDetector(
+                                          onTap: () => pickImage(
+                                              ImageSource.gallery, 'profile'),
+                                          child: ClipOval(
+                                            child: Image.memory(
+                                              webImgProfile,
+                                              width: 120,
+                                              height: 120,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        )
+                                      : ElevatedButton(
+                                          onPressed: () => pickImage(
+                                              ImageSource.gallery, 'profile'),
+                                          style: ElevatedButton.styleFrom(
+                                            primary: Colors.white,
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        80.0)),
+                                          ),
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 20, horizontal: 5),
+                                            child: const Icon(
+                                              Icons.person,
+                                              size: 80,
+                                              color: Colors.black,
+                                            ),
+                                          )),
                             ),
                             addImageButton(90, 70),
                           ],
@@ -230,28 +249,34 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
                                 color: Color.fromRGBO(30, 30, 30, 100),
                               ),
                               //add image here
-                              child: !isThereImageCover
-                                  ? Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: const [
-                                        Icon(
-                                          Icons.add_circle,
-                                          size: 45,
-                                        ),
-                                        SizedBox(height: 10),
-                                        Text(
-                                          'Drag and Drop or Upload Banner Image',
-                                          style: TextStyle(
-                                              fontSize: 11,
-                                              color: Colors.white),
-                                        ),
-                                      ],
-                                    )
-                                  : Image.memory(
-                                      webImgCover,
+                              child: (profileSettings.cover != '' &&
+                                      !isThereImageCover)
+                                  ? Image.network(
+                                      profileSettings.cover,
                                       fit: BoxFit.cover,
-                                    ),
+                                    )
+                                  : isThereImageCover
+                                      ? Image.memory(
+                                          webImgCover,
+                                          fit: BoxFit.cover,
+                                        )
+                                      : Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: const [
+                                            Icon(
+                                              Icons.add_circle,
+                                              size: 45,
+                                            ),
+                                            SizedBox(height: 10),
+                                            Text(
+                                              'Drag and Drop or Upload Banner Image',
+                                              style: TextStyle(
+                                                  fontSize: 11,
+                                                  color: Colors.white),
+                                            ),
+                                          ],
+                                        ),
                             ),
                           ),
                         ),
@@ -270,7 +295,9 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
                       contentPadding: const EdgeInsets.all(0),
                       value: profileSettings.nsfw,
                       onChanged: (newValue) {
-                        profileSettings.nsfw = newValue;
+                        setState(() {
+                          profileSettings.nsfw = newValue;
+                        });
                       },
                       title: const Text('NSFW', style: TextStyle(fontSize: 16)),
                       subtitle: const Text(
@@ -290,7 +317,9 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
                       contentPadding: const EdgeInsets.all(0),
                       value: profileSettings.allowPeopleToFollowYou,
                       onChanged: (newValue) {
-                        profileSettings.allowPeopleToFollowYou = newValue;
+                        setState(() {
+                          profileSettings.allowPeopleToFollowYou = newValue;
+                        });
                       },
                       title: const Text('Allow people to follow you',
                           style: TextStyle(fontSize: 16)),
@@ -304,7 +333,9 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
                       contentPadding: const EdgeInsets.all(0),
                       value: profileSettings.contentVisibility,
                       onChanged: (newValue) {
-                        profileSettings.contentVisibility = newValue;
+                        setState(() {
+                          profileSettings.contentVisibility = newValue;
+                        });
                       },
                       title: const Text('Content visibility',
                           style: TextStyle(fontSize: 16)),
@@ -318,8 +349,10 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
                       contentPadding: const EdgeInsets.all(0),
                       value: profileSettings.activeInCommunitiesVisibility,
                       onChanged: (newValue) {
-                        profileSettings.activeInCommunitiesVisibility =
-                            newValue;
+                        setState(() {
+                          profileSettings.activeInCommunitiesVisibility =
+                              newValue;
+                        });
                       },
                       title: const Text('Active in communities visibility',
                           style: TextStyle(fontSize: 16)),

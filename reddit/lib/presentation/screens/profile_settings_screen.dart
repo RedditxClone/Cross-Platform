@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:reddit/business_logic/cubit/cubit/settings_cubit.dart';
+import 'package:reddit/business_logic/cubit/settings/settings_cubit.dart';
 import 'package:reddit/data/model/user_settings.dart';
 
 class ProfileSettings extends StatefulWidget {
@@ -41,7 +41,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                 margin: const EdgeInsets.only(right: 10),
                 decoration: BoxDecoration(
                     color: color,
-                    borderRadius: BorderRadius.all(Radius.circular(10))),
+                    borderRadius: const BorderRadius.all(Radius.circular(10))),
                 width: 7,
               ),
               Column(
@@ -291,17 +291,24 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                       InkWell(
                         onTap: () => chooseCoverPhotoBottomSheet(ctx),
                         child: Container(
-                            width: MediaQuery.of(ctx).size.width,
-                            height: 130,
-                            decoration: const BoxDecoration(
-                              color: Color.fromRGBO(30, 30, 30, 100),
-                            ),
-                            child: imgCover != null
-                                ? Image.file(
-                                    imgCover!,
-                                    fit: BoxFit.cover,
-                                  )
-                                : const Icon(Icons.add_a_photo_outlined)),
+                          width: MediaQuery.of(ctx).size.width,
+                          height: 130,
+                          decoration: const BoxDecoration(
+                            color: Color.fromRGBO(30, 30, 30, 100),
+                          ),
+                          child:
+                              (profileSettings.cover != '' && imgCover == null)
+                                  ? Image.network(
+                                      profileSettings.cover,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : imgCover != null
+                                      ? Image.file(
+                                          imgCover!,
+                                          fit: BoxFit.cover,
+                                        )
+                                      : const Icon(Icons.add_a_photo_outlined),
+                        ),
                       ),
                       //------------- Change Profile Photo --------------
                       Positioned(
@@ -310,33 +317,51 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                         child: Container(
                             decoration:
                                 const BoxDecoration(shape: BoxShape.circle),
-                            child: imgProfile != null
+                            child: (profileSettings.profile != '' &&
+                                    imgProfile == null)
                                 ? ClipOval(
-                                    child: Image.file(
-                                      imgProfile!,
-                                      width: 80,
-                                      height: 80,
-                                      fit: BoxFit.fill,
+                                    child: InkWell(
+                                      onTap: () => pickImage(
+                                          ImageSource.gallery, 'profile'),
+                                      child: Image.network(
+                                        profileSettings.profile,
+                                        width: 80,
+                                        height: 80,
+                                        fit: BoxFit.cover,
+                                      ),
                                     ),
                                   )
-                                : ElevatedButton(
-                                    onPressed: () => pickImage(
-                                        ImageSource.gallery, 'profile'),
-                                    style: ElevatedButton.styleFrom(
-                                      primary: Colors.white,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(80.0)),
-                                    ),
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 20, horizontal: 5),
-                                      child: const Icon(
-                                        Icons.person,
-                                        size: 40,
-                                        color: Colors.black,
-                                      ),
-                                    ))),
+                                : imgProfile != null
+                                    ? InkWell(
+                                        onTap: () => pickImage(
+                                            ImageSource.gallery, 'profile'),
+                                        child: ClipOval(
+                                          child: Image.file(
+                                            imgProfile!,
+                                            width: 80,
+                                            height: 80,
+                                            fit: BoxFit.fill,
+                                          ),
+                                        ),
+                                      )
+                                    : ElevatedButton(
+                                        onPressed: () => pickImage(
+                                            ImageSource.gallery, 'profile'),
+                                        style: ElevatedButton.styleFrom(
+                                          primary: Colors.white,
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(80.0)),
+                                        ),
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 20, horizontal: 5),
+                                          child: const Icon(
+                                            Icons.person,
+                                            size: 40,
+                                            color: Colors.black,
+                                          ),
+                                        ))),
                       ),
                       Positioned(
                           top: 140,
@@ -495,7 +520,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
               onPressed: () => editProfileBottomSheet(context),
               child: const Text("Profile Settings"));
         } else {
-          return Text('error');
+          return const Text('error');
         }
       }),
     );
