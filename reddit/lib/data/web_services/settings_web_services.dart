@@ -15,15 +15,29 @@ class SettingsWebServices {
     dio = Dio(options);
   }
 
-  /// ### Returns all user settings
-  /// Performs get request to the endpoint /prefs to get all user settings from the API
-  Future<dynamic> getProfileSettings() async {
+  /// Returns all user settings :Performs get request to the endpoint /prefs to get all user settings from the API
+  Future<dynamic> getUserSettings() async {
     try {
       Response response = await dio.get('prefs');
       return response.data;
     } catch (e) {
       print(e.toString());
       return Settings();
+    }
+  }
+
+  /// Returns all user settings :Performs get request to the endpoint /prefs to get all user settings from the API
+  ///
+  /// @param key the key to be updated
+  /// @param value the new value
+  /// @returns the updated value
+  Future<String> updatePrefs(String key, value) async {
+    try {
+      Response response = await dio.patch('prefs', data: {key: value});
+      return response.data;
+    } catch (e) {
+      print(e.toString());
+      return '';
     }
   }
 }

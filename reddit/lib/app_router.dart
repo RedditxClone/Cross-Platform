@@ -21,7 +21,7 @@ class AppRouter {
         return MaterialPageRoute(
             builder: (_) => BlocProvider(
                   create: (BuildContext context) => settingsCubit,
-                  child: ProfileSettingsWeb(),
+                  child: ProfileSettings(),
                 ));
       /*
       case example:

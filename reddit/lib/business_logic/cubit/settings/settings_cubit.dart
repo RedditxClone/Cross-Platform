@@ -13,10 +13,43 @@ class SettingsCubit extends Cubit<SettingsState> {
   /// ### Get the user settings from the repository
   /// this function will be used in the bloc builder widget (UI) to display user settings
   Settings getUserSettings() {
-    settingsRepository.getProfileSettings().then((userSettings) {
+    settingsRepository.getUserSettings().then((userSettings) {
       emit(SettingsAvailable(userSettings));
       settings = userSettings;
     });
     return settings;
+  }
+
+  String changeCoverphoto(String img) {
+    String newImg = '';
+    settingsRepository.updatePrefs('cover', img).then((image) {
+      settings.cover = image;
+      emit(SettingsChanged(settings));
+      newImg = image;
+    });
+    return newImg;
+  }
+
+  String changeProfilephoto(String img) {
+    String newImg = '';
+    settingsRepository.updatePrefs('profile', img).then((image) {
+      settings.profile = image;
+      emit(SettingsChanged(settings));
+      newImg = image;
+    });
+    return newImg;
+  }
+
+  bool updateactiveInCom(bool newVal) {
+    bool ret = true;
+    settingsRepository
+        .updatePrefs('activeInCommunitiesVisibility', newVal)
+        .then((val) {
+      settings.activeInCommunitiesVisibility = val;
+      emit(SettingsChanged(settings));
+      ret = val;
+      print(val);
+    });
+    return ret;
   }
 }
