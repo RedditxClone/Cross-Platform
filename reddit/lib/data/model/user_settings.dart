@@ -9,9 +9,11 @@ class Settings {
   late String disroptiveSettings;
   late bool showUnInSearch;
   late bool personalizeAllOfReddit;
-  late bool personalizeAds;
+  late bool personalizeAdsInformation;
+  late bool personalizeAdsYourActivity;
   late bool personalizeRecGeneralLocation;
   late bool personalizeRecOurPartners;
+  late bool useTwoFactorAuthentication;
   Settings() {
     profile = '';
     cover = '';
@@ -22,9 +24,11 @@ class Settings {
     disroptiveSettings = 'OFF';
     showUnInSearch = true;
     personalizeAllOfReddit = true;
-    personalizeAds = true;
+    personalizeAdsInformation = true;
+    personalizeAdsYourActivity = true;
     personalizeRecGeneralLocation = true;
     personalizeRecOurPartners = true;
+    useTwoFactorAuthentication = true;
   }
 
   /// ### Transform the data from json to Settings Class object
@@ -38,8 +42,10 @@ class Settings {
     disroptiveSettings = json['disroptiveSettings'];
     showUnInSearch = json['showUnInSearch'];
     personalizeAllOfReddit = json['personalizeAllOfReddit'];
-    personalizeAds = json['personalizeAds'];
+    personalizeAdsInformation = json['personalizeAds_information'];
+    personalizeAdsYourActivity = json['personalizeAds_yourActivity'];
     personalizeRecGeneralLocation = json['personalizeRec_generalLocation'];
     personalizeRecOurPartners = json['personalizeRec_ourPartners'];
+    useTwoFactorAuthentication = json['Use two-factor authentication'];
   }
 }

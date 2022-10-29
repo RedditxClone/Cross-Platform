@@ -99,7 +99,7 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
           child: BlocBuilder<SettingsCubit, SettingsState>(
             builder: (_, state) {
               if (state is SettingsAvailable) {
-                profileSettings = state.profileSettings;
+                profileSettings = state.settings;
 
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

@@ -515,7 +515,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
       appBar: AppBar(),
       body: BlocBuilder<SettingsCubit, SettingsState>(builder: (_, state) {
         if (state is SettingsAvailable) {
-          profileSettings = state.profileSettings;
+          profileSettings = state.settings;
           return ElevatedButton(
               onPressed: () => editProfileBottomSheet(context),
               child: const Text("Profile Settings"));

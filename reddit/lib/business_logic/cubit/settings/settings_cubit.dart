@@ -7,7 +7,7 @@ part 'settings_state.dart';
 
 class SettingsCubit extends Cubit<SettingsState> {
   final SettingsRepository settingsRepository;
-  Settings profileSettings = Settings();
+  Settings settings = Settings();
   SettingsCubit(this.settingsRepository) : super(SettingsInitial());
 
   /// ### Get the user settings from the repository
@@ -15,8 +15,8 @@ class SettingsCubit extends Cubit<SettingsState> {
   Settings getUserSettings() {
     settingsRepository.getProfileSettings().then((userSettings) {
       emit(SettingsAvailable(userSettings));
-      profileSettings = userSettings;
+      settings = userSettings;
     });
-    return profileSettings;
+    return settings;
   }
 }
