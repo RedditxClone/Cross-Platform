@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:reddit/business_logic/cubit/cubit/settings_cubit.dart';
+import 'package:reddit/business_logic/cubit/settings/settings_cubit.dart';
 import 'package:reddit/data/repository/settings_repository.dart';
 import 'package:reddit/data/web_services/settings_web_services.dart';
 import 'package:reddit/presentation/screens/profile_settings_screen.dart';
@@ -21,7 +21,7 @@ class AppRouter {
         return MaterialPageRoute(
             builder: (_) => BlocProvider(
                   create: (BuildContext context) => settingsCubit,
-                  child: ProfileSettings(),
+                  child: ProfileSettingsWeb(),
                 ));
       /*
       case example:
