@@ -12,20 +12,15 @@ import 'package:google_sign_in/google_sign_in.dart';
 // import '../../../helper/utils/shared_pref.dart';
 // import '../../../helper/utils/shared_keys.dart';
 
-GoogleSignIn _googleSignIn = GoogleSignIn(
-  scopes: [
-    "id",
-    "email",
-    "firstName",
-    "lastName",
-    "picture",
-    'https://lavie.orangedigitalcenteregypt.com/api/v1/docs#/auth/googleAuth',
-  ],
-);
-Future<void> _handleSignIn() async {
-  try {
-    await _googleSignIn.signIn();
-  } catch (error) {
-    print(error);
-  }
+class GoogleSingInApi {
+  static final GoogleSignIn _googleSignIn = GoogleSignIn();
+  /*scopes: [
+      "id",
+      "email",
+      "firstName",
+      "lastName",
+      "picture",
+      'https://lavie.orangedigitalcenteregypt.com/api/v1/docs#/auth/googleAuth',
+    ], */
+  static Future<GoogleSignInAccount?> login() => _googleSignIn.signIn();
 }

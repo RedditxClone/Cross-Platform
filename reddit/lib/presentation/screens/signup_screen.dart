@@ -1,10 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import '../../data/web_services/authorization/login_conroller.dart';
 import '../../helper/dio.dart';
-import 'home.dart';
 
 class SignupMobile extends StatefulWidget {
   const SignupMobile({super.key});
@@ -21,6 +20,7 @@ class _SignupMobileState extends State<SignupMobile> {
   bool usernameError = false;
   bool emailCorrect = false;
   bool passwordCorrect = false;
+  bool redundantUsername = false;
   GoogleSignIn? _currentUser;
   @override
   void initState() {
@@ -35,6 +35,55 @@ class _SignupMobileState extends State<SignupMobile> {
 
   void togglePasswordVisible() {
     passwordVisible = !passwordVisible;
+  }
+
+  // void _handleSignIn() async {
+  //   try {
+  //     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+  //     final GoogleSignInAuthentication googleAuth =
+  //         await googleUser!.authentication;
+  //     final AuthCredential credential = GoogleAuthProvider.credential(
+  //       accessToken: googleAuth.accessToken,
+  //       idToken: googleAuth.idToken,
+  //     );
+  //     final UserCredential userCredential =
+  //         await FirebaseAuth.instance.signInWithCredential(credential);
+  //     final User? user = userCredential.user;
+  //     if (user != null) {
+  //       final User currentUser = await _currentUser!.signInSilently();
+  //       assert(user.uid == currentUser.uid);
+  //       print('signInWithGoogle succeeded: $user');
+  //       Navigator.push(
+  //         context,
+  //         MaterialPageRoute(
+  //           builder: (context) => Home(),
+  //         ),
+  //       );
+  //     }
+  //   } catch (error) {
+  //     print(error);
+  //   }
+  // }
+  void checkOnUsername(value) async {
+    try {
+      var res = await DioHelper.getData(url: '/api/user/usernamecheck', query: {
+        'username': value,
+      }) as Response;
+      var resData = res.data as Map<String, dynamic>;
+      print(resData.runtimeType);
+      if (value.length < 3 || resData['state'] as bool == false) {
+        print(resData['state']);
+        setState(() {
+          redundantUsername = true;
+        });
+      } else {
+        setState(() {
+          redundantUsername = false;
+        });
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   void signUpContinue(BuildContext ctx) async {
@@ -70,10 +119,14 @@ class _SignupMobileState extends State<SignupMobile> {
     );
   }
 
+  Future signInWithGoogle() async {
+    var googleAccount = await GoogleSingInApi.login();
+  }
+
   Widget createContinueWithButton(String lable) {
     return OutlinedButton(
       onPressed: () {
-        //GoogleSignIn().signIn();
+        signInWithGoogle();
       },
       style: OutlinedButton.styleFrom(
         side: const BorderSide(color: Colors.blue, width: 1),
@@ -110,7 +163,7 @@ class _SignupMobileState extends State<SignupMobile> {
         ),
       ],
     );
-    //initialize the textfields
+    //initialize the textfields to be empty when the bottom sheet is opened
     emailController.text = "";
     usernameController.text = "";
     passwordController.text = "";
@@ -208,6 +261,7 @@ class _SignupMobileState extends State<SignupMobile> {
                                   }
                                 });
                               },
+                              textInputAction: TextInputAction.next,
                             ),
                             const SizedBox(height: 10),
                             TextField(
@@ -219,9 +273,9 @@ class _SignupMobileState extends State<SignupMobile> {
                                     borderRadius: BorderRadius.circular(25)),
                                 contentPadding: const EdgeInsets.all(15),
                                 hintText: 'Username',
-                                errorText: usernameError
-                                    ? "Letters, numbers, dashes, and underscores only. Please try again without symbols."
-                                    : null,
+                                errorText: (redundantUsername
+                                    ? "Username already exists. Please try again with a different username."
+                                    : null),
                               ),
                               // inputFormatters: [
                               //   FilteringTextInputFormatter.allow(
@@ -232,6 +286,8 @@ class _SignupMobileState extends State<SignupMobile> {
                                 usernameError =
                                     value.contains(RegExp(r'[^a-zA-Z0-9_-]'));
                               }),
+                              onSubmitted: (value) => checkOnUsername(value),
+                              textInputAction: TextInputAction.next,
                             ),
                             const SizedBox(height: 10),
                             TextField(
@@ -241,7 +297,8 @@ class _SignupMobileState extends State<SignupMobile> {
                               keyboardType: TextInputType.visiblePassword,
                               decoration: InputDecoration(
                                 border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(25)),
+                                  borderRadius: BorderRadius.circular(25),
+                                ),
                                 contentPadding: const EdgeInsets.all(15),
                                 suffixIcon: IconButton(
                                   onPressed: () => setState(() {
@@ -275,6 +332,8 @@ class _SignupMobileState extends State<SignupMobile> {
                                   passwordCorrect = value.length >= 8;
                                 });
                               },
+                              textInputAction: TextInputAction.done,
+                              onEditingComplete: () => signUpContinue(context),
                             ),
                             // SizedBox(
                             //     height: MediaQuery.of(ctx).size.height * 0.005),
