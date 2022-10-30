@@ -7,6 +7,7 @@ import 'package:reddit/data/model/account_settings_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../constants/country_names.dart';
 
+///Widget that constructs the Account Settings screen on Android
 class AccountSettingsScreen extends StatefulWidget {
   const AccountSettingsScreen({Key? key}) : super(key: key);
 
@@ -15,18 +16,19 @@ class AccountSettingsScreen extends StatefulWidget {
 }
 
 class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
-  // Account settings retrieved from backend
+  /// Account settings model retrieved from backend
   AccountSettingsModel? accountSettings;
-  // bool _allowPeopleToFollowYou = true;
   bool _isMan = true;
   String _country = "";
-  // String _countryCode = "";
   // get this value from previous screen
   final String _email = "bemoi.erian@gmail.com";
   final String _username = "bemoierian";
   final Uri _countryLearnMoreUrl =
       Uri.parse('https://reddithelp.com/hc/en-us/articles/360062429491');
 
+  /// Calling bloc BlocProvider inside initState
+  ///
+  /// load the user's settings initialy from backend.
   @override
   void initState() {
     super.initState();
@@ -41,13 +43,12 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
     );
   }
 
+  /// Build UI of account settings screen using BlocBuilder
   Widget buildAccountSettingsBloc() {
     return BlocBuilder<AccountSettingsCubit, AccountSettingsState>(
       builder: (context, state) {
         if (state is AccountSettingsLoaded) {
           accountSettings = state.accSettings;
-          // _countryCode = accountSettings!.countryCode;
-          // _allowPeopleToFollowYou = accountSettings!.enableFollowers;
           _isMan = accountSettings!.gender == "M" ? true : false;
           for (var map in countryNamesMap) {
             if (map["code"] == accountSettings!.countryCode) {
@@ -81,6 +82,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
     );
   }
 
+  /// Builds the UI of the basic settings category of Account Settings
   Widget _basicSettingsWidget(context) {
     return Container(
       color: Colors.grey.shade900,
@@ -151,6 +153,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
     );
   }
 
+  /// Builds the UI of the "Connected Accounts" category of Account Settings
   Widget _connectedAccountsSettingsWidget() {
     return Container(
       color: Colors.grey.shade900,
@@ -177,6 +180,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
     );
   }
 
+  /// Builds the UI of the "Blocking and permissions" category of Account Settings
   Widget _blockingAndPermissionsSettingsWidget() {
     return Container(
       color: Colors.grey.shade900,
@@ -215,6 +219,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
     );
   }
 
+  /// Builds the UI of a button with title, subtitle, prefix icon and a customized on press function
   Widget _basicSettingsButton(title, subtitle, prefixIcon, onPressedFunc) {
     return TextButton(
       onPressed: onPressedFunc,
@@ -259,6 +264,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
     );
   }
 
+  /// Builds the UI of the country button.
   Widget _countryButton(title, subtitle, prefixIcon, onPressedFunc) {
     return TextButton(
       onPressed: onPressedFunc,
@@ -321,12 +327,14 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
     );
   }
 
+  /// Launches a given url on the phone screen
   Future<void> _launchUrl(url) async {
     if (!await launchUrl(url)) {
       throw 'Could not launch $url';
     }
   }
 
+  /// Builds the UI of "Connect to google", "Connect to facebook" button
   Widget _connectedAccountsButton(title) {
     return Container(
       padding: const EdgeInsets.all(8.0),
@@ -375,6 +383,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
     );
   }
 
+  /// Builds the UI of a button with title, subtitle, prefix icon and a switch.
   Widget _toggleSettingsButton(title, subtitle, prefixIcon) {
     return Container(
       padding: const EdgeInsets.all(8.0),
@@ -429,6 +438,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
     );
   }
 
+  /// Builds the UI of the "Select gender" button.
   Widget _genderSettingsButton(prefixIcon, context) {
     return TextButton(
       onPressed: () => _genderBottomSheet(context),
@@ -471,7 +481,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
     );
   }
 
-  // TODO: adjust colors
+  /// Builds the UI of the bottom sheet shown when choosing gender.
   void _genderBottomSheet(context) {
     showModalBottomSheet<void>(
       context: context,

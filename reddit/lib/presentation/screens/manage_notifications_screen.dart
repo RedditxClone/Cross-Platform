@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// Builds the UI of the Manage Notifications screen inside Account settings on Android.
 class ManageNotificationsScreen extends StatefulWidget {
   ManageNotificationsScreen({Key? key}) : super(key: key);
 
@@ -27,10 +28,13 @@ class _ManageNotificationsScreenState extends State<ManageNotificationsScreen> {
   bool? _modNotifications;
   // Obtain shared preferences.
   SharedPreferences? prefs;
+
+  /// Get shared prefs instance
   Future<void> getSharedPrefsInstance() async {
     prefs = await SharedPreferences.getInstance();
   }
 
+  /// Set local variables with values of shared preferences instance
   Future<void> _setVarsFromSharedPreferences() async {
     if (prefs == null) {
       await getSharedPrefsInstance();
@@ -53,6 +57,7 @@ class _ManageNotificationsScreenState extends State<ManageNotificationsScreen> {
     setState(() {});
   }
 
+  /// initialize shared preferences variables if they were not before.
   Future<void> _initSharedPreferencesIfNull() async {
     if (prefs!.getBool('inboxMessage') == null) {
       await prefs!.setBool('inboxMessage', true);
@@ -115,6 +120,7 @@ class _ManageNotificationsScreenState extends State<ManageNotificationsScreen> {
     );
   }
 
+  /// Builds the UI of the "Messages" category of Manage Notification settings
   Widget _messagesWidget() {
     return Container(
       color: Colors.grey.shade900,
@@ -172,6 +178,7 @@ class _ManageNotificationsScreenState extends State<ManageNotificationsScreen> {
     );
   }
 
+  /// Builds the UI of the "Activity" category of Manage Notification settings
   Widget _activityWidget() {
     return Container(
       color: Colors.grey.shade900,
@@ -262,6 +269,7 @@ class _ManageNotificationsScreenState extends State<ManageNotificationsScreen> {
     );
   }
 
+  /// Builds the UI of the "Updates" category of Manage Notification settings
   Widget _updatesWidget() {
     return Container(
       color: Colors.grey.shade900,
@@ -297,6 +305,7 @@ class _ManageNotificationsScreenState extends State<ManageNotificationsScreen> {
     );
   }
 
+  /// Builds the UI of the "Moderation" category of Manage Notification settings
   Widget _moderationWidget() {
     return Container(
       color: Colors.grey.shade900,
@@ -332,6 +341,7 @@ class _ManageNotificationsScreenState extends State<ManageNotificationsScreen> {
     );
   }
 
+  /// Builds the UI of the toggle button
   Widget _toggleSettingsButton(
       {required title,
       required prefixIcon,

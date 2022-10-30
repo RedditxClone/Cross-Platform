@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Builds the UI of the Change Password screen inside Account settings on Android.
 class ChangePasswordScreen extends StatelessWidget {
   final _currentPasswordController = TextEditingController();
   final _newPasswordController = TextEditingController();

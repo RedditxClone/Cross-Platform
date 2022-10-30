@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Builds the UI of the Manage Blocked Accounts screen inside Account settings on Android.
 class ManageBlockedAccountsScreen extends StatefulWidget {
   const ManageBlockedAccountsScreen({Key? key}) : super(key: key);
 

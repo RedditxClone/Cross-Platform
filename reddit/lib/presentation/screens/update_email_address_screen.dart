@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Builds the UI of the "Update Email Address" screen inside Account settings on Android.
 class UpdateEmailAddressScreen extends StatelessWidget {
   final _emailAddressController = TextEditingController();
   final _redditPasswordController = TextEditingController();

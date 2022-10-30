@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/constants/country_names.dart';
 
+/// Builds the UI of the Choose Country screen inside Account settings on Android.
 class CountryScreen extends StatelessWidget {
   late String _countryCode;
   final Object? _arguments;
