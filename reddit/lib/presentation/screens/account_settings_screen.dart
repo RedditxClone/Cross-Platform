@@ -17,11 +17,10 @@ class AccountSettingsScreen extends StatefulWidget {
 class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
   // Account settings retrieved from backend
   AccountSettingsModel? accountSettings;
-  bool _allowPeopleToFollowYou = true;
-  // get this value from api
+  // bool _allowPeopleToFollowYou = true;
   bool _isMan = true;
   String _country = "";
-  String _countryCode = "";
+  // String _countryCode = "";
   // get this value from previous screen
   final String _email = "bemoi.erian@gmail.com";
   final String _username = "bemoierian";
@@ -47,10 +46,11 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
       builder: (context, state) {
         if (state is AccountSettingsLoaded) {
           accountSettings = state.accSettings;
-          _countryCode = accountSettings!.countryCode;
-          _allowPeopleToFollowYou = accountSettings!.enableFollowers;
+          // _countryCode = accountSettings!.countryCode;
+          // _allowPeopleToFollowYou = accountSettings!.enableFollowers;
+          _isMan = accountSettings!.gender == "M" ? true : false;
           for (var map in countryNamesMap) {
-            if (map["code"] == _countryCode) {
+            if (map["code"] == accountSettings!.countryCode) {
               _country = map["name"]!;
             }
           }
@@ -58,7 +58,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
             color: Colors.black,
             child: ListView(
               children: [
-                _basicSettingsWidget(),
+                _basicSettingsWidget(context),
                 _connectedAccountsSettingsWidget(),
                 _blockingAndPermissionsSettingsWidget(),
               ],
@@ -81,7 +81,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
     );
   }
 
-  Widget _basicSettingsWidget() {
+  Widget _basicSettingsWidget(context) {
     return Container(
       color: Colors.grey.shade900,
       child: Column(
@@ -126,16 +126,18 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               Navigator.pushNamed(context, manageNotificationsRoute);
             },
           ),
-          _genderSettingsButton(Icons.person),
+          _genderSettingsButton(Icons.person, context),
           _countryButton(
             "Country",
             "This is your primary location,",
             Icons.location_on_outlined,
             () async {
               var countryMap = await Navigator.pushNamed(context, countryRoute,
-                  arguments: {"code": _countryCode}) as Map<String, String>;
+                      arguments: {"code": accountSettings!.countryCode})
+                  as Map<String, String>;
               print("countryMap: $countryMap");
-              accountSettings!.countryCode = countryMap["code"] ?? _countryCode;
+              accountSettings!.countryCode =
+                  countryMap["code"] ?? accountSettings!.countryCode;
               // // setState(() {
               // _country = countryMap["name"] ?? _country;
               // print("country name: $_country");
@@ -409,7 +411,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Switch(
-                  value: _allowPeopleToFollowYou,
+                  value: accountSettings!.enableFollowers,
                   onChanged: ((value) {
                     accountSettings!.enableFollowers = value;
                     // Update settings request
@@ -427,9 +429,9 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
     );
   }
 
-  Widget _genderSettingsButton(prefixIcon) {
+  Widget _genderSettingsButton(prefixIcon, context) {
     return TextButton(
-      onPressed: _genderBottomSheet,
+      onPressed: () => _genderBottomSheet(context),
       child: Row(
         children: [
           Expanded(
@@ -470,80 +472,92 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
   }
 
   // TODO: adjust colors
-  void _genderBottomSheet() {
+  void _genderBottomSheet(context) {
     showModalBottomSheet<void>(
       context: context,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
             topLeft: Radius.circular(30), topRight: Radius.circular(30)),
       ),
-      builder: (BuildContext context) {
-        return Container(
-          decoration: BoxDecoration(
-            borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(30), topRight: Radius.circular(30)),
-            color: Colors.grey.shade900,
-          ),
-          height: 200,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              PreferredSize(
-                preferredSize: AppBar().preferredSize,
-                child: AppBar(
-                  title: const Text("Select gender"),
-                  centerTitle: true,
-                  automaticallyImplyLeading: false,
-                  backgroundColor: Colors.grey.shade900,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(25.0),
-                      topRight: Radius.circular(25.0),
+      builder: (_) {
+        return BlocProvider.value(
+          value: BlocProvider.of<AccountSettingsCubit>(context),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+              color: Colors.grey.shade900,
+            ),
+            height: 200,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                PreferredSize(
+                  preferredSize: AppBar().preferredSize,
+                  child: AppBar(
+                    title: const Text("Select gender"),
+                    centerTitle: true,
+                    automaticallyImplyLeading: false,
+                    backgroundColor: Colors.grey.shade900,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(25.0),
+                        topRight: Radius.circular(25.0),
+                      ),
                     ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          // set gender
+                          Navigator.pop(context);
+                        },
+                        child: const Text("Done"),
+                      ),
+                    ],
                   ),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        // set gender
-                        Navigator.pop(context);
-                      },
-                      child: const Text("Done"),
-                    ),
-                  ],
                 ),
-              ),
-              Card(
-                color: Colors.grey.shade900,
-                child: ListTile(
-                  title: const Text("Man"),
-                  leading: _isMan
-                      ? const Icon(Icons.check_circle)
-                      : const Icon(Icons.circle_outlined),
-                  onTap: () {
-                    setState(() {
-                      _isMan = true;
-                    });
-                    Navigator.pop(context);
-                  },
+                Card(
+                  color: Colors.grey.shade900,
+                  child: ListTile(
+                    title: const Text("Man"),
+                    leading: _isMan
+                        ? const Icon(Icons.check_circle)
+                        : const Icon(Icons.circle_outlined),
+                    onTap: () {
+                      // setState(() {
+                      //   _isMan = true;
+                      // });
+
+                      Navigator.pop(context);
+                      accountSettings!.gender = "M";
+                      // Update settings request
+                      BlocProvider.of<AccountSettingsCubit>(context)
+                          .updateAccountSettings(accountSettings!);
+                    },
+                  ),
                 ),
-              ),
-              Card(
-                color: Colors.grey.shade900,
-                child: ListTile(
-                  title: const Text("Woman"),
-                  leading: !_isMan
-                      ? const Icon(Icons.check_circle)
-                      : const Icon(Icons.circle_outlined),
-                  onTap: () {
-                    setState(() {
-                      _isMan = false;
-                    });
-                    Navigator.pop(context);
-                  },
-                ),
-              )
-            ],
+                Card(
+                  color: Colors.grey.shade900,
+                  child: ListTile(
+                    title: const Text("Woman"),
+                    leading: !_isMan
+                        ? const Icon(Icons.check_circle)
+                        : const Icon(Icons.circle_outlined),
+                    onTap: () {
+                      // setState(() {
+                      //   _isMan = false;
+                      // });
+                      Navigator.pop(context);
+                      accountSettings!.gender = "W";
+                      // Update settings request
+                      BlocProvider.of<AccountSettingsCubit>(context)
+                          .updateAccountSettings(accountSettings!);
+                    },
+                  ),
+                )
+              ],
+            ),
           ),
         );
       },

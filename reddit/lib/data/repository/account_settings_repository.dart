@@ -13,6 +13,12 @@ class AccountSettingsRepository {
     final accSettings = await accountSettingsWebServices.getAccountSettings();
     print("Account settings from repo:");
     print("$accSettings");
-    return AccountSettingsModel.fromJson(jsonDecode(accSettings));
+    return AccountSettingsModel.fromJson(accSettings);
+  }
+
+  Future<void> updateAccountSettings(
+      AccountSettingsModel newAccSettings) async {
+    Map<String, dynamic> jsonMap = newAccSettings.toJson();
+    await accountSettingsWebServices.updateAccountSettings(jsonMap);
   }
 }

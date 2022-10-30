@@ -273,7 +273,6 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
             "Connect account to log in to Reddit with Facebook",
             null,
           ),
-          // TODO: country dropdown list
           _accountSettingsElement(
             "Connect to Google",
             "Connect account to log in to Reddit with Google",
@@ -299,7 +298,6 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
                   .updateAccountSettings(accountSettings!);
             },
           )
-          // TODO: country dropdown list
         ],
       ),
     );

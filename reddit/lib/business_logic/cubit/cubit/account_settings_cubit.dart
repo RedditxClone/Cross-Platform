@@ -21,9 +21,9 @@ class AccountSettingsCubit extends Cubit<AccountSettingsState> {
   }
 
   void updateAccountSettings(AccountSettingsModel newAccSettings) {
-    emit(AccountSettingsLoading());
+    // emit(AccountSettingsLoading());
     accountSettings = newAccSettings;
-    // TODO: Call patch request here
+    accountSettingsRepository.updateAccountSettings(newAccSettings);
     emit(AccountSettingsLoaded(accountSettings!));
   }
 }
