@@ -3,7 +3,8 @@ import 'package:reddit/constants/strings.dart';
 
 class AccountSettingsWebServices {
   bool useMockServer = true;
-  String mockUrl = "http://10.0.2.2:3001/";
+  // String mockUrl = "http://10.0.2.2:3001/";
+  String mockUrl = "http://127.0.0.1:3001/";
   late Dio dio;
   AccountSettingsWebServices() {
     BaseOptions options = BaseOptions(
@@ -21,7 +22,7 @@ class AccountSettingsWebServices {
       print(response.data);
       return response.data;
     } catch (e) {
-      print("null");
+      print(e);
       return [];
     }
   }

@@ -39,6 +39,7 @@ dependencies:
   dartdoc: ^6.1.2
   url_launcher: ^6.1.6
   shared_preferences: ^2.0.15
+  flutter_signin_button: ^2.0.0
 
 dev_dependencies:
   flutter_test:

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_signin_button/flutter_signin_button.dart';
 
 import '../../../business_logic/cubit/cubit/account_settings_cubit.dart';
 import '../../../constants/country_names.dart';
@@ -15,11 +16,11 @@ class AccountSettingsScreenWeb extends StatefulWidget {
 
 class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
   AccountSettingsModel? accountSettings;
-  bool _allowPeopleToFollowYou = true;
+  // bool _allowPeopleToFollowYou = true;
   // get this value from api
-  bool _isMan = true;
+  // bool _isMan = true;
   String _country = "";
-  String _countryCode = "";
+  // String _countryCode = "";
   // TODO: make it responsive
   final titleColor = const Color.fromRGBO(215, 218, 220, 1);
 
@@ -41,10 +42,10 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
             builder: (context, state) {
           if (state is AccountSettingsLoaded) {
             accountSettings = state.accSettings;
-            _countryCode = accountSettings!.countryCode;
-            _allowPeopleToFollowYou = accountSettings!.enableFollowers;
+            _isMale = accountSettings!.gender == "M" ? 1 : 0;
+
             for (var map in countryNamesMap) {
-              if (map["code"] == _countryCode) {
+              if (map["code"] == accountSettings!.countryCode) {
                 _country = map["name"]!;
               }
             }
@@ -102,7 +103,7 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
             ),
           ),
           // Account settings element
-          // TODO: change email pop up
+          // TODO: change email function
           _accountSettingsElement(
             "Email address",
             "bemoi.erian@gmail.com",
@@ -226,7 +227,9 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
             "Password must be at least 8 characters long.",
             _rounderButton(
               "Change",
-              () {},
+              () {
+                // TODO: Change password function
+              },
             ),
           ),
           _accountSettingsElement(
@@ -239,6 +242,27 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
             "This is your primary location. Learn more",
             null,
           ),
+          // Country dropdown list
+          DropdownButton(
+            // Initial Value
+            value: accountSettings!.countryCode,
+
+            // Array list of items
+            items: countryNamesMap.map((e) {
+              return DropdownMenuItem(
+                value: e["code"]!,
+                child: Text(e["name"]!),
+              );
+            }).toList(),
+
+            // After selecting the desired option,it will
+            // change button value to selected value
+            onChanged: (String? newValue) {
+              accountSettings!.countryCode = newValue!;
+              BlocProvider.of<AccountSettingsCubit>(context)
+                  .updateAccountSettings(accountSettings!);
+            },
+          )
         ],
       ),
     );
@@ -267,37 +291,26 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
             ),
           ),
           // Account settings element
-          // TODO: Connect to facebook button
+          // TODO: Connect to facebook function
           _accountSettingsElement(
             "Connect to Facebook",
             "Connect account to log in to Reddit with Facebook",
-            null,
+            SignInButton(
+              Buttons.Facebook,
+              text: "Connect to Facebook",
+              onPressed: () {},
+            ),
           ),
+          // TODO: Connect to google function
           _accountSettingsElement(
             "Connect to Google",
             "Connect account to log in to Reddit with Google",
-            null,
+            SignInButton(
+              Buttons.Google,
+              text: "Connect to Google",
+              onPressed: () {},
+            ),
           ),
-          DropdownButton(
-            // Initial Value
-            value: _countryCode,
-
-            // Array list of items
-            items: countryNamesMap.map((e) {
-              return DropdownMenuItem(
-                value: e["code"]!,
-                child: Text(e["name"]!),
-              );
-            }).toList(),
-
-            // After selecting the desired option,it will
-            // change button value to selected value
-            onChanged: (String? newValue) {
-              accountSettings!.countryCode = newValue!;
-              BlocProvider.of<AccountSettingsCubit>(context)
-                  .updateAccountSettings(accountSettings!);
-            },
-          )
         ],
       ),
     );
@@ -433,11 +446,9 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
               )
             ],
             onChanged: (value) {
-              setState(
-                () {
-                  _isMale = (value ?? 0) as int;
-                },
-              );
+              accountSettings!.gender = (value == 1 ? "M" : "W");
+              BlocProvider.of<AccountSettingsCubit>(context)
+                  .updateAccountSettings(accountSettings!);
             },
             hint: const Text("Select item")),
       ),

@@ -1,5 +1,4 @@
-import 'dart:ffi';
-
+/// Model of account settings comming from "user/me/prefs"
 class AccountSettingsModel {
   late String countryCode;
   late bool enableFollowers;
