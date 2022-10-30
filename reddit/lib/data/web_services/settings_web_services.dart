@@ -5,7 +5,7 @@ import 'package:reddit/data/model/user_settings.dart';
 class SettingsWebServices {
   late Dio dio;
   String mockUrl =
-      'https://7162b851-2e76-417e-9486-48a82a29d7a6.mock.pstmn.io/';
+      'https://53abd284-fb16-44a0-9bc9-497fcd7a854d.mock.pstmn.io/';
   bool isMockerServer = true;
   SettingsWebServices() {
     BaseOptions options = BaseOptions(

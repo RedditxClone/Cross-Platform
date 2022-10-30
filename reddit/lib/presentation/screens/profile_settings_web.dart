@@ -16,13 +16,17 @@ class ProfileSettingsWeb extends StatefulWidget {
 }
 
 class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
-  // bool nsfw = true;
-  // bool allowPeopleToFollowYou = true;
-  // bool activeInCommunitiesVisibility = true;
-  // bool contentVisibility = true;
-  bool isThereImageCover = false;
-  bool isThereImageProfile = false;
   late Settings profileSettings;
+  late TextEditingController displayName;
+  late TextEditingController about;
+  String displayNameTxt = '';
+  String aboutTxt = '';
+  late bool nsfw = true;
+  late bool allowPeopleToFollowYou = true;
+  late bool activeInCommunitiesVisibility = true;
+  late bool contentVisibility = true;
+  late bool showActiveCommunities;
+
   Uint8List webImgCover = Uint8List(8);
   Uint8List webImgProfile = Uint8List(8);
   @override
@@ -108,6 +112,8 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
         title('Display name (optional)',
             'Set a display name. This does not change your username.'),
         TextField(
+            //onSubmitted: (value) => BlocProvider.of<SettingsCubit>(context).changeDisplayName(displayName.text),
+            controller: displayName,
             maxLength: 30,
             style: const TextStyle(fontSize: 16),
             keyboardType: TextInputType.text,
@@ -121,6 +127,8 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
         title('About (optional)',
             'A brief description of yourself shown on your profile.'),
         TextField(
+            //onSubmitted: (value) => BlocProvider.of<SettingsCubit>(context).changeAbout(about.text),
+            controller: about,
             minLines: 5,
             maxLines: 20,
             maxLength: 200,
@@ -262,6 +270,7 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
           onChanged: (newValue) {
             setState(() {
               profileSettings.nsfw = newValue;
+              nsfw = newValue;
             });
           },
           title: const Text('NSFW', style: TextStyle(fontSize: 16)),
@@ -271,7 +280,7 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
         ),
         const SizedBox(height: 20),
 
-        /////////////////---PROFILE CATEGORY--//////////////////////
+        /////////////////---ADVANCED--//////////////////////
         const Text('ADVANCED',
             style: TextStyle(fontSize: 10, color: Colors.grey)),
         const Divider(),
@@ -284,6 +293,7 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
           onChanged: (newValue) {
             setState(() {
               profileSettings.allowPeopleToFollowYou = newValue;
+              allowPeopleToFollowYou = newValue;
             });
           },
           title: const Text('Allow people to follow you',
@@ -300,6 +310,7 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
           onChanged: (newValue) {
             setState(() {
               profileSettings.contentVisibility = newValue;
+              contentVisibility = newValue;
             });
           },
           title:
@@ -316,6 +327,7 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
           onChanged: (newValue) {
             setState(() {
               profileSettings.activeInCommunitiesVisibility = newValue;
+              showActiveCommunities = newValue;
             });
           },
           title: const Text('Active in communities visibility',
@@ -343,11 +355,15 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
             builder: (_, state) {
               if (state is SettingsAvailable) {
                 profileSettings = state.settings;
-
+                displayName =
+                    TextEditingController(text: profileSettings.displayName);
+                about = TextEditingController(text: profileSettings.about);
+                contentVisibility = profileSettings.contentVisibility;
+                showActiveCommunities =
+                    profileSettings.activeInCommunitiesVisibility;
                 return buildEditProfileBody();
               } else if (state is SettingsChanged) {
                 profileSettings = state.settings;
-
                 return buildEditProfileBody();
               } else {
                 return const Center(child: CircularProgressIndicator());

@@ -16,8 +16,12 @@ class ProfileSettings extends StatefulWidget {
 
 class _ProfileSettingsState extends State<ProfileSettings> {
   late Settings profileSettings;
-  bool contentVisibility = true;
-  bool showActiveCommunities = true;
+  late TextEditingController displayName;
+  late TextEditingController about;
+  String displayNameTxt = '';
+  String aboutTxt = '';
+  late bool contentVisibility;
+  late bool showActiveCommunities;
   File? imgCover;
   File? imgProfile;
 
@@ -358,6 +362,8 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                     style: TextStyle(fontSize: 17)),
                 const SizedBox(height: 10),
                 TextField(
+                    onSubmitted: (value) => displayName.text = value,
+                    controller: displayName,
                     maxLength: 30,
                     style: const TextStyle(fontSize: 18),
                     keyboardType: TextInputType.text,
@@ -379,6 +385,8 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                 ),
                 const SizedBox(height: 10),
                 TextField(
+                    onSubmitted: (value) => about.text = value,
+                    controller: about,
                     minLines: 5,
                     maxLines: 20,
                     maxLength: 200,
@@ -433,6 +441,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
             onChanged: (newValue) {
               setState(() {
                 profileSettings.contentVisibility = newValue;
+                contentVisibility = newValue;
               });
             },
             title: const Text('Content visibility',
@@ -449,6 +458,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
             onChanged: (newValue) {
               setState(() {
                 profileSettings.activeInCommunitiesVisibility = newValue;
+                showActiveCommunities = newValue;
               });
             },
             title: const Text('Show active communities',
@@ -475,6 +485,11 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                 onPressed: () {
                   displayMsg(ctx, Colors.green, 'Success',
                       'Your settings has been saved');
+
+                  // BlocProvider.of<SettingsCubit>(context).changeDisplayName(displayName.text)
+                  // BlocProvider.of<SettingsCubit>(context).changeAbout(about.text)
+                  // BlocProvider.of<SettingsCubit>(context).updateContentVisiblity(contentVisibility);
+                  // BlocProvider.of<SettingsCubit>(context).updateShowactiveInCom(showActiveCommunities);
                 },
                 child: const Text('Save', style: TextStyle(fontSize: 20)))
           ],
@@ -501,9 +516,18 @@ class _ProfileSettingsState extends State<ProfileSettings> {
       body: BlocBuilder<SettingsCubit, SettingsState>(builder: (_, state) {
         if (state is SettingsAvailable) {
           profileSettings = state.settings;
+          displayName =
+              TextEditingController(text: profileSettings.displayName);
+          about = TextEditingController(text: profileSettings.about);
+          contentVisibility = profileSettings.contentVisibility;
+          showActiveCommunities = profileSettings.activeInCommunitiesVisibility;
           return buildEditProfileBody(context);
         } else if (state is SettingsChanged) {
           profileSettings = state.settings;
+          displayName =
+              TextEditingController(text: profileSettings.displayName);
+          about = TextEditingController(text: profileSettings.about);
+
           return buildEditProfileBody(context);
         } else {
           return const Center(child: CircularProgressIndicator());

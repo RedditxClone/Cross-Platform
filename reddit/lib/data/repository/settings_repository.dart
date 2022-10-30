@@ -14,7 +14,7 @@ class SettingsRepository {
   }
 
   Future<dynamic> updatePrefs(String key, val) async {
-    final newImg = await settingsWebServices.updatePrefs(key, val);
-    return jsonDecode(newImg)[key];
+    final newVal = await settingsWebServices.updatePrefs(key, val);
+    return jsonDecode(newVal)[key];
   }
 }

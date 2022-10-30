@@ -10,8 +10,7 @@ class SettingsCubit extends Cubit<SettingsState> {
   Settings settings = Settings();
   SettingsCubit(this.settingsRepository) : super(SettingsInitial());
 
-  /// ### Get the user settings from the repository
-  /// this function will be used in the bloc builder widget (UI) to display user settings
+  /// Get all user settings @initial build of any settings widget
   Settings getUserSettings() {
     settingsRepository.getUserSettings().then((userSettings) {
       emit(SettingsAvailable(userSettings));
@@ -20,6 +19,7 @@ class SettingsCubit extends Cubit<SettingsState> {
     return settings;
   }
 
+  /// change the cover photo : send to the backend the new image
   String changeCoverphoto(String img) {
     String newImg = '';
     settingsRepository.updatePrefs('cover', img).then((image) {
@@ -30,26 +30,83 @@ class SettingsCubit extends Cubit<SettingsState> {
     return newImg;
   }
 
+  /// change the profile photo : send to the backend the new image
   String changeProfilephoto(String img) {
     String newImg = '';
     settingsRepository.updatePrefs('profile', img).then((image) {
       settings.profile = image;
-      print(image);
       emit(SettingsChanged(settings));
       newImg = image;
     });
     return newImg;
   }
 
-  bool updateactiveInCom(bool newVal) {
+  /// change display name of the user
+  bool changeDisplayName(String newVal) {
     bool ret = true;
+    settingsRepository.updatePrefs('displayName', newVal).then((val) {
+      settings.displayName = val;
+      emit(SettingsChanged(settings));
+      ret = true;
+    });
+    return ret;
+  }
+
+  /// change display name of the user
+  bool changeAbout(String newVal) {
+    bool ret = true;
+    settingsRepository.updatePrefs('about', newVal).then((val) {
+      settings.about = val;
+      emit(SettingsChanged(settings));
+      ret = true;
+    });
+    return ret;
+  }
+
+  /// toggle the value of activeInCommunitiesVisibility : send to the backend the new value
+  bool updateShowactiveInCom(bool newVal) {
+    bool ret = false;
     settingsRepository
         .updatePrefs('activeInCommunitiesVisibility', newVal)
         .then((val) {
       settings.activeInCommunitiesVisibility = val;
       emit(SettingsChanged(settings));
-      ret = val;
-      print(val);
+      ret = true;
+    });
+    return ret;
+  }
+
+  /// toggle the value of contentVisibility : send to the backend the new value
+  bool updateContentVisiblity(bool newVal) {
+    bool ret = false;
+    settingsRepository.updatePrefs('contentVisibility', newVal).then((val) {
+      settings.contentVisibility = val;
+      emit(SettingsChanged(settings));
+      ret = true;
+    });
+    return ret;
+  }
+
+  /// toggle the value of allowPeopleToFollowYou : send to the backend the new value
+  bool updatePeopleToFollowYou(bool newVal) {
+    bool ret = false;
+    settingsRepository
+        .updatePrefs('allowPeopleToFollowYou', newVal)
+        .then((val) {
+      settings.allowPeopleToFollowYou = val;
+      emit(SettingsChanged(settings));
+      ret = true;
+    });
+    return ret;
+  }
+
+  /// toggle the value of nsfw : send to the backend the new value
+  bool updateNSFW(bool newVal) {
+    bool ret = false;
+    settingsRepository.updatePrefs('nsfw', newVal).then((val) {
+      settings.nsfw = val;
+      emit(SettingsChanged(settings));
+      ret = true;
     });
     return ret;
   }
