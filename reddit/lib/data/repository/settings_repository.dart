@@ -8,8 +8,13 @@ class SettingsRepository {
   SettingsRepository(this.settingsWebServices);
 
   /// ### Returns all user settings from json to Settings class object
-  Future<Settings> getProfileSettings() async {
-    final settings = await settingsWebServices.getProfileSettings();
-    return Settings.fromjson(jsonDecode(settings)); //try jsondecode(settings)
+  Future<Settings> getUserSettings() async {
+    final settings = await settingsWebServices.getUserSettings();
+    return Settings.fromjson(jsonDecode(settings));
+  }
+
+  Future<dynamic> updatePrefs(String key, val) async {
+    final newVal = await settingsWebServices.updatePrefs(key, val);
+    return jsonDecode(newVal)[key];
   }
 }

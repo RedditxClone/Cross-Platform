@@ -2,6 +2,8 @@
 class Settings {
   late String profile;
   late String cover;
+  late String displayName;
+  late String about;
   late bool nsfw;
   late bool allowPeopleToFollowYou;
   late bool activeInCommunitiesVisibility;
@@ -17,6 +19,8 @@ class Settings {
   Settings() {
     profile = '';
     cover = '';
+    displayName = '';
+    about = '';
     nsfw = true;
     allowPeopleToFollowYou = true;
     activeInCommunitiesVisibility = true;
@@ -35,6 +39,8 @@ class Settings {
   Settings.fromjson(Map<String, dynamic> json) {
     profile = json['profile'];
     cover = json['cover'];
+    displayName = json['displayName'];
+    about = json['about'];
     nsfw = json['nsfw'];
     allowPeopleToFollowYou = json['allowPeopleToFollowYou'];
     activeInCommunitiesVisibility = json['activeInCommunitiesVisibility'];
