@@ -34,6 +34,7 @@ class SettingsCubit extends Cubit<SettingsState> {
     String newImg = '';
     settingsRepository.updatePrefs('profile', img).then((image) {
       settings.profile = image;
+      print(image);
       emit(SettingsChanged(settings));
       newImg = image;
     });

@@ -4,9 +4,12 @@ import 'package:reddit/data/model/user_settings.dart';
 
 class SettingsWebServices {
   late Dio dio;
+  String mockUrl =
+      'https://7162b851-2e76-417e-9486-48a82a29d7a6.mock.pstmn.io/';
+  bool isMockerServer = true;
   SettingsWebServices() {
     BaseOptions options = BaseOptions(
-      baseUrl: baseUrl,
+      baseUrl: isMockerServer ? mockUrl : baseUrl,
       receiveDataWhenStatusError: true,
       connectTimeout: 30 * 1000,
       receiveTimeout: 30 * 1000,
@@ -15,7 +18,7 @@ class SettingsWebServices {
     dio = Dio(options);
   }
 
-  /// Returns all user settings :Performs get request to the endpoint /prefs to get all user settings from the API
+  /// Returns all user settings : Performs get request to the endpoint /prefs to get all user settings from the API
   Future<dynamic> getUserSettings() async {
     try {
       Response response = await dio.get('prefs');
@@ -26,11 +29,7 @@ class SettingsWebServices {
     }
   }
 
-  /// Returns all user settings :Performs get request to the endpoint /prefs to get all user settings from the API
-  ///
-  /// @param key the key to be updated
-  /// @param value the new value
-  /// @returns the updated value
+  /// updates a user setting
   Future<String> updatePrefs(String key, value) async {
     try {
       Response response = await dio.patch('prefs', data: {key: value});

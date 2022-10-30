@@ -72,9 +72,11 @@ class _ProfileSettingsState extends State<ProfileSettings> {
   Future pickImage(ImageSource src, String dest) async {
     try {
       Navigator.pop(context);
+
       final image = await ImagePicker().pickImage(source: src);
       if (image == null) return;
       final imageTemp = File(image.path);
+
       switch (dest) {
         case 'cover':
           // imgCover = imageTemp;
@@ -83,6 +85,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
         case 'profile':
           // imgProfile = imageTemp;
           BlocProvider.of<SettingsCubit>(context).changeProfilephoto('');
+
           break;
         default:
           break;
@@ -285,11 +288,6 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                         profileSettings.cover,
                         fit: BoxFit.cover,
                       )
-                    // : imgCover != null
-                    //     ? Image.file(
-                    //         imgCover!,
-                    //         fit: BoxFit.cover,
-                    //       )
                     : const Icon(Icons.add_a_photo_outlined),
               ),
             ),
@@ -302,8 +300,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                   child: (profileSettings.profile != '' && imgProfile == null)
                       ? ClipOval(
                           child: InkWell(
-                            onTap: () =>
-                                pickImage(ImageSource.gallery, 'profile'),
+                            onTap: () => chooseProfilePhotoBottomSheet(context),
                             child: Image.network(
                               profileSettings.profile,
                               width: 80,
@@ -312,22 +309,9 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                             ),
                           ),
                         )
-                      // : imgProfile != null
-                      //     ? InkWell(
-                      //         onTap: () =>
-                      //             pickImage(ImageSource.gallery, 'profile'),
-                      //         child: ClipOval(
-                      //           child: Image.file(
-                      //             imgProfile!,
-                      //             width: 80,
-                      //             height: 80,
-                      //             fit: BoxFit.fill,
-                      //           ),
-                      //         ),
-                      //       )
                       : ElevatedButton(
                           onPressed: () =>
-                              pickImage(ImageSource.gallery, 'profile'),
+                              chooseProfilePhotoBottomSheet(context),
                           style: ElevatedButton.styleFrom(
                             primary: Colors.white,
                             shape: RoundedRectangleBorder(
@@ -480,50 +464,49 @@ class _ProfileSettingsState extends State<ProfileSettings> {
     );
   }
 
-  void editProfileBottomSheet(BuildContext ctx) {
-    showModalBottomSheet(
-        isScrollControlled: true,
-        enableDrag: false,
-        constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(ctx).size.height -
-                MediaQuery.of(ctx).padding.top),
-        context: ctx,
-        builder: (_) {
-          return Scaffold(
-              appBar: AppBar(
-                leading: const CloseButton(),
-                centerTitle: true,
-                title: const Text('Edit Profile'),
-                actions: [
-                  TextButton(
-                      onPressed: () {
-                        displayMsg(ctx, Colors.green, 'Success',
-                            'Your settings has been saved');
-                      },
-                      child: const Text('Save', style: TextStyle(fontSize: 20)))
-                ],
-              ),
-              body: buildEditProfileBody(ctx));
-        });
+  Widget editProfileBottomSheet(BuildContext ctx) {
+    return Scaffold(
+        appBar: AppBar(
+          leading: const CloseButton(),
+          centerTitle: true,
+          title: const Text('Edit Profile'),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  displayMsg(ctx, Colors.green, 'Success',
+                      'Your settings has been saved');
+                },
+                child: const Text('Save', style: TextStyle(fontSize: 20)))
+          ],
+        ),
+        body: buildEditProfileBody(ctx));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        leading: const CloseButton(),
+        centerTitle: true,
+        title: const Text('Edit Profile'),
+        actions: [
+          TextButton(
+              onPressed: () {
+                displayMsg(context, Colors.green, 'Success',
+                    'Your settings has been saved');
+              },
+              child: const Text('Save', style: TextStyle(fontSize: 20)))
+        ],
+      ),
       body: BlocBuilder<SettingsCubit, SettingsState>(builder: (_, state) {
         if (state is SettingsAvailable) {
           profileSettings = state.settings;
-          return ElevatedButton(
-              onPressed: () => editProfileBottomSheet(context),
-              child: const Text("Profile Settings"));
+          return buildEditProfileBody(context);
         } else if (state is SettingsChanged) {
           profileSettings = state.settings;
-          return ElevatedButton(
-              onPressed: () => editProfileBottomSheet(context),
-              child: const Text("Profile Settings"));
+          return buildEditProfileBody(context);
         } else {
-          return const Text('error');
+          return const Center(child: CircularProgressIndicator());
         }
       }),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reddit/business_logic/cubit/settings/settings_cubit.dart';
 import 'package:reddit/data/repository/settings_repository.dart';
@@ -21,7 +22,9 @@ class AppRouter {
         return MaterialPageRoute(
             builder: (_) => BlocProvider(
                   create: (BuildContext context) => settingsCubit,
-                  child: ProfileSettings(),
+                  child: kIsWeb
+                      ? const ProfileSettingsWeb()
+                      : const ProfileSettings(),
                 ));
       /*
       case example:
