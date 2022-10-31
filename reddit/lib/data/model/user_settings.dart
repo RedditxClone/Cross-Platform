@@ -16,24 +16,23 @@ class Settings {
   late bool personalizeRecGeneralLocation;
   late bool personalizeRecOurPartners;
   late bool useTwoFactorAuthentication;
-  Settings() {
-    profile = '';
-    cover = '';
-    displayName = '';
-    about = '';
-    nsfw = true;
-    allowPeopleToFollowYou = true;
-    activeInCommunitiesVisibility = true;
-    contentVisibility = true;
-    disroptiveSettings = 'OFF';
-    showUnInSearch = true;
-    personalizeAllOfReddit = true;
-    personalizeAdsInformation = true;
-    personalizeAdsYourActivity = true;
-    personalizeRecGeneralLocation = true;
-    personalizeRecOurPartners = true;
-    useTwoFactorAuthentication = true;
-  }
+  Settings(
+      {profile = '',
+      cover = '',
+      displayName = '',
+      about = '',
+      nsfw = true,
+      allowPeopleToFollowYou = true,
+      activeInCommunitiesVisibility = true,
+      contentVisibility = true,
+      disroptiveSettings = 'OFF',
+      showUnInSearch = true,
+      personalizeAllOfReddit = true,
+      personalizeAdsInformation = true,
+      personalizeAdsYourActivity = true,
+      personalizeRecGeneralLocation = true,
+      personalizeRecOurPartners = true,
+      useTwoFactorAuthentication = true});
 
   /// ### Transform the data from json to Settings Class object
   Settings.fromjson(Map<String, dynamic> json) {

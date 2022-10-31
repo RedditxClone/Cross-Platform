@@ -35,6 +35,28 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
     profileSettings = BlocProvider.of<SettingsCubit>(context).getUserSettings();
   }
 
+  bool isSmallSizedScreen() {
+    return MediaQuery.of(context).size.width < 600 ? true : false;
+  }
+
+  bool isMediumSizedScreen() {
+    return MediaQuery.of(context).size.width >= 600 &&
+            MediaQuery.of(context).size.width < 1000
+        ? true
+        : false;
+  }
+
+  bool isLargeSizedScreen() {
+    return MediaQuery.of(context).size.width >= 1000 &&
+            MediaQuery.of(context).size.width < 1300
+        ? true
+        : false;
+  }
+
+  bool isXLargeSizedScreen() {
+    return MediaQuery.of(context).size.width >= 1300 ? true : false;
+  }
+
   /// ## Parameters
   /// ### src : the image source can be ImageSource.gallery or ImageSource.camera
   /// ### dest : the image destination can be 'cover' for cover photo or 'profile' fom profile photo
@@ -96,250 +118,277 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
   }
 
   Widget buildEditProfileBody() {
-    return Column(
+    return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Cutomize Profile',
-          style: TextStyle(fontSize: 20),
-        ),
-        const SizedBox(height: 30),
-        /////////////////---PROFILE INFORMATION--//////////////////////
-        const Text('PROFILE INFORMATION',
-            style: TextStyle(fontSize: 10, color: Colors.grey)),
-        const Divider(),
-        //------------- Display Name--------------
-        title('Display name (optional)',
-            'Set a display name. This does not change your username.'),
-        TextField(
-            //onSubmitted: (value) => BlocProvider.of<SettingsCubit>(context).changeDisplayName(displayName.text),
-            controller: displayName,
-            maxLength: 30,
-            style: const TextStyle(fontSize: 16),
-            keyboardType: TextInputType.text,
-            decoration: InputDecoration(
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(3)),
-              contentPadding: const EdgeInsets.all(15),
-              hintText: 'Display name (optional)',
-            )),
-        //------------- About --------------
-        title('About (optional)',
-            'A brief description of yourself shown on your profile.'),
-        TextField(
-            //onSubmitted: (value) => BlocProvider.of<SettingsCubit>(context).changeAbout(about.text),
-            controller: about,
-            minLines: 5,
-            maxLines: 20,
-            maxLength: 200,
-            style: const TextStyle(fontSize: 16),
-            keyboardType: TextInputType.text,
-            decoration: InputDecoration(
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(3)),
-              contentPadding: const EdgeInsets.all(15),
-              hintText: 'About (optional)',
-            )),
-        //------------- Social Links --------------
-        title('Social links (5 max)',
-            'People who visit your profile will see your social links.'),
-        SizedBox(
-          width: 150,
-          height: 40,
-          child: ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                primary: const Color.fromRGBO(90, 90, 90, 100),
-                onPrimary: Colors.white,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0)),
+        Expanded(
+            flex: isSmallSizedScreen() ? 0 : 1,
+            child: const SizedBox(width: 10)),
+        Expanded(
+          flex: isMediumSizedScreen() ? 4 : 3,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Cutomize Profile',
+                style: TextStyle(fontSize: 20),
               ),
-              child: Row(
-                children: const [
-                  Icon(Icons.add),
-                  Text(
-                    " Add social link",
-                    style: TextStyle(fontSize: 13, color: Colors.white),
+              const SizedBox(height: 30),
+              /////////////////---PROFILE INFORMATION--//////////////////////
+              const Text('PROFILE INFORMATION',
+                  style: TextStyle(fontSize: 10, color: Colors.grey)),
+              const Divider(),
+              //------------- Display Name--------------
+              title('Display name (optional)',
+                  'Set a display name. This does not change your username.'),
+              TextField(
+                  //onSubmitted: (value) => BlocProvider.of<SettingsCubit>(context).changeDisplayName(displayName.text),
+                  controller: displayName,
+                  maxLength: 30,
+                  style: const TextStyle(fontSize: 16),
+                  keyboardType: TextInputType.text,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(3)),
+                    contentPadding: const EdgeInsets.all(15),
+                    hintText: 'Display name (optional)',
+                  )),
+              //------------- About --------------
+              title('About (optional)',
+                  'A brief description of yourself shown on your profile.'),
+              TextField(
+                  //onSubmitted: (value) => BlocProvider.of<SettingsCubit>(context).changeAbout(about.text),
+                  controller: about,
+                  minLines: 5,
+                  maxLines: 20,
+                  maxLength: 200,
+                  style: const TextStyle(fontSize: 16),
+                  keyboardType: TextInputType.text,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(3)),
+                    contentPadding: const EdgeInsets.all(15),
+                    hintText: 'About (optional)',
+                  )),
+              //------------- Social Links --------------
+              title('Social links (5 max)',
+                  'People who visit your profile will see your social links.'),
+              SizedBox(
+                width: 150,
+                height: 40,
+                child: ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      primary: const Color.fromRGBO(90, 90, 90, 100),
+                      onPrimary: Colors.white,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0)),
+                    ),
+                    child: Row(
+                      children: const [
+                        Icon(Icons.add),
+                        Text(
+                          " Add social link",
+                          style: TextStyle(fontSize: 13, color: Colors.white),
+                        ),
+                      ],
+                    )),
+              ),
+              const SizedBox(height: 25),
+
+              /////////////////---IMAGES--//////////////////////
+              const Text('IMAGES',
+                  style: TextStyle(fontSize: 10, color: Colors.grey)),
+              const Divider(),
+              const SizedBox(height: 20),
+              //------------- Avatar and banner image --------------
+              title('Avatar and banner image',
+                  'Peaple who visit your Reddit profile will see your social links.'),
+              Row(
+                children: [
+                  Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Container(
+                        decoration: const BoxDecoration(shape: BoxShape.circle),
+                        child: (profileSettings.profile != '')
+                            ? GestureDetector(
+                                onTap: () =>
+                                    pickImage(ImageSource.gallery, 'profile'),
+                                child: ClipOval(
+                                  child: Image.network(
+                                    profileSettings.profile,
+                                    width: 120,
+                                    height: 120,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              )
+                            : ElevatedButton(
+                                onPressed: () =>
+                                    pickImage(ImageSource.gallery, 'profile'),
+                                style: ElevatedButton.styleFrom(
+                                  primary: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(80.0)),
+                                ),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 20, horizontal: 5),
+                                  child: const Icon(
+                                    Icons.person,
+                                    size: 80,
+                                    color: Colors.black,
+                                  ),
+                                )),
+                      ),
+                      addImageButton(90, 70),
+                    ],
+                  ),
+                  const SizedBox(width: 10),
+                  InkWell(
+                    onTap: () => pickImage(ImageSource.gallery, 'cover'),
+                    child: DottedBorder(
+                      dashPattern: const [3, 2],
+                      borderType: BorderType.RRect,
+                      radius: const Radius.circular(5),
+                      color: Colors.white,
+                      child: Container(
+                        width: isXLargeSizedScreen()
+                            ? 425
+                            : isLargeSizedScreen()
+                                ? 0.3 * (MediaQuery.of(context).size.width)
+                                : isMediumSizedScreen()
+                                    ? 0.4 * (MediaQuery.of(context).size.width)
+                                    : (MediaQuery.of(context).size.width - 160),
+                        height: 120,
+                        decoration: const BoxDecoration(
+                          color: Color.fromRGBO(30, 30, 30, 100),
+                        ),
+                        //add image here
+                        child: (profileSettings.cover != '')
+                            ? Image.network(
+                                profileSettings.cover,
+                                fit: BoxFit.fitWidth,
+                              )
+                            : Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const [
+                                  Icon(
+                                    Icons.add_circle,
+                                    size: 45,
+                                  ),
+                                  SizedBox(height: 10),
+                                  Text(
+                                    'Drag and Drop or Upload Banner Image',
+                                    style: TextStyle(
+                                        fontSize: 11, color: Colors.white),
+                                  ),
+                                ],
+                              ),
+                      ),
+                    ),
                   ),
                 ],
-              )),
-        ),
-        const SizedBox(height: 25),
-
-        /////////////////---IMAGES--//////////////////////
-        const Text('IMAGES',
-            style: TextStyle(fontSize: 10, color: Colors.grey)),
-        const Divider(),
-        const SizedBox(height: 20),
-        //------------- Avatar and banner image --------------
-        title('Avatar and banner image',
-            'Peaple who visit your Reddit profile will see your social links.'),
-        Row(
-          children: [
-            Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Container(
-                  decoration: const BoxDecoration(shape: BoxShape.circle),
-                  child: (profileSettings.profile != '')
-                      ? GestureDetector(
-                          onTap: () =>
-                              pickImage(ImageSource.gallery, 'profile'),
-                          child: ClipOval(
-                            child: Image.network(
-                              profileSettings.profile,
-                              width: 120,
-                              height: 120,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        )
-                      : ElevatedButton(
-                          onPressed: () =>
-                              pickImage(ImageSource.gallery, 'profile'),
-                          style: ElevatedButton.styleFrom(
-                            primary: Colors.white,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(80.0)),
-                          ),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 20, horizontal: 5),
-                            child: const Icon(
-                              Icons.person,
-                              size: 80,
-                              color: Colors.black,
-                            ),
-                          )),
-                ),
-                addImageButton(90, 70),
-              ],
-            ),
-            const SizedBox(width: 10),
-            InkWell(
-              onTap: () => pickImage(ImageSource.gallery, 'cover'),
-              child: DottedBorder(
-                dashPattern: const [3, 2],
-                borderType: BorderType.RRect,
-                radius: const Radius.circular(5),
-                color: Colors.white,
-                child: Container(
-                  width: 430, //to be changed when responsive
-                  height: 120,
-                  decoration: const BoxDecoration(
-                    color: Color.fromRGBO(30, 30, 30, 100),
-                  ),
-                  //add image here
-                  child: (profileSettings.cover != '')
-                      ? Image.network(
-                          profileSettings.cover,
-                          fit: BoxFit.cover,
-                        )
-                      : Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Icon(
-                              Icons.add_circle,
-                              size: 45,
-                            ),
-                            SizedBox(height: 10),
-                            Text(
-                              'Drag and Drop or Upload Banner Image',
-                              style:
-                                  TextStyle(fontSize: 11, color: Colors.white),
-                            ),
-                          ],
-                        ),
-                ),
               ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-        /////////////////---PROFILE CATEGORY--//////////////////////
-        const Text('PROFILE CATEGORY',
-            style: TextStyle(fontSize: 10, color: Colors.grey)),
-        const Divider(),
+              /////////////////---PROFILE CATEGORY--//////////////////////
+              const Text('PROFILE CATEGORY',
+                  style: TextStyle(fontSize: 10, color: Colors.grey)),
+              const Divider(),
 
-        //------------- NSFW --------------
-        SwitchListTile(
-          activeColor: Colors.blue,
-          contentPadding: const EdgeInsets.all(0),
-          value: profileSettings.nsfw,
-          onChanged: (newValue) {
-            setState(() {
-              profileSettings.nsfw = newValue;
-              nsfw = newValue;
-            });
-          },
-          title: const Text('NSFW', style: TextStyle(fontSize: 16)),
-          subtitle: const Text(
-              'This content is NSFW (may contain nudity, pornography, profanity or inappropriate content for those under 18)',
-              style: TextStyle(fontSize: 11, color: Colors.grey)),
-        ),
-        const SizedBox(height: 20),
+              //------------- NSFW --------------
+              SwitchListTile(
+                activeColor: Colors.blue,
+                contentPadding: const EdgeInsets.all(0),
+                value: profileSettings.nsfw,
+                onChanged: (newValue) {
+                  setState(() {
+                    profileSettings.nsfw = newValue;
+                    nsfw = newValue;
+                  });
+                },
+                title: const Text('NSFW', style: TextStyle(fontSize: 16)),
+                subtitle: const Text(
+                    'This content is NSFW (may contain nudity, pornography, profanity or inappropriate content for those under 18)',
+                    style: TextStyle(fontSize: 11, color: Colors.grey)),
+              ),
+              const SizedBox(height: 20),
 
-        /////////////////---ADVANCED--//////////////////////
-        const Text('ADVANCED',
-            style: TextStyle(fontSize: 10, color: Colors.grey)),
-        const Divider(),
+              /////////////////---ADVANCED--//////////////////////
+              const Text('ADVANCED',
+                  style: TextStyle(fontSize: 10, color: Colors.grey)),
+              const Divider(),
 
-        //------------- Allow people to follow you --------------
-        SwitchListTile(
-          activeColor: Colors.blue,
-          contentPadding: const EdgeInsets.all(0),
-          value: profileSettings.allowPeopleToFollowYou,
-          onChanged: (newValue) {
-            setState(() {
-              profileSettings.allowPeopleToFollowYou = newValue;
-              allowPeopleToFollowYou = newValue;
-            });
-          },
-          title: const Text('Allow people to follow you',
-              style: TextStyle(fontSize: 16)),
-          subtitle: const Text(
-              'Followers will be notified about posts you make to your profile and see them in their home feed.',
-              style: TextStyle(fontSize: 11, color: Colors.grey)),
+              //------------- Allow people to follow you --------------
+              SwitchListTile(
+                activeColor: Colors.blue,
+                contentPadding: const EdgeInsets.all(0),
+                value: profileSettings.allowPeopleToFollowYou,
+                onChanged: (newValue) {
+                  setState(() {
+                    profileSettings.allowPeopleToFollowYou = newValue;
+                    allowPeopleToFollowYou = newValue;
+                  });
+                },
+                title: const Text('Allow people to follow you',
+                    style: TextStyle(fontSize: 16)),
+                subtitle: const Text(
+                    'Followers will be notified about posts you make to your profile and see them in their home feed.',
+                    style: TextStyle(fontSize: 11, color: Colors.grey)),
+              ),
+              //------------- Content visibility --------------
+              SwitchListTile(
+                activeColor: Colors.blue,
+                contentPadding: const EdgeInsets.all(0),
+                value: profileSettings.contentVisibility,
+                onChanged: (newValue) {
+                  setState(() {
+                    profileSettings.contentVisibility = newValue;
+                    contentVisibility = newValue;
+                  });
+                },
+                title: const Text('Content visibility',
+                    style: TextStyle(fontSize: 16)),
+                subtitle: const Text(
+                    'Posts to this profile can appear in r/all and your profile can be discovered in /users',
+                    style: TextStyle(fontSize: 11, color: Colors.grey)),
+              ),
+              //------------- Active in communities visibility --------------
+              SwitchListTile(
+                activeColor: Colors.blue,
+                contentPadding: const EdgeInsets.all(0),
+                value: profileSettings.activeInCommunitiesVisibility,
+                onChanged: (newValue) {
+                  setState(() {
+                    profileSettings.activeInCommunitiesVisibility = newValue;
+                    showActiveCommunities = newValue;
+                  });
+                },
+                title: const Text('Active in communities visibility',
+                    style: TextStyle(fontSize: 16)),
+                subtitle: const Text(
+                    'Show which communities I am active in on my profile.',
+                    style: TextStyle(fontSize: 11, color: Colors.grey)),
+              ),
+              /////////////////---PROFILE MODERATION--//////////////////////
+              const Text('PROFILE MODERATION',
+                  style: TextStyle(fontSize: 10, color: Colors.grey)),
+              const Divider(),
+            ],
+          ),
         ),
-        //------------- Content visibility --------------
-        SwitchListTile(
-          activeColor: Colors.blue,
-          contentPadding: const EdgeInsets.all(0),
-          value: profileSettings.contentVisibility,
-          onChanged: (newValue) {
-            setState(() {
-              profileSettings.contentVisibility = newValue;
-              contentVisibility = newValue;
-            });
-          },
-          title:
-              const Text('Content visibility', style: TextStyle(fontSize: 16)),
-          subtitle: const Text(
-              'Posts to this profile can appear in r/all and your profile can be discovered in /users',
-              style: TextStyle(fontSize: 11, color: Colors.grey)),
-        ),
-        //------------- Active in communities visibility --------------
-        SwitchListTile(
-          activeColor: Colors.blue,
-          contentPadding: const EdgeInsets.all(0),
-          value: profileSettings.activeInCommunitiesVisibility,
-          onChanged: (newValue) {
-            setState(() {
-              profileSettings.activeInCommunitiesVisibility = newValue;
-              showActiveCommunities = newValue;
-            });
-          },
-          title: const Text('Active in communities visibility',
-              style: TextStyle(fontSize: 16)),
-          subtitle: const Text(
-              'Show which communities I am active in on my profile.',
-              style: TextStyle(fontSize: 11, color: Colors.grey)),
-        ),
-        /////////////////---PROFILE MODERATION--//////////////////////
-        const Text('PROFILE MODERATION',
-            style: TextStyle(fontSize: 10, color: Colors.grey)),
-        const Divider(),
+        Expanded(
+            flex: isSmallSizedScreen()
+                ? 0
+                : isMediumSizedScreen()
+                    ? 1
+                    : isLargeSizedScreen()
+                        ? 2
+                        : 3,
+            child: const SizedBox(width: 10)),
       ],
     );
   }
@@ -350,7 +399,7 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
       appBar: AppBar(),
       body: SingleChildScrollView(
         child: Container(
-          padding: const EdgeInsets.fromLTRB(170, 20, 670, 20),
+          padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
           child: BlocBuilder<SettingsCubit, SettingsState>(
             builder: (_, state) {
               if (state is SettingsAvailable) {
