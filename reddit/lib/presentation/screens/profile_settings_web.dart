@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:reddit/business_logic/cubit/settings/settings_cubit.dart';
+import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/data/model/user_settings.dart';
 
 class ProfileSettingsWeb extends StatefulWidget {
@@ -17,6 +18,7 @@ class ProfileSettingsWeb extends StatefulWidget {
 
 class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
   late Settings profileSettings;
+  late Responsive responsive;
   late TextEditingController displayName;
   late TextEditingController about;
   String displayNameTxt = '';
@@ -33,24 +35,6 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
   void initState() {
     super.initState();
     profileSettings = BlocProvider.of<SettingsCubit>(context).getUserSettings();
-  }
-
-  bool isSmallSizedScreen() {
-    return MediaQuery.of(context).size.width < 600 ? true : false;
-  }
-
-  bool isMediumSizedScreen() {
-    return MediaQuery.of(context).size.width >= 600 &&
-            MediaQuery.of(context).size.width < 1000
-        ? true
-        : false;
-  }
-
-  bool isLargeSizedScreen() {
-    return MediaQuery.of(context).size.width >= 1000 &&
-            MediaQuery.of(context).size.width < 1300
-        ? true
-        : false;
   }
 
   bool isXLargeSizedScreen() {
@@ -122,10 +106,10 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
-            flex: isSmallSizedScreen() ? 0 : 1,
+            flex: responsive.isSmallSizedScreen() ? 0 : 1,
             child: const SizedBox(width: 10)),
         Expanded(
-          flex: isMediumSizedScreen() ? 4 : 3,
+          flex: responsive.isMediumSizedScreen() ? 4 : 3,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -257,9 +241,9 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
                       child: Container(
                         width: isXLargeSizedScreen()
                             ? 425
-                            : isLargeSizedScreen()
+                            : responsive.isLargeSizedScreen()
                                 ? 0.3 * (MediaQuery.of(context).size.width)
-                                : isMediumSizedScreen()
+                                : responsive.isMediumSizedScreen()
                                     ? 0.4 * (MediaQuery.of(context).size.width)
                                     : (MediaQuery.of(context).size.width - 160),
                         height: 120,
@@ -381,11 +365,11 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
           ),
         ),
         Expanded(
-            flex: isSmallSizedScreen()
+            flex: responsive.isSmallSizedScreen()
                 ? 0
-                : isMediumSizedScreen()
+                : responsive.isMediumSizedScreen()
                     ? 1
-                    : isLargeSizedScreen()
+                    : responsive.isLargeSizedScreen()
                         ? 2
                         : 3,
             child: const SizedBox(width: 10)),
@@ -403,6 +387,7 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
           child: BlocBuilder<SettingsCubit, SettingsState>(
             builder: (_, state) {
               if (state is SettingsAvailable) {
+                responsive = Responsive(context);
                 profileSettings = state.settings;
                 displayName =
                     TextEditingController(text: profileSettings.displayName);
