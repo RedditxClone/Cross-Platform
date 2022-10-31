@@ -14,10 +14,7 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => const SignupMobile(),
         );
-      case 'Home':
-        return MaterialPageRoute(
-          builder: (_) => const Home(),
-        );
+
       /*
       case example:
       case '/':

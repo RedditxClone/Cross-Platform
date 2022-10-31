@@ -52,12 +52,12 @@ android {
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
-    signingConfig{
-        debug{
+    signingConfigs {
+        debug {
             keyAlias 'androiddebugkey'
             keyPassword 'redditx'
-            storeFile file('./src/mykey.jks')
             storePassword 'redditx'
+            storeFile file('mykey.jks')
         }
     }
     buildTypes {

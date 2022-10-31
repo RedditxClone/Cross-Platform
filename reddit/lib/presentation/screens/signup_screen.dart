@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:reddit/presentation/screens/home.dart';
 import '../../data/web_services/authorization/login_conroller.dart';
 import '../../helper/dio.dart';
 
@@ -21,16 +21,9 @@ class _SignupMobileState extends State<SignupMobile> {
   bool emailCorrect = false;
   bool passwordCorrect = false;
   bool redundantUsername = false;
-  GoogleSignIn? _currentUser;
   @override
   void initState() {
     super.initState();
-    // _currentUser = GoogleSignIn(
-    //   scopes: [
-    //     'profile',
-    //     'email',
-    //   ],
-    // );
   }
 
   void togglePasswordVisible() {
@@ -64,27 +57,27 @@ class _SignupMobileState extends State<SignupMobile> {
   //     print(error);
   //   }
   // }
-  void checkOnUsername(value) async {
-    try {
-      var res = await DioHelper.getData(url: '/api/user/usernamecheck', query: {
-        'username': value,
-      }) as Response;
-      var resData = res.data as Map<String, dynamic>;
-      print(resData.runtimeType);
-      if (value.length < 3 || resData['state'] as bool == false) {
-        print(resData['state']);
-        setState(() {
-          redundantUsername = true;
-        });
-      } else {
-        setState(() {
-          redundantUsername = false;
-        });
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
+  // void checkOnUsername(value) async {
+  //   try {
+  //     var res = await DioHelper.getData(url: '/api/user/usernamecheck', query: {
+  //       'username': value,
+  //     }) as Response;
+  //     var resData = res.data as Map<String, dynamic>;
+  //     print(resData.runtimeType);
+  //     if (value.length < 3 || resData['state'] as bool == false) {
+  //       print(resData['state']);
+  //       setState(() {
+  //         redundantUsername = true;
+  //       });
+  //     } else {
+  //       setState(() {
+  //         redundantUsername = false;
+  //       });
+  //     }
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
 
   void signUpContinue(BuildContext ctx) async {
     if (emailCorrect && !usernameError) {}
@@ -121,6 +114,19 @@ class _SignupMobileState extends State<SignupMobile> {
 
   Future signInWithGoogle() async {
     var googleAccount = await GoogleSingInApi.login();
+    if (googleAccount != null) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => Home(googleSignInAccount: googleAccount),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Error in Signing in with Google"),
+        ),
+      );
+    }
   }
 
   Widget createContinueWithButton(String lable) {
@@ -286,7 +292,7 @@ class _SignupMobileState extends State<SignupMobile> {
                                 usernameError =
                                     value.contains(RegExp(r'[^a-zA-Z0-9_-]'));
                               }),
-                              onSubmitted: (value) => checkOnUsername(value),
+                              // onSubmitted: (value) => checkOnUsername(value),
                               textInputAction: TextInputAction.next,
                             ),
                             const SizedBox(height: 10),
