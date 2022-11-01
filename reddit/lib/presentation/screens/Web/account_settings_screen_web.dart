@@ -18,18 +18,14 @@ class AccountSettingsScreenWeb extends StatefulWidget {
 
 class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
   AccountSettingsModel? accountSettings;
-  // bool _allowPeopleToFollowYou = true;
-  // get this value from api
-  // bool _isMan = true;
   String _country = "";
-  // String _countryCode = "";
-  // TODO: make it responsive
   final titleColor = const Color.fromRGBO(215, 218, 220, 1);
 
   final subtitleColor = const Color.fromRGBO(129, 131, 132, 1);
 
   final backgroundColor = const Color.fromRGBO(26, 26, 27, 1);
   var _isMale = 0;
+  // Country Learn more URL
   final Uri _countryLearnMoreUrl =
       Uri.parse('https://reddithelp.com/hc/en-us/articles/360062429491');
   @override
@@ -38,10 +34,18 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
     BlocProvider.of<AccountSettingsCubit>(context).getAccountSettings();
   }
 
+  /// Function that return true if the width of the screen is considered small.
+  ///
+  /// Small width = 650
+  /// Used in responsive design
   bool _isSmallSizedScreen() {
     return MediaQuery.of(context).size.width < 650 ? true : false;
   }
 
+  /// Function that return true if the width of the screen is considered medium.
+  ///
+  /// Medium width = 650 -> 1000
+  /// Used in responsive design
   bool _isMediumSizedScreen() {
     return MediaQuery.of(context).size.width >= 650 &&
             MediaQuery.of(context).size.width < 1000
@@ -49,6 +53,10 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
         : false;
   }
 
+  /// Function that return true if the width of the screen is considered large.
+  ///
+  /// Medium width > 1000
+  /// Used in responsive design
   bool _isLargeSizedScreen() {
     return (MediaQuery.of(context).size.width >= 1000) ? true : false;
   }
@@ -62,7 +70,7 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
           if (state is AccountSettingsLoaded) {
             accountSettings = state.accSettings;
             _isMale = accountSettings!.gender == "M" ? 1 : 0;
-
+            // Get country name from country code returned from server
             for (var map in countryNamesMap) {
               if (map["code"] == accountSettings!.countryCode) {
                 _country = map["name"]!;
@@ -117,11 +125,17 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
               ],
             );
           } else {
-            return Container();
+            return const Center(
+              child: CircularProgressIndicator(
+                color: Colors.yellow,
+              ),
+            );
+            ;
           }
         }));
   }
 
+  /// Builds the UI of the Account Preferences category of Account Settings
   Widget _accountPreferencesWidget() {
     // ignore: sized_box_for_whitespace
     return Container(
@@ -306,6 +320,7 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
     );
   }
 
+  /// Builds the UI of the Connected Accounts category of Account Settings
   Widget _connectedAccountsWidget() {
     // ignore: sized_box_for_whitespace
     return Container(
@@ -354,6 +369,7 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
     );
   }
 
+  /// Builds the UI of the Delete Account category of Account Settings
   Widget _deleteAccountWidget() {
     // ignore: sized_box_for_whitespace
     return Container(
@@ -401,6 +417,7 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
     );
   }
 
+  /// Builds the UI of each element inside Account Settings
   Widget _accountSettingsElement(title, subtitle, suffixWidget) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 20),
@@ -442,6 +459,7 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
     }
   }
 
+  /// Builds the UI of the Country element inside Account Settings
   Widget _countryElement() {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 20),
@@ -483,6 +501,7 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
     );
   }
 
+  /// Builds the Round button used in "Change email", "Change Password"
   Widget _rounderButton(title, onPressedFunc) {
     // ignore: sized_box_for_whitespace
     return Container(
@@ -501,6 +520,7 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
     );
   }
 
+  /// Builds the dropdown list of "Choose Country"
   Widget _genderDropDown() {
     // ignore: sized_box_for_whitespace
     return Container(

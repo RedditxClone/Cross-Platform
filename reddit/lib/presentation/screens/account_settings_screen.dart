@@ -50,6 +50,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
         if (state is AccountSettingsLoaded) {
           accountSettings = state.accSettings;
           _isMan = accountSettings!.gender == "M" ? true : false;
+          // Get country name from country code returned from server
           for (var map in countryNamesMap) {
             if (map["code"] == accountSettings!.countryCode) {
               _country = map["name"]!;
@@ -140,10 +141,6 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               print("countryMap: $countryMap");
               accountSettings!.countryCode =
                   countryMap["code"] ?? accountSettings!.countryCode;
-              // // setState(() {
-              // _country = countryMap["name"] ?? _country;
-              // print("country name: $_country");
-              // });
               BlocProvider.of<AccountSettingsCubit>(context)
                   .updateAccountSettings(accountSettings!);
             },
