@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:reddit/business_logic/bloc/email_settings_bloc.dart';
+import 'package:reddit/business_logic/cubit/email_settings_cubit.dart';
 import 'package:reddit/data/repository/email_settings_repo.dart';
+import 'package:reddit/data/web_services/email_settings_web_services.dart';
 import 'presentation/screens/email_settings_web.dart';
 import 'presentation/screens/home_page.dart';
-import 'presentation/screens/safety_settings_web.dart';
 
 class AppRouter {
   // declare repository and cubit objects
-  late EmailSettingsReposity emailSettingsReposity;
-  late EmailSettingsBloc emailSettingsBloc;
+  late EmailSettingsRepository emailSettingsReposity;
+  late EmailSettingsCubit emailSettingsCubit;
+  late EmailSettingsWebServices emailSettingsWebServices;
 
   AppRouter() {
     // initialise repository and cubit objects
-    emailSettingsReposity = EmailSettingsReposity();
-    emailSettingsBloc = EmailSettingsBloc(emailSettingsReposity);
+    emailSettingsReposity = EmailSettingsRepository(emailSettingsWebServices);
+    emailSettingsCubit = EmailSettingsCubit(emailSettingsReposity);
   }
   Route? generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -24,8 +25,8 @@ class AppRouter {
       case '/emailSettings':
         return MaterialPageRoute(
             builder: (_) => BlocProvider.value(
-                  value: emailSettingsBloc,
-                  child: const EmailSettingsWeb(userId: 1),
+                  value: emailSettingsCubit,
+                  child: const EmailSettingsWeb(),
                 ));
       /*
       case example:
