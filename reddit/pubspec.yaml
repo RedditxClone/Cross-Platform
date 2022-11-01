@@ -33,6 +33,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_bloc: ^8.1.1
+  flutter_facebook_auth: ^5.0.1
   google_sign_in: ^5.4.2
   icons_plus: ^3.0.0
   shared_preferences: ^2.0.15

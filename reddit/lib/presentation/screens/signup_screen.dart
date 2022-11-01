@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:reddit/data/model/signin.dart';
 import 'package:reddit/presentation/screens/home.dart';
 import '../../data/web_services/authorization/login_conroller.dart';
 import '../../helper/dio.dart';
@@ -14,13 +15,14 @@ class SignupMobile extends StatefulWidget {
 
 class _SignupMobileState extends State<SignupMobile> {
   bool passwordVisible = true;
-  var emailController = TextEditingController(text: '');
+  var emailController = TextEditingController();
   var usernameController = TextEditingController();
   var passwordController = TextEditingController();
   bool usernameError = false;
   bool emailCorrect = false;
   bool passwordCorrect = false;
   bool redundantUsername = false;
+  late User newUser;
   @override
   void initState() {
     super.initState();
@@ -30,33 +32,6 @@ class _SignupMobileState extends State<SignupMobile> {
     passwordVisible = !passwordVisible;
   }
 
-  // void _handleSignIn() async {
-  //   try {
-  //     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-  //     final GoogleSignInAuthentication googleAuth =
-  //         await googleUser!.authentication;
-  //     final AuthCredential credential = GoogleAuthProvider.credential(
-  //       accessToken: googleAuth.accessToken,
-  //       idToken: googleAuth.idToken,
-  //     );
-  //     final UserCredential userCredential =
-  //         await FirebaseAuth.instance.signInWithCredential(credential);
-  //     final User? user = userCredential.user;
-  //     if (user != null) {
-  //       final User currentUser = await _currentUser!.signInSilently();
-  //       assert(user.uid == currentUser.uid);
-  //       print('signInWithGoogle succeeded: $user');
-  //       Navigator.push(
-  //         context,
-  //         MaterialPageRoute(
-  //           builder: (context) => Home(),
-  //         ),
-  //       );
-  //     }
-  //   } catch (error) {
-  //     print(error);
-  //   }
-  // }
   // void checkOnUsername(value) async {
   //   try {
   //     var res = await DioHelper.getData(url: '/api/user/usernamecheck', query: {
@@ -80,24 +55,23 @@ class _SignupMobileState extends State<SignupMobile> {
   // }
 
   void signUpContinue(BuildContext ctx) async {
-    if (emailCorrect && !usernameError) {}
-    var res = await DioHelper.postData(url: '/api/auth/signup', data: {
-      "email": emailController.text,
-      "password": passwordController.text,
-      "name": usernameController.text,
-      "birthdate": "2022-10-27T18:44:44.105Z",
-      "image": "null"
-    }) as Response;
-    if (res.statusCode == 201) {
-      print(res.data);
-      Navigator.of(ctx).pushNamed(
-        "Home",
-        arguments: res.data,
-      );
-    } else {
-      setState(() {
-        usernameError = true;
-      });
+    if (emailCorrect && !usernameError) {
+      var res = await DioHelper.postData(url: '/api/auth/signup', data: {
+        "email": emailController.text,
+        "password": passwordController.text,
+        "name": usernameController.text,
+      }) as Response;
+      if (res.statusCode == 201) {
+        print(res.data);
+        Navigator.of(ctx).pushNamed(
+          "Home",
+          arguments: res.data,
+        );
+      } else {
+        setState(() {
+          usernameError = true;
+        });
+      }
     }
   }
 
@@ -113,14 +87,28 @@ class _SignupMobileState extends State<SignupMobile> {
   }
 
   Future signInWithGoogle() async {
-    var googleAccount = await GoogleSingInApi.login();
-    if (googleAccount != null) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => Home(googleSignInAccount: googleAccount),
-        ),
-      );
-    } else {
+    try {
+      var googleAccount = await GoogleSingInApi.loginMob();
+      if (googleAccount != null) {
+        newUser = User(
+          userId: googleAccount.id,
+          email: googleAccount.email,
+          name: googleAccount.displayName??'',
+          imageUrl: googleAccount.photoUrl??'',
+        );
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => Home(user: newUser),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Error in Signing in with Google"),
+          ),
+        );
+      }
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Error in Signing in with Google"),
@@ -129,11 +117,33 @@ class _SignupMobileState extends State<SignupMobile> {
     }
   }
 
+  void signInWithFacebook() async {
+    // try {
+    // var facebookAccount = await FacebookAuth.instance.login();
+    // if (facebookAccount != null) {
+    //   Navigator.of(context).pushReplacement(
+    //     MaterialPageRoute(
+    //       builder: (context) => Home(facebookSignInAccount: facebookAccount),
+    //     ),
+    // );
+    // } else {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     SnackBar(
+    //       content: Text("Error in Signing in with Facebook"),
+    //     ),
+    //   );
+    // }
+    // } catch (e) {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     SnackBar(
+    //       content: Text("Error in Signing in with Facebook"),
+    //     ),
+    //   );
+    // }
+  }
   Widget createContinueWithButton(String lable) {
     return OutlinedButton(
-      onPressed: () {
-        signInWithGoogle();
-      },
+      onPressed: lable == 'google' ? signInWithGoogle : signInWithFacebook,
       style: OutlinedButton.styleFrom(
         side: const BorderSide(color: Colors.blue, width: 1),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),

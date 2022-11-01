@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 
+import '../../data/model/signin.dart';
+import '../../data/web_services/authorization/login_conroller.dart';
+import 'home.dart';
+
 class SignupWeb extends StatefulWidget {
   const SignupWeb({super.key});
 
@@ -9,6 +13,7 @@ class SignupWeb extends StatefulWidget {
 }
 
 class _SignupWebState extends State<SignupWeb> {
+  late User newUser;
   TextSpan createTextSpan(String txt, bool isUrl) {
     return TextSpan(
       text: txt,
@@ -22,7 +27,7 @@ class _SignupWebState extends State<SignupWeb> {
 
   Widget createContinueWithButton(String lable) {
     return OutlinedButton.icon(
-      onPressed: () {},
+      onPressed: lable == 'google' ? signInWithGoogle : () {},
       icon: Logo(
         lable == 'google' ? Logos.google : Logos.facebook_logo,
         size: 20,
@@ -51,6 +56,37 @@ class _SignupWebState extends State<SignupWeb> {
     );
   }
 
+  Future signInWithGoogle() async {
+    try {
+      var googleAccount = await GoogleSingInApi.loginWeb();
+      if (googleAccount != null) {
+        newUser = User(
+          userId: googleAccount.id,
+          email: googleAccount.email,
+          name: googleAccount.displayName??'',
+          imageUrl: googleAccount.photoUrl??'',
+        );
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => Home(user: newUser),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Error in Signing in with Google"),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Error in Signing in with Google"),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     const textStyleForPolicy = TextStyle(
@@ -67,123 +103,104 @@ class _SignupWebState extends State<SignupWeb> {
       body: SingleChildScrollView(
         child: Row(
           children: [
-            // SizedBox(
-            //   height: double.infinity,
-            //   child: Image.asset(
-            //     'assets/images/sidelogo.png',
-            //     width: MediaQuery.of(context).size.width * 0.09,
-            //     fit: BoxFit.fitHeight,
-            //   ),
-            // ),
-            // Container(
-            //   // width: MediaQuery.of(context).size.width * 0.91,
-            //   height: double.infinity,
-            //   margin: const EdgeInsets.all(0),
-            //   padding: EdgeInsets.only(
-            //       left: MediaQuery.of(context).size.width * 0.02),
-            //   child: Column(
-            //     // mainAxisAlignment: MainAxisAlignment.spaceAround,
-            //     children: [
-            //       Column(
-            //         crossAxisAlignment: CrossAxisAlignment.start,
-            //         children: [
-            //           const Text(
-            //             "Sign Up",
-            //             style: TextStyle(
-            //               fontSize: 20,
-            //               fontWeight: FontWeight.bold,
-            //               color: Colors.black,
-            //             ),
-            //           ),
-            //           SizedBox(
-            //             height: MediaQuery.of(context).size.height * 0.01,
-            //           ),
-            //           const Text(
-            //             "By continuing, you are setting up a Reddit",
-            //             style: textStyleForPolicy,
-            //           ),
-            //           SizedBox(
-            //             height: MediaQuery.of(context).size.height * 0.005,
-            //           ),
-            //           Row(
-            //             children: [
-            //               const Text(
-            //                 "account and agree to our ",
-            //                 style: textStyleForPolicy,
-            //               ),
-            //               InkWell(
-            //                 onTap: () => print("click"),
-            //                 child: const Text(
-            //                   "User Agreement",
-            //                   style: textStyleForLinks,
-            //                 ),
-            //               ),
-            //               const Text(" and ", style: textStyleForPolicy),
-            //               InkWell(
-            //                 onTap: () => print("click"),
-            //                 child: const Text(
-            //                   "Privacy Policy",
-            //                   style: textStyleForLinks,
-            //                 ),
-            //               ),
-            //             ],
-            //           ),
-            //         ],
-            //       ),
-            //       Column(
-            //         children: [
-            //           createContinueWithButton("google"),
-            //           SizedBox(
-            //             height: MediaQuery.of(context).size.height * 0.01,
-            //           ),
-            //           createContinueWithButton("facebook"),
-            //         ],
-            //       ),
-                  // Row(
-                  //   children: const <Widget>[
-                  //     Divider(
-                  //       height: 20,
-                  //       thickness: 5,
-                  //       indent: 20,
-                  //       endIndent: 0,
-                  //       color: Colors.black,
-                  //     ),
-                  //     Text(
-                  //       "OR",
-                  //       style: TextStyle(
-                  //         color: Color.fromARGB(255, 85, 83, 83),
-                  //         fontSize: 17,
-                  //       ),
-                  //     ),
-                  //     Divider(
-                  //       height: 20,
-                  //       thickness: 5,
-                  //       indent: 20,
-                  //       endIndent: 0,
-                  //       color: Colors.black,
-                  //     ),
-                  //   ],
-                  // ),
-                  // Container(
-                  //   width: 400,
-                  //   child: TextField(
-                  //     decoration: InputDecoration(
-                  //       border: OutlineInputBorder(
-                  //         borderRadius: BorderRadius.all(
-                  //           Radius.circular(8),
-                  //         ),
-                  //       ),
-                  //       labelText: 'Username',
-                  //     ),
-                  //     maxLines: 1,
-                  //     maxLength: 50,
-                  //     keyboardType: TextInputType.text,
-                  //   ),
-                  // ),
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.09,
+              height: MediaQuery.of(context).size.height,
+              child: Image.asset(
+                'assets/images/sidelogo.png',
+                fit: BoxFit.fitHeight,
+              ),
+            ),
+            Container(
+              height: MediaQuery.of(context).size.height,
+              padding: EdgeInsets.only(
+                  left: MediaQuery.of(context).size.width * 0.02),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Sign Up",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.01,
+                      ),
+                      const Text(
+                        "By continuing, you are setting up a Reddit",
+                        style: textStyleForPolicy,
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.005,
+                      ),
+                      Row(
+                        children: [
+                          const Text(
+                            "account and agree to our ",
+                            style: textStyleForPolicy,
+                          ),
+                          InkWell(
+                            onTap: () => print("click"),
+                            child: const Text(
+                              "User Agreement",
+                              style: textStyleForLinks,
+                            ),
+                          ),
+                          const Text(" and ", style: textStyleForPolicy),
+                          InkWell(
+                            onTap: () => print("click"),
+                            child: const Text(
+                              "Privacy Policy",
+                              style: textStyleForLinks,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      createContinueWithButton("google"),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.01,
+                      ),
+                      createContinueWithButton("facebook"),
+                    ],
+                  ),
+                  const Center(
+                    child: Text(
+                      "OR",
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 85, 83, 83),
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const Center(
+                    child: TextField(
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(8),
+                          ),
+                        ),
+                        labelText: 'Email',
+                      ),
+                      maxLines: 1,
+                      keyboardType: TextInputType.emailAddress,
+                    ),
+                  ),
                 ],
-              // ),
-            // )
-          // ],
+              ),
+            )
+          ],
         ),
       ),
     );
