@@ -343,9 +343,11 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 title == "Google"
-                    ? Image.network(
-                        'http://pngimg.com/uploads/google/google_PNG19635.png',
-                        fit: BoxFit.cover)
+                    ? Image.asset(
+                        'assets/icon/google.png',
+                        width: 25,
+                        height: 25,
+                      )
                     : const Icon(Icons.facebook),
               ],
             ),
@@ -417,10 +419,12 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Switch(
+                  key: const Key("allow_people_to_follow_you"),
                   value: accountSettings!.enableFollowers,
                   onChanged: ((value) {
                     accountSettings!.enableFollowers = value;
                     // Update settings request
+                    print('Calls update account settings function');
                     BlocProvider.of<AccountSettingsCubit>(context)
                         .updateAccountSettings(accountSettings!);
                   }),

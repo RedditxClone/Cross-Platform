@@ -26,12 +26,11 @@ class AccountSettingsWebServices {
       return response.data;
     } catch (e) {
       print(e);
-      return [];
+      return "";
     }
   }
 
-  Future<void> updateAccountSettings(
-      Map<String, dynamic> newAccSettings) async {
+  Future<int> updateAccountSettings(Map<String, dynamic> newAccSettings) async {
     try {
       Response response = await dio.patch(
         'user/me/prefs',
@@ -42,8 +41,10 @@ class AccountSettingsWebServices {
       } else {
         print("Failed to updateAccount settings");
       }
+      return response.statusCode!;
     } catch (e) {
       print(e);
+      return 404;
     }
   }
 }

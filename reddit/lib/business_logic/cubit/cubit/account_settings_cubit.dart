@@ -12,6 +12,7 @@ class AccountSettingsCubit extends Cubit<AccountSettingsState> {
       : super(AccountSettingsInitial());
   // gets characters from repository and sends it to the state (ui)
   void getAccountSettings() {
+    emit(AccountSettingsLoading());
     accountSettingsRepository.getAccountSettings().then((accountSettings) {
       // start the state existing in characters_state
       // here you sent characters list to characters loaded state

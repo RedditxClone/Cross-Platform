@@ -21,6 +21,21 @@ class AccountSettingsModel {
       required this.emailMessages,
       required this.defaultCommentSort,
       required this.showFlair});
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AccountSettingsModel &&
+          countryCode == other.countryCode &&
+          enableFollowers == other.enableFollowers &&
+          gender == other.gender &&
+          over18 == other.over18 &&
+          numComments == other.numComments &&
+          emailUpvotePost == other.emailUpvotePost &&
+          emailUpvoteComment == other.emailUpvoteComment &&
+          emailMessages == other.emailMessages &&
+          defaultCommentSort == other.defaultCommentSort &&
+          showFlair == other.showFlair;
   AccountSettingsModel.fromJson(Map<String, dynamic> json) {
     print("Account settings from model:");
     print("$json");
