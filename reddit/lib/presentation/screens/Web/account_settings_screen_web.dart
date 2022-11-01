@@ -1,6 +1,8 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../business_logic/cubit/cubit/account_settings_cubit.dart';
 import '../../../constants/country_names.dart';
@@ -28,10 +30,27 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
 
   final backgroundColor = const Color.fromRGBO(26, 26, 27, 1);
   var _isMale = 0;
+  final Uri _countryLearnMoreUrl =
+      Uri.parse('https://reddithelp.com/hc/en-us/articles/360062429491');
   @override
   void initState() {
     super.initState();
     BlocProvider.of<AccountSettingsCubit>(context).getAccountSettings();
+  }
+
+  bool _isSmallSizedScreen() {
+    return MediaQuery.of(context).size.width < 650 ? true : false;
+  }
+
+  bool _isMediumSizedScreen() {
+    return MediaQuery.of(context).size.width >= 650 &&
+            MediaQuery.of(context).size.width < 1000
+        ? true
+        : false;
+  }
+
+  bool _isLargeSizedScreen() {
+    return (MediaQuery.of(context).size.width >= 1000) ? true : false;
   }
 
   @override
@@ -49,30 +68,53 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
                 _country = map["name"]!;
               }
             }
-            return Container(
-              padding: const EdgeInsets.fromLTRB(50, 50, 40, 0),
-              constraints: const BoxConstraints(maxWidth: 800),
-              child: ListView(
-                children: [
-                  // title
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
-                    child: Text(
-                      "Account Settings",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                        color: titleColor,
-                      ),
+            return Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: Container(),
+                ),
+                Expanded(
+                  flex: _isLargeSizedScreen()
+                      ? 4
+                      : _isMediumSizedScreen()
+                          ? 5
+                          : 9,
+                  child: Container(
+                    // padding: const EdgeInsets.fromLTRB(50, 50, 40, 0),
+                    constraints: const BoxConstraints(maxWidth: 800),
+                    child: ListView(
+                      children: [
+                        // title
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+                          child: Text(
+                            "Account Settings",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500,
+                              color: titleColor,
+                            ),
+                          ),
+                        ),
+                        // subtitle
+                        _accountPreferencesWidget(),
+                        _connectedAccountsWidget(),
+                        _deleteAccountWidget()
+                        //
+                      ],
                     ),
                   ),
-                  // subtitle
-                  _accountPreferencesWidget(),
-                  _connectedAccountsWidget(),
-                  _deleteAccountWidget()
-                  //
-                ],
-              ),
+                ),
+                Expanded(
+                  flex: _isLargeSizedScreen()
+                      ? 3
+                      : _isMediumSizedScreen()
+                          ? 2
+                          : 1,
+                  child: Container(),
+                ),
+              ],
             );
           } else {
             return Container();
@@ -237,11 +279,7 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
             "Reddit will never share this information and only uses it to improve what content you see.",
             _genderDropDown(),
           ),
-          _accountSettingsElement(
-            "Country",
-            "This is your primary location. Learn more",
-            null,
-          ),
+          _countryElement(),
           // Country dropdown list
           DropdownButton(
             // Initial Value
@@ -393,6 +431,53 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
                 ],
               )),
           suffixWidget ?? Container()
+        ],
+      ),
+    );
+  }
+
+  Future<void> _launchUrl(url) async {
+    if (!await launchUrl(url)) {
+      throw 'Could not launch $url';
+    }
+  }
+
+  Widget _countryElement() {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Expanded(
+              flex: 20,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Country",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: titleColor,
+                    ),
+                  ),
+                  RichText(
+                    text: TextSpan(children: [
+                      TextSpan(
+                          text: "This is your primary location.",
+                          style: TextStyle(color: Colors.grey.shade500)),
+                      TextSpan(
+                        text: " Learn more",
+                        style: const TextStyle(color: Colors.blue),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            _launchUrl(_countryLearnMoreUrl);
+                          },
+                      ),
+                    ]),
+                  ),
+                ],
+              )),
         ],
       ),
     );
