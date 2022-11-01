@@ -10,6 +10,17 @@ class AccountSettingsModel {
   late bool emailMessages;
   late int defaultCommentSort;
   late bool showFlair;
+  AccountSettingsModel(
+      {required this.countryCode,
+      required this.enableFollowers,
+      required this.gender,
+      required this.over18,
+      required this.numComments,
+      required this.emailUpvotePost,
+      required this.emailUpvoteComment,
+      required this.emailMessages,
+      required this.defaultCommentSort,
+      required this.showFlair});
   AccountSettingsModel.fromJson(Map<String, dynamic> json) {
     print("Account settings from model:");
     print("$json");
