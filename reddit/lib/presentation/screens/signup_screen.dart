@@ -96,11 +96,11 @@ class _SignupMobileState extends State<SignupMobile> {
           name: googleAccount.displayName??'',
           imageUrl: googleAccount.photoUrl??'',
         );
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => Home(user: newUser),
-          ),
-        );
+        // Navigator.of(context).pushReplacement(
+        //   MaterialPageRoute(
+        //     builder: (context) => Home(user: newUser),
+        //   ),
+        // );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

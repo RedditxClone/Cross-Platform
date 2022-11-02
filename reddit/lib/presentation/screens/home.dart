@@ -4,9 +4,18 @@ import 'package:reddit/data/web_services/authorization/login_conroller.dart';
 import '../../data/model/signin.dart';
 
 //for testing and will be deleted
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   const Home({Key? key, required this.user}) : super(key: key);
   final User user;
+
+  @override
+  State<Home> createState() => _HomeState(user);
+}
+
+class _HomeState extends State<Home> {
+  final User user;
+
+  _HomeState(this.user);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,26 +26,27 @@ class Home extends StatelessWidget {
         child: Column(
           children: [
             CircleAvatar(
-              backgroundImage: NetworkImage(user.imageUrl),
+              backgroundImage:
+                  user.imageUrl != null ? NetworkImage(user.imageUrl!) : null,
               radius: 100,
             ),
             Text(
-              user.name,
+              user.name!=null?user.name!:"null",
               style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            Text(
-              user.email,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            // Text(
+            //   widget.user.email,
+            //   style: const TextStyle(
+            //     fontSize: 20,
+            //     fontWeight: FontWeight.bold,
+            //   ),
+            // ),
             ElevatedButton(
               onPressed: () async {
-                var res = await GoogleSingInApi.signoutMob();
+                var res = await GoogleSingInApi.signoutWeb();
                 if (res == null) {
                   Navigator.of(context).pushReplacementNamed('/');
                 } else {

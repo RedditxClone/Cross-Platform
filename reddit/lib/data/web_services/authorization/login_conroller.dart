@@ -26,6 +26,6 @@ class GoogleSingInApi {
 
   static Future<GoogleSignInAccount?> loginWeb() => _googleSignInWeb.signIn();
   static Future<GoogleSignInAccount?> logoutWeb() => _googleSignInWeb.signOut();
-  static Future<GoogleSignInAccount?> signouWeb() =>
+  static Future<GoogleSignInAccount?> signoutWeb() =>
       _googleSignInWeb.disconnect();
 }

@@ -73,22 +73,21 @@
 // }
 
 class User {
-  late String userId;
-  late String name;
-  late String email;
-  late String imageUrl;
-  late String accessToken;
-
-  User({
-    required String userId,
-    required String name,
-    required String email,
-    required String imageUrl,
-  });
+  late String? userId;
+  late String? name;
+  late String? email;
+  late String? imageUrl;
+  late String? accessToken;
+  // final String? userId, name, email, imageUrl;
+  User(
+      {required this.userId,
+      required this.name,
+      required this.email,
+      required this.imageUrl});
   User.fromJson(Map<String, dynamic> json) {
     userId = json['userId'];
     name = json['userName'];
-    //email = json['email'];
+    email = json['email'];
     imageUrl = json['icon'];
   }
 }
