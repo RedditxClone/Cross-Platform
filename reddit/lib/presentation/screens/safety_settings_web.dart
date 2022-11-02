@@ -143,7 +143,8 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
                   onSubmitted: (value) {
                     BlocProvider.of<SettingsCubit>(context)
                         .updateSettings({'blocked': value});
-                    displayMsg(context, Colors.blue, 'Changes Saved');
+                    displayMsg(context, Colors.blue,
+                        '${blockedUsers.text} is now blocked');
                   },
                   controller: blockedUsers,
                   style: const TextStyle(fontSize: 16),
@@ -162,9 +163,11 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
                           // displayMsg(context, Colors.blue, '${blockedUsers.text} is now blocked');
                           //}
                           //else{
+
                           displayMsg(context, Colors.red,
                               'An error has occured. Please try again later');
                           //}
+                          blockedUsers.text = '';
                         },
                         child: Text(
                           'Add',
@@ -388,8 +391,7 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
             if (state is SettingsAvailable) {
               responsive = Responsive(context);
               safetySettings = state.settings;
-              blockedUsers =
-                  TextEditingController(text: safetySettings!.blocked);
+              blockedUsers = TextEditingController();
               return buildBody();
             } else if (state is SettingsChanged) {
               safetySettings = state.settings;

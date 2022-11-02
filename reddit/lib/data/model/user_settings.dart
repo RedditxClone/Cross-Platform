@@ -9,7 +9,7 @@ class Settings {
   late bool activeInCommunitiesVisibility;
   late bool contentVisibility;
   late String disroptiveSettings;
-  late String blocked;
+  late List<dynamic> blocked;
   late bool showUnInSearch;
   late bool personalizeAllOfReddit;
   late bool personalizeAdsInformation;
