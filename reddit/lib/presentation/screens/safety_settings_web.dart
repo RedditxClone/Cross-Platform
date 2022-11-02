@@ -3,6 +3,7 @@ import 'dart:html';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:reddit/business_logic/cubit/settings/settings_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/data/model/user_settings.dart';
@@ -16,10 +17,11 @@ class SafetySettingsWeb extends StatefulWidget {
 }
 
 class _SafetySettingsWebState extends State<SafetySettingsWeb> {
-  Settings safetySettings = Settings();
+  Settings? safetySettings;
   TextEditingController blockedUsers = TextEditingController();
   late Responsive responsive;
   String disruptiveComments = 'OFF';
+  Color _AddColor = Colors.grey;
   bool var1 = true;
   bool var2 = true;
   bool var3 = true;
@@ -30,7 +32,7 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
   @override
   void initState() {
     super.initState();
-    safetySettings = BlocProvider.of<SettingsCubit>(context).getUserSettings();
+    BlocProvider.of<SettingsCubit>(context).getUserSettings();
   }
 
   TextSpan createTextSpan(String txt, bool isUrl) {
@@ -49,6 +51,43 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
           }
         },
     );
+  }
+
+  void displayMsg(BuildContext context, Color color, String title) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      width: 400,
+      content: Container(
+          height: 50,
+          padding: const EdgeInsets.all(5),
+          decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              color: Colors.black,
+              borderRadius: const BorderRadius.all(Radius.circular(10))),
+          child: Row(
+            children: [
+              Container(
+                margin: const EdgeInsets.only(right: 10),
+                decoration: BoxDecoration(
+                    color: color,
+                    borderRadius: const BorderRadius.all(Radius.circular(10))),
+                width: 9,
+              ),
+              Logo(
+                Logos.reddit,
+                color: Colors.white,
+                size: 20,
+              ),
+              SizedBox(width: 10),
+              Text(
+                title,
+                style: const TextStyle(fontSize: 16, color: Colors.white),
+              ),
+            ],
+          )),
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+    ));
   }
 
   Widget title(String title, String subtitle) {
@@ -101,13 +140,36 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
               title('People You’ve Blocked',
                   'Blocked people can’t send you chat requests or private messages.'),
               TextField(
-                  //onSubmitted: (value) => BlocProvider.of<SettingsCubit>(context).changeDisplayName(blockedUsers.text),
+                  onSubmitted: (value) {
+                    BlocProvider.of<SettingsCubit>(context)
+                        .updateSettings({'blocked': value});
+                    displayMsg(context, Colors.blue, 'Changes Saved');
+                  },
                   controller: blockedUsers,
                   style: const TextStyle(fontSize: 16),
                   keyboardType: TextInputType.text,
                   decoration: InputDecoration(
-                    suffixText: 'Add',
-                    suffixStyle: const TextStyle(fontSize: 16),
+                    suffix: TextButton(
+                        onHover: (isHoverd) {
+                          setState(() {
+                            _AddColor = isHoverd ? Colors.white : Colors.grey;
+                          });
+                        },
+                        onPressed: () {
+                          //if(){ // if the user added exist
+                          // BlocProvider.of<SettingsCubit>(context)
+                          //     .updateSettings({'blocked': blockedUsers.text});
+                          // displayMsg(context, Colors.blue, '${blockedUsers.text} is now blocked');
+                          //}
+                          //else{
+                          displayMsg(context, Colors.red,
+                              'An error has occured. Please try again later');
+                          //}
+                        },
+                        child: Text(
+                          'Add',
+                          style: TextStyle(fontSize: 16, color: _AddColor),
+                        )),
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(3)),
                     contentPadding: const EdgeInsets.all(15),
@@ -132,11 +194,14 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
                                 child: Text(e),
                               ))
                           .toList(),
-                      value: safetySettings.disroptiveSettings,
+                      value: safetySettings!.disroptiveSettings,
                       onChanged: (val) {
                         setState(() {
-                          safetySettings.disroptiveSettings = val as String;
+                          safetySettings!.disroptiveSettings = val as String;
                           disruptiveComments = val;
+                          BlocProvider.of<SettingsCubit>(context)
+                              .updateSettings({'disruptiveComments': val});
+                          displayMsg(context, Colors.blue, 'Changes Saved');
                         });
                       })
                 ],
@@ -150,10 +215,13 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
               SwitchListTile(
                 activeColor: Colors.blue,
                 contentPadding: const EdgeInsets.all(0),
-                value: safetySettings.showUnInSearch,
+                value: safetySettings!.showUnInSearch,
                 onChanged: (newValue) {
                   setState(() {
-                    safetySettings.showUnInSearch = var1 = newValue;
+                    safetySettings!.showUnInSearch = var1 = newValue;
+                    BlocProvider.of<SettingsCubit>(context)
+                        .updateSettings({'showUnInSearch': newValue});
+                    displayMsg(context, Colors.blue, 'Changes Saved');
                   });
                 },
                 title: const Text('Show up in search results',
@@ -167,10 +235,13 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
               SwitchListTile(
                 activeColor: Colors.blue,
                 contentPadding: const EdgeInsets.all(0),
-                value: safetySettings.personalizeAllOfReddit,
+                value: safetySettings!.personalizeAllOfReddit,
                 onChanged: (newValue) {
                   setState(() {
-                    safetySettings.personalizeAllOfReddit = var2 = newValue;
+                    safetySettings!.personalizeAllOfReddit = var2 = newValue;
+                    BlocProvider.of<SettingsCubit>(context)
+                        .updateSettings({'personalizeAllOfReddit': newValue});
+                    displayMsg(context, Colors.blue, 'Changes Saved');
                   });
                 },
                 title: const Text(
@@ -185,10 +256,13 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
               SwitchListTile(
                 activeColor: Colors.blue,
                 contentPadding: const EdgeInsets.all(0),
-                value: safetySettings.personalizeAdsInformation,
+                value: safetySettings!.personalizeAdsInformation,
                 onChanged: (newValue) {
                   setState(() {
-                    safetySettings.personalizeAdsInformation = var3 = newValue;
+                    safetySettings!.personalizeAdsInformation = var3 = newValue;
+                    BlocProvider.of<SettingsCubit>(context).updateSettings(
+                        {'personalizeAdsInformation': newValue});
+                    displayMsg(context, Colors.blue, 'Changes Saved');
                   });
                 },
                 title: const Text(
@@ -203,10 +277,11 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
               SwitchListTile(
                 activeColor: Colors.blue,
                 contentPadding: const EdgeInsets.all(0),
-                value: safetySettings.personalizeAdsYourActivity,
+                value: safetySettings!.personalizeAdsYourActivity,
                 onChanged: (newValue) {
                   setState(() {
-                    safetySettings.personalizeAdsYourActivity = var4 = newValue;
+                    safetySettings!.personalizeAdsYourActivity =
+                        var4 = newValue;
                   });
                 },
                 title: const Text(
@@ -221,11 +296,14 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
               SwitchListTile(
                 activeColor: Colors.blue,
                 contentPadding: const EdgeInsets.all(0),
-                value: safetySettings.personalizeRecGeneralLocation,
+                value: safetySettings!.personalizeRecGeneralLocation,
                 onChanged: (newValue) {
                   setState(() {
-                    safetySettings.personalizeRecGeneralLocation =
+                    safetySettings!.personalizeRecGeneralLocation =
                         var5 = newValue;
+                    BlocProvider.of<SettingsCubit>(context).updateSettings(
+                        {'personalizeRecGeneralLocation': newValue});
+                    displayMsg(context, Colors.blue, 'Changes Saved');
                   });
                 },
                 title: const Text(
@@ -240,10 +318,13 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
               SwitchListTile(
                 activeColor: Colors.blue,
                 contentPadding: const EdgeInsets.all(0),
-                value: safetySettings.personalizeRecOurPartners,
+                value: safetySettings!.personalizeRecOurPartners,
                 onChanged: (newValue) {
                   setState(() {
-                    safetySettings.personalizeRecOurPartners = var6 = newValue;
+                    safetySettings!.personalizeRecOurPartners = var6 = newValue;
+                    BlocProvider.of<SettingsCubit>(context).updateSettings(
+                        {'personalizeRecOurPartners': newValue});
+                    displayMsg(context, Colors.blue, 'Changes Saved');
                   });
                 },
                 title: const Text(
@@ -262,10 +343,14 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
               SwitchListTile(
                 activeColor: Colors.blue,
                 contentPadding: const EdgeInsets.all(0),
-                value: safetySettings.useTwoFactorAuthentication,
+                value: safetySettings!.useTwoFactorAuthentication,
                 onChanged: (newValue) {
                   setState(() {
-                    safetySettings.useTwoFactorAuthentication = var7 = newValue;
+                    safetySettings!.useTwoFactorAuthentication =
+                        var7 = newValue;
+                    BlocProvider.of<SettingsCubit>(context).updateSettings(
+                        {'useTwoFactorAuthentication': newValue});
+                    displayMsg(context, Colors.blue, 'Changes Saved');
                   });
                 },
                 title: const Text('Use two-factor authentication',
@@ -303,7 +388,8 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
             if (state is SettingsAvailable) {
               responsive = Responsive(context);
               safetySettings = state.settings;
-              //initialise controller
+              blockedUsers =
+                  TextEditingController(text: safetySettings!.blocked);
               return buildBody();
             } else if (state is SettingsChanged) {
               safetySettings = state.settings;

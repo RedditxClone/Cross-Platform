@@ -13,8 +13,14 @@ class SettingsRepository {
     return Settings.fromjson(jsonDecode(settings));
   }
 
-  Future<dynamic> updatePrefs(String key, val) async {
-    final newVal = await settingsWebServices.updatePrefs(key, val);
+  Future<dynamic> updateImage(String key, val) async {
+    Map newImage = {key: val};
+    final newVal = await settingsWebServices.updatePrefs(newImage);
     return jsonDecode(newVal)[key];
+  }
+
+  Future<dynamic> updatePrefs(Map Changed) async {
+    final newVal = await settingsWebServices.updatePrefs(Changed);
+    return newVal;
   }
 }
