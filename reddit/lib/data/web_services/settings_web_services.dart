@@ -1,11 +1,15 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/data/model/user_settings.dart';
 
 class SettingsWebServices {
   late Dio dio;
+  // String mockUrl = TargetPlatform.android == defaultTargetPlatform
+  //     ? "http://10.0.2.2:3000/"
+  //     : "http://127.0.0.1:3000/";
   String mockUrl =
-      'https://53abd284-fb16-44a0-9bc9-497fcd7a854d.mock.pstmn.io/';
+      'https://4e3b1a52-b358-471e-a853-ddbca4d767d5.mock.pstmn.io/';
   bool isMockerServer = true;
   SettingsWebServices() {
     BaseOptions options = BaseOptions(
@@ -25,14 +29,25 @@ class SettingsWebServices {
       return response.data;
     } catch (e) {
       print(e.toString());
-      return Settings();
+      return '';
+    }
+  }
+
+  /// updates a image
+  Future<String> updateImage(String key, value) async {
+    try {
+      Response response = await dio.patch('prefs', data: {key: value});
+      return response.data;
+    } catch (e) {
+      // print(e.toString());
+      return '';
     }
   }
 
   /// updates a user setting
-  Future<String> updatePrefs(String key, value) async {
+  Future<String> updatePrefs(Map changed) async {
     try {
-      Response response = await dio.patch('prefs', data: {key: value});
+      Response response = await dio.patch('prefs', data: changed);
       return response.data;
     } catch (e) {
       print(e.toString());

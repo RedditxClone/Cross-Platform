@@ -15,8 +15,9 @@ class ProfileSettings extends StatefulWidget {
 }
 
 class _ProfileSettingsState extends State<ProfileSettings> {
-  late Settings profileSettings;
+  Settings? profileSettings;
   late TextEditingController displayName;
+  Map changed = {};
   late TextEditingController about;
   String displayNameTxt = '';
   String aboutTxt = '';
@@ -84,7 +85,8 @@ class _ProfileSettingsState extends State<ProfileSettings> {
       switch (dest) {
         case 'cover':
           // imgCover = imageTemp;
-          BlocProvider.of<SettingsCubit>(context).changeCoverphoto('');
+          BlocProvider.of<SettingsCubit>(context)
+              .changeCoverphoto(profileSettings!, '');
           break;
         case 'profile':
           // imgProfile = imageTemp;
@@ -287,9 +289,9 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                 decoration: const BoxDecoration(
                   color: Color.fromRGBO(30, 30, 30, 100),
                 ),
-                child: (profileSettings.cover != '')
+                child: (profileSettings!.cover != '')
                     ? Image.network(
-                        profileSettings.cover,
+                        profileSettings!.cover,
                         fit: BoxFit.cover,
                       )
                     : const Icon(Icons.add_a_photo_outlined),
@@ -301,12 +303,12 @@ class _ProfileSettingsState extends State<ProfileSettings> {
               left: 20,
               child: Container(
                   decoration: const BoxDecoration(shape: BoxShape.circle),
-                  child: (profileSettings.profile != '' && imgProfile == null)
+                  child: (profileSettings!.profile != '' && imgProfile == null)
                       ? ClipOval(
                           child: InkWell(
                             onTap: () => chooseProfilePhotoBottomSheet(context),
                             child: Image.network(
-                              profileSettings.profile,
+                              profileSettings!.profile,
                               width: 80,
                               height: 80,
                               fit: BoxFit.cover,
@@ -362,7 +364,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                     style: TextStyle(fontSize: 17)),
                 const SizedBox(height: 10),
                 TextField(
-                    onSubmitted: (value) => displayName.text = value,
+                    onSubmitted: (value) => changed['displayName'] = value,
                     controller: displayName,
                     maxLength: 30,
                     style: const TextStyle(fontSize: 18),
@@ -385,7 +387,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                 ),
                 const SizedBox(height: 10),
                 TextField(
-                    onSubmitted: (value) => about.text = value,
+                    onSubmitted: (value) => changed['about'] = value,
                     controller: about,
                     minLines: 5,
                     maxLines: 20,
@@ -436,12 +438,14 @@ class _ProfileSettingsState extends State<ProfileSettings> {
           const SizedBox(height: 20),
 
           SwitchListTile(
+            key: const Key("allow_people_to_follow_you"),
             activeColor: Colors.blue,
-            value: profileSettings.contentVisibility,
+            value: profileSettings!.contentVisibility,
             onChanged: (newValue) {
               setState(() {
-                profileSettings.contentVisibility = newValue;
+                profileSettings!.contentVisibility = newValue;
                 contentVisibility = newValue;
+                changed['contentVisibility'] = newValue;
               });
             },
             title: const Text('Content visibility',
@@ -454,11 +458,12 @@ class _ProfileSettingsState extends State<ProfileSettings> {
           const SizedBox(height: 20),
           SwitchListTile(
             activeColor: Colors.blue,
-            value: profileSettings.activeInCommunitiesVisibility,
+            value: profileSettings!.activeInCommunitiesVisibility,
             onChanged: (newValue) {
               setState(() {
-                profileSettings.activeInCommunitiesVisibility = newValue;
+                profileSettings!.activeInCommunitiesVisibility = newValue;
                 showActiveCommunities = newValue;
+                changed['activeInCommunitiesVisibility'] = newValue;
               });
             },
             title: const Text('Show active communities',
@@ -483,10 +488,14 @@ class _ProfileSettingsState extends State<ProfileSettings> {
           actions: [
             TextButton(
                 onPressed: () {
-                  displayMsg(ctx, Colors.green, 'Success',
-                      'Your settings has been saved');
+                  print('ehhhhhhhhhhhh');
 
-                  // BlocProvider.of<SettingsCubit>(context).changeDisplayName(displayName.text)
+                  // displayMsg(ctx, Colors.green, 'Success','Your settings has been saved');
+
+                  if (changed.isNotEmpty) {
+                    BlocProvider.of<SettingsCubit>(context)
+                        .updateSettings(changed);
+                  }
                   // BlocProvider.of<SettingsCubit>(context).changeAbout(about.text)
                   // BlocProvider.of<SettingsCubit>(context).updateContentVisiblity(contentVisibility);
                   // BlocProvider.of<SettingsCubit>(context).updateShowactiveInCom(showActiveCommunities);
@@ -507,8 +516,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
         actions: [
           TextButton(
               onPressed: () {
-                displayMsg(context, Colors.green, 'Success',
-                    'Your settings has been saved');
+                // displayMsg(context, Colors.green, 'Success','Your settings has been saved');
               },
               child: const Text('Save', style: TextStyle(fontSize: 20)))
         ],
@@ -517,16 +525,18 @@ class _ProfileSettingsState extends State<ProfileSettings> {
         if (state is SettingsAvailable) {
           profileSettings = state.settings;
           displayName =
-              TextEditingController(text: profileSettings.displayName);
-          about = TextEditingController(text: profileSettings.about);
-          contentVisibility = profileSettings.contentVisibility;
-          showActiveCommunities = profileSettings.activeInCommunitiesVisibility;
+              TextEditingController(text: profileSettings!.displayName);
+          about = TextEditingController(text: profileSettings!.about);
+          contentVisibility = profileSettings!.contentVisibility;
+          showActiveCommunities =
+              profileSettings!.activeInCommunitiesVisibility;
           return buildEditProfileBody(context);
         } else if (state is SettingsChanged) {
           profileSettings = state.settings;
+          print('state changed');
           displayName =
-              TextEditingController(text: profileSettings.displayName);
-          about = TextEditingController(text: profileSettings.about);
+              TextEditingController(text: profileSettings!.displayName);
+          about = TextEditingController(text: profileSettings!.about);
 
           return buildEditProfileBody(context);
         } else {

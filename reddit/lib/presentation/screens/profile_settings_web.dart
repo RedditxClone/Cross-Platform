@@ -4,6 +4,7 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:reddit/business_logic/cubit/settings/settings_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
@@ -17,7 +18,7 @@ class ProfileSettingsWeb extends StatefulWidget {
 }
 
 class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
-  late Settings profileSettings;
+  Settings? profileSettings;
   late Responsive responsive;
   late TextEditingController displayName;
   late TextEditingController about;
@@ -34,11 +35,45 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
   @override
   void initState() {
     super.initState();
-    profileSettings = BlocProvider.of<SettingsCubit>(context).getUserSettings();
+
+    BlocProvider.of<SettingsCubit>(context).getUserSettings();
   }
 
-  bool isXLargeSizedScreen() {
-    return MediaQuery.of(context).size.width >= 1300 ? true : false;
+  void displayMsg(BuildContext context, Color color, String title) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      width: 400,
+      content: Container(
+          height: 50,
+          padding: const EdgeInsets.all(5),
+          decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              color: Colors.black,
+              borderRadius: const BorderRadius.all(Radius.circular(10))),
+          child: Row(
+            children: [
+              Container(
+                margin: const EdgeInsets.only(right: 10),
+                decoration: BoxDecoration(
+                    color: color,
+                    borderRadius: const BorderRadius.all(Radius.circular(10))),
+                width: 9,
+              ),
+              Logo(
+                Logos.reddit,
+                color: Colors.white,
+                size: 20,
+              ),
+              SizedBox(width: 10),
+              Text(
+                title,
+                style: const TextStyle(fontSize: 16, color: Colors.white),
+              ),
+            ],
+          )),
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+    ));
   }
 
   /// ## Parameters
@@ -57,8 +92,10 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
         } else if (dest == 'cover') {
           // webImgCover = f;
           // isThereImageCover = true;
-          BlocProvider.of<SettingsCubit>(context).changeCoverphoto('');
+          BlocProvider.of<SettingsCubit>(context)
+              .changeCoverphoto(profileSettings!, '');
         }
+        displayMsg(context, Colors.blue, 'Changes Saved');
       });
     } on PlatformException catch (e) {}
   }
@@ -126,7 +163,11 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
               title('Display name (optional)',
                   'Set a display name. This does not change your username.'),
               TextField(
-                  //onSubmitted: (value) => BlocProvider.of<SettingsCubit>(context).changeDisplayName(displayName.text),
+                  onEditingComplete: () {
+                    BlocProvider.of<SettingsCubit>(context)
+                        .updateSettings({'displayName': displayName.text});
+                    displayMsg(context, Colors.blue, 'Changes Saved');
+                  },
                   controller: displayName,
                   maxLength: 30,
                   style: const TextStyle(fontSize: 16),
@@ -141,7 +182,11 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
               title('About (optional)',
                   'A brief description of yourself shown on your profile.'),
               TextField(
-                  //onSubmitted: (value) => BlocProvider.of<SettingsCubit>(context).changeAbout(about.text),
+                  onEditingComplete: () {
+                    BlocProvider.of<SettingsCubit>(context)
+                        .updateSettings({'about': about.text});
+                    displayMsg(context, Colors.blue, 'Changes Saved');
+                  },
                   controller: about,
                   minLines: 5,
                   maxLines: 20,
@@ -195,13 +240,13 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
                     children: [
                       Container(
                         decoration: const BoxDecoration(shape: BoxShape.circle),
-                        child: (profileSettings.profile != '')
+                        child: (profileSettings!.profile != '')
                             ? GestureDetector(
                                 onTap: () =>
                                     pickImage(ImageSource.gallery, 'profile'),
                                 child: ClipOval(
                                   child: Image.network(
-                                    profileSettings.profile,
+                                    profileSettings!.profile,
                                     width: 120,
                                     height: 120,
                                     fit: BoxFit.cover,
@@ -239,7 +284,7 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
                       radius: const Radius.circular(5),
                       color: Colors.white,
                       child: Container(
-                        width: isXLargeSizedScreen()
+                        width: responsive.isXLargeSizedScreen()
                             ? 425
                             : responsive.isLargeSizedScreen()
                                 ? 0.3 * (MediaQuery.of(context).size.width)
@@ -251,9 +296,9 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
                           color: Color.fromRGBO(30, 30, 30, 100),
                         ),
                         //add image here
-                        child: (profileSettings.cover != '')
+                        child: (profileSettings!.cover != '')
                             ? Image.network(
-                                profileSettings.cover,
+                                profileSettings!.cover,
                                 fit: BoxFit.fitWidth,
                               )
                             : Column(
@@ -287,11 +332,14 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
               SwitchListTile(
                 activeColor: Colors.blue,
                 contentPadding: const EdgeInsets.all(0),
-                value: profileSettings.nsfw,
+                value: profileSettings!.nsfw,
                 onChanged: (newValue) {
                   setState(() {
-                    profileSettings.nsfw = newValue;
+                    profileSettings!.nsfw = newValue;
                     nsfw = newValue;
+                    BlocProvider.of<SettingsCubit>(context)
+                        .updateSettings({'nsfw': newValue});
+                    displayMsg(context, Colors.blue, 'Changes Saved');
                   });
                 },
                 title: const Text('NSFW', style: TextStyle(fontSize: 16)),
@@ -310,11 +358,14 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
               SwitchListTile(
                 activeColor: Colors.blue,
                 contentPadding: const EdgeInsets.all(0),
-                value: profileSettings.allowPeopleToFollowYou,
+                value: profileSettings!.allowPeopleToFollowYou,
                 onChanged: (newValue) {
                   setState(() {
-                    profileSettings.allowPeopleToFollowYou = newValue;
+                    profileSettings!.allowPeopleToFollowYou = newValue;
                     allowPeopleToFollowYou = newValue;
+                    BlocProvider.of<SettingsCubit>(context)
+                        .updateSettings({'allowPeopleToFollowYou': newValue});
+                    displayMsg(context, Colors.blue, 'Changes Saved');
                   });
                 },
                 title: const Text('Allow people to follow you',
@@ -327,11 +378,14 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
               SwitchListTile(
                 activeColor: Colors.blue,
                 contentPadding: const EdgeInsets.all(0),
-                value: profileSettings.contentVisibility,
+                value: profileSettings!.contentVisibility,
                 onChanged: (newValue) {
                   setState(() {
-                    profileSettings.contentVisibility = newValue;
+                    profileSettings!.contentVisibility = newValue;
                     contentVisibility = newValue;
+                    BlocProvider.of<SettingsCubit>(context)
+                        .updateSettings({'contentVisibility': newValue});
+                    displayMsg(context, Colors.blue, 'Changes Saved');
                   });
                 },
                 title: const Text('Content visibility',
@@ -344,11 +398,14 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
               SwitchListTile(
                 activeColor: Colors.blue,
                 contentPadding: const EdgeInsets.all(0),
-                value: profileSettings.activeInCommunitiesVisibility,
+                value: profileSettings!.activeInCommunitiesVisibility,
                 onChanged: (newValue) {
                   setState(() {
-                    profileSettings.activeInCommunitiesVisibility = newValue;
+                    profileSettings!.activeInCommunitiesVisibility = newValue;
                     showActiveCommunities = newValue;
+                    BlocProvider.of<SettingsCubit>(context).updateSettings(
+                        {'activeInCommunitiesVisibility': newValue});
+                    displayMsg(context, Colors.blue, 'Changes Saved');
                   });
                 },
                 title: const Text('Active in communities visibility',
@@ -390,11 +447,11 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
                 responsive = Responsive(context);
                 profileSettings = state.settings;
                 displayName =
-                    TextEditingController(text: profileSettings.displayName);
-                about = TextEditingController(text: profileSettings.about);
-                contentVisibility = profileSettings.contentVisibility;
+                    TextEditingController(text: profileSettings!.displayName);
+                about = TextEditingController(text: profileSettings!.about);
+                contentVisibility = profileSettings!.contentVisibility;
                 showActiveCommunities =
-                    profileSettings.activeInCommunitiesVisibility;
+                    profileSettings!.activeInCommunitiesVisibility;
                 return buildEditProfileBody();
               } else if (state is SettingsChanged) {
                 profileSettings = state.settings;
