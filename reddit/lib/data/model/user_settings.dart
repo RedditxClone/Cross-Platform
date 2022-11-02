@@ -9,6 +9,7 @@ class Settings {
   late bool activeInCommunitiesVisibility;
   late bool contentVisibility;
   late String disroptiveSettings;
+  late String blocked;
   late bool showUnInSearch;
   late bool personalizeAllOfReddit;
   late bool personalizeAdsInformation;
@@ -26,6 +27,7 @@ class Settings {
       required this.activeInCommunitiesVisibility,
       required this.contentVisibility,
       required this.disroptiveSettings,
+      required this.blocked,
       required this.showUnInSearch,
       required this.personalizeAllOfReddit,
       required this.personalizeAdsInformation,
@@ -45,6 +47,7 @@ class Settings {
     activeInCommunitiesVisibility = json['activeInCommunitiesVisibility'];
     contentVisibility = json['contentVisibility'];
     disroptiveSettings = json['disroptiveSettings'];
+    blocked = json['blocked'];
     showUnInSearch = json['showUnInSearch'];
     personalizeAllOfReddit = json['personalizeAllOfReddit'];
     personalizeAdsInformation = json['personalizeAds_information'];
@@ -68,6 +71,7 @@ class Settings {
               other.activeInCommunitiesVisibility &&
           contentVisibility == other.contentVisibility &&
           disroptiveSettings == other.disroptiveSettings &&
+          blocked == other.blocked &&
           showUnInSearch == other.showUnInSearch &&
           personalizeAllOfReddit == other.personalizeAllOfReddit &&
           personalizeAdsInformation == other.personalizeAdsInformation &&
