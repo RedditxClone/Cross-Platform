@@ -12,3 +12,7 @@ class AccountSettingsLoaded extends AccountSettingsState {
 
   AccountSettingsLoaded(this.accSettings);
 }
+
+class WrongPassword extends AccountSettingsState {}
+
+class PasswordUpdatedSuccessfully extends AccountSettingsState {}

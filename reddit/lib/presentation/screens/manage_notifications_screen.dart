@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Builds the UI of the Manage Notifications screen inside Account settings on Android.
 class ManageNotificationsScreen extends StatefulWidget {
-  ManageNotificationsScreen({Key? key}) : super(key: key);
+  const ManageNotificationsScreen({Key? key}) : super(key: key);
 
   @override
   State<ManageNotificationsScreen> createState() =>

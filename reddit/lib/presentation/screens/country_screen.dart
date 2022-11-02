@@ -17,7 +17,6 @@ class CountryScreen extends StatelessWidget {
         title: const Text("Country"),
         centerTitle: true,
       ),
-      // TODO: body
       body: ListView(
         children: [
           ...countryNamesMap

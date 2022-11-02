@@ -1,3 +1,5 @@
+import 'package:reddit/data/model/change_password_model.dart';
+
 import '../web_services/account_settings_web_services.dart';
 import '../model/account_settings_model.dart';
 
@@ -18,5 +20,10 @@ class AccountSettingsRepository {
       AccountSettingsModel newAccSettings) async {
     Map<String, dynamic> jsonMap = newAccSettings.toJson();
     await accountSettingsWebServices.updateAccountSettings(jsonMap);
+  }
+
+  Future<int> changePassword(ChangePasswordModel changePasswordModel) async {
+    Map<String, dynamic> jsonMap = changePasswordModel.toJson();
+    return await accountSettingsWebServices.changePassword(jsonMap);
   }
 }

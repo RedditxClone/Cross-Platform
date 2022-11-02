@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:reddit/data/model/account_settings_model.dart';
+import 'package:reddit/data/model/change_password_model.dart';
 import 'package:reddit/data/repository/account_settings_repository.dart';
 
 part 'account_settings_state.dart';
@@ -26,5 +27,17 @@ class AccountSettingsCubit extends Cubit<AccountSettingsState> {
     accountSettings = newAccSettings;
     accountSettingsRepository.updateAccountSettings(newAccSettings);
     emit(AccountSettingsLoaded(accountSettings!));
+  }
+
+  void changePassword(ChangePasswordModel changePasswordModel) {
+    accountSettingsRepository.changePassword(changePasswordModel).then((value) {
+      if (value == 200) {
+        // emit updated successfully state
+        emit(PasswordUpdatedSuccessfully());
+      } else if (value == 403) {
+        // emit Wrong password state
+        emit(WrongPassword());
+      }
+    });
   }
 }

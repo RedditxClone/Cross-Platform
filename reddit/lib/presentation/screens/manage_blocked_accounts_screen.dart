@@ -19,7 +19,6 @@ class _ManageBlockedAccountsScreenState
         title: const Text("Blocked accounts"),
         centerTitle: true,
       ),
-      // TODO: body
       body: ListView(
         children: [
           // Search input field

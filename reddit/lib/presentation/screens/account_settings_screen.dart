@@ -117,8 +117,11 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
             "",
             Icons.settings,
             () {
-              Navigator.pushNamed(context, changePasswordRoute,
-                  arguments: {"email": _email, "username": _username});
+              Navigator.pushNamed(context, changePasswordRoute, arguments: {
+                "context": context,
+                "email": _email,
+                "username": _username
+              });
             },
           ),
           _basicSettingsButton(
@@ -367,7 +370,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 TextButton(
-                  // TODO: add links
+                  // TODO: add connect to google / facebook functionality
                   onPressed: () {},
                   child: const Text(
                     "Connect",
@@ -536,10 +539,6 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                         ? const Icon(Icons.check_circle)
                         : const Icon(Icons.circle_outlined),
                     onTap: () {
-                      // setState(() {
-                      //   _isMan = true;
-                      // });
-
                       Navigator.pop(context);
                       accountSettings!.gender = "M";
                       // Update settings request

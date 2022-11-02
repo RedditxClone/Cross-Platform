@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reddit/business_logic/cubit/cubit/account_settings_cubit.dart';
 import 'package:reddit/data/model/account_settings_model.dart';
+import 'package:reddit/data/model/change_password_model.dart';
 import 'package:reddit/data/repository/account_settings_repository.dart';
 import 'package:reddit/data/web_services/account_settings_web_services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -43,17 +44,8 @@ void main() async {
       defaultCommentSort: 0,
       showFlair: true,
       countryCode: "EG");
-
-  // test('initial state of SettingsCubit',
-  //   () {
-  //     arrangeWebServices();
-  //     final future = charactersCubit.getAllCharacters();
-  //     expect(charactersCubit.state, isA<CharactersLoaded>());
-  //     // charactersCubit.charactersList[0].char_id = 2;
-  //     expect(charactersCubit.charactersList, settingsFromRepository);
-  //   }
-  // );
-
+  final changePasswordModel =
+      ChangePasswordModel(oldPassword: "123", newPassword: "456");
   group("State test", () {
     setUp(() {
       mockAccountSettingsWebService = MockAccountSettingsWebService();
@@ -92,28 +84,46 @@ void main() async {
           cubit.updateAccountSettings(settingsFromRepository),
       expect: () => [isA<AccountSettingsLoaded>()],
     );
-    // blocTest<AccountSettingsCubit, AccountSettingsState>(
-    //   'Settings not loaded correclty',
-    //   setUp: () {
-    //     when(() => mockAccountSettingsWebService.getAccountSettings()).thenAnswer(
-    //       (_) async => <String, dynamic>{},
-    //     );
-    //   },
-    //   build: () {
-    //     return accountSettingsCubit;
-    //   },
-    //   act: (AccountSettingsCubit cubit) => cubit.getAccountSettings(),
-    //   expect: () => [isA<AccountSettingsLoading>()],
-    // );
+    blocTest<AccountSettingsCubit, AccountSettingsState>(
+      'Password updated successfullt state is emitted correctly after if server responded with 200',
+      setUp: () {
+        when(() => mockAccountSettingsWebService
+                .changePassword({"oldPassword": "123", "newPassword": "456"}))
+            .thenAnswer((_) async => 200);
+      },
+      build: () {
+        return accountSettingsCubit;
+      },
+      act: (AccountSettingsCubit cubit) =>
+          cubit.changePassword(changePasswordModel),
+      expect: () => [isA<PasswordUpdatedSuccessfully>()],
+    );
+    blocTest<AccountSettingsCubit, AccountSettingsState>(
+      'Wrong password state is emitted correctly after if server responded with 403',
+      setUp: () {
+        when(() => mockAccountSettingsWebService
+                .changePassword({"oldPassword": "123", "newPassword": "456"}))
+            .thenAnswer((_) async => 403);
+      },
+      build: () {
+        return accountSettingsCubit;
+      },
+      act: (AccountSettingsCubit cubit) =>
+          cubit.changePassword(changePasswordModel),
+      expect: () => [isA<WrongPassword>()],
+    );
   });
+  // Test if mapping from Json to model is correct
   group('Model test', () {
-    test('Model is generated correctly', () {
+    test('Account Aettings Model is generated correctly', () {
       expect(
         AccountSettingsModel.fromJson(settingsFromWebServices),
         settingsFromRepository,
       );
     });
   });
+  // Check if the data shown on UI is the same as the data comming from server.
+  // Check if update settings function is called when updating any value from UI.
   group("UI data matches response data", () {
     setUp(() {
       mockAccountSettingsCubit = MockAccountSettingsCubit();

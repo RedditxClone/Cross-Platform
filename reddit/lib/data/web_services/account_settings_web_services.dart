@@ -47,4 +47,32 @@ class AccountSettingsWebServices {
       return 404;
     }
   }
+
+  Future<int> changePassword(Map<String, dynamic> changePasswordMap) async {
+    try {
+      Response response = await dio.patch(
+        'auth/change_password',
+        data: changePasswordMap,
+      );
+      if (response.statusCode == 200) {
+        print("Password changed successfully");
+      } else if (response.statusCode == 403) {
+        print("Wrong password");
+      } else if (response.statusCode == 401) {
+        print("Unauthorized");
+      }
+      return response.statusCode!;
+    } catch (e) {
+      print(e);
+      if (e is DioError) {
+        if (e.response!.statusCode == 403) {
+          print("Wrong password");
+        } else if (e.response!.statusCode == 401) {
+          print("Unauthorized");
+        }
+        return e.response!.statusCode!;
+      }
+      return 404;
+    }
+  }
 }

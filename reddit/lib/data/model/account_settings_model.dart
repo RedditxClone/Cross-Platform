@@ -23,6 +23,7 @@ class AccountSettingsModel {
       required this.showFlair});
 
   @override
+  // ignore: hash_and_equals
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is AccountSettingsModel &&

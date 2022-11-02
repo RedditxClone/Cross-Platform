@@ -18,7 +18,6 @@ class AccountSettingsScreenWeb extends StatefulWidget {
 
 class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
   AccountSettingsModel? accountSettings;
-  String _country = "";
   final titleColor = const Color.fromRGBO(215, 218, 220, 1);
 
   final subtitleColor = const Color.fromRGBO(129, 131, 132, 1);
@@ -70,12 +69,6 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
           if (state is AccountSettingsLoaded) {
             accountSettings = state.accSettings;
             _isMale = accountSettings!.gender == "M" ? 1 : 0;
-            // Get country name from country code returned from server
-            for (var map in countryNamesMap) {
-              if (map["code"] == accountSettings!.countryCode) {
-                _country = map["name"]!;
-              }
-            }
             return Row(
               children: [
                 Expanded(
@@ -89,7 +82,6 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
                           ? 5
                           : 9,
                   child: Container(
-                    // padding: const EdgeInsets.fromLTRB(50, 50, 40, 0),
                     constraints: const BoxConstraints(maxWidth: 800),
                     child: ListView(
                       children: [
@@ -130,7 +122,6 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
                 color: Colors.yellow,
               ),
             );
-            ;
           }
         }));
   }
@@ -178,7 +169,7 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
                         // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Padding(
-                            padding: EdgeInsets.all(20.0),
+                            padding: const EdgeInsets.all(20.0),
                             child: Row(
                               children: const [
                                 Padding(
@@ -228,7 +219,7 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.all(10.0),
+                            padding: const EdgeInsets.all(10.0),
                             child: TextField(
                               decoration: InputDecoration(
                                 hintText: "New email",

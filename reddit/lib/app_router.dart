@@ -65,10 +65,17 @@ class AppRouter {
         return MaterialPageRoute(
             builder: (_) => UpdateEmailAddressScreen(arguments));
       case changePasswordRoute:
-        return MaterialPageRoute(
-            builder: (_) => ChangePasswordScreen(arguments));
+        return MaterialPageRoute(builder: (context) {
+          Map<String, dynamic> argMap = arguments as Map<String, dynamic>;
+          return BlocProvider.value(
+            value: BlocProvider.of<AccountSettingsCubit>(
+                argMap["context"] as BuildContext),
+            child: ChangePasswordScreen(arguments),
+          );
+        });
       case manageNotificationsRoute:
-        return MaterialPageRoute(builder: (_) => ManageNotificationsScreen());
+        return MaterialPageRoute(
+            builder: (_) => const ManageNotificationsScreen());
       case countryRoute:
         return MaterialPageRoute(builder: (_) => CountryScreen(arguments));
       case manageBlockedAccountsRoute:
