@@ -28,6 +28,24 @@ class EmailSettings {
     required this.communityDiscovery,
     required this.unsubscribeEmails,
   });
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is EmailSettings &&
+          other.inboxMessages == inboxMessages &&
+          other.chatRequests == chatRequests &&
+          other.newUserWelcome == newUserWelcome &&
+          other.commentsOnPost == commentsOnPost &&
+          other.repliesToComments == repliesToComments &&
+          other.upvotesOnPost == upvotesOnPost &&
+          other.upvotesOnComments == upvotesOnComments &&
+          other.usernameMentions == usernameMentions &&
+          other.newFollowers == newFollowers &&
+          other.dailyDigest == dailyDigest &&
+          other.weeklyRecap == weeklyRecap &&
+          other.communityDiscovery == communityDiscovery &&
+          other.unsubscribeEmails == unsubscribeEmails;
+
   EmailSettings.fromJson(Map<String, dynamic> json) {
     inboxMessages = json['inbox_messages'];
     chatRequests = json['chat_requests'];

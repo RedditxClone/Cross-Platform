@@ -10,75 +10,86 @@ class EmailSettingsWeb extends StatefulWidget {
 }
 
 class _EmailSettingsWebState extends State<EmailSettingsWeb> {
-  late EmailSettings _emailSettings =
-      BlocProvider.of<EmailSettingsCubit>(context).getEmailSettings();
-
+  late EmailSettings _emailSettings;
   _EmailSettingsWebState();
 
   @override
   void initState() {
     super.initState();
-    // BlocProvider.of<EmailSettingsCubit>(context).getEmailSettings( );
+    BlocProvider.of<EmailSettingsCubit>(context).getEmailSettings();
   }
 
   late Map<String, List<dynamic>> section1 = {
     "Inbox messages": [
       _emailSettings.inboxMessages,
       (newValue) => _emailSettings.inboxMessages = newValue,
+      "inbox_messages"
     ],
     "Chat requests": [
       _emailSettings.chatRequests,
       (newValue) => _emailSettings.chatRequests = newValue,
+      "chat_requests"
     ],
   };
   late Map<String, List<dynamic>> section2 = {
     "New user welcome": [
       _emailSettings.newUserWelcome,
       (newValue) => _emailSettings.newUserWelcome = newValue,
+      "new_user_welcome"
     ],
     "Comments on your posts": [
       _emailSettings.commentsOnPost,
       (newValue) => _emailSettings.commentsOnPost = newValue,
+      "comments_on_post"
     ],
     "Replies to your comments": [
       _emailSettings.repliesToComments,
       (newValue) => _emailSettings.repliesToComments = newValue,
+      "replies_to_comments"
     ],
     "Upvotes on your posts": [
       _emailSettings.upvotesOnPost,
       (newValue) => _emailSettings.upvotesOnPost = newValue,
+      "upvotes_on_post"
     ],
     "Upvotes on your comments": [
       _emailSettings.upvotesOnComments,
       (newValue) => _emailSettings.upvotesOnComments = newValue,
+      "upvotes_on_comments"
     ],
     "Username mentions": [
       _emailSettings.usernameMentions,
       (newValue) => _emailSettings.usernameMentions = newValue,
+      "username_mentions"
     ],
     "New followers": [
       _emailSettings.newFollowers,
       (newValue) => _emailSettings.newFollowers = newValue,
+      "new_followers"
     ],
   };
   late Map<String, List<dynamic>> section3 = {
     "Daily Digest": [
       _emailSettings.dailyDigest,
       (newValue) => _emailSettings.dailyDigest = newValue,
+      "daily_digest"
     ],
     "Weekly Recap": [
       _emailSettings.weeklyRecap,
       (newValue) => _emailSettings.weeklyRecap = newValue,
+      "weekly_recap"
     ],
     "Community Discovery": [
       _emailSettings.communityDiscovery,
       (newValue) => _emailSettings.communityDiscovery = newValue,
+      "community_discovery"
     ],
   };
   late Map<String, List<dynamic>> section4 = {
     "Unsubscribe from all emails": [
       _emailSettings.unsubscribeEmails,
       (newValue) => _emailSettings.unsubscribeEmails = newValue,
+      "unsubscribe_emails"
     ],
   };
 
@@ -98,13 +109,14 @@ class _EmailSettingsWebState extends State<EmailSettingsWeb> {
     ];
   }
 
-  Widget _createSwitchListTile(title, value_onChanged) {
+  Widget _createSwitchListTile(title, infoList) {
     return SwitchListTile(
+        key: Key(infoList[2]),
         contentPadding: EdgeInsets.zero,
         inactiveThumbColor: Colors.white,
         activeTrackColor: Colors.blue,
         inactiveTrackColor: const Color.fromARGB(255, 126, 125, 125),
-        value: value_onChanged[0],
+        value: infoList[0],
         title: title != null
             ? Text(
                 title,
@@ -113,7 +125,7 @@ class _EmailSettingsWebState extends State<EmailSettingsWeb> {
             : null,
         activeColor: Colors.white,
         onChanged: (value) {
-          value_onChanged[1](value);
+          infoList[1](value);
           BlocProvider.of<EmailSettingsCubit>(context)
               .updateEmailSettings(_emailSettings);
         });
@@ -122,7 +134,7 @@ class _EmailSettingsWebState extends State<EmailSettingsWeb> {
   Widget _buildSettingsList() {
     return BlocBuilder<EmailSettingsCubit, EmailSettingsState>(
         builder: (context, state) {
-      if (state is EmailSettingsLoaded || state is EmailSettingsUpdated) {
+      if (state is EmailSettingsLoaded) {
         _emailSettings = (state).emailSettings;
         return SingleChildScrollView(
             child: LayoutBuilder(

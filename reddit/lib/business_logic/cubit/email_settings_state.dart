@@ -1,18 +1,13 @@
 part of 'email_settings_cubit.dart';
-@immutable
-abstract class EmailSettingsState {
-  final EmailSettings emailSettings;
-  const EmailSettingsState(this.emailSettings);
-}
 
-class EmailSettingsInitial extends EmailSettingsState {
-  const EmailSettingsInitial(super.emailSettings);
-}
+@immutable
+abstract class EmailSettingsState {}
+
+class EmailSettingsInitial extends EmailSettingsState {}
+
+class EmailSettingsLoading extends EmailSettingsState {}
 
 class EmailSettingsLoaded extends EmailSettingsState {
-  const EmailSettingsLoaded(emailSettings) : super(emailSettings);
-}
-
-class EmailSettingsUpdated extends EmailSettingsState {
-  const EmailSettingsUpdated(emailSettings) : super(emailSettings);
+  final EmailSettings emailSettings;
+  EmailSettingsLoaded(this.emailSettings);
 }

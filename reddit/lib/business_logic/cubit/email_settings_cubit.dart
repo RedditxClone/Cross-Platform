@@ -8,39 +8,26 @@ part 'email_settings_state.dart';
 
 class EmailSettingsCubit extends Cubit<EmailSettingsState> {
   EmailSettingsCubit(this.emailSettingsRepository)
-      : super(EmailSettingsInitial(EmailSettings(
-            inboxMessages: false,
-            chatRequests: false,
-            newUserWelcome: false,
-            commentsOnPost: false,
-            repliesToComments: false,
-            upvotesOnPost: false,
-            upvotesOnComments: false,
-            usernameMentions: false,
-            newFollowers: false,
-            dailyDigest: false,
-            weeklyRecap: false,
-            communityDiscovery: false,
-            unsubscribeEmails: false)));
+      : super(EmailSettingsInitial());
 
   final EmailSettingsRepository emailSettingsRepository;
-  late EmailSettings _emailSettings;
+  EmailSettings? _emailSettings;
 
-  EmailSettings getEmailSettings() {
+  void getEmailSettings() {
+    emit(EmailSettingsLoading());
+
     emailSettingsRepository.getEmailSettings().then(
       (value) {
         _emailSettings = value;
-        emit(EmailSettingsLoaded(_emailSettings));
+        emit(EmailSettingsLoaded(_emailSettings!));
       },
     );
-    return _emailSettings;
   }
 
-  EmailSettings updateEmailSettings(EmailSettings updatedEmailSettings) {
+  void updateEmailSettings(EmailSettings updatedEmailSettings) {
     _emailSettings = updatedEmailSettings;
     emailSettingsRepository.updateEmailSettings(updatedEmailSettings);
-    emit(EmailSettingsUpdated(_emailSettings));
-    return _emailSettings;
+    emit(EmailSettingsLoaded(_emailSettings!));
   }
 }
 
