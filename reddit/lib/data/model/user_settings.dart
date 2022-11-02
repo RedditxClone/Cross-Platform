@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 /// # Settings data model
 class Settings {
   late String profile;
@@ -9,7 +11,7 @@ class Settings {
   late bool activeInCommunitiesVisibility;
   late bool contentVisibility;
   late String disroptiveSettings;
-  late String blocked;
+  late List<dynamic> blocked;
   late bool showUnInSearch;
   late bool personalizeAllOfReddit;
   late bool personalizeAdsInformation;
@@ -56,7 +58,6 @@ class Settings {
     personalizeRecOurPartners = json['personalizeRec_ourPartners'];
     useTwoFactorAuthentication = json['useTwoFactorAuthentication'];
   }
-
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -71,7 +72,7 @@ class Settings {
               other.activeInCommunitiesVisibility &&
           contentVisibility == other.contentVisibility &&
           disroptiveSettings == other.disroptiveSettings &&
-          blocked == other.blocked &&
+          listEquals(blocked, other.blocked) &&
           showUnInSearch == other.showUnInSearch &&
           personalizeAllOfReddit == other.personalizeAllOfReddit &&
           personalizeAdsInformation == other.personalizeAdsInformation &&

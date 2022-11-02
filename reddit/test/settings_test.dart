@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:bloc_test/bloc_test.dart';
@@ -7,7 +5,6 @@ import 'package:reddit/business_logic/cubit/settings/settings_cubit.dart';
 import 'package:reddit/data/model/user_settings.dart';
 import 'package:reddit/data/repository/settings_repository.dart';
 import 'package:reddit/data/web_services/settings_web_services.dart';
-import 'package:reddit/presentation/screens/profile_settings_screen.dart';
 
 class MockAccountSettingsWebService extends Mock
     implements SettingsWebServices {}
@@ -19,7 +16,6 @@ void main() async {
   late MockAccountSettingsWebService mockAccountSettingsWebService;
   late SettingsRepository accountSettingsRepository;
   late SettingsCubit accountSettingsCubit;
-  late MockAccountSettingsCubit mockAccountSettingsCubit;
 
   final Map<String, dynamic> settingsFromWebServices = {
     "profile":
@@ -34,7 +30,7 @@ void main() async {
     "contentVisibility": false,
     "disroptiveSettings": "MEDIUM",
     "showUnInSearch": true,
-    "blocked": "@_Mark1",
+    "blocked": ["@_Mark1"],
     "personalizeAllOfReddit": false,
     "personalizeAds_information": true,
     "personalizeAds_yourActivity": false,
@@ -60,7 +56,7 @@ void main() async {
       activeInCommunitiesVisibility: true,
       contentVisibility: false,
       disroptiveSettings: 'MEDIUM',
-      blocked: '@_Mark1',
+      blocked: ['@_Mark1'],
       showUnInSearch: true,
       personalizeAllOfReddit: false,
       personalizeAdsInformation: true,
