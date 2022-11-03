@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'constants/strings.dart';
+import 'presentation/screens/setting_tab_ui.dart';
+
 class AppRouter {
   // declare repository and cubit objects
   AppRouter() {
@@ -8,10 +11,14 @@ class AppRouter {
   Route? generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case '/':
-        return MaterialPageRoute(builder: (_) => Scaffold(
+        return MaterialPageRoute(
+            builder: (_) => Scaffold(
                   appBar: AppBar(),
                   body: Container(),
                 ));
+      case settingTabUiRoute:
+        return MaterialPageRoute(builder: (_) => const SettingTabUi());
+
       /*
       case example:
       case '/':
