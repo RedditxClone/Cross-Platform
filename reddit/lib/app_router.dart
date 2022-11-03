@@ -37,7 +37,7 @@ class AppRouter {
           ),
         );
       */
-      case profileSettingsRoute:
+      case safetySettingsRoute:
         return MaterialPageRoute(
             builder: (_) => BlocProvider(
                   create: (BuildContext context) => settingsCubit,
