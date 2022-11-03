@@ -20,8 +20,7 @@ class AppRouter {
   Route? generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case '/':
-        return MaterialPageRoute(
-            builder: (_) => Scaffold(
+        return MaterialPageRoute(builder: (_) => Scaffold(
                   appBar: AppBar(),
                   body: Container(),
                 ));
