@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reddit/constants/strings.dart';
 import 'app_router.dart';
 
 void main() {
@@ -19,8 +20,13 @@ class MyApp extends StatelessWidget {
         // This is the theme of your application.
         primarySwatch: Colors.blue,
       ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+      ),
+      themeMode: ThemeMode.dark,
       debugShowCheckedModeBanner: false,
       onGenerateRoute: appRouter.generateRoute,
+      initialRoute: profileSettingsRoute,
     );
   }
 }
