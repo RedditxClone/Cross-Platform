@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reddit/business_logic/cubit/settings/settings_cubit.dart';
+import 'package:reddit/constants/strings.dart';
 import 'package:reddit/data/repository/settings_repository.dart';
 import 'package:reddit/data/web_services/settings_web_services.dart';
 import 'package:reddit/presentation/screens/safety_settings_web.dart';
@@ -18,9 +20,9 @@ class AppRouter {
     switch (settings.name) {
       case '/':
         return MaterialPageRoute(
-            builder: (_) => BlocProvider(
-                  create: (BuildContext context) => settingsCubit,
-                  child: SafetySettingsWeb(),
+            builder: (_) => Scaffold(
+                  appBar: AppBar(),
+                  body: Container(),
                 ));
       /*
       case example:
@@ -35,6 +37,13 @@ class AppRouter {
           ),
         );
       */
+      case profileSettingsRoute:
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider(
+                  create: (BuildContext context) => settingsCubit,
+                  child: const SafetySettingsWeb(),
+                ));
+
       default:
         return null;
     }
