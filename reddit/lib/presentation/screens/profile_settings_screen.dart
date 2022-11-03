@@ -533,7 +533,6 @@ class _ProfileSettingsState extends State<ProfileSettings> {
           return buildEditProfileBody(context);
         } else if (state is SettingsChanged) {
           profileSettings = state.settings;
-          print('state changed');
           displayName =
               TextEditingController(text: profileSettings!.displayName);
           about = TextEditingController(text: profileSettings!.about);

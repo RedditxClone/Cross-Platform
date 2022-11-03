@@ -9,7 +9,7 @@ class SettingsWebServices {
   //     ? "http://10.0.2.2:3000/"
   //     : "http://127.0.0.1:3000/";
   String mockUrl =
-      'https://4e3b1a52-b358-471e-a853-ddbca4d767d5.mock.pstmn.io/';
+      'https://ee2e6548-8637-491e-ac9f-5109ed246fd1.mock.pstmn.io/';
   bool isMockerServer = true;
   SettingsWebServices() {
     BaseOptions options = BaseOptions(

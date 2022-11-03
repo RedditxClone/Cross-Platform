@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:bloc_test/bloc_test.dart';
@@ -17,7 +19,7 @@ void main() async {
   late SettingsRepository accountSettingsRepository;
   late SettingsCubit accountSettingsCubit;
 
-  final Map<String, dynamic> settingsFromWebServices = {
+  const String settingsFromWebServices = '''{
     "profile":
         "https://image.shutterstock.com/mosaic_250/2780032/1854697390/stock-photo-head-shot-young-attractive-businessman-in-glasses-standing-in-modern-office-pose-for-camera-1854697390.jpg",
     "cover":
@@ -37,7 +39,7 @@ void main() async {
     "personalizeRec_generalLocation": true,
     "personalizeRec_ourPartners": true,
     "useTwoFactorAuthentication": false
-  };
+  }''';
   const Map<String, String> patchResponse = {
     'cover':
         'https://images.unsplash.com/photo-1504805572947-34fad45aed93?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8Y292ZXIlMjBwaG90b3xlbnwwfHwwfHw%3D&w=1000&q=80',
@@ -107,7 +109,7 @@ void main() async {
   group('Model test', () {
     test('Model is generated correctly', () {
       expect(
-        Settings.fromjson(settingsFromWebServices),
+        Settings.fromjson(jsonDecode(settingsFromWebServices)),
         settingsFromRepository,
       );
     });
