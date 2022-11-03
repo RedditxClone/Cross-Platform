@@ -4,10 +4,11 @@ import 'package:reddit/constants/strings.dart';
 
 class AccountSettingsWebServices {
   bool useMockServer = true;
-  String mockUrl = TargetPlatform.android == defaultTargetPlatform
-      ? "http://10.0.2.2:3001/"
-      : "http://127.0.0.1:3001/";
-  // String mockUrl = "http://127.0.0.1:3001/";
+  // String mockUrl = TargetPlatform.android == defaultTargetPlatform
+  //     ? "http://10.0.2.2:3001/"
+  //     : "http://127.0.0.1:3001/";
+  String mockUrl =
+      "https://a8eda59d-d8f3-4ef2-9581-29e6473824d9.mock.pstmn.io/";
   late Dio dio;
   AccountSettingsWebServices() {
     BaseOptions options = BaseOptions(

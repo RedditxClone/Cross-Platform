@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:reddit/data/model/change_password_model.dart';
 
 import '../web_services/account_settings_web_services.dart';
@@ -13,7 +15,7 @@ class AccountSettingsRepository {
     final accSettings = await accountSettingsWebServices.getAccountSettings();
     print("Account settings from repo:");
     print("$accSettings");
-    return AccountSettingsModel.fromJson(accSettings);
+    return AccountSettingsModel.fromJson(jsonDecode(accSettings));
   }
 
   Future<void> updateAccountSettings(

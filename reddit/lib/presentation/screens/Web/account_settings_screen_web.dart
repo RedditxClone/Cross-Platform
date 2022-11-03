@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../business_logic/cubit/cubit/account_settings_cubit.dart';
 import '../../../constants/country_names.dart';
 import '../../../data/model/account_settings_model.dart';
+import '../../../data/model/change_password_model.dart';
 
 class AccountSettingsScreenWeb extends StatefulWidget {
   const AccountSettingsScreenWeb({Key? key}) : super(key: key);
@@ -18,6 +19,12 @@ class AccountSettingsScreenWeb extends StatefulWidget {
 
 class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
   AccountSettingsModel? accountSettings;
+
+  final _updatePasswordOldPasswordController = TextEditingController();
+  final _updatePasswordNewPasswordController = TextEditingController();
+  final _updatePasswordConfirmNewPasswordController = TextEditingController();
+  final _changeEmailCurrentPasswordController = TextEditingController();
+  final _changeEmailNewEmailController = TextEditingController();
   final titleColor = const Color.fromRGBO(215, 218, 220, 1);
 
   final subtitleColor = const Color.fromRGBO(129, 131, 132, 1);
@@ -63,59 +70,20 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: backgroundColor,
-        body: BlocBuilder<AccountSettingsCubit, AccountSettingsState>(
-            builder: (context, state) {
+      backgroundColor: backgroundColor,
+      body: BlocBuilder<AccountSettingsCubit, AccountSettingsState>(
+        builder: (context, state) {
           if (state is AccountSettingsLoaded) {
             accountSettings = state.accSettings;
             _isMale = accountSettings!.gender == "M" ? 1 : 0;
-            return Row(
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: Container(),
-                ),
-                Expanded(
-                  flex: _isLargeSizedScreen()
-                      ? 4
-                      : _isMediumSizedScreen()
-                          ? 5
-                          : 9,
-                  child: Container(
-                    constraints: const BoxConstraints(maxWidth: 800),
-                    child: ListView(
-                      children: [
-                        // title
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
-                          child: Text(
-                            "Account Settings",
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w500,
-                              color: titleColor,
-                            ),
-                          ),
-                        ),
-                        // subtitle
-                        _accountPreferencesWidget(),
-                        _connectedAccountsWidget(),
-                        _deleteAccountWidget()
-                        //
-                      ],
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: _isLargeSizedScreen()
-                      ? 3
-                      : _isMediumSizedScreen()
-                          ? 2
-                          : 1,
-                  child: Container(),
-                ),
-              ],
-            );
+            return buildAccountSettingsUI();
+          } else if (state is PasswordUpdatedSuccessfully) {
+            // displayMsg(context, Colors.white, Colors.green,
+            //     "Password updated successfully");
+            return buildAccountSettingsUI();
+          } else if (state is WrongPassword) {
+            // displayMsg(context, Colors.white, Colors.green, "Wrong password");
+            return buildAccountSettingsUI();
           } else {
             return const Center(
               child: CircularProgressIndicator(
@@ -123,7 +91,59 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
               ),
             );
           }
-        }));
+        },
+      ),
+    );
+  }
+
+  Widget buildAccountSettingsUI() {
+    return Row(
+      children: [
+        Expanded(
+          flex: 1,
+          child: Container(),
+        ),
+        Expanded(
+          flex: _isLargeSizedScreen()
+              ? 4
+              : _isMediumSizedScreen()
+                  ? 5
+                  : 9,
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 800),
+            child: ListView(
+              children: [
+                // title
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+                  child: Text(
+                    "Account Settings",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                      color: titleColor,
+                    ),
+                  ),
+                ),
+                // subtitle
+                _accountPreferencesWidget(),
+                _connectedAccountsWidget(),
+                _deleteAccountWidget()
+                //
+              ],
+            ),
+          ),
+        ),
+        Expanded(
+          flex: _isLargeSizedScreen()
+              ? 3
+              : _isMediumSizedScreen()
+                  ? 2
+                  : 1,
+          child: Container(),
+        ),
+      ],
+    );
   }
 
   /// Builds the UI of the Account Preferences category of Account Settings
@@ -156,116 +176,7 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
             "bemoi.erian@gmail.com",
             _rounderButton(
               "Change",
-              () {
-                showDialog(
-                  context: context,
-                  builder: (context) => Dialog(
-                    child: Container(
-                      color: backgroundColor,
-                      width: 450,
-                      height: 370,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(20.0),
-                            child: Row(
-                              children: const [
-                                Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Icon(Icons.mail),
-                                ),
-                                Text(
-                                  "Update your email",
-                                  style: TextStyle(
-                                      fontSize: 25,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ],
-                            ),
-                          ),
-                          // ignore: prefer_const_constructors
-                          Padding(
-                            padding: const EdgeInsets.all(15.0),
-                            child: const Text(
-                              "Update your email below. There will be a new verification email sent that you will need to use to verify this new email.",
-                              style: TextStyle(
-                                  fontSize: 15, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          // ignore: prefer_const_constructors
-                          Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: TextField(
-                              decoration: InputDecoration(
-                                hintText: "Password",
-                                border: OutlineInputBorder(
-                                    borderSide: const BorderSide(
-                                        width: 0, color: Colors.transparent),
-                                    borderRadius: BorderRadius.circular(5.0)),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                      width: 0, color: Colors.transparent),
-                                  borderRadius: BorderRadius.circular(5.0),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide: const BorderSide(
-                                        width: 0, color: Colors.transparent),
-                                    borderRadius: BorderRadius.circular(5.0)),
-                                filled: true,
-                                fillColor: Colors.grey.shade800,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: TextField(
-                              decoration: InputDecoration(
-                                hintText: "New email",
-                                border: OutlineInputBorder(
-                                    borderSide: const BorderSide(
-                                        width: 0, color: Colors.transparent),
-                                    borderRadius: BorderRadius.circular(5.0)),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                      width: 0, color: Colors.transparent),
-                                  borderRadius: BorderRadius.circular(5.0),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide: const BorderSide(
-                                        width: 0, color: Colors.transparent),
-                                    borderRadius: BorderRadius.circular(5.0)),
-                                filled: true,
-                                fillColor: Colors.grey.shade800,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Container(
-                                  // padding: const EdgeInsets.all(10),
-                                  color: Colors.white,
-                                  child: TextButton(
-                                    onPressed: () {},
-                                    child: const Text(
-                                      "Save",
-                                      style: TextStyle(color: Colors.grey),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              },
+              () => _showChangeEmailPopUp(),
             ),
           ),
           // TODO: change password pop up
@@ -274,9 +185,7 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
             "Password must be at least 8 characters long.",
             _rounderButton(
               "Change",
-              () {
-                // TODO: Change password function
-              },
+              () => _showChangePasswordPopUp(),
             ),
           ),
           _accountSettingsElement(
@@ -286,27 +195,286 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
           ),
           _countryElement(),
           // Country dropdown list
-          DropdownButton(
-            // Initial Value
-            value: accountSettings!.countryCode,
+          DropdownButtonHideUnderline(
+            child: DropdownButton(
+              // Initial Value
+              value: accountSettings!.countryCode,
 
-            // Array list of items
-            items: countryNamesMap.map((e) {
-              return DropdownMenuItem(
-                value: e["code"]!,
-                child: Text(e["name"]!),
-              );
-            }).toList(),
+              // Array list of items
+              items: countryNamesMap.map((e) {
+                return DropdownMenuItem(
+                  value: e["code"]!,
+                  child: Text(e["name"]!),
+                );
+              }).toList(),
 
-            // After selecting the desired option,it will
-            // change button value to selected value
-            onChanged: (String? newValue) {
-              accountSettings!.countryCode = newValue!;
-              BlocProvider.of<AccountSettingsCubit>(context)
-                  .updateAccountSettings(accountSettings!);
-            },
+              // After selecting the desired option,it will
+              // change button value to selected value
+              onChanged: (String? newValue) {
+                accountSettings!.countryCode = newValue!;
+                BlocProvider.of<AccountSettingsCubit>(context)
+                    .updateAccountSettings(accountSettings!);
+              },
+            ),
           )
         ],
+      ),
+    );
+  }
+
+  void _showChangeEmailPopUp() {
+    showDialog(
+      context: context,
+      builder: (_) => Dialog(
+        child: Container(
+          color: backgroundColor,
+          width: 450,
+          height: 370,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Row(
+                  children: const [
+                    Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Icon(Icons.mail),
+                    ),
+                    Text(
+                      "Update your email",
+                      style:
+                          TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+              // ignore: prefer_const_constructors
+              Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: const Text(
+                  "Update your email below. There will be a new verification email sent that you will need to use to verify this new email.",
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+              ),
+              // ignore: prefer_const_constructors
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: TextField(
+                  controller: _changeEmailCurrentPasswordController,
+                  decoration: InputDecoration(
+                    hintText: "CURRENT PASSWORD",
+                    border: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                            width: 0, color: Colors.transparent),
+                        borderRadius: BorderRadius.circular(5.0)),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide:
+                          const BorderSide(width: 0, color: Colors.transparent),
+                      borderRadius: BorderRadius.circular(5.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                            width: 0, color: Colors.transparent),
+                        borderRadius: BorderRadius.circular(5.0)),
+                    filled: true,
+                    fillColor: Colors.grey.shade800,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: TextField(
+                  controller: _changeEmailNewEmailController,
+                  decoration: InputDecoration(
+                    hintText: "NEW EMAIL",
+                    border: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                            width: 0, color: Colors.transparent),
+                        borderRadius: BorderRadius.circular(5.0)),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide:
+                          const BorderSide(width: 0, color: Colors.transparent),
+                      borderRadius: BorderRadius.circular(5.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                            width: 0, color: Colors.transparent),
+                        borderRadius: BorderRadius.circular(5.0)),
+                    filled: true,
+                    fillColor: Colors.grey.shade800,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                      // padding: const EdgeInsets.all(10),
+                      color: Colors.white,
+                      child: TextButton(
+                        onPressed: () {},
+                        child: const Text(
+                          "Save",
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showChangePasswordPopUp() {
+    showDialog(
+      context: context,
+      builder: (_) => Dialog(
+        child: Container(
+          color: backgroundColor,
+          width: 500,
+          height: 500,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Row(
+                  children: const [
+                    Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Icon(Icons.mail),
+                    ),
+                    Text(
+                      "Change password",
+                      style:
+                          TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+              // ignore: prefer_const_constructors
+              Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: const Text(
+                  "",
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+              ),
+              // ignore: prefer_const_constructors
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: TextField(
+                  obscureText: true,
+                  enableSuggestions: false,
+                  autocorrect: false,
+                  controller: _updatePasswordOldPasswordController,
+                  decoration: InputDecoration(
+                    hintText: "OLD PASSWORD",
+                    border: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                            width: 0, color: Colors.transparent),
+                        borderRadius: BorderRadius.circular(5.0)),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide:
+                          const BorderSide(width: 0, color: Colors.transparent),
+                      borderRadius: BorderRadius.circular(5.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                            width: 0, color: Colors.transparent),
+                        borderRadius: BorderRadius.circular(5.0)),
+                    filled: true,
+                    fillColor: Colors.grey.shade800,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: TextField(
+                  obscureText: true,
+                  enableSuggestions: false,
+                  autocorrect: false,
+                  controller: _updatePasswordNewPasswordController,
+                  decoration: InputDecoration(
+                    hintText: "NEW PASSWORD",
+                    border: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                            width: 0, color: Colors.transparent),
+                        borderRadius: BorderRadius.circular(5.0)),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide:
+                          const BorderSide(width: 0, color: Colors.transparent),
+                      borderRadius: BorderRadius.circular(5.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                            width: 0, color: Colors.transparent),
+                        borderRadius: BorderRadius.circular(5.0)),
+                    filled: true,
+                    fillColor: Colors.grey.shade800,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: TextField(
+                  obscureText: true,
+                  enableSuggestions: false,
+                  autocorrect: false,
+                  controller: _updatePasswordConfirmNewPasswordController,
+                  decoration: InputDecoration(
+                    hintText: "CONFIRM NEW PASSWORD",
+                    border: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                            width: 0, color: Colors.transparent),
+                        borderRadius: BorderRadius.circular(5.0)),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide:
+                          const BorderSide(width: 0, color: Colors.transparent),
+                      borderRadius: BorderRadius.circular(5.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                            width: 0, color: Colors.transparent),
+                        borderRadius: BorderRadius.circular(5.0)),
+                    filled: true,
+                    fillColor: Colors.grey.shade800,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                      // padding: const EdgeInsets.all(10),
+                      color: Colors.white,
+                      child: TextButton(
+                        onPressed: () {
+                          _tryChangePassword(context);
+                        },
+                        child: const Text(
+                          "Save",
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -474,10 +642,18 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
                     text: TextSpan(children: [
                       TextSpan(
                           text: "This is your primary location.",
-                          style: TextStyle(color: Colors.grey.shade500)),
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: subtitleColor,
+                          )),
                       TextSpan(
                         text: " Learn more",
-                        style: const TextStyle(color: Colors.blue),
+                        style: const TextStyle(
+                          color: Colors.blue,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
                             _launchUrl(_countryLearnMoreUrl);
@@ -515,7 +691,7 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
   Widget _genderDropDown() {
     // ignore: sized_box_for_whitespace
     return Container(
-      width: 80,
+      // width: 85,
       child: DropdownButtonHideUnderline(
         child: DropdownButton(
             style: const TextStyle(
@@ -524,9 +700,9 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
             ),
             focusColor: Colors.transparent,
             dropdownColor: Colors.transparent,
-            iconEnabledColor: Colors.transparent,
-            iconDisabledColor: Colors.transparent,
-            iconSize: 0,
+            // iconEnabledColor: Colors.transparent,
+            // iconDisabledColor: Colors.transparent,
+            // iconSize: 0,
             value: _isMale,
             elevation: 1,
             items: const [
@@ -549,5 +725,92 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
             hint: const Text("Select item")),
       ),
     );
+  }
+
+  /// Validate input
+  /// Change password if inputs are valid
+  /// Show warning if inputs are not valid
+  void _tryChangePassword(context) {
+    // All parameters correct case, call changePassword function
+    if (_updatePasswordNewPasswordController.text ==
+            _updatePasswordConfirmNewPasswordController.text &&
+        _updatePasswordNewPasswordController.text.length >= 8 &&
+        _updatePasswordOldPasswordController.text.isNotEmpty &&
+        _updatePasswordNewPasswordController.text.isNotEmpty) {
+      BlocProvider.of<AccountSettingsCubit>(context).changePassword(
+        ChangePasswordModel(
+          oldPassword: _updatePasswordOldPasswordController.text,
+          newPassword: _updatePasswordNewPasswordController.text,
+        ),
+      );
+      // Navigator.pop(context);
+      // Password less than 8 characters, display warning
+    } else if (_updatePasswordOldPasswordController.text.isNotEmpty &&
+        _updatePasswordNewPasswordController.text.isNotEmpty &&
+        _updatePasswordConfirmNewPasswordController.text.isNotEmpty &&
+        _updatePasswordNewPasswordController.text.length < 8) {
+      displayMsg(
+        context,
+        Colors.white,
+        Colors.red,
+        "Sorry, your password must be at least 8 characters long. Try that again.",
+      );
+      // New password and confirm new password does not match, display warning
+    } else if (_updatePasswordOldPasswordController.text.isNotEmpty &&
+        _updatePasswordNewPasswordController.text.isNotEmpty &&
+        _updatePasswordConfirmNewPasswordController.text.isNotEmpty &&
+        _updatePasswordNewPasswordController.text !=
+            _updatePasswordConfirmNewPasswordController.text) {
+      displayMsg(context, Colors.white, Colors.red,
+          "Oops, your password don't match. Try that again");
+      // Not all fields are filled, display warning
+    } else {
+      displayMsg(context, Colors.white, Colors.red,
+          "Oops, you forgot to fill everything out.");
+    }
+  }
+
+  void displayMsg(
+      BuildContext context, Color textColor, Color leftBarColor, String title) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      width: 500,
+      content: Container(
+          height: 50,
+          padding: const EdgeInsets.all(5),
+          decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              color: Colors.black,
+              borderRadius: const BorderRadius.all(Radius.circular(10))),
+          child: Row(
+            children: [
+              Container(
+                margin: const EdgeInsets.only(right: 10),
+                decoration: BoxDecoration(
+                    color: leftBarColor,
+                    borderRadius: const BorderRadius.all(Radius.circular(10))),
+                width: 9,
+              ),
+              // Logo(
+              //   Logos.reddit,
+              //   color: Colors.white,
+              //   size: 20,
+              // ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(fontSize: 16, color: textColor),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          )),
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: Colors.transparent,
+      elevation: 3,
+    ));
   }
 }

@@ -26,44 +26,7 @@ class ChangePasswordScreen extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () {
-              // Validate input
-              // All parameters correct case, call changePassword function
-              if (_newPasswordController.text ==
-                      _confirmNewPasswordController.text &&
-                  _newPasswordController.text.length >= 8 &&
-                  _currentPasswordController.text.isNotEmpty &&
-                  _newPasswordController.text.isNotEmpty) {
-                BlocProvider.of<AccountSettingsCubit>(context).changePassword(
-                  ChangePasswordModel(
-                    oldPassword: _currentPasswordController.text,
-                    newPassword: _newPasswordController.text,
-                  ),
-                );
-                // Navigator.pop(context);
-                // Password less than 8 characters, display warning
-              } else if (_currentPasswordController.text.isNotEmpty &&
-                  _newPasswordController.text.isNotEmpty &&
-                  _confirmNewPasswordController.text.isNotEmpty &&
-                  _newPasswordController.text.length < 8) {
-                displayMsg(
-                    context,
-                    Colors.white,
-                    Colors.red,
-                    "Sorry, your password must be at least 8 characters long. Try that again.",
-                    "");
-                // New password and confirm new password does not match, display warning
-              } else if (_currentPasswordController.text.isNotEmpty &&
-                  _newPasswordController.text.isNotEmpty &&
-                  _confirmNewPasswordController.text.isNotEmpty &&
-                  _newPasswordController.text !=
-                      _confirmNewPasswordController.text) {
-                displayMsg(context, Colors.white, Colors.red,
-                    "Oops, your password don't match. Try that again", "");
-                // Not all fields are filled, display warning
-              } else {
-                displayMsg(context, Colors.white, Colors.red,
-                    "Oops, you forgot to fill everything out.", "");
-              }
+              _tryChangePassword(context);
             },
             child: const Text("Save", style: TextStyle(color: Colors.blue)),
           )
@@ -82,6 +45,47 @@ class ChangePasswordScreen extends StatelessWidget {
         child: buildChangePasswordScreen(),
       ),
     );
+  }
+
+  /// Validate input
+  /// Change password if inputs are valid
+  /// Show warning if inputs are not valid
+  void _tryChangePassword(context) {
+    // All parameters correct case, call changePassword function
+    if (_newPasswordController.text == _confirmNewPasswordController.text &&
+        _newPasswordController.text.length >= 8 &&
+        _currentPasswordController.text.isNotEmpty &&
+        _newPasswordController.text.isNotEmpty) {
+      BlocProvider.of<AccountSettingsCubit>(context).changePassword(
+        ChangePasswordModel(
+          oldPassword: _currentPasswordController.text,
+          newPassword: _newPasswordController.text,
+        ),
+      );
+      // Navigator.pop(context);
+      // Password less than 8 characters, display warning
+    } else if (_currentPasswordController.text.isNotEmpty &&
+        _newPasswordController.text.isNotEmpty &&
+        _confirmNewPasswordController.text.isNotEmpty &&
+        _newPasswordController.text.length < 8) {
+      displayMsg(
+          context,
+          Colors.white,
+          Colors.red,
+          "Sorry, your password must be at least 8 characters long. Try that again.",
+          "");
+      // New password and confirm new password does not match, display warning
+    } else if (_currentPasswordController.text.isNotEmpty &&
+        _newPasswordController.text.isNotEmpty &&
+        _confirmNewPasswordController.text.isNotEmpty &&
+        _newPasswordController.text != _confirmNewPasswordController.text) {
+      displayMsg(context, Colors.white, Colors.red,
+          "Oops, your password don't match. Try that again", "");
+      // Not all fields are filled, display warning
+    } else {
+      displayMsg(context, Colors.white, Colors.red,
+          "Oops, you forgot to fill everything out.", "");
+    }
   }
 
   /// Widget that builds the change password screen on mobile.

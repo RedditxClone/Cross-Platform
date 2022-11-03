@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reddit/business_logic/cubit/cubit/account_settings_cubit.dart';
@@ -21,7 +23,7 @@ void main() async {
   late AccountSettingsRepository accountSettingsRepository;
   late AccountSettingsCubit accountSettingsCubit;
   late MockAccountSettingsCubit mockAccountSettingsCubit;
-  final Map<String, dynamic> settingsFromWebServices = {
+  const String settingsFromWebServices = '''{
     "gender": "M",
     "enable_followers": true,
     "over_18": true,
@@ -32,7 +34,7 @@ void main() async {
     "default_comment_sort": 0,
     "show_flair": true,
     "country_code": "EG"
-  };
+  }''';
   final settingsFromRepository = AccountSettingsModel(
       gender: "M",
       enableFollowers: true,
@@ -75,7 +77,7 @@ void main() async {
       'Settings loaded state is emitted correctly after updating settings',
       setUp: () {
         when(() => mockAccountSettingsWebService.updateAccountSettings(
-            settingsFromWebServices)).thenAnswer((_) async => 200);
+            jsonDecode(settingsFromWebServices))).thenAnswer((_) async => 200);
       },
       build: () {
         return accountSettingsCubit;
@@ -117,7 +119,7 @@ void main() async {
   group('Model test', () {
     test('Account Aettings Model is generated correctly', () {
       expect(
-        AccountSettingsModel.fromJson(settingsFromWebServices),
+        AccountSettingsModel.fromJson(jsonDecode(settingsFromWebServices)),
         settingsFromRepository,
       );
     });
