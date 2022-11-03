@@ -1,7 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:reddit/constants/strings.dart';
-import 'package:reddit/data/model/user_settings.dart';
 
 class SettingsWebServices {
   late Dio dio;
@@ -28,29 +26,26 @@ class SettingsWebServices {
       Response response = await dio.get('prefs');
       return response.data;
     } catch (e) {
-      print(e.toString());
       return '';
     }
   }
 
-  /// updates a image
+  /// patch request to update cover and profile photo
   Future<String> updateImage(String key, value) async {
     try {
       Response response = await dio.patch('prefs', data: {key: value});
       return response.data;
     } catch (e) {
-      // print(e.toString());
       return '';
     }
   }
 
-  /// updates a user setting
+  /// patch request to updates any user settings
   Future<String> updatePrefs(Map changed) async {
     try {
       Response response = await dio.patch('prefs', data: changed);
       return response.data;
     } catch (e) {
-      print(e.toString());
       return '';
     }
   }
