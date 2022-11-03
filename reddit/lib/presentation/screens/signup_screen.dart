@@ -169,13 +169,13 @@ class SignUp {
                       height: 80,
                       padding: const EdgeInsets.all(15),
                       color: Theme.of(context).scaffoldBackgroundColor,
-                      child: RaisedButton(
+                      child: ElevatedButton(
                         onPressed: () => setState(() {
                           signUpContinue();
                         }),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(80.0)),
-                        padding: const EdgeInsets.all(0.0),
+                        // shape: RoundedRectangleBorder(
+                        //     borderRadius: BorderRadius.circular(80.0)),
+                        // padding: const EdgeInsets.all(0.0),
                         child: Ink(
                           decoration: const BoxDecoration(
                             gradient: LinearGradient(
