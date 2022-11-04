@@ -1,5 +1,6 @@
 import 'dart:async' show Future;
 import 'package:shared_preferences/shared_preferences.dart';
+import './shared_keys.dart';
 
 class PreferenceUtils {
   static Future<SharedPreferences> get _instance async =>
@@ -39,11 +40,4 @@ class PreferenceUtils {
   static getStringList(String key) {
     return _prefsInstance?.getStringList(key) ?? [];
   }
-}
-
-enum SharedPrefKeys {
-  country,
-  token,
-  user,
-  theme,
 }

@@ -73,12 +73,14 @@
 // }
 
 class User {
-  late String? userId;
-  late String? name;
+  late String?
+      userId; //in case of google or facebook user it will be taken from the google or facebook and in case of reddit sign in it will be the username
+  late String? name;//in case of google or facebook user it will be taken from the google or facebook and in case of reddit sign in it will be the username
   late String? email;
-  late String? imageUrl;
-  late String? accessToken;
-  // final String? userId, name, email, imageUrl;
+  late String? imageUrl;//in case of google or facebook user it will be taken from the google or facebook and in case of reddit sign in it will be null
+  // late String? accessToken;
+  late String? password;//in case of reddit sign in it will be the password else it will be null
+
   User(
       {required this.userId,
       required this.name,

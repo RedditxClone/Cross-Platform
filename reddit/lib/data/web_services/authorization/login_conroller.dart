@@ -1,6 +1,10 @@
 // import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+
+import '../../../constants/strings.dart';
+
 // import 'package:test/data/models/facebook_auth_model.dart';
 // import 'package:test/ui/screens/question.dart';
 
@@ -28,4 +32,43 @@ class GoogleSingInApi {
   static Future<GoogleSignInAccount?> logoutWeb() => _googleSignInWeb.signOut();
   static Future<GoogleSignInAccount?> signoutWeb() =>
       _googleSignInWeb.disconnect();
+}
+
+class FacebookSignInApi {
+  static void facebookInit() async {
+    // check if is running on Web
+    if (kIsWeb) {
+      // initialiaze the facebook javascript SDK
+      await FacebookAuth.i.webAndDesktopInitialize(
+        appId: FACEBOOK_APP_ID,
+        cookie: true,
+        xfbml: true,
+        version: "v14.0",
+      );
+    }
+  }
+
+  static Future<LoginResult?> login() async {
+    final LoginResult result = await FacebookAuth.instance.login();
+    if (result.status == LoginStatus.success) {
+      // you are logged
+
+      return result;
+    }
+    print(result.status);
+    print(result.message);
+    return null;
+  }
+
+  static void logout() async {
+    await FacebookAuth.instance.logOut();
+  }
+
+
+  static Future<Map<String, dynamic>> getUserData() async {
+    final userMap = await FacebookAuth.instance
+        .getUserData(fields: "id,name,email,picture");
+    return userMap;
+  }
+  
 }

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 
+import '../../constants/strings.dart';
 import '../../data/model/signin.dart';
 import '../../data/web_services/authorization/login_conroller.dart';
-import 'home.dart';
 
 class SignupWeb extends StatefulWidget {
   const SignupWeb({super.key});
@@ -14,20 +14,18 @@ class SignupWeb extends StatefulWidget {
 
 class _SignupWebState extends State<SignupWeb> {
   late User newUser;
-  TextSpan createTextSpan(String txt, bool isUrl) {
-    return TextSpan(
-      text: txt,
-      style: TextStyle(
-        fontSize: 14,
-        color: isUrl ? Colors.blue : Colors.black,
-        decoration: isUrl ? TextDecoration.underline : TextDecoration.none,
-      ),
-    );
+  var emailController = TextEditingController();
+  bool emailCorrect = false;
+
+  @override
+  void initState() {
+    super.initState();
+    FacebookSignInApi.facebookInit();
   }
 
   Widget createContinueWithButton(String lable) {
     return OutlinedButton.icon(
-      onPressed: lable == 'google' ? signInWithGoogle : () {},
+      onPressed: lable == 'google' ? signInWithGoogle : signInWithFacebook,
       icon: Logo(
         lable == 'google' ? Logos.google : Logos.facebook_logo,
         size: 20,
@@ -56,6 +54,34 @@ class _SignupWebState extends State<SignupWeb> {
     );
   }
 
+  Future signInWithFacebook() async {
+    try {
+      var loginResult = await FacebookSignInApi.login();
+      if (loginResult != null) {
+        var fbUser = await FacebookSignInApi.getUserData();
+        newUser = User(
+          name: fbUser['name'] as String,
+          email: fbUser['email'] as String,
+          imageUrl: fbUser['picture']['data']['url'] as String,
+          userId: fbUser['id'] as String,
+        );
+        Navigator.of(context).pushNamed(HOME_PAGE, arguments: newUser);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Error in Signing in with Facebook"),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+        ),
+      );
+    }
+  }
+
   Future signInWithGoogle() async {
     try {
       var googleAccount = await GoogleSingInApi.loginWeb().then((value) {
@@ -66,7 +92,7 @@ class _SignupWebState extends State<SignupWeb> {
           userId: value?.id,
         );
         Navigator.of(context).pushNamed(
-          '/home',
+          HOME_PAGE,
           arguments: newUser,
         );
       });
@@ -75,6 +101,21 @@ class _SignupWebState extends State<SignupWeb> {
         const SnackBar(
           content: Text("Error in Signing in with Google"),
         ),
+      );
+    }
+  }
+
+  void continieSignUp() {
+    if (emailCorrect) {
+      newUser = User(
+        name: null,
+        email: emailController.text, //set the email takes from the text field
+        imageUrl: null,
+        userId: null,
+      );
+      Navigator.of(context).pushNamed(
+        SIGNU_PAGE2,
+        arguments: newUser,
       );
     }
   }
@@ -200,23 +241,47 @@ class _SignupWebState extends State<SignupWeb> {
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.01,
                       ),
-                      const TextField(
+                      TextField(
+                        controller: emailController,
                         decoration: InputDecoration(
-                          border: OutlineInputBorder(
+                          border: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(
                               Radius.circular(8),
                             ),
                           ),
                           labelText: 'Email',
+                          suffixIcon: emailController.text.isEmpty
+                              ? null
+                              : emailCorrect
+                                  ? const Icon(
+                                      IconData(0xf635,
+                                          fontFamily: 'MaterialIcons'),
+                                      color: Colors.green,
+                                    )
+                                  : const Icon(
+                                      IconData(0xf713,
+                                          fontFamily: 'MaterialIcons'),
+                                      color: Colors.red,
+                                    ),
                         ),
                         maxLines: 1,
                         keyboardType: TextInputType.emailAddress,
+                        onChanged: (value) {
+                          setState(() {
+                            int index = value.indexOf('@');
+                            if (index != -1) {
+                              emailCorrect = value.contains('.', index + 2) &&
+                                  value[value.length - 1] != '.' &&
+                                  value[value.length - 1] != ' ';
+                            }
+                          });
+                        },
                       ),
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.01,
                       ),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: continieSignUp,
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all(
                             const Color.fromARGB(255, 42, 94, 137),
@@ -245,7 +310,8 @@ class _SignupWebState extends State<SignupWeb> {
                             ),
                           ),
                           InkWell(
-                            onTap: () => Navigator.of(context).pushNamed('/'),
+                            onTap: () => Navigator.of(context)
+                                .pushNamed(LOGIN_PAGE), //navigate to login page
                             child: const Text(
                               " Log in",
                               style: TextStyle(

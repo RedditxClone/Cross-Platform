@@ -1,4 +1,4 @@
-enum SharedKeys {
+enum SharedPrefKeys {
   isLogin,
   searchItem,
   accessToken,

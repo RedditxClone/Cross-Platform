@@ -93,8 +93,8 @@ class _SignupMobileState extends State<SignupMobile> {
         newUser = User(
           userId: googleAccount.id,
           email: googleAccount.email,
-          name: googleAccount.displayName??'',
-          imageUrl: googleAccount.photoUrl??'',
+          name: googleAccount.displayName ?? '',
+          imageUrl: googleAccount.photoUrl ?? '',
         );
         // Navigator.of(context).pushReplacement(
         //   MaterialPageRoute(
@@ -273,7 +273,8 @@ class _SignupMobileState extends State<SignupMobile> {
                                   if (index != -1) {
                                     emailCorrect =
                                         value.contains('.', index + 2) &&
-                                            value[value.length - 1] != '.';
+                                            value[value.length - 1] != '.' &&
+                                            value[value.length - 1] != ' ';
                                   }
                                 });
                               },
@@ -341,11 +342,12 @@ class _SignupMobileState extends State<SignupMobile> {
                                 errorText: passwordCorrect ||
                                         passwordController.text.isEmpty
                                     ? null
-                                    : "Password must be at least 8 characters",
+                                    : "Password cannot contain your username",
                               ),
                               onChanged: (value) {
                                 setState(() {
-                                  passwordCorrect = value.length >= 8;
+                                  passwordCorrect =
+                                      value.contains(usernameController.text);
                                 });
                               },
                               textInputAction: TextInputAction.done,

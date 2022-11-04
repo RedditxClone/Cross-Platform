@@ -31,31 +31,40 @@ class _HomeState extends State<Home> {
               radius: 100,
             ),
             Text(
-              user.name!=null?user.name!:"null",
+              user.name != null ? user.name! : "null",
               style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            // Text(
-            //   widget.user.email,
-            //   style: const TextStyle(
-            //     fontSize: 20,
-            //     fontWeight: FontWeight.bold,
-            //   ),
-            // ),
+            Text(
+              user.userId != null ? user.userId! : "null",
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              user.email != null ? user.email! : "null",
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             ElevatedButton(
               onPressed: () async {
-                var res = await GoogleSingInApi.signoutWeb();
-                if (res == null) {
-                  Navigator.of(context).pushReplacementNamed('/');
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text("Error in Signing in with Google"),
-                    ),
-                  );
-                }
+                // var res = await GoogleSingInApi.signoutWeb();
+                // if (res == null) {
+                //   Navigator.of(context).pushReplacementNamed('/');
+                // } else {
+                //   ScaffoldMessenger.of(context).showSnackBar(
+                //     SnackBar(
+                //       content: Text("Error in Signing in with Google"),
+                //     ),
+                //   );
+                // }
+                FacebookSignInApi.logout();
+                Navigator.of(context).pushReplacementNamed('/');
               },
               child: const Text("Sign Out"),
             ),

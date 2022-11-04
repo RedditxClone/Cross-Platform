@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/presentation/screens/home.dart';
 import 'package:reddit/presentation/screens/signup_page.dart';
+import 'package:reddit/presentation/screens/signup_page2.dart';
 import 'package:reddit/presentation/screens/signup_screen.dart';
 
 import 'data/model/signin.dart';
@@ -13,6 +14,7 @@ class AppRouter {
   Route? generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case '/':
+        // final user = settings.arguments as User;
         return MaterialPageRoute(
           builder: (_) => const SignupWeb(),
         );
@@ -20,6 +22,11 @@ class AppRouter {
         final user = settings.arguments as User;
         return MaterialPageRoute(
           builder: (_) => Home(user: user),
+        );
+      case '/signup2':
+        final user = settings.arguments as User;
+        return MaterialPageRoute(
+          builder: (_) => SignupWeb2(user: user),
         );
       /*
       case example:
