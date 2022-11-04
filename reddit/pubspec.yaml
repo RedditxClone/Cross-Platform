@@ -27,9 +27,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-
   bloc_test: ^9.1.0
-
   cupertino_icons: ^1.0.2
   dio: ^4.0.6
   dotted_border: ^2.0.0+3
@@ -41,8 +39,7 @@ dependencies:
   image_picker: ^0.8.6
   mocktail: ^0.3.0
   google_sign_in: ^5.4.2
- 
-
+  shared_preferences: ^2.0.15
 
 
 dev_dependencies:
