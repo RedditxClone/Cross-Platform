@@ -14,3 +14,15 @@ const changePasswordRoute = "/account_settings/change_password";
 const manageNotificationsRoute = "/account_settings/manage_notifications";
 const countryRoute = "/account_settings/country";
 const manageBlockedAccountsRoute = "/account_settings/manage_blocked_accounts";
+//---------------------------------------
+// ------Profile settings routes---------
+//---------------------------------------
+const profileSettingsRoute = '/profileSettings';
+//---------------------------------------
+// ------Safety settings routes----------
+//---------------------------------------
+const safetySettingsRoute = '/safetySettings';
+//---------------------------------------
+// ------Email settings routes---------
+//---------------------------------------
+const emailSettingsWebScreenRoute = "/emailSettings";

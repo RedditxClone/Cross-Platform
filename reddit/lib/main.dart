@@ -27,12 +27,11 @@ class MyApp extends StatelessWidget {
             foregroundColor: MaterialStateProperty.all(Colors.white),
           ),
         ),
+
       ),
       themeMode: ThemeMode.dark,
       debugShowCheckedModeBanner: false,
       onGenerateRoute: appRouter.generateRoute,
-      // to be deleted
-      initialRoute: accountSettingsRoute,
     );
   }
 }
