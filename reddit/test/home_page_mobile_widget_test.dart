@@ -5,39 +5,31 @@ import 'package:reddit/presentation/screens/home/home_page_mobile.dart';
 void main() {
   setUp(() {});
   Widget createWidgetUnderTest() {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-      ),
-      themeMode: ThemeMode.dark,
-      home: const HomePage(),
+    return const MaterialApp(
+      home: HomePage(),
     );
   }
 
+  // testing that the post cards exist
   testWidgets('testing post testing', (WidgetTester tester) async {
     await tester.pumpWidget(createWidgetUnderTest());
     expect(find.text("This is a post"), findsWidgets);
   });
-  testWidgets('testing only one app bar testing', (WidgetTester tester) async {
-    await tester.pumpWidget(createWidgetUnderTest());
-    expect(find.byType(AppBar), findsOneWidget);
-  });
+
+  // testing that there is only one bottom nav bar
   testWidgets('testing only one bottom navigation bar testing',
       (WidgetTester tester) async {
     await tester.pumpWidget(createWidgetUnderTest());
     expect(find.byType(BottomNavigationBar), findsOneWidget);
   });
 
+  // testing that there is only one drop down menu to navigate between home and popular
   testWidgets('testing only one drop down menu', (WidgetTester tester) async {
     await tester.pumpWidget(createWidgetUnderTest());
     expect(find.byKey(const Key('dropdown')), findsWidgets);
   });
 
+  // testing tapping on the drop down menu and find the popular page
   testWidgets('test tapping on the drop down menu',
       (WidgetTester tester) async {
     await tester.pumpWidget(createWidgetUnderTest());
@@ -45,6 +37,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 500));
     expect(find.byKey(const Key('popular-test')), findsWidgets);
   });
+  // testing tapping on the popular page drop down menu item navigates to popular page
   testWidgets('test tapping on the popular item opens popular page',
       (WidgetTester tester) async {
     await tester.pumpWidget(createWidgetUnderTest());
