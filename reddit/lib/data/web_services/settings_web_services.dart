@@ -1,7 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:reddit/constants/strings.dart';
-import 'package:reddit/data/model/user_settings.dart';
 
 class SettingsWebServices {
   late Dio dio;
@@ -28,7 +26,6 @@ class SettingsWebServices {
       Response response = await dio.get('prefs');
       return response.data;
     } catch (e) {
-      print(e.toString());
       return '';
     }
   }
@@ -50,7 +47,6 @@ class SettingsWebServices {
       Response response = await dio.patch('prefs', data: changed);
       return response.data;
     } catch (e) {
-      print(e.toString());
       return '';
     }
   }
