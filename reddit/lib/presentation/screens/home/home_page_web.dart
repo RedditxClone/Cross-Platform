@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/presentation/screens/Home/home_web.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 
@@ -14,7 +15,7 @@ class _HomePageWebState extends State<HomePageWeb> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-            backgroundColor: Colors.black.withOpacity(0.2),
+            backgroundColor: defaultAppbarBackgroundColor,
             title: const AppBarWebLoggedIn(
               screen: 'Home',
             )),

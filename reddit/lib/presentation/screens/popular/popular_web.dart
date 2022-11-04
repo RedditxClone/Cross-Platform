@@ -13,6 +13,7 @@ class _PopularWebState extends State<PopularWeb> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+            // automaticallyImplyLeading: false,
             backgroundColor: Colors.black.withOpacity(0.2),
             title: const AppBarWebLoggedIn(
               screen: 'Popular',

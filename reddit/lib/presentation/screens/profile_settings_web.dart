@@ -8,7 +8,9 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:reddit/business_logic/cubit/settings/settings_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
+import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/data/model/user_settings.dart';
+import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 
 class ProfileSettingsWeb extends StatefulWidget {
   const ProfileSettingsWeb({Key? key}) : super(key: key);
@@ -437,9 +439,14 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+          backgroundColor: defaultAppbarBackgroundColor,
+          title: const AppBarWebLoggedIn(
+            screen: 'User settings',
+          )),
       body: SingleChildScrollView(
         child: Container(
+          color: defaultWebBackgroundColor,
           padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
           child: BlocBuilder<SettingsCubit, SettingsState>(
             builder: (_, state) {
@@ -457,7 +464,9 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
                 profileSettings = state.settings;
                 return buildEditProfileBody();
               } else {
-                return const Center(child: CircularProgressIndicator());
+                return Container(
+                    height: MediaQuery.of(context).size.height - 50,
+                    child: Center(child: CircularProgressIndicator()));
               }
             },
           ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/constants/strings.dart';
+import 'package:reddit/constants/theme_colors.dart';
 import 'app_router.dart';
 
 void main() {

@@ -15,6 +15,21 @@ class AppBarWebLoggedIn extends StatefulWidget {
 }
 
 class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
+  void routeToPage(val) {
+    switch (val) {
+      case 'Home':
+        Navigator.pushReplacementNamed(context, homePageRout);
+        break;
+      case 'Popular':
+        Navigator.pushReplacementNamed(context, popularPageRout);
+        break;
+      case 'User settings':
+        Navigator.pushReplacementNamed(context, profileSettingsRoute);
+        break;
+      default:
+    }
+  }
+
   List<DropdownMenuItem<String>> createItems(BuildContext context) {
     return [
       const DropdownMenuItem(
@@ -82,9 +97,9 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
     ];
   }
 
-  Widget appBardIcon(IconData icon) {
+  Widget appBardIcon(IconData icon, Function func) {
     return InkWell(
-      onTap: () {},
+      onTap: () => func,
       child: SizedBox(
           width: 40,
           height: 40,
@@ -122,7 +137,9 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
             style: const TextStyle(fontSize: 14, color: Colors.white),
             items: createItems(context),
             value: widget.screen,
-            onChanged: (val) {}),
+            onChanged: (val) {
+              routeToPage(val);
+            }),
         SizedBox(
           width: 0.25 * MediaQuery.of(context).size.width,
           height: 40,
@@ -149,9 +166,11 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
           MediaQuery.of(context).size.width < 740
               ? const SizedBox(width: 0)
               : Row(children: [
-                  appBardIcon(Icons.arrow_circle_up_rounded),
-                  appBardIcon(Icons.circle_outlined),
-                  appBardIcon(Icons.chat),
+                  appBardIcon(Icons.arrow_circle_up_rounded, () {
+                    Navigator.pushReplacementNamed(context, popularPageRout);
+                  }),
+                  appBardIcon(Icons.circle_outlined, () {}),
+                  appBardIcon(Icons.chat, () {}),
                   Container(
                       height: 30,
                       width: 1,
@@ -160,10 +179,10 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
                 ]),
           Row(
             children: [
-              appBardIcon(Icons.shield_outlined),
-              appBardIcon(Icons.message_outlined),
-              appBardIcon(Icons.notifications_outlined),
-              appBardIcon(Icons.add),
+              appBardIcon(Icons.shield_outlined, () {}),
+              appBardIcon(Icons.message_outlined, () {}),
+              appBardIcon(Icons.notifications_outlined, () {}),
+              appBardIcon(Icons.add, () {}),
             ],
           ),
         ]),

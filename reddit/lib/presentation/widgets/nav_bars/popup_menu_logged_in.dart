@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reddit/constants/strings.dart';
 
 class PopupMenuLoggedIn extends StatelessWidget {
   const PopupMenuLoggedIn({Key? key}) : super(key: key);
@@ -112,6 +113,15 @@ class PopupMenuLoggedIn extends StatelessWidget {
       position: PopupMenuPosition.under,
       itemBuilder: (_) => optionsList,
       constraints: const BoxConstraints.expand(width: 200, height: 450),
+      onSelected: (value) {
+        switch (value) {
+          case 3:
+            Navigator.pushReplacementNamed(context, profileSettingsRoute);
+            break;
+          default:
+            break;
+        }
+      },
       child: Row(
         children: [
           const CircleAvatar(child: Icon(Icons.person)),

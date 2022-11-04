@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:reddit/constants/responsive.dart';
+import 'package:reddit/constants/theme_colors.dart';
 
 class HomeWeb extends StatefulWidget {
   const HomeWeb({Key? key}) : super(key: key);
@@ -17,7 +18,7 @@ class _HomeWebState extends State<HomeWeb> {
     responsive = Responsive(context);
     return SingleChildScrollView(
       child: Container(
-        color: Colors.black,
+        color: defaultWebBackgroundColor,
         padding: const EdgeInsets.all(15),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,

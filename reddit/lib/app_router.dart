@@ -5,8 +5,10 @@ import 'package:reddit/business_logic/cubit/settings/safety_settings_cubit.dart'
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/data/repository/safety_settings_repository.dart';
 import 'package:reddit/data/web_services/safety_settings_web_services.dart';
-import 'package:reddit/presentation/screens/home/home_page.dart';
+import 'package:reddit/presentation/screens/home/home_page_mobile.dart';
 import 'package:reddit/presentation/screens/home/home_page_web.dart';
+import 'package:reddit/presentation/screens/popular/popular.dart';
+import 'package:reddit/presentation/screens/popular/popular_web.dart';
 import 'package:reddit/presentation/screens/safety_settings_web.dart';
 import 'package:reddit/business_logic/cubit/settings/settings_cubit.dart';
 import 'package:reddit/data/repository/settings_repository.dart';
@@ -47,7 +49,9 @@ class AppRouter {
           ),
         );
       */
-
+      case popularPageRout:
+        return MaterialPageRoute(
+            builder: (_) => kIsWeb ? const PopularWeb() : const Popular());
       case safetySettingsRoute:
         return MaterialPageRoute(
             builder: (_) => BlocProvider(
