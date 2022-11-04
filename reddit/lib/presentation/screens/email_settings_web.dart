@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reddit/business_logic/cubit/email_settings_cubit.dart';
 import 'package:reddit/data/model/email_settings.dart';
+import 'package:icons_plus/icons_plus.dart';
 
 class EmailSettingsWeb extends StatefulWidget {
   const EmailSettingsWeb({super.key});
@@ -93,13 +94,51 @@ class _EmailSettingsWebState extends State<EmailSettingsWeb> {
     ],
   };
 
+  void _displayMsg(BuildContext context, Color color, String title) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      width: 400,
+      content: Container(
+          height: 50,
+          padding: const EdgeInsets.all(5),
+          decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              color: const Color.fromARGB(255, 33, 32, 32),
+              borderRadius: const BorderRadius.all(Radius.circular(10))),
+          child: Row(
+            children: [
+              Container(
+                margin: const EdgeInsets.only(right: 10),
+                decoration: BoxDecoration(
+                    color: color,
+                    borderRadius: const BorderRadius.all(Radius.circular(10))),
+                width: 9,
+              ),
+              Logo(
+                Logos.reddit,
+                color: Colors.white,
+                size: 20,
+              ),
+              const SizedBox(width: 10),
+              Text(
+                title,
+                style: const TextStyle(fontSize: 16, color: Colors.white),
+              ),
+            ],
+          )),
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+    ));
+  }
+
   ///each setting reprensents an entry in the map
   ///value is a list of: value, onChanged function, subtitle if exist
   List<Widget> _createSection(
       sectionTitle, Map<String, List<dynamic>> itemsMap) {
     return [
       Text(sectionTitle,
-          style: const TextStyle(fontSize: 15, color: Colors.grey)),
+          style: const TextStyle(
+              fontSize: 10, fontWeight: FontWeight.w700, color: Colors.grey)),
       const Divider(
         color: Color.fromARGB(255, 105, 104, 104),
         thickness: 0,
@@ -120,11 +159,15 @@ class _EmailSettingsWebState extends State<EmailSettingsWeb> {
         title: title != null
             ? Text(
                 title,
-                style: const TextStyle(fontSize: 15, color: Colors.white),
+                style: const TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 15,
+                    color: Colors.white),
               )
             : null,
         activeColor: Colors.white,
         onChanged: (value) {
+          infoList[0] = value;
           infoList[1](value);
           BlocProvider.of<EmailSettingsCubit>(context)
               .updateEmailSettings(_emailSettings);
@@ -160,21 +203,33 @@ class _EmailSettingsWebState extends State<EmailSettingsWeb> {
                         style: TextStyle(fontSize: 25, color: Colors.white),
                       ),
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: _createSection("MESSAGES", section1),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: _createSection("ACTIVITY", section2),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: _createSection("NEWSLETTERS", section3),
-                    ),
-                    Column(
+                    Padding(
+                      padding: const EdgeInsets.only(top: 45),
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: _createSection("", section4))
+                        children: _createSection("MESSAGES", section1),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 45),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: _createSection("ACTIVITY", section2),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 45),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: _createSection("NEWSLETTERS", section3),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 45, bottom: 30),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: _createSection("", section4)),
+                    )
                   ]),
             ),
           ),
@@ -192,9 +247,15 @@ class _EmailSettingsWebState extends State<EmailSettingsWeb> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: _buildSettingsList(),
-      backgroundColor: Colors.black,
+      body: BlocListener<EmailSettingsCubit, EmailSettingsState>(
+        listener: (context, state) {
+          if (state is EmailSettingsUpdated) {
+            _displayMsg(context, Colors.blue, 'Changes Saved');
+          }
+        },
+        child: _buildSettingsList(),
+      ),
+      backgroundColor: const Color.fromARGB(195, 37, 38, 39),
     );
   }
 }

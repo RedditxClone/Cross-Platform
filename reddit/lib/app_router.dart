@@ -14,6 +14,7 @@ class AppRouter {
 
   AppRouter() {
     // initialise repository and cubit objects
+    emailSettingsWebServices = EmailSettingsWebServices();
     emailSettingsReposity = EmailSettingsRepository(emailSettingsWebServices);
     emailSettingsCubit = EmailSettingsCubit(emailSettingsReposity);
   }

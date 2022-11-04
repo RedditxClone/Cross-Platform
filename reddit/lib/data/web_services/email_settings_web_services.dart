@@ -4,9 +4,8 @@ import 'package:reddit/constants/strings.dart';
 
 class EmailSettingsWebServices {
   bool useMockServer = true;
-  String mockUrl = TargetPlatform.android == defaultTargetPlatform
-      ? "http://10.0.2.2:3001/"
-      : "http://127.0.0.1:3001/";
+  String mockUrl =
+      "https://f1c179b0-0158-4a47-ba39-7b803b8ae58a.mock.pstmn.io/";
   late Dio dio;
   EmailSettingsWebServices() {
     BaseOptions options = BaseOptions(
@@ -21,25 +20,23 @@ class EmailSettingsWebServices {
   Future<dynamic> getEmailSettings() async {
     try {
       Response response = await dio.get('user/me/prefs');
-      print(response.data);
       return response.data;
     } catch (e) {
-      print(e);
       return [];
     }
   }
 
   Future<void> updateEmailSettings(
-      Map<String, dynamic> newAccSettings) async {
+      Map<String, dynamic> newEmailSettings) async {
     try {
       Response response = await dio.patch(
         'user/me/prefs',
-        data: newAccSettings,
+        data: newEmailSettings,
       );
       if (response.statusCode == 200) {
-        print("Email settings updated successfully");
+        print("updated Email settings");
       } else {
-        print("Failed to updateEmail settings");
+        print("Failed to update Email settings");
       }
     } catch (e) {
       print(e);

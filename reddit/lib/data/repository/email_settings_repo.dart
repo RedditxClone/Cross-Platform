@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import '../web_services/email_settings_web_services.dart';
 import '../model/email_settings.dart';
 
@@ -8,7 +10,7 @@ class EmailSettingsRepository {
 
   Future<EmailSettings> getEmailSettings() async {
     final emailSettingsData = await emailSettingsWebServices.getEmailSettings();
-    return EmailSettings.fromJson(emailSettingsData);
+    return EmailSettings.fromJson(jsonDecode(emailSettingsData));
   }
 
   Future<void> updateEmailSettings(EmailSettings updatedEmailSettings) async {
@@ -16,3 +18,4 @@ class EmailSettingsRepository {
     await emailSettingsWebServices.updateEmailSettings(settingsMap);
   }
 }
+

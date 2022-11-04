@@ -11,3 +11,5 @@ class EmailSettingsLoaded extends EmailSettingsState {
   final EmailSettings emailSettings;
   EmailSettingsLoaded(this.emailSettings);
 }
+
+class EmailSettingsUpdated extends EmailSettingsState {}
