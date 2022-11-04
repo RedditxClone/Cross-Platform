@@ -23,6 +23,9 @@ class _RecaptchaScreenState extends State<RecaptchaScreen> {
         ..src = 'assets/webpages/recaptcha.html'
         ..style.border = 'none',
     );
+
+    /// To receive recaptcha response
+    /// Receiving response from recaptcha means that you are authorized
     html.window.onMessage.listen((msg) {
       // Replace the route here with the route you wish to go
       Navigator.pushReplacementNamed(context, '/');
