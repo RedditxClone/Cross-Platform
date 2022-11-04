@@ -20,7 +20,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
   AccountSettingsModel? accountSettings;
   bool _isMan = true;
   String _country = "";
-  // get this value from previous screen
+  // get these value from server
   final String _email = "bemoi.erian@gmail.com";
   final String _username = "bemoierian";
   final Uri _countryLearnMoreUrl =

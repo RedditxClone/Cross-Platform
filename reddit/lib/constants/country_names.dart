@@ -1,3 +1,7 @@
+// -----------------------------------------------
+// A list of country codes and names used in "select country"
+// in account settings
+// -----------------------------------------------
 List<Map<String, String>> countryNamesMap = [
   {"name": 'Afghanistan', "code": 'AF'},
   {"name": 'Åland Islands', "code": 'AX'},

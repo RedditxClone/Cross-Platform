@@ -11,7 +11,9 @@ class AccountSettingsCubit extends Cubit<AccountSettingsState> {
   AccountSettingsModel? accountSettings;
   AccountSettingsCubit(this.accountSettingsRepository)
       : super(AccountSettingsInitial());
-  // gets characters from repository and sends it to the state (ui)
+
+  /// Gets account settings data from repository.
+  /// Emits the corresponding state for UI.
   void getAccountSettings() {
     emit(AccountSettingsLoading());
     accountSettingsRepository.getAccountSettings().then((accountSettings) {
@@ -22,6 +24,8 @@ class AccountSettingsCubit extends Cubit<AccountSettingsState> {
     });
   }
 
+  /// Send data to repository to prepare the PATCH request.
+  /// Emits the corresponding state for UI.
   void updateAccountSettings(AccountSettingsModel newAccSettings) {
     // emit(AccountSettingsLoading());
     accountSettings = newAccSettings;
@@ -29,6 +33,8 @@ class AccountSettingsCubit extends Cubit<AccountSettingsState> {
     emit(AccountSettingsLoaded(accountSettings!));
   }
 
+  /// Send data to repository to prepare the PATCH request.
+  /// Emits the corresponding state for UI.
   void changePassword(ChangePasswordModel changePasswordModel) {
     accountSettingsRepository.changePassword(changePasswordModel).then((value) {
       if (value == 200) {

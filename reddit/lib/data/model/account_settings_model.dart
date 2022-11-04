@@ -37,6 +37,9 @@ class AccountSettingsModel {
           emailMessages == other.emailMessages &&
           defaultCommentSort == other.defaultCommentSort &&
           showFlair == other.showFlair;
+
+  /// Map settings comming from web services to the model.
+  /// The repository (account_settings_repository) calls this function
   AccountSettingsModel.fromJson(Map<String, dynamic> json) {
     print("Account settings from model:");
     print("$json");
@@ -52,6 +55,7 @@ class AccountSettingsModel {
     showFlair = json['show_flair'];
     gender = json['gender'];
   }
+  // Trial to update only certain settings
   // Map<String, dynamic> toJson(
   //     {countryCode,
   //     enableFollowers,
@@ -82,7 +86,7 @@ class AccountSettingsModel {
   //   });
   //   return map;
   // }
-
+  /// Map settings from model to Json to be sent to web services.
   Map<String, dynamic> toJson() => {
         'country_code': countryCode,
         'enable_followers': enableFollowers,
