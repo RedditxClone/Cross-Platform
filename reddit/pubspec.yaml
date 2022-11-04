@@ -3,7 +3,7 @@ description: A new Flutter project.
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -27,15 +27,22 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  bloc_test: ^9.1.0
   cupertino_icons: ^1.0.2
-  dartdoc: ^6.1.2
   dio: ^4.0.6
+  dotted_border: ^2.0.0+3
   flutter:
     sdk: flutter
   flutter_bloc: ^8.1.1
-  google_sign_in: ^5.4.2
+  flutter_signin_button: ^2.0.0
   icons_plus: ^3.0.0
   webview_flutter_plus: ^0.3.0+2
+  url_launcher: ^6.1.6
+  image_picker: ^0.8.6
+  mocktail: ^0.3.0
+  google_sign_in: ^5.4.2
+  shared_preferences: ^2.0.15
+
 
 dev_dependencies:
   flutter_launcher_icons: ^0.10.0
@@ -57,7 +64,6 @@ flutter_icons:
   image_path: "assets/icon/reddit.png"
 # The following section is specific to Flutter packages.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -67,6 +73,7 @@ flutter:
   assets:
     - assets/images/
     - assets/webpages/
+    - assets/icon/google.png
   #   - images/a_dot_ham.jpeg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
