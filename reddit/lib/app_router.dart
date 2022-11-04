@@ -11,19 +11,20 @@ import 'package:reddit/data/repository/settings_repository.dart';
 import 'package:reddit/data/web_services/settings_web_services.dart';
 import 'package:reddit/presentation/screens/profile_settings_screen.dart';
 import 'package:reddit/presentation/screens/profile_settings_web.dart';
+
 class AppRouter {
   // declare repository and cubit objects
-  late SafetySettingsRepository settingsRepository;
-  late SafetySettingsCubit settingsCubit;
+  late SafetySettingsRepository safetySettingsRepository;
+  late SafetySettingsCubit safetySettingsCubit;
   late SettingsRepository settingsRepository;
   late SettingsCubit settingsCubit;
   AppRouter() {
     // initialise repository and cubit objects
-    settingsRepository = SafetySettingsRepository(SafetySettingsWebServices());
-    settingsCubit = SafetySettingsCubit(settingsRepository);
+    safetySettingsRepository =
+        SafetySettingsRepository(SafetySettingsWebServices());
+    safetySettingsCubit = SafetySettingsCubit(safetySettingsRepository);
     settingsRepository = SettingsRepository(SettingsWebServices());
     settingsCubit = SettingsCubit(settingsRepository);
-
   }
   Route? generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -50,10 +51,10 @@ class AppRouter {
       case safetySettingsRoute:
         return MaterialPageRoute(
             builder: (_) => BlocProvider(
-                  create: (BuildContext context) => settingsCubit,
+                  create: (BuildContext context) => safetySettingsCubit,
                   child: const SafetySettingsWeb(),
                 ));
-       case profileSettingsRoute:
+      case profileSettingsRoute:
         return MaterialPageRoute(
             builder: (_) => BlocProvider(
                   create: (BuildContext context) => settingsCubit,
@@ -64,7 +65,6 @@ class AppRouter {
 
       default:
         return null;
-
     }
   }
 }
