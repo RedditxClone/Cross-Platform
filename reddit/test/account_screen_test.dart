@@ -10,7 +10,7 @@ import 'package:reddit/data/web_services/account_settings_web_services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:bloc_test/bloc_test.dart';
-import '../lib/presentation/screens/account_settings_screen.dart';
+import '../lib/presentation/screens/account_settings/account_settings_screen.dart';
 
 class MockAccountSettingsWebService extends Mock
     implements AccountSettingsWebServices {}

@@ -5,13 +5,13 @@ import 'package:reddit/business_logic/cubit/cubit/account_settings_cubit.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/data/repository/account_settings_repository.dart';
 import 'package:reddit/data/web_services/account_settings_web_services.dart';
-import 'package:reddit/presentation/screens/Web/account_settings_screen_web.dart';
-import 'package:reddit/presentation/screens/account_settings_screen.dart';
-import 'package:reddit/presentation/screens/change_password_screen.dart';
-import 'package:reddit/presentation/screens/country_screen.dart';
-import 'package:reddit/presentation/screens/manage_blocked_accounts_screen.dart';
-import 'package:reddit/presentation/screens/manage_notifications_screen.dart';
-import 'package:reddit/presentation/screens/update_email_address_screen.dart';
+import 'package:reddit/presentation/screens/account_settings/account_settings_screen_web.dart';
+import 'package:reddit/presentation/screens/account_settings/account_settings_screen.dart';
+import 'package:reddit/presentation/screens/account_settings/change_password_screen.dart';
+import 'package:reddit/presentation/screens/account_settings/country_screen.dart';
+import 'package:reddit/presentation/screens/account_settings/manage_blocked_accounts_screen.dart';
+import 'package:reddit/presentation/screens/account_settings/manage_notifications_screen.dart';
+import 'package:reddit/presentation/screens/account_settings/update_email_address_screen.dart';
 
 class AppRouter {
   // platform

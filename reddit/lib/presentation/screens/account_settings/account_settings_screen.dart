@@ -5,7 +5,7 @@ import 'package:reddit/business_logic/cubit/cubit/account_settings_cubit.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/data/model/account_settings_model.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../constants/country_names.dart';
+import '../../../constants/country_names.dart';
 
 ///Widget that constructs the Account Settings screen on Android
 class AccountSettingsScreen extends StatefulWidget {
