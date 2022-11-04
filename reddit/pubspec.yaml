@@ -27,16 +27,20 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  bloc_test: ^9.1.0
   cupertino_icons: ^1.0.2
   dio: ^4.0.6
+  dotted_border: ^2.0.0+3
   flutter:
     sdk: flutter
   flutter_bloc: ^8.1.1
-  mocktail: ^0.3.0
-  bloc_test: ^9.1.0
   icons_plus: ^3.0.0
-
+  url_launcher: ^6.1.6
+  image_picker: ^0.8.6
+  mocktail: ^0.3.0
+  google_sign_in: ^5.4.2
   shared_preferences: ^2.0.15
+
 
 dev_dependencies:
   flutter_launcher_icons: ^0.10.0
