@@ -33,6 +33,7 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
     BlocProvider.of<SafetySettingsCubit>(context).getUserSettings();
   }
 
+  /// creates the text in the top of the page
   TextSpan createTextSpan(String txt, bool isUrl) {
     return TextSpan(
       text: txt,
@@ -51,6 +52,8 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
     );
   }
 
+  /// displayed in the bottom of the page on every change the user make to inform him if the change
+  /// that the changes are saved or there was an error that occured
   void displayMsg(BuildContext context, Color color, String title) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       width: 400,
@@ -88,6 +91,7 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
     ));
   }
 
+  /// build the titles above every group of the safety settings UI
   Widget title(String title, String subtitle) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,6 +108,7 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
     );
   }
 
+  /// build the body of the safety settings UI
   Widget buildBody() {
     return Row(
       children: [

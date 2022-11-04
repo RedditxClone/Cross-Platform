@@ -20,12 +20,10 @@ class SafetySettingsCubit extends Cubit<SafetySettingsState> {
 
   /// change the cover photo : send to the backend the new image and emit sate SettingsChanged
   void changeCoverphoto(SafetySettings settings, String img) {
-    String newImg = '';
     this.settings = settings;
     settingsRepository.updateImage('cover', img).then((image) {
       settings.cover = image;
       emit(SafetySettingsChanged(settings));
-      newImg = image;
     });
   }
 

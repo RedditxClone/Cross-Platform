@@ -77,9 +77,9 @@ void main() async {
           SafetySettingsRepository(mockAccountSettingsWebService);
       accountSettingsCubit = SafetySettingsCubit(accountSettingsRepository);
     });
-    // Calling getAccountSettings() function returns the correct state
-    // AccountSettingsLoading means that the request is sent and we are waiting for the response
-    // AccountSettingsLoaded means that the response is received and UI is built based on this responce
+
+    /// Calling getAccountSettings() function returns the correct state
+    /// SafetySettingsAvailable means that the response is received and UI is built based on this responce
     blocTest<SafetySettingsCubit, SafetySettingsState>(
       'Settings loaded state is emitted correctly after getting settings data from server',
       setUp: () {
@@ -108,7 +108,8 @@ void main() async {
       expect: () => [isA<SafetySettingsChanged>()],
     );
   });
-  // Test if mapping from Json to model is correct
+
+  /// Test if mapping from Json to model is correct
   group('Model test', () {
     test('Model is generated correctly', () {
       expect(
@@ -118,8 +119,8 @@ void main() async {
     });
   });
 
-  // Check if the data shown on UI is the same as the data comming from server.
-  // Check if update settings function is called when updating any value from UI.
+  /// Check if the data shown on UI is the same as the data comming from server.
+  /// Check if update settings function is called when updating any value from UI.
   group("UI data matches response data", () {
     setUp(() {
       mockAccountSettingsCubit = MockAccountSettingsCubit();

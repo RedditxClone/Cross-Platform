@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-/// # Settings data model
+/// Safety Settings data model
 class SafetySettings {
   late String profile;
   late String cover;
@@ -38,7 +38,7 @@ class SafetySettings {
       required this.personalizeRecOurPartners,
       required this.useTwoFactorAuthentication});
 
-  /// ### Transform the data from json to Settings Class object
+  ///  Transform the data from json to Settings Class object
   SafetySettings.fromjson(Map<String, dynamic> json) {
     profile = json['profile'];
     cover = json['cover'];

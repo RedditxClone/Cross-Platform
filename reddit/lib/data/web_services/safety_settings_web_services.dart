@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:reddit/constants/strings.dart';
 
+// This class is responsible of making request to the server
 class SafetySettingsWebServices {
   late Dio dio;
   // String mockUrl = TargetPlatform.android == defaultTargetPlatform
