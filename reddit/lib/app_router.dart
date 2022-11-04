@@ -1,26 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:reddit/business_logic/cubit/settings/settings_cubit.dart';
+import 'package:reddit/business_logic/cubit/settings/safety_settings_cubit.dart';
 import 'package:reddit/constants/strings.dart';
+import 'package:reddit/data/repository/safety_settings_repository.dart';
+import 'package:reddit/data/web_services/safety_settings_web_services.dart';
+import 'package:reddit/presentation/screens/safety_settings_web.dart';
+import 'package:reddit/business_logic/cubit/settings/settings_cubit.dart';
 import 'package:reddit/data/repository/settings_repository.dart';
 import 'package:reddit/data/web_services/settings_web_services.dart';
 import 'package:reddit/presentation/screens/profile_settings_screen.dart';
 import 'package:reddit/presentation/screens/profile_settings_web.dart';
-
 class AppRouter {
   // declare repository and cubit objects
+  late SafetySettingsRepository settingsRepository;
+  late SafetySettingsCubit settingsCubit;
   late SettingsRepository settingsRepository;
   late SettingsCubit settingsCubit;
   AppRouter() {
     // initialise repository and cubit objects
+    settingsRepository = SafetySettingsRepository(SafetySettingsWebServices());
+    settingsCubit = SafetySettingsCubit(settingsRepository);
     settingsRepository = SettingsRepository(SettingsWebServices());
     settingsCubit = SettingsCubit(settingsRepository);
+
   }
   Route? generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case '/':
-        return MaterialPageRoute(builder: (_) => Scaffold(
+        return MaterialPageRoute(
+            builder: (_) => Scaffold(
                   appBar: AppBar(),
                   body: Container(),
                 ));
@@ -37,7 +46,14 @@ class AppRouter {
           ),
         );
       */
-      case profileSettingsRoute:
+
+      case safetySettingsRoute:
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider(
+                  create: (BuildContext context) => settingsCubit,
+                  child: const SafetySettingsWeb(),
+                ));
+       case profileSettingsRoute:
         return MaterialPageRoute(
             builder: (_) => BlocProvider(
                   create: (BuildContext context) => settingsCubit,
@@ -45,6 +61,10 @@ class AppRouter {
                       ? const ProfileSettingsWeb()
                       : const ProfileSettings(),
                 ));
+
+      default:
+        return null;
+
     }
   }
 }
