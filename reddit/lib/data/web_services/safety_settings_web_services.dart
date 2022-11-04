@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:reddit/constants/strings.dart';
 
-class SettingsWebServices {
+class SafetySettingsWebServices {
   late Dio dio;
   // String mockUrl = TargetPlatform.android == defaultTargetPlatform
   //     ? "http://10.0.2.2:3000/"
@@ -9,7 +9,7 @@ class SettingsWebServices {
   String mockUrl =
       'https://ee2e6548-8637-491e-ac9f-5109ed246fd1.mock.pstmn.io/';
   bool isMockerServer = true;
-  SettingsWebServices() {
+  SafetySettingsWebServices() {
     BaseOptions options = BaseOptions(
       baseUrl: isMockerServer ? mockUrl : baseUrl,
       receiveDataWhenStatusError: true,

@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 /// # Settings data model
-class Settings {
+class SafetySettings {
   late String profile;
   late String cover;
   late String displayName;
@@ -19,7 +19,7 @@ class Settings {
   late bool personalizeRecGeneralLocation;
   late bool personalizeRecOurPartners;
   late bool useTwoFactorAuthentication;
-  Settings(
+  SafetySettings(
       {required this.profile,
       required this.cover,
       required this.displayName,
@@ -39,7 +39,7 @@ class Settings {
       required this.useTwoFactorAuthentication});
 
   /// ### Transform the data from json to Settings Class object
-  Settings.fromjson(Map<String, dynamic> json) {
+  SafetySettings.fromjson(Map<String, dynamic> json) {
     profile = json['profile'];
     cover = json['cover'];
     displayName = json['displayName'];
@@ -61,7 +61,7 @@ class Settings {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is Settings &&
+      other is SafetySettings &&
           profile == other.profile &&
           cover == other.cover &&
           displayName == other.displayName &&

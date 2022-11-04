@@ -1,16 +1,16 @@
 import 'dart:convert';
 
-import 'package:reddit/data/model/user_settings.dart';
-import 'package:reddit/data/web_services/settings_web_services.dart';
+import 'package:reddit/data/model/safety_user_settings.dart';
+import 'package:reddit/data/web_services/safety_settings_web_services.dart';
 
-class SettingsRepository {
-  final SettingsWebServices settingsWebServices;
-  SettingsRepository(this.settingsWebServices);
+class SafetySettingsRepository {
+  final SafetySettingsWebServices settingsWebServices;
+  SafetySettingsRepository(this.settingsWebServices);
 
   /// Returns all user settings from json to Settings class object
-  Future<Settings> getUserSettings() async {
+  Future<SafetySettings> getUserSettings() async {
     final settings = await settingsWebServices.getUserSettings();
-    return Settings.fromjson(jsonDecode(settings));
+    return SafetySettings.fromjson(jsonDecode(settings));
   }
 
   /// patch to update cover and profile photo

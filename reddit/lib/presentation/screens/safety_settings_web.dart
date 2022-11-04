@@ -1,12 +1,10 @@
-import 'dart:html';
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
-import 'package:reddit/business_logic/cubit/settings/settings_cubit.dart';
+import 'package:reddit/business_logic/cubit/settings/safety_settings_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
-import 'package:reddit/data/model/user_settings.dart';
+import 'package:reddit/data/model/safety_user_settings.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SafetySettingsWeb extends StatefulWidget {
@@ -17,7 +15,7 @@ class SafetySettingsWeb extends StatefulWidget {
 }
 
 class _SafetySettingsWebState extends State<SafetySettingsWeb> {
-  Settings? safetySettings;
+  SafetySettings? safetySettings;
   TextEditingController blockedUsers = TextEditingController();
   late Responsive responsive;
   String disruptiveComments = 'OFF';
@@ -32,7 +30,7 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<SettingsCubit>(context).getUserSettings();
+    BlocProvider.of<SafetySettingsCubit>(context).getUserSettings();
   }
 
   TextSpan createTextSpan(String txt, bool isUrl) {
@@ -141,7 +139,7 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
                   'Blocked people can’t send you chat requests or private messages.'),
               TextField(
                   onSubmitted: (value) {
-                    BlocProvider.of<SettingsCubit>(context)
+                    BlocProvider.of<SafetySettingsCubit>(context)
                         .updateSettings({'blocked': value});
                     displayMsg(context, Colors.blue,
                         '${blockedUsers.text} is now blocked');
@@ -202,7 +200,7 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
                         setState(() {
                           safetySettings!.disroptiveSettings = val as String;
                           disruptiveComments = val;
-                          BlocProvider.of<SettingsCubit>(context)
+                          BlocProvider.of<SafetySettingsCubit>(context)
                               .updateSettings({'disruptiveComments': val});
                           displayMsg(context, Colors.blue, 'Changes Saved');
                         });
@@ -216,13 +214,14 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
               const Divider(),
               //------------- Show up in search results --------------
               SwitchListTile(
+                key: const Key("showUnInSearch"),
                 activeColor: Colors.blue,
                 contentPadding: const EdgeInsets.all(0),
                 value: safetySettings!.showUnInSearch,
                 onChanged: (newValue) {
                   setState(() {
                     safetySettings!.showUnInSearch = var1 = newValue;
-                    BlocProvider.of<SettingsCubit>(context)
+                    BlocProvider.of<SafetySettingsCubit>(context)
                         .updateSettings({'showUnInSearch': newValue});
                     displayMsg(context, Colors.blue, 'Changes Saved');
                   });
@@ -242,7 +241,7 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
                 onChanged: (newValue) {
                   setState(() {
                     safetySettings!.personalizeAllOfReddit = var2 = newValue;
-                    BlocProvider.of<SettingsCubit>(context)
+                    BlocProvider.of<SafetySettingsCubit>(context)
                         .updateSettings({'personalizeAllOfReddit': newValue});
                     displayMsg(context, Colors.blue, 'Changes Saved');
                   });
@@ -263,8 +262,9 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
                 onChanged: (newValue) {
                   setState(() {
                     safetySettings!.personalizeAdsInformation = var3 = newValue;
-                    BlocProvider.of<SettingsCubit>(context).updateSettings(
-                        {'personalizeAdsInformation': newValue});
+                    BlocProvider.of<SafetySettingsCubit>(context)
+                        .updateSettings(
+                            {'personalizeAdsInformation': newValue});
                     displayMsg(context, Colors.blue, 'Changes Saved');
                   });
                 },
@@ -304,8 +304,9 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
                   setState(() {
                     safetySettings!.personalizeRecGeneralLocation =
                         var5 = newValue;
-                    BlocProvider.of<SettingsCubit>(context).updateSettings(
-                        {'personalizeRecGeneralLocation': newValue});
+                    BlocProvider.of<SafetySettingsCubit>(context)
+                        .updateSettings(
+                            {'personalizeRecGeneralLocation': newValue});
                     displayMsg(context, Colors.blue, 'Changes Saved');
                   });
                 },
@@ -325,8 +326,9 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
                 onChanged: (newValue) {
                   setState(() {
                     safetySettings!.personalizeRecOurPartners = var6 = newValue;
-                    BlocProvider.of<SettingsCubit>(context).updateSettings(
-                        {'personalizeRecOurPartners': newValue});
+                    BlocProvider.of<SafetySettingsCubit>(context)
+                        .updateSettings(
+                            {'personalizeRecOurPartners': newValue});
                     displayMsg(context, Colors.blue, 'Changes Saved');
                   });
                 },
@@ -351,8 +353,9 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
                   setState(() {
                     safetySettings!.useTwoFactorAuthentication =
                         var7 = newValue;
-                    BlocProvider.of<SettingsCubit>(context).updateSettings(
-                        {'useTwoFactorAuthentication': newValue});
+                    BlocProvider.of<SafetySettingsCubit>(context)
+                        .updateSettings(
+                            {'useTwoFactorAuthentication': newValue});
                     displayMsg(context, Colors.blue, 'Changes Saved');
                   });
                 },
@@ -386,14 +389,14 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
       body: SingleChildScrollView(
           child: Container(
         padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
-        child: BlocBuilder<SettingsCubit, SettingsState>(
+        child: BlocBuilder<SafetySettingsCubit, SafetySettingsState>(
           builder: (context, state) {
-            if (state is SettingsAvailable) {
+            if (state is SafetySettingsAvailable) {
               responsive = Responsive(context);
               safetySettings = state.settings;
               blockedUsers = TextEditingController();
               return buildBody();
-            } else if (state is SettingsChanged) {
+            } else if (state is SafetySettingsChanged) {
               safetySettings = state.settings;
               return buildBody();
             } else {
