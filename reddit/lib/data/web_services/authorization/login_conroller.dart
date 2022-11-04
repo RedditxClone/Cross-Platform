@@ -55,8 +55,8 @@ class FacebookSignInApi {
 
       return result;
     }
-    print(result.status);
-    print(result.message);
+    // print(result.status);
+    // print(result.message);
     return null;
   }
 
@@ -64,11 +64,9 @@ class FacebookSignInApi {
     await FacebookAuth.instance.logOut();
   }
 
-
   static Future<Map<String, dynamic>> getUserData() async {
     final userMap = await FacebookAuth.instance
         .getUserData(fields: "id,name,email,picture");
     return userMap;
   }
-  
 }

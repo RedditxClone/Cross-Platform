@@ -65,7 +65,10 @@ class _SignupWebState extends State<SignupWeb> {
           imageUrl: fbUser['picture']['data']['url'] as String,
           userId: fbUser['id'] as String,
         );
-        Navigator.of(context).pushNamed(HOME_PAGE, arguments: newUser);
+        Navigator.of(context).pushNamed(
+          HOME_PAGE,
+          arguments: newUser,
+        );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
