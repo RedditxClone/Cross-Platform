@@ -15,7 +15,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: '/emailSettings',
       title: 'Reddit',
       theme: ThemeData(
         // This is the theme of your application.
@@ -27,7 +26,6 @@ class MyApp extends StatelessWidget {
       themeMode: ThemeMode.dark,
       debugShowCheckedModeBanner: false,
       onGenerateRoute: appRouter.generateRoute,
-      initialRoute: profileSettingsRoute,
     );
   }
 }
