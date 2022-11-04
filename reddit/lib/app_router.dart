@@ -1,5 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:reddit/constants/strings.dart';
+import 'package:reddit/presentation/screens/recaptcha_screen.dart'
+    if (dart.library.html) 'package:reddit/presentation/screens/recaptcha_screen_web.dart'
+    as recaptcha_screen;
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -93,6 +97,12 @@ class AppRouter {
           ),
         );
       */
+
+      case recaptchaRoute:
+        // return MaterialPageRoute(builder: (_) => const RecaptchaScreenWeb());
+        return MaterialPageRoute(
+            builder: (_) => const recaptcha_screen.RecaptchaScreen());
+
 
       case accountSettingsRoute:
         return MaterialPageRoute(

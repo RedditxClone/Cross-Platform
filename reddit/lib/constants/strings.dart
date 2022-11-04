@@ -26,3 +26,7 @@ const safetySettingsRoute = '/safetySettings';
 // ------Email settings routes---------
 //---------------------------------------
 const emailSettingsWebScreenRoute = "/emailSettings";
+//---------------------------------------
+// -----------reCaptcha routes-----------
+//---------------------------------------
+const recaptchaRoute = "/recaptcha";
