@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:reddit/constants/strings.dart';
+import 'package:reddit/presentation/screens/forget_password.dart';
+import 'package:reddit/presentation/screens/forget_username.dart';
 import 'package:reddit/presentation/screens/home.dart';
+import 'package:reddit/presentation/screens/login_page.dart';
 import 'package:reddit/presentation/screens/signup_page.dart';
 import 'package:reddit/presentation/screens/signup_page2.dart';
 import 'package:reddit/presentation/screens/signup_screen.dart';
@@ -14,19 +18,34 @@ class AppRouter {
   Route? generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case '/':
-        // final user = settings.arguments as User;
         return MaterialPageRoute(
-          builder: (_) => const SignupWeb(),
+          builder: (_) => const ForgetPassword(),
         );
-      case '/home':
+      case HOME_PAGE:
         final user = settings.arguments as User;
         return MaterialPageRoute(
           builder: (_) => Home(user: user),
         );
-      case '/signup2':
+      case SIGNU_PAGE2:
         final user = settings.arguments as User;
         return MaterialPageRoute(
           builder: (_) => SignupWeb2(user: user),
+        );
+      case forgetUsername:
+        return MaterialPageRoute(
+          builder: (_) => const ForgetUsername(),
+        );
+      case forgetPassword:
+        return MaterialPageRoute(
+          builder: (_) => const ForgetPassword(),
+        );
+      case SIGNU_PAGE1:
+        return MaterialPageRoute(
+          builder: (_) => const SignupWeb(),
+        );
+      case loginPage:
+        return MaterialPageRoute(
+          builder: (_) => const LoginWeb(),
         );
       /*
       case example:

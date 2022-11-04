@@ -1,26 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:reddit/helper/dio.dart';
+import 'package:url_launcher/link.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../constants/strings.dart';
 import '../../data/model/signin.dart';
 import '../../data/web_services/authorization/login_conroller.dart';
 
-class SignupWeb extends StatefulWidget {
-  const SignupWeb({super.key});
+class LoginWeb extends StatefulWidget {
+  const LoginWeb({super.key});
 
   @override
-  State<SignupWeb> createState() => _SignupWebState();
+  State<LoginWeb> createState() => _LoginWebState();
 }
 
-class _SignupWebState extends State<SignupWeb> {
+class _LoginWebState extends State<LoginWeb> {
   late User newUser;
-  var emailController = TextEditingController();
-  bool emailCorrect = false;
 
+  final userAgreementUrl = Uri.parse(USER_AGGREMENT);
+  final privacyPolicyUrl = Uri.parse(PRIVACY_POLICY);
+  var usernameController = TextEditingController();
+  var passwordController = TextEditingController();
+  bool loginCorrect = true;
+  bool usernameCorrect = true;
+  // bool passwordEmpty = false;
+  // bool usernameEmpty = false;
+  bool usernameUsed = false;
+  bool passwordVisible = true;
   @override
   void initState() {
     super.initState();
     FacebookSignInApi.facebookInit();
+  }
+
+  Future<void> _launchUrl(Uri url) async {
+    if (await canLaunchUrl(url)) {
+      await launchUrl(
+        url,
+      );
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   Widget createContinueWithButton(String lable) {
@@ -108,18 +129,38 @@ class _SignupWebState extends State<SignupWeb> {
     }
   }
 
-  void continieSignUp() {
-    if (emailCorrect) {
-      newUser = User(
-        name: null,
-        email: emailController.text, //set the email takes from the text field
-        imageUrl: null,
-        userId: null,
+  void continueLogin() {
+    if (usernameController.text.isEmpty || passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please fill out the empty fields"),
+        ),
       );
-      Navigator.of(context).pushNamed(
-        SIGNU_PAGE2,
-        arguments: newUser,
-      );
+    } else {
+      if (loginCorrect) {
+        DioHelper.postData(url: "/api/auth/login", data: {
+          "username": usernameController.text,
+          "password": passwordController.text,
+        }).then((value) {
+          if (value.statusCode == 201) {
+            newUser = User.fromJson(value.data);
+            Navigator.of(context).pushNamed(HOME_PAGE); //navigate to home page
+          } else {
+            setState(() {
+              loginCorrect = false;
+            });
+          }
+        });
+      } else {
+        if (!loginCorrect) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Username or Password incorrect"),
+            ),
+          );
+          return;
+        }
+      }
     }
   }
 
@@ -158,7 +199,7 @@ class _SignupWebState extends State<SignupWeb> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      "Sign Up",
+                      "Log in",
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -168,32 +209,33 @@ class _SignupWebState extends State<SignupWeb> {
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.01,
                     ),
-                    const Text(
-                      "By continuing, you are setting up a Reddit",
-                      style: textStyleForPolicy,
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.005,
-                    ),
                     Row(
                       children: [
                         const Text(
-                          "account and agree to our ",
+                          "By continuing, you agree to our ",
                           style: textStyleForPolicy,
                         ),
-                        InkWell(
-                          onTap: () => print("click"),
-                          child: const Text(
-                            "User Agreement",
-                            style: textStyleForLinks,
+                        Link(
+                          uri: userAgreementUrl,
+                          target: LinkTarget.blank,
+                          builder: (context, followLink) => InkWell(
+                            onTap: followLink,
+                            child: const Text(
+                              "User Agreement",
+                              style: textStyleForLinks,
+                            ),
                           ),
                         ),
                         const Text(" and ", style: textStyleForPolicy),
-                        InkWell(
-                          onTap: () => print("click"),
-                          child: const Text(
-                            "Privacy Policy",
-                            style: textStyleForLinks,
+                        Link(
+                          uri: privacyPolicyUrl,
+                          target: LinkTarget.blank,
+                          builder: (context, followLink) => InkWell(
+                            onTap: followLink,
+                            child: const Text(
+                              "Privacy Policy.",
+                              style: textStyleForLinks,
+                            ),
                           ),
                         ),
                       ],
@@ -245,17 +287,23 @@ class _SignupWebState extends State<SignupWeb> {
                         height: MediaQuery.of(context).size.height * 0.01,
                       ),
                       TextField(
-                        controller: emailController,
+                        controller: usernameController,
                         decoration: InputDecoration(
+                          hintText: "CHOOSE A USERNAME",
+                          label: const Text("CHOOSE A USERNAME"),
+                          hintStyle: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                            color: Colors.grey,
+                          ),
                           border: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(
                               Radius.circular(8),
                             ),
                           ),
-                          labelText: 'Email',
-                          suffixIcon: emailController.text.isEmpty
+                          prefixIcon: usernameController.text.isEmpty
                               ? null
-                              : emailCorrect
+                              : usernameCorrect
                                   ? const Icon(
                                       IconData(0xf635,
                                           fontFamily: 'MaterialIcons'),
@@ -266,25 +314,76 @@ class _SignupWebState extends State<SignupWeb> {
                                           fontFamily: 'MaterialIcons'),
                                       color: Colors.red,
                                     ),
+                          errorText: usernameController.text.isEmpty ||
+                                  usernameCorrect
+                              ? null
+                              : "Username must be between 3 and 20 characters",
                         ),
                         maxLines: 1,
-                        keyboardType: TextInputType.emailAddress,
+                        // maxLength: 20,
+                        textInputAction: TextInputAction.unspecified,
                         onChanged: (value) {
                           setState(() {
-                            int index = value.indexOf('@');
-                            if (index != -1) {
-                              emailCorrect = value.contains('.', index + 2) &&
-                                  value[value.length - 1] != '.' &&
-                                  value[value.length - 1] != ' ';
-                            }
+                            usernameCorrect =
+                                value.length >= 3 && value.length <= 20;
                           });
                         },
                       ),
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.01,
                       ),
+                      TextField(
+                        controller: passwordController,
+                        decoration: InputDecoration(
+                          hintText: "PASSWORD",
+                          label: const Text("PASSWORD"),
+                          hintStyle: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                            color: Colors.grey,
+                          ),
+                          border: const OutlineInputBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(8),
+                            ),
+                          ),
+                          suffixIcon: IconButton(
+                            onPressed: () => setState(() {
+                              passwordVisible = !passwordVisible;
+                            }),
+                            icon: Icon(
+                              passwordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                            ),
+                          ),
+                          prefixIcon: passwordController.text.isEmpty
+                              ? null
+                              : loginCorrect
+                                  ? const Icon(
+                                      IconData(0xf635,
+                                          fontFamily: 'MaterialIcons'),
+                                      color: Colors.green,
+                                    )
+                                  : const Icon(
+                                      IconData(0xf713,
+                                          fontFamily: 'MaterialIcons'),
+                                      color: Colors.red,
+                                    ),
+                          errorText:
+                              passwordController.text.isEmpty || loginCorrect
+                                  ? null
+                                  : "Incorrect is password",
+                        ),
+                        maxLines: 1,
+                        obscureText: passwordVisible,
+                        keyboardType: TextInputType.visiblePassword,
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.01,
+                      ),
                       ElevatedButton(
-                        onPressed: continieSignUp,
+                        onPressed: continueLogin,
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all(
                             const Color.fromARGB(255, 42, 94, 137),
@@ -298,7 +397,7 @@ class _SignupWebState extends State<SignupWeb> {
                             const EdgeInsets.fromLTRB(120, 25, 120, 25),
                           ),
                         ),
-                        child: const Text("Continue"),
+                        child: const Text("LOG IN"),
                       ),
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.01,
@@ -306,17 +405,36 @@ class _SignupWebState extends State<SignupWeb> {
                       Row(
                         children: [
                           const Text(
-                            "Already a redditor?",
+                            "Forgot your ",
                             style: TextStyle(
                               color: Color.fromARGB(255, 85, 83, 83),
                               fontSize: 14,
                             ),
                           ),
                           InkWell(
-                            onTap: () => Navigator.of(context)
-                                .pushNamed(loginPage), //navigate to login page
+                            onTap: () => Navigator.of(context).pushNamed(
+                                forgetUsername), //navigate to login page
                             child: const Text(
-                              " Log in",
+                              "username",
+                              style: TextStyle(
+                                color: Color.fromARGB(255, 42, 94, 137),
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          const Text(
+                            " or ",
+                            style: TextStyle(
+                              color: Color.fromARGB(255, 85, 83, 83),
+                              fontSize: 14,
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () => Navigator.of(context).pushNamed(
+                                forgetPassword), //navigate to login page
+                            child: const Text(
+                              "password ?",
                               style: TextStyle(
                                 color: Color.fromARGB(255, 42, 94, 137),
                                 fontSize: 14,
