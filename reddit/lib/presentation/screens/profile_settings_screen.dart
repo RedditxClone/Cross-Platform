@@ -488,8 +488,6 @@ class _ProfileSettingsState extends State<ProfileSettings> {
           actions: [
             TextButton(
                 onPressed: () {
-                  print('ehhhhhhhhhhhh');
-
                   // displayMsg(ctx, Colors.green, 'Success','Your settings has been saved');
 
                   if (changed.isNotEmpty) {

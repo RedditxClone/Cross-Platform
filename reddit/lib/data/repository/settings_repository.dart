@@ -19,8 +19,8 @@ class SettingsRepository {
     return jsonDecode(newVal)[key];
   }
 
-  Future<dynamic> updatePrefs(Map Changed) async {
-    final newVal = await settingsWebServices.updatePrefs(Changed);
+  Future<dynamic> updatePrefs(Map changed) async {
+    final newVal = await settingsWebServices.updatePrefs(changed);
     return newVal;
   }
 }

@@ -65,7 +65,7 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
                 color: Colors.white,
                 size: 20,
               ),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Text(
                 title,
                 style: const TextStyle(fontSize: 16, color: Colors.white),
@@ -464,9 +464,9 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
                 profileSettings = state.settings;
                 return buildEditProfileBody();
               } else {
-                return Container(
+                return SizedBox(
                     height: MediaQuery.of(context).size.height - 50,
-                    child: Center(child: CircularProgressIndicator()));
+                    child: const Center(child: CircularProgressIndicator()));
               }
             },
           ),
