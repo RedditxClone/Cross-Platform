@@ -85,6 +85,7 @@ class PopupMenuLoggedIn extends StatelessWidget {
             )
           ])),
       PopupMenuItem(
+          key: const Key('loggout'),
           value: 6,
           child:
               Row(mainAxisAlignment: MainAxisAlignment.start, children: const [
@@ -108,6 +109,7 @@ class PopupMenuLoggedIn extends StatelessWidget {
           ])),
     ];
     return PopupMenuButton(
+      key: const Key('popup-menu'),
       padding: const EdgeInsets.all(0),
       offset: Offset.fromDirection(0, 150),
       position: PopupMenuPosition.under,

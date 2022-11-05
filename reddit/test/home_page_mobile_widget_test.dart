@@ -17,7 +17,7 @@ void main() {
   });
 
   // testing that there is only one bottom nav bar
-  testWidgets('testing only one bottom navigation bar testing',
+  testWidgets('testing only one bottom navigation bar',
       (WidgetTester tester) async {
     await tester.pumpWidget(createWidgetUnderTest());
     expect(find.byType(BottomNavigationBar), findsOneWidget);

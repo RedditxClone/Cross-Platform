@@ -46,6 +46,7 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
                 : const Text('Home', style: TextStyle(fontSize: 15))
           ])),
       DropdownMenuItem(
+          key: const Key('popular-test'),
           value: 'Popular',
           child: Row(children: [
             const Icon(Icons.arrow_circle_up_outlined, size: 20),
@@ -68,6 +69,7 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
           child: Text('Other',
               style: TextStyle(fontSize: 12, color: Colors.grey))),
       DropdownMenuItem(
+          key: const Key('user-settings-test'),
           value: 'User settings',
           child: Row(children: [
             const CircleAvatar(radius: 13, child: Icon(Icons.person, size: 15)),
@@ -129,6 +131,7 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
           ),
         ),
         DropdownButton2(
+            key: const Key('dropdown'),
             alignment: Alignment.center,
             buttonHeight: 40,
             buttonWidth: 0.17 * MediaQuery.of(context).size.width,
@@ -141,6 +144,7 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
               routeToPage(val);
             }),
         SizedBox(
+          key: const Key('search-bar'),
           width: 0.25 * MediaQuery.of(context).size.width,
           height: 40,
           child: TextField(
