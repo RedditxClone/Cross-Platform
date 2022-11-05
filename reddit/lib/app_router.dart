@@ -51,7 +51,8 @@ class AppRouter {
       */
       case popularPageRout:
         return MaterialPageRoute(
-            builder: (_) => kIsWeb ? const PopularWeb() : const Popular());
+            builder: (_) =>
+                kIsWeb ? const PopularWeb(isLoggedIn: true) : const Popular());
       case safetySettingsRoute:
         return MaterialPageRoute(
             builder: (_) => BlocProvider(

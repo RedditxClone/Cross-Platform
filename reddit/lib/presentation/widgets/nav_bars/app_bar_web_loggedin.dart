@@ -18,10 +18,10 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
   void routeToPage(val) {
     switch (val) {
       case 'Home':
-        Navigator.pushReplacementNamed(context, homePageRout);
+        Navigator.pushNamed(context, homePageRout);
         break;
       case 'Popular':
-        Navigator.pushReplacementNamed(context, popularPageRout);
+        Navigator.pushNamed(context, popularPageRout);
         break;
       case 'User settings':
         Navigator.pushReplacementNamed(context, profileSettingsRoute);

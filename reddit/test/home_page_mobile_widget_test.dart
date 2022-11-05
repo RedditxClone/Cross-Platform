@@ -26,7 +26,7 @@ void main() {
   // testing that there is only one drop down menu to navigate between home and popular
   testWidgets('testing only one drop down menu', (WidgetTester tester) async {
     await tester.pumpWidget(createWidgetUnderTest());
-    expect(find.byKey(const Key('dropdown')), findsWidgets);
+    expect(find.byKey(const Key('dropdown')), findsOneWidget);
   });
 
   // testing tapping on the drop down menu and find the popular page
