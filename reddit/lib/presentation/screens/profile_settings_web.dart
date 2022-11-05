@@ -440,6 +440,7 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+          automaticallyImplyLeading: false,
           backgroundColor: defaultAppbarBackgroundColor,
           title: const AppBarWebLoggedIn(
             screen: 'User settings',

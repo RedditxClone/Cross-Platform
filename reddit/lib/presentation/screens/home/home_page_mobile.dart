@@ -8,7 +8,12 @@ import 'package:reddit/presentation/screens/test_home_screens/notifications.dart
 import 'package:reddit/presentation/widgets/posts/add_post.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  late bool isLoggedin;
+  final Object? arguments;
+  HomePage(this.arguments, {Key? key}) : super(key: key) {
+    Map<String, bool> argMap = arguments as Map<String, bool>;
+    isLoggedin = argMap["isLoggedin"] ?? false;
+  }
 
   @override
   State<HomePage> createState() => _HomePageState();

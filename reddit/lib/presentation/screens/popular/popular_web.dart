@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/presentation/widgets/home_widgets/left_list_not_logged_in.dart';
+import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_Not_loggedin.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 
 class PopularWeb extends StatefulWidget {
@@ -22,9 +23,9 @@ class _PopularWebState extends State<PopularWeb> {
         appBar: AppBar(
             automaticallyImplyLeading: false,
             backgroundColor: defaultAppbarBackgroundColor,
-            title: const AppBarWebLoggedIn(
-              screen: 'Popular',
-            )),
+            title: widget.isLoggedIn
+                ? const AppBarWebLoggedIn(screen: 'Popular')
+                : const AppBarWebNotLoggedIn(screen: 'Popular')),
         body:
             //  SingleChildScrollView(
             // child:
@@ -59,7 +60,7 @@ class _PopularWebState extends State<PopularWeb> {
                           width: 100,
                           child: Column(
                             children: [
-                              Container(
+                              SizedBox(
                                 height: 200,
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,

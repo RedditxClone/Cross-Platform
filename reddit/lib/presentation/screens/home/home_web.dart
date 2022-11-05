@@ -76,8 +76,8 @@ class _HomeWebState extends State<HomeWeb> {
                       ),
                     ),
                   ),
-                  SizedBox(
-                      width: MediaQuery.of(context).size.width < 900 ? 0 : 15),
+                  // SizedBox(
+                  //     width: MediaQuery.of(context).size.width < 900 ? 0 : 15),
                   MediaQuery.of(context).size.width < 900
                       ? const SizedBox(width: 0)
                       : Expanded(

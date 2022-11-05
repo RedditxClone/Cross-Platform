@@ -6,7 +6,7 @@ void main() {
   setUp(() {});
   Widget createWidgetUnderTest() {
     return const MaterialApp(
-      home: HomePageWeb(),
+      home: HomePageWeb(isLoggedIn: true),
     );
   }
 

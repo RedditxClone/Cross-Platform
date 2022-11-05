@@ -22,6 +22,7 @@ class AppRouter {
   late SafetySettingsCubit safetySettingsCubit;
   late SettingsRepository settingsRepository;
   late SettingsCubit settingsCubit;
+
   AppRouter() {
     // initialise repository and cubit objects
     safetySettingsRepository =
@@ -31,10 +32,14 @@ class AppRouter {
     settingsCubit = SettingsCubit(settingsRepository);
   }
   Route? generateRoute(RouteSettings settings) {
+    final arguments = settings.arguments;
     switch (settings.name) {
       case homePageRout:
+        Map<String, dynamic> argMap = arguments as Map<String, dynamic>;
         return MaterialPageRoute(
-          builder: (_) => kIsWeb ? const HomePageWeb() : const HomePage(),
+          builder: (_) => kIsWeb
+              ? HomePageWeb(isLoggedIn: argMap["isLoggedIn"])
+              : HomePage(arguments),
         );
       /*
       case example:
@@ -50,9 +55,11 @@ class AppRouter {
         );
       */
       case popularPageRout:
+        Map<String, dynamic> argMap = arguments as Map<String, dynamic>;
         return MaterialPageRoute(
-            builder: (_) =>
-                kIsWeb ? const PopularWeb(isLoggedIn: true) : const Popular());
+            builder: (_) => kIsWeb
+                ? PopularWeb(isLoggedIn: argMap["isLoggedIn"])
+                : const Popular());
       case safetySettingsRoute:
         return MaterialPageRoute(
             builder: (_) => BlocProvider(

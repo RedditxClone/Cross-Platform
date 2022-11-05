@@ -28,7 +28,8 @@ class LeftList extends StatelessWidget {
                   padding: const EdgeInsets.only(left: 10),
                   child: InkWell(
                       onTap: () {
-                        Navigator.pushReplacementNamed(context, homePageRout);
+                        Navigator.pushNamed(context, homePageRout,
+                            arguments: {"isLoggedIn": false});
                       },
                       child: Row(children: const [
                         Icon(Icons.home_filled, size: 20),
@@ -41,8 +42,8 @@ class LeftList extends StatelessWidget {
                   padding: const EdgeInsets.only(left: 10),
                   child: InkWell(
                       onTap: () {
-                        Navigator.pushReplacementNamed(
-                            context, popularPageRout);
+                        Navigator.pushNamed(context, popularPageRout,
+                            arguments: {"isLoggedIn": false});
                       },
                       child: Row(children: const [
                         Icon(Icons.arrow_circle_up_outlined, size: 20),

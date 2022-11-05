@@ -23,7 +23,8 @@ class _AppBarWebNotLoggedInState extends State<AppBarWebNotLoggedIn> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         InkWell(
-          onTap: () => Navigator.pushReplacementNamed(context, homePageRout),
+          onTap: () => Navigator.pushReplacementNamed(context, homePageRout,
+              arguments: {"isLoggedIn": false}),
           hoverColor: Colors.transparent,
           child: Row(
             children: [
@@ -38,16 +39,17 @@ class _AppBarWebNotLoggedInState extends State<AppBarWebNotLoggedIn> {
         SizedBox(
           width: 90,
           child: InkWell(
-            onTap: () =>
-                Navigator.pushReplacementNamed(context, popularPageRout),
+            onTap: () => Navigator.pushReplacementNamed(
+                context, popularPageRout,
+                arguments: {"isLoggedIn": false}),
             hoverColor: Colors.transparent,
             child: Row(
-              children: const [
-                Icon(Icons.arrow_circle_up_rounded, size: 27),
-                SizedBox(width: 5),
+              children: [
+                const Icon(Icons.arrow_circle_up_rounded, size: 27),
+                const SizedBox(width: 5),
                 Text(
-                  "Popular",
-                  style: TextStyle(fontSize: 14),
+                  widget.screen,
+                  style: const TextStyle(fontSize: 14),
                 )
               ],
             ),

@@ -5,8 +5,8 @@ import 'package:reddit/presentation/screens/home/home_page_mobile.dart';
 void main() {
   setUp(() {});
   Widget createWidgetUnderTest() {
-    return const MaterialApp(
-      home: HomePage(),
+    return MaterialApp(
+      home: HomePage(const {"isLoggedin": false}),
     );
   }
 
