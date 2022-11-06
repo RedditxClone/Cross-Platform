@@ -8,7 +8,7 @@ const useMockServerForAllWebServices = true;
 //---------------------------------------
 // -----------homepage routes-----------
 //---------------------------------------
-const homePageRout = '/';
+const homePageRout = '/home';
 const popularPageRout = '/popular';
 //---------------------------------------
 // ------Account settings routes---------

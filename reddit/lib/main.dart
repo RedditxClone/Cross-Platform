@@ -30,7 +30,6 @@ class MyApp extends StatelessWidget {
             foregroundColor: MaterialStateProperty.all(Colors.white),
           ),
         ),
-
       ),
       themeMode: ThemeMode.dark,
       debugShowCheckedModeBanner: false,
@@ -44,7 +43,6 @@ class MyApp extends StatelessWidget {
               arguments: {"isLoggedIn": isLoggedIn}))!,
         ];
       },
-
     );
   }
 }

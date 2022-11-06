@@ -1,7 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../business_logic/cubit/cubit/account_settings_cubit.dart';
@@ -504,25 +503,23 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
           ),
           // Account settings element
           // TODO: Connect to facebook function
-          _accountSettingsElement(
-            "Connect to Facebook",
-            "Connect account to log in to Reddit with Facebook",
-            SignInButton(
-              Buttons.Facebook,
-              text: "Connect to Facebook",
-              onPressed: () {},
-            ),
-          ),
+          _accountSettingsElement("Connect to Facebook",
+              "Connect account to log in to Reddit with Facebook", null
+              // SignInButton(
+              //   Buttons.Facebook,
+              //   text: "Connect to Facebook",
+              //   onPressed: () {},
+              // ),
+              ),
           // TODO: Connect to google function
-          _accountSettingsElement(
-            "Connect to Google",
-            "Connect account to log in to Reddit with Google",
-            SignInButton(
-              Buttons.Google,
-              text: "Connect to Google",
-              onPressed: () {},
-            ),
-          ),
+          _accountSettingsElement("Connect to Google",
+              "Connect account to log in to Reddit with Google", null
+              // SignInButton(
+              //   Buttons.Google,
+              //   text: "Connect to Google",
+              //   onPressed: () {},
+              // ),
+              ),
         ],
       ),
     );
