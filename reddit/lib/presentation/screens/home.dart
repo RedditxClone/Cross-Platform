@@ -63,7 +63,7 @@ class _HomeState extends State<Home> {
                 //     ),
                 //   );
                 // }
-                FacebookSignInApi.logout();
+                // FacebookSignInApi.logout();
                 Navigator.of(context).pushReplacementNamed('/');
               },
               child: const Text("Sign Out"),

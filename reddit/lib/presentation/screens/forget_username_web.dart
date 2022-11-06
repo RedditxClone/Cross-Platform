@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:reddit/helper/dio.dart';
 
 class ForgetUsername extends StatefulWidget {
   const ForgetUsername({super.key});
@@ -13,14 +14,31 @@ class _ForgetUsernameState extends State<ForgetUsername> {
   var emailController = TextEditingController();
   bool emailCorrect = false;
   bool emailEmpty = false;
-  void emailMe() {
+  void emailMe() async {
     if (emailController.text.isEmpty) {
       setState(() {
         emailEmpty = true;
       });
     } else if (emailCorrect) {
-      //TODO: send email to the user
-
+      await DioHelper.postData(
+        url: '/api/auth/forget-username',
+        data: {"email": emailController.text},
+      ).then((value) {
+        if (value.statusCode == 201) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                  "An email will be sent if the user exists in the database"),
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Error!! please try again later"),
+            ),
+          );
+        }
+      });
     }
   }
 
@@ -86,7 +104,7 @@ class _ForgetUsernameState extends State<ForgetUsername> {
                   ],
                 ),
                 SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.25,
+                  width: MediaQuery.of(context).size.width * 0.3,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

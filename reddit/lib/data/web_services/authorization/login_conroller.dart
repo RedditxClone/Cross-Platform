@@ -1,6 +1,6 @@
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import '../../../constants/strings.dart';
 
 class GoogleSingInApi {
@@ -23,7 +23,7 @@ class GoogleSingInApi {
 }
 
 class FacebookSignInApi {
-  static void facebookInit() async {
+  static void init() async {
     // check if is running on Web
     if (kIsWeb) {
       // initialiaze the facebook javascript SDK

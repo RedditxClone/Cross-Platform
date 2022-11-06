@@ -6,7 +6,7 @@ class DioHelper {
   static init() {
     dio = Dio(
       BaseOptions(
-        baseUrl: 'https://1f31522f-b5db-46da-8731-483c7fb7dabe.mock.pstmn.io/',
+        baseUrl: 'https://5b55fa34-8217-4320-ba92-424f557a660e.mock.pstmn.io',
         receiveDataWhenStatusError: true,
         sendTimeout: 5000,
         receiveTimeout: 5000,

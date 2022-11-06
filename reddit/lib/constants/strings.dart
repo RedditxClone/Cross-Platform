@@ -10,3 +10,5 @@ const forgetPassword = '/forgetPassword';
 const forgetUsername = '/forgetUsername';
 const getHelpPage =
     'https://reddithelp.com/hc/en-us/sections/360008917491-Account-Security';
+const signupScreen = '/signupScreen';
+const loginScreen = '/loginScreen';

@@ -25,10 +25,10 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       onGenerateRoute: appRouter.generateRoute,
-      // darkTheme: ThemeData(
-      //   brightness: Brightness.dark,
-      // ),
-      // themeMode: ThemeMode.dark,
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+      ),
+      themeMode: ThemeMode.dark,
     );
   }
 }

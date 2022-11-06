@@ -31,7 +31,7 @@ class _LoginWebState extends State<LoginWeb> {
   @override
   void initState() {
     super.initState();
-    FacebookSignInApi.facebookInit();
+    // FacebookSignInApi.init();
   }
 
   Future<void> _launchUrl(Uri url) async {
@@ -77,26 +77,26 @@ class _LoginWebState extends State<LoginWeb> {
 
   Future signInWithFacebook() async {
     try {
-      var loginResult = await FacebookSignInApi.login();
-      if (loginResult != null) {
-        var fbUser = await FacebookSignInApi.getUserData();
-        newUser = User(
-          name: fbUser['name'] as String,
-          email: fbUser['email'] as String,
-          imageUrl: fbUser['picture']['data']['url'] as String,
-          userId: fbUser['id'] as String,
-        );
-        Navigator.of(context).pushNamed(
-          HOME_PAGE,
-          arguments: newUser,
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Error in Signing in with Facebook"),
-          ),
-        );
-      }
+      // var loginResult = await FacebookSignInApi.login();
+      // if (loginResult != null) {
+      //   var fbUser = await FacebookSignInApi.getUserData();
+      //   newUser = User(
+      //     name: fbUser['name'] as String,
+      //     email: fbUser['email'] as String,
+      //     imageUrl: fbUser['picture']['data']['url'] as String,
+      //     userId: fbUser['id'] as String,
+      //   );
+      //   Navigator.of(context).pushNamed(
+      //     HOME_PAGE,
+      //     arguments: newUser,
+      //   );
+      // } else {
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     const SnackBar(
+      //       content: Text("Error in Signing in with Facebook"),
+      //     ),
+      //   );
+      // }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

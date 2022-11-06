@@ -73,13 +73,17 @@
 // }
 
 class User {
+  late String? _type;
   late String?
       userId; //in case of google or facebook user it will be taken from the google or facebook and in case of reddit sign in it will be the username
-  late String? name;//in case of google or facebook user it will be taken from the google or facebook and in case of reddit sign in it will be the username
+  late String?
+      name; //in case of google or facebook user it will be taken from the google or facebook and in case of reddit sign in it will be the username
   late String? email;
-  late String? imageUrl;//in case of google or facebook user it will be taken from the google or facebook and in case of reddit sign in it will be null
-  // late String? accessToken;
-  late String? password;//in case of reddit sign in it will be the password else it will be null
+  late String?
+      imageUrl; //in case of google or facebook user it will be taken from the google or facebook and in case of reddit sign in it will be null
+  late String?
+      password; //in case of reddit sign in it will be the password else it will be null
+  late String? accessToken;
 
   User(
       {required this.userId,
@@ -90,6 +94,8 @@ class User {
     userId = json['userId'];
     name = json['userName'];
     email = json['email'];
-    imageUrl = json['icon'];
+    imageUrl = json['image'];
+    accessToken = json['accessToken'];
+    _type = json['type'];
   }
 }

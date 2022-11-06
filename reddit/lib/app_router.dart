@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/constants/strings.dart';
-import 'package:reddit/presentation/screens/forget_password.dart';
-import 'package:reddit/presentation/screens/forget_username.dart';
+import 'package:reddit/presentation/screens/forget_password_web.dart';
+import 'package:reddit/presentation/screens/forget_username_web.dart';
 import 'package:reddit/presentation/screens/home.dart';
 import 'package:reddit/presentation/screens/login_page.dart';
+import 'package:reddit/presentation/screens/login_screen.dart';
 import 'package:reddit/presentation/screens/signup_page.dart';
 import 'package:reddit/presentation/screens/signup_page2.dart';
 import 'package:reddit/presentation/screens/signup_screen.dart';
@@ -19,7 +20,7 @@ class AppRouter {
     switch (settings.name) {
       case '/':
         return MaterialPageRoute(
-          builder: (_) => const ForgetPassword(),
+          builder: (_) => const ForgetUsername(),
         );
       case HOME_PAGE:
         final user = settings.arguments as User;
@@ -46,6 +47,10 @@ class AppRouter {
       case loginPage:
         return MaterialPageRoute(
           builder: (_) => const LoginWeb(),
+        );
+        case signupScreen:
+        return MaterialPageRoute(
+          builder: (_) => const SignupMobile(),
         );
       /*
       case example:
