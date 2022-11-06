@@ -79,7 +79,13 @@ class EndDrawer extends StatelessWidget {
                   // TODO: go to sign up / log in page
                 },
               ),
-              _buildSettingsButton(context),
+              ListTile(
+                leading: const Icon(Icons.settings),
+                title: const Text("Settings"),
+                onTap: () {
+                  // TODO: this may be changed by another settings page
+                },
+              ),
             ],
           ),
         ),

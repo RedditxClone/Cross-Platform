@@ -184,9 +184,7 @@ class _HomePageState extends State<HomePage> {
                 4, Icons.notifications, Icons.notifications_outlined),
           ]),
       drawer: const Drawer(),
-      endDrawer: EndDrawer(
-        _isLoggedin,
-      ),
+      endDrawer: EndDrawer(_isLoggedin),
     );
   }
 }
