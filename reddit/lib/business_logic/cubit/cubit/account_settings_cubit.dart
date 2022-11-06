@@ -15,6 +15,9 @@ class AccountSettingsCubit extends Cubit<AccountSettingsState> {
   /// Gets account settings data from repository.
   /// Emits the corresponding state for UI.
   void getAccountSettings() {
+    // To avoid state error when you leave the settings page
+    // To avoid state error when you leave the settings page
+    if (isClosed) return;
     emit(AccountSettingsLoading());
     accountSettingsRepository.getAccountSettings().then((accountSettings) {
       // start the state existing in characters_state
@@ -27,6 +30,8 @@ class AccountSettingsCubit extends Cubit<AccountSettingsState> {
   /// Send data to repository to prepare the PATCH request.
   /// Emits the corresponding state for UI.
   void updateAccountSettings(AccountSettingsModel newAccSettings) {
+    // To avoid state error when you leave the settings page
+    if (isClosed) return;
     // emit(AccountSettingsLoading());
     accountSettings = newAccSettings;
     accountSettingsRepository.updateAccountSettings(newAccSettings);
@@ -36,6 +41,8 @@ class AccountSettingsCubit extends Cubit<AccountSettingsState> {
   /// Send data to repository to prepare the PATCH request.
   /// Emits the corresponding state for UI.
   void changePassword(ChangePasswordModel changePasswordModel) {
+    // To avoid state error when you leave the settings page
+    if (isClosed) return;
     accountSettingsRepository.changePassword(changePasswordModel).then((value) {
       if (value == 200) {
         // emit updated successfully state

@@ -9,15 +9,15 @@ import 'package:reddit/presentation/widgets/home_widgets/end_drawer.dart';
 import 'package:reddit/presentation/widgets/posts/add_post.dart';
 
 class HomePage extends StatefulWidget {
-  late bool isLoggedin;
+  late bool _isLoggedin;
   final Object? arguments;
   HomePage(this.arguments, {Key? key}) : super(key: key) {
     Map<String, bool> argMap = arguments as Map<String, bool>;
-    isLoggedin = argMap["isLoggedin"] ?? false;
+    _isLoggedin = argMap["isLoggedin"] ?? false;
   }
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<HomePage> createState() => _HomePageState(_isLoggedin);
 }
 
 class _HomePageState extends State<HomePage> {
@@ -25,6 +25,8 @@ class _HomePageState extends State<HomePage> {
   String _screen = 'Home';
   IconData dropDownArrow = Icons.keyboard_arrow_down;
   bool passwordVisible = true;
+  late bool _isLoggedin;
+  _HomePageState(this._isLoggedin);
   void togglePasswordVisible() {
     setState(() {
       passwordVisible = !passwordVisible;
@@ -182,7 +184,9 @@ class _HomePageState extends State<HomePage> {
                 4, Icons.notifications, Icons.notifications_outlined),
           ]),
       drawer: const Drawer(),
-      endDrawer: const EndDrawer(),
+      endDrawer: EndDrawer(
+        _isLoggedin,
+      ),
     );
   }
 }
