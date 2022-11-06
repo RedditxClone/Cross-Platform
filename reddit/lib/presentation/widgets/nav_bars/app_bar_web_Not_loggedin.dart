@@ -47,10 +47,12 @@ class _AppBarWebNotLoggedInState extends State<AppBarWebNotLoggedIn> {
               children: [
                 const Icon(Icons.arrow_circle_up_rounded, size: 27),
                 const SizedBox(width: 5),
-                Text(
-                  widget.screen,
-                  style: const TextStyle(fontSize: 14),
-                )
+                MediaQuery.of(context).size.width > 1000
+                    ? Text(
+                        widget.screen,
+                        style: const TextStyle(fontSize: 14),
+                      )
+                    : const SizedBox(width: 0)
               ],
             ),
           ),
@@ -79,37 +81,39 @@ class _AppBarWebNotLoggedInState extends State<AppBarWebNotLoggedIn> {
         ),
         Row(
           children: [
-            OutlinedButton(
-              onPressed: () {},
-              style: OutlinedButton.styleFrom(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
-                  side: const BorderSide(width: 1, color: Colors.white),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25))),
-              child: const Text(
-                "Sign Up",
-                style: TextStyle(color: Colors.white, fontSize: 18),
-              ),
-            ),
+            MediaQuery.of(context).size.width > 800
+                ? OutlinedButton(
+                    onPressed: () {},
+                    style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 15, horizontal: 25),
+                        side: const BorderSide(width: 1, color: Colors.white),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25))),
+                    child: const Text(
+                      "Sign Up",
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    ),
+                  )
+                : const SizedBox(width: 0),
             const SizedBox(width: 20),
-            ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                  primary: Colors.white,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25))),
-              child: const Text(
-                "Sign In",
-                style: TextStyle(color: Colors.black, fontSize: 18),
-              ),
-            ),
-            const SizedBox(width: 20),
-            MediaQuery.of(context).size.width < 520
-                ? const SizedBox(width: 0)
-                : const PopupMenuNotLoggedIn(),
+            MediaQuery.of(context).size.width > 800
+                ? ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                        primary: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 15, horizontal: 25),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25))),
+                    child: const Text(
+                      "Sign In",
+                      style: TextStyle(color: Colors.black, fontSize: 18),
+                    ),
+                  )
+                : const SizedBox(width: 0),
+            SizedBox(width: MediaQuery.of(context).size.width < 600 ? 20 : 10),
+            const PopupMenuNotLoggedIn(),
           ],
         ),
       ],

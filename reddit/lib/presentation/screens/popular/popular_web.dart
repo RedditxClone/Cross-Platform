@@ -40,7 +40,8 @@ class _PopularWebState extends State<PopularWeb> {
                   : const SizedBox(width: 0),
               Container(
                 padding: const EdgeInsets.only(top: 15),
-                width: widget.isLoggedIn
+                width: widget.isLoggedIn ||
+                        MediaQuery.of(context).size.width < 1300
                     ? MediaQuery.of(context).size.width
                     : MediaQuery.of(context).size.width - 280,
                 child: SingleChildScrollView(
@@ -65,30 +66,75 @@ class _PopularWebState extends State<PopularWeb> {
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    // Container(
-                                    //   width: 245.6,
-                                    //   color:
-                                    //       const Color.fromRGBO(70, 70, 70, 100),
-                                    // ),
-                                    const SizedBox(width: 15),
-                                    Container(
-                                      width: 245.6,
-                                      color:
-                                          const Color.fromRGBO(70, 70, 70, 100),
+                                    Expanded(
+                                      child: Container(
+                                        // put your popular card here istead of container
+                                        width: 245.6,
+                                        color: const Color.fromRGBO(
+                                            70, 70, 70, 100),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width <
+                                                    600
+                                                ? 0
+                                                : 15),
+                                    Expanded(
+                                      flex: MediaQuery.of(context).size.width <
+                                              800
+                                          ? 0
+                                          : 1,
+                                      child: Container(
+                                        // put your popular card here istead of container
+                                        width:
+                                            MediaQuery.of(context).size.width <
+                                                    700
+                                                ? 0
+                                                : 245.6,
+                                        color: const Color.fromRGBO(
+                                            70, 70, 70, 100),
+                                      ),
                                     ),
                                     const SizedBox(width: 15),
-                                    Container(
-                                      width: 245.6,
-                                      color:
-                                          const Color.fromRGBO(70, 70, 70, 100),
+                                    Expanded(
+                                      flex: MediaQuery.of(context).size.width >
+                                              1200
+                                          ? 1
+                                          : 0,
+                                      child: Container(
+                                        // put your popular card here istead of container
+                                        width:
+                                            MediaQuery.of(context).size.width <
+                                                    1000
+                                                ? 0
+                                                : 245.6,
+                                        color: const Color.fromRGBO(
+                                            70, 70, 70, 100),
+                                      ),
                                     ),
-                                    const SizedBox(width: 15),
-                                    Container(
-                                      width: 245.6,
-                                      color:
-                                          const Color.fromRGBO(70, 70, 70, 100),
+                                    SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width <
+                                                    1200
+                                                ? 0
+                                                : 15),
+                                    Expanded(
+                                      flex: MediaQuery.of(context).size.width >
+                                              1500
+                                          ? 1
+                                          : 0,
+                                      child: Container(
+                                        // put your popular card here istead of container
+                                        width:
+                                            MediaQuery.of(context).size.width <
+                                                    1200
+                                                ? 0
+                                                : 245.6,
+                                        color: const Color.fromRGBO(
+                                            70, 70, 70, 100),
+                                      ),
                                     ),
-                                    const SizedBox(width: 15),
                                   ],
                                 ),
                               ),
@@ -136,7 +182,7 @@ class _PopularWebState extends State<PopularWeb> {
                                   ),
                                   const SizedBox(width: 15),
                                   MediaQuery.of(context).size.width < 900
-                                      ? const SizedBox(width: 10)
+                                      ? const SizedBox(width: 0)
                                       : Expanded(
                                           flex: 3,
                                           child: Column(
@@ -170,7 +216,10 @@ class _PopularWebState extends State<PopularWeb> {
                           ),
                         ),
                       ),
-                      const Expanded(flex: 1, child: SizedBox(width: 10))
+                      Expanded(
+                          flex: responsive.isSmallSizedScreen() ? 0 : 1,
+                          child: SizedBox(
+                              width: responsive.isSmallSizedScreen() ? 0 : 10))
                     ],
                   ),
                 ),

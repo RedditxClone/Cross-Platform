@@ -143,7 +143,7 @@ class LeftList extends StatelessWidget {
               ],
             ),
           ),
-          Container(
+          SizedBox(
             height: 285,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
