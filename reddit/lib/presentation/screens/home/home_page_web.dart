@@ -17,6 +17,8 @@ class _HomePageWebState extends State<HomePageWeb> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+            shape: const Border(
+                bottom: BorderSide(color: Colors.grey, width: 0.5)),
             automaticallyImplyLeading: false,
             backgroundColor: defaultAppbarBackgroundColor,
             title: widget.isLoggedIn

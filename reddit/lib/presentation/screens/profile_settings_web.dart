@@ -440,6 +440,8 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+          shape:
+              const Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
           automaticallyImplyLeading: false,
           backgroundColor: defaultAppbarBackgroundColor,
           title: const AppBarWebLoggedIn(
@@ -447,7 +449,7 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
           )),
       body: SingleChildScrollView(
         child: Container(
-          color: defaultWebBackgroundColor,
+          color: defaultSecondaryColor,
           padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
           child: BlocBuilder<SettingsCubit, SettingsState>(
             builder: (_, state) {

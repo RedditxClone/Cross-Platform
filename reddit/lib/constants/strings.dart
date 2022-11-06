@@ -8,8 +8,13 @@ const useMockServerForAllWebServices = true;
 //---------------------------------------
 // -----------homepage routes-----------
 //---------------------------------------
-const homePageRout = '/home';
-const popularPageRout = '/popular';
+const homePageRoute = '/home';
+const popularPageRoute = '/popular';
+//---------------------------------------
+// -----------Log in / Sign up-----------
+//---------------------------------------
+const logInRoute = "/login";
+const signUpRoute = "/signup";
 //---------------------------------------
 // ------Account settings routes---------
 //---------------------------------------

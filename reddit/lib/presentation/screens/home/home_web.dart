@@ -53,31 +53,41 @@ class _HomeWebState extends State<HomeWeb> {
                       child: Column(
                         children: [
                           Container(
-                            height: 130,
-                            color: const Color.fromRGBO(70, 70, 70, 100),
+                            // add new post
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: const Color.fromRGBO(70, 70, 70, 100)),
+                            height: 70,
                             margin: const EdgeInsets.only(bottom: 15),
                           ),
                           Container(
-                            height: 130,
-                            color: const Color.fromRGBO(70, 70, 70, 100),
+                            // sort posts
+                            height: 70,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: const Color.fromRGBO(70, 70, 70, 100)),
                             margin: const EdgeInsets.only(bottom: 15),
                           ),
                           Container(
+                            // feed posts 1
                             height: 400,
-                            color: const Color.fromRGBO(70, 70, 70, 100),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: const Color.fromRGBO(70, 70, 70, 100)),
                             margin: const EdgeInsets.only(bottom: 15),
                           ),
                           Container(
+                            // feed posts 2
                             height: 400,
-                            color: const Color.fromRGBO(70, 70, 70, 100),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: const Color.fromRGBO(70, 70, 70, 100)),
                             margin: const EdgeInsets.only(bottom: 15),
                           ),
                         ],
                       ),
                     ),
                   ),
-                  // SizedBox(
-                  //     width: MediaQuery.of(context).size.width < 900 ? 0 : 15),
                   MediaQuery.of(context).size.width < 900
                       ? const SizedBox(width: 0)
                       : Expanded(
@@ -88,17 +98,26 @@ class _HomeWebState extends State<HomeWeb> {
                               children: [
                                 Container(
                                   height: 500,
-                                  color: const Color.fromRGBO(70, 70, 70, 100),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5),
+                                      color: const Color.fromRGBO(
+                                          70, 70, 70, 100)),
                                   margin: const EdgeInsets.only(bottom: 15),
                                 ),
                                 Container(
                                   height: 200,
-                                  color: const Color.fromRGBO(70, 70, 70, 100),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5),
+                                      color: const Color.fromRGBO(
+                                          70, 70, 70, 100)),
                                   margin: const EdgeInsets.only(bottom: 15),
                                 ),
                                 Container(
                                   height: 200,
-                                  color: const Color.fromRGBO(70, 70, 70, 100),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5),
+                                      color: const Color.fromRGBO(
+                                          70, 70, 70, 100)),
                                   margin: const EdgeInsets.only(bottom: 15),
                                 ),
                               ],

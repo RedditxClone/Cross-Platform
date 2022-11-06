@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:reddit/presentation/screens/home/home_page_web.dart';
-import 'package:reddit/presentation/screens/popular/popular_web.dart';
 import 'app_router.dart';
 
 void main() {
@@ -34,12 +32,15 @@ class MyApp extends StatelessWidget {
       themeMode: ThemeMode.dark,
       debugShowCheckedModeBanner: false,
       onGenerateRoute: appRouter.generateRoute,
-      initialRoute:
-          kIsWeb ? (isLoggedIn ? homePageRout : popularPageRout) : homePageRout,
+      initialRoute: kIsWeb
+          ? (isLoggedIn ? homePageRoute : popularPageRoute)
+          : homePageRoute,
       onGenerateInitialRoutes: (String initialRouteName) {
         return [
           appRouter.generateRoute(RouteSettings(
-              name: isLoggedIn ? homePageRout : popularPageRout,
+              name: kIsWeb
+                  ? (isLoggedIn ? homePageRoute : popularPageRoute)
+                  : homePageRoute,
               arguments: {"isLoggedIn": isLoggedIn}))!,
         ];
       },

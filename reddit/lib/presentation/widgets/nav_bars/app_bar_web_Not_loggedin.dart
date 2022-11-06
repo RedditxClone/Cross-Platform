@@ -1,9 +1,6 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:reddit/constants/strings.dart';
-import 'package:reddit/presentation/widgets/nav_bars/popup_menu_logged_in.dart';
 import 'package:reddit/presentation/widgets/nav_bars/popup_menu_not_logged_in.dart';
 
 class AppBarWebNotLoggedIn extends StatefulWidget {
@@ -23,7 +20,7 @@ class _AppBarWebNotLoggedInState extends State<AppBarWebNotLoggedIn> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         InkWell(
-          onTap: () => Navigator.pushReplacementNamed(context, homePageRout,
+          onTap: () => Navigator.pushReplacementNamed(context, homePageRoute,
               arguments: {"isLoggedIn": false}),
           hoverColor: Colors.transparent,
           child: Row(
@@ -40,7 +37,7 @@ class _AppBarWebNotLoggedInState extends State<AppBarWebNotLoggedIn> {
           width: 90,
           child: InkWell(
             onTap: () => Navigator.pushReplacementNamed(
-                context, popularPageRout,
+                context, popularPageRoute,
                 arguments: {"isLoggedIn": false}),
             hoverColor: Colors.transparent,
             child: Row(
@@ -83,7 +80,7 @@ class _AppBarWebNotLoggedInState extends State<AppBarWebNotLoggedIn> {
           children: [
             MediaQuery.of(context).size.width > 800
                 ? OutlinedButton(
-                    onPressed: () {},
+                    onPressed: () => Navigator.pushNamed(context, signUpRoute),
                     style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                             vertical: 15, horizontal: 25),
@@ -99,7 +96,7 @@ class _AppBarWebNotLoggedInState extends State<AppBarWebNotLoggedIn> {
             const SizedBox(width: 20),
             MediaQuery.of(context).size.width > 800
                 ? ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () => Navigator.pushNamed(context, logInRoute),
                     style: ElevatedButton.styleFrom(
                         primary: Colors.white,
                         padding: const EdgeInsets.symmetric(
