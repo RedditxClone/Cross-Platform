@@ -6,6 +6,11 @@ const baseUrl = '';
 // Use mock server instead of our backend server
 const useMockServerForAllWebServices = true;
 //---------------------------------------
+// -----------homepage routes-----------
+//---------------------------------------
+const homePageRout = '/';
+const popularPageRout = '/popular';
+//---------------------------------------
 // ------Account settings routes---------
 //---------------------------------------
 const accountSettingsRoute = "/account_settings";
