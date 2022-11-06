@@ -3,14 +3,14 @@ import 'package:reddit/constants/strings.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:reddit/helper/dio.dart';
 
-class ForgetUsername extends StatefulWidget {
-  const ForgetUsername({super.key});
+class ForgetUsernameWeb extends StatefulWidget {
+  const ForgetUsernameWeb({super.key});
 
   @override
-  State<ForgetUsername> createState() => _ForgetUsernameState();
+  State<ForgetUsernameWeb> createState() => _ForgetUsernameWebState();
 }
 
-class _ForgetUsernameState extends State<ForgetUsername> {
+class _ForgetUsernameWebState extends State<ForgetUsernameWeb> {
   var emailController = TextEditingController();
   bool emailCorrect = false;
   bool emailEmpty = false;

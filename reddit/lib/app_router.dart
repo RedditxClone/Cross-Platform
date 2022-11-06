@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/constants/strings.dart';
+import 'package:reddit/presentation/screens/forget_password_android.dart';
 import 'package:reddit/presentation/screens/forget_password_web.dart';
+import 'package:reddit/presentation/screens/forget_username_android.dart';
 import 'package:reddit/presentation/screens/forget_username_web.dart';
 import 'package:reddit/presentation/screens/home.dart';
 import 'package:reddit/presentation/screens/login_page.dart';
@@ -20,7 +22,7 @@ class AppRouter {
     switch (settings.name) {
       case '/':
         return MaterialPageRoute(
-          builder: (_) => const ForgetUsername(),
+          builder: (_) => const SignupMobile(),
         );
       case HOME_PAGE:
         final user = settings.arguments as User;
@@ -32,13 +34,13 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => SignupWeb2(user: user),
         );
-      case forgetUsername:
+      case forgetUsernameWeb:
         return MaterialPageRoute(
-          builder: (_) => const ForgetUsername(),
+          builder: (_) => const ForgetUsernameWeb(),
         );
-      case forgetPassword:
+      case forgetPasswordWeb:
         return MaterialPageRoute(
-          builder: (_) => const ForgetPassword(),
+          builder: (_) => const ForgetPasswordWeb(),
         );
       case SIGNU_PAGE1:
         return MaterialPageRoute(
@@ -48,9 +50,21 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => const LoginWeb(),
         );
-        case signupScreen:
+      case signupScreen:
         return MaterialPageRoute(
           builder: (_) => const SignupMobile(),
+        );
+      case forgetPasswordAndroid:
+        return MaterialPageRoute(
+          builder: (_) => const ForgetPasswordAndroid(),
+        );
+      case loginScreen:
+        return MaterialPageRoute(
+          builder: (_) => const LoginMobile(),
+        );
+        case forgetUsernameAndroid:
+        return MaterialPageRoute(
+          builder: (_) => const ForgetUsernameAndroid(),
         );
       /*
       case example:

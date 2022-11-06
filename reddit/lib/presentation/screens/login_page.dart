@@ -413,7 +413,7 @@ class _LoginWebState extends State<LoginWeb> {
                           ),
                           InkWell(
                             onTap: () => Navigator.of(context).pushNamed(
-                                forgetUsername), //navigate to login page
+                                forgetUsernameWeb), //navigate to login page
                             child: const Text(
                               "username",
                               style: TextStyle(
@@ -432,7 +432,7 @@ class _LoginWebState extends State<LoginWeb> {
                           ),
                           InkWell(
                             onTap: () => Navigator.of(context).pushNamed(
-                                forgetPassword), //navigate to login page
+                                forgetPasswordWeb), //navigate to login page
                             child: const Text(
                               "password ?",
                               style: TextStyle(

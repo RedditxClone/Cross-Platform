@@ -1,10 +1,9 @@
 import 'dart:convert';
-
-import 'package:dio/dio.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:reddit/data/model/signin.dart';
-import 'package:reddit/presentation/screens/signup_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../constants/strings.dart';
 import '../../data/web_services/authorization/login_conroller.dart';
 import '../../helper/dio.dart';
@@ -18,81 +17,78 @@ class LoginMobile extends StatefulWidget {
 
 class _LoginMobileState extends State<LoginMobile> {
   bool passwordVisible = true;
-  var emailController = TextEditingController();
   var usernameController = TextEditingController();
   var passwordController = TextEditingController();
-  // bool usernameError = false;
-  bool emailCorrect = false;
-  bool passwordCorrect = true;
-  bool redundantUsername = false;
+  bool usernameEmpty = true;
+  bool passwordEmpty = true;
+
   late User newUser;
   @override
   void initState() {
     super.initState();
-    // FacebookSignInApi.init();
   }
 
   void togglePasswordVisible() {
     passwordVisible = !passwordVisible;
   }
 
-  // void checkOnUsername(value) async {
-  //   try {
-  //     var res = await DioHelper.getData(url: '/api/user/usernamecheck', query: {
-  //       'username': value,
-  //     }) as Response;
-  //     var resData = res.data as Map<String, dynamic>;
-  //     print(resData.runtimeType);
-  //     if (value.length < 3 || resData['state'] as bool == false) {
-  //       print(resData['state']);
-  //       setState(() {
-  //         redundantUsername = true;
-  //       });
-  //     } else {
-  //       setState(() {
-  //         redundantUsername = false;
-  //       });
-  //     }
-  //   } catch (e) {
-  //     print(e);
-  //   }
-  // }
-
   void loginContinue(BuildContext ctx) async {
-    if (emailCorrect && passwordCorrect) {
-      await DioHelper.postData(url: '/api/auth/login', data: {
-        "email": emailController.text,
-        "password": passwordController.text,
-        "name": usernameController.text,
-      }).then((value) {
-        if (value.statusCode == 201) {
-          print(value.data);
-          newUser = User.fromJson(jsonDecode(value.data));
-          Navigator.of(ctx).pop();
-          Navigator.of(ctx).pushReplacementNamed(
-            HOME_PAGE,
-            arguments: newUser,
-          );
-        } else {
-          setState(() {
-            // usernameError = true;check if the user name is unique
-          });
-        }
-      });
-    }
+    await DioHelper.postData(url: '/api/auth/login', data: {
+      "password": passwordController.text,
+      "name": usernameController.text,
+    }).then((value) {
+      if (value.statusCode == 201) {
+        print(value.data);
+        newUser = User.fromJson(jsonDecode(value.data));
+        Navigator.of(ctx).pop();
+        Navigator.of(ctx).pushReplacementNamed(
+          HOME_PAGE,
+          arguments: newUser,
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: const [
+                Icon(
+                  Icons.error,
+                  color: Colors.red,
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  'Username or password is incorrect',
+                  style: TextStyle(
+                    color: Colors.red,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }
+    });
   }
 
-  TextSpan createTextSpan(String txt, bool isUrl) {
+  TextSpan createTextSpan(String txt, bool isUrl, {String url = ""}) {
     return TextSpan(
       text: txt,
       style: TextStyle(
-        fontSize: 14,
-        color: isUrl ? Colors.blue : Colors.grey,
+        fontSize: 15,
+        color: isUrl ? Colors.red : Colors.grey,
         decoration: isUrl ? TextDecoration.underline : TextDecoration.none,
       ),
+      recognizer: TapGestureRecognizer()
+        ..onTap = () {
+          if (isUrl) {
+            launchUrl(Uri.parse(url));
+          }
+        },
     );
   }
 
+//TODO: add API request to save the data of google and facebook users
   Future signInWithGoogle() async {
     try {
       var googleAccount = await GoogleSingInApi.loginMob();
@@ -159,7 +155,7 @@ class _LoginMobileState extends State<LoginMobile> {
     return OutlinedButton(
       onPressed: lable == 'google' ? signInWithGoogle : signInWithFacebook,
       style: OutlinedButton.styleFrom(
-        side: const BorderSide(color: Colors.blue, width: 1),
+        side: const BorderSide(color: Colors.white, width: 1),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
       ),
       child: Container(
@@ -174,7 +170,11 @@ class _LoginMobileState extends State<LoginMobile> {
                     size: 20,
                     color: Colors.white,
                   ),
-            Text("Continue with $lable", style: const TextStyle(fontSize: 19)),
+            Text("Continue with $lable",
+                style: const TextStyle(
+                  fontSize: 19,
+                  color: Colors.white,
+                )),
             const SizedBox(width: 20),
           ],
         ),
@@ -201,14 +201,13 @@ class _LoginMobileState extends State<LoginMobile> {
       ],
     );
     //initialize the textfields to be empty when the bottom sheet is opened
-    emailController.text = "";
     usernameController.text = "";
     passwordController.text = "";
     showModalBottomSheet(
         isScrollControlled: true,
         enableDrag: false,
         constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(ctx).size.height -
+            minHeight: MediaQuery.of(ctx).size.height -
                 MediaQuery.of(ctx).padding.top -
                 appBar.preferredSize
                     .height), //the page height - appbar height - status bar height
@@ -220,29 +219,29 @@ class _LoginMobileState extends State<LoginMobile> {
               appBar: appBar,
               body: SingleChildScrollView(
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
                       padding: const EdgeInsets.all(15),
                       child: SingleChildScrollView(
                         child: Column(
                           children: [
-                            RichText(
-                              text: TextSpan(children: [
-                                createTextSpan(
-                                    "By continuing, you agree to our ", false),
-                                createTextSpan("User Agreement ", true),
-                                createTextSpan(
-                                    "and acknowledge that you understand the ",
-                                    false),
-                                createTextSpan("Privacy Policy ", true),
-                                createTextSpan(".", false),
-                              ]),
+                            const Text(
+                              "Log in to Reddit",
+                              style: TextStyle(
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                            const SizedBox(height: 20),
+                            SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.05),
                             createContinueWithButton('google'),
                             const SizedBox(height: 10),
                             createContinueWithButton('facebook'),
-                            const SizedBox(height: 15),
+                            SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.05),
                             Row(children: const <Widget>[
                               Expanded(
                                   child: Divider(
@@ -258,68 +257,35 @@ class _LoginMobileState extends State<LoginMobile> {
                                 endIndent: 30,
                               )),
                             ]),
-                            const SizedBox(height: 10),
-                            TextField(
-                              controller: emailController,
-                              style: const TextStyle(fontSize: 18),
-                              keyboardType: TextInputType.emailAddress,
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(25),
-                                ),
-                                contentPadding: const EdgeInsets.all(15),
-                                hintText: 'Email',
-                                suffixIcon: emailController.text.isEmpty
-                                    ? null
-                                    : emailCorrect
-                                        ? const Icon(
-                                            IconData(0xf635,
-                                                fontFamily: 'MaterialIcons'),
-                                            color: Colors.green,
-                                          )
-                                        : const Icon(
-                                            IconData(0xf713,
-                                                fontFamily: 'MaterialIcons'),
-                                            color: Colors.red,
-                                          ),
-                              ),
-                              maxLines: 1,
-                              onChanged: (value) {
-                                setState(() {
-                                  int index = value.indexOf('@');
-                                  if (index != -1) {
-                                    emailCorrect =
-                                        value.contains('.', index + 2) &&
-                                            value[value.length - 1] != '.' &&
-                                            value[value.length - 1] != ' ';
-                                  }
-                                });
-                              },
-                              textInputAction: TextInputAction.next,
-                            ),
-                            const SizedBox(height: 10),
+                            SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.05),
                             TextField(
                               controller: usernameController,
                               style: const TextStyle(fontSize: 18),
                               keyboardType: TextInputType.text,
                               decoration: InputDecoration(
                                 border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(25)),
+                                    borderRadius: BorderRadius.circular(10)),
                                 contentPadding: const EdgeInsets.all(15),
                                 hintText: 'Username',
-                                errorText: (redundantUsername
-                                    ? "Username already exists. Please try again with a different username."
-                                    : null),
+                                suffixIcon: usernameEmpty
+                                    ? null
+                                    : IconButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            usernameController.text = "";
+                                            usernameEmpty = true;
+                                          });
+                                        },
+                                        icon: const Icon(
+                                          Icons.clear,
+                                          color: Colors.grey,
+                                        )),
                               ),
-                              // inputFormatters: [
-                              //   FilteringTextInputFormatter.allow(
-                              //       RegExp(r'[a-zA-Z0-9_-]')),
-                              //   FilteringTextInputFormatter.
-                              // ],
-                              // onChanged: (value) => setState(() {
-                              //   usernameError =
-                              //       value.contains(RegExp(r'[^a-zA-Z0-9_-]'));
-                              // }),
+                              onChanged: (value) => setState(() {
+                                usernameEmpty = value.isEmpty;
+                              }),
                               // onSubmitted: (value) => checkOnUsername(value),
                               textInputAction: TextInputAction.next,
                             ),
@@ -331,7 +297,7 @@ class _LoginMobileState extends State<LoginMobile> {
                               keyboardType: TextInputType.visiblePassword,
                               decoration: InputDecoration(
                                 border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(25),
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
                                 contentPadding: const EdgeInsets.all(15),
                                 suffixIcon: IconButton(
@@ -342,48 +308,47 @@ class _LoginMobileState extends State<LoginMobile> {
                                       ? Icons.visibility
                                       : Icons.visibility_off),
                                 ),
-                                prefixIcon: passwordController.text.isEmpty
-                                    ? null
-                                    : passwordCorrect
-                                        ? const Icon(
-                                            IconData(0xf635,
-                                                fontFamily: 'MaterialIcons'),
-                                            color: Colors.green,
-                                          )
-                                        : const Icon(
-                                            IconData(0xf713,
-                                                fontFamily: 'MaterialIcons'),
-                                            color: Colors.red,
-                                          ),
                                 hintText: 'Password',
-                                errorText: passwordCorrect ||
-                                        passwordController.text.isEmpty
-                                    ? null
-                                    : "Password cannot contain your username",
                               ),
-                              onChanged: (value) {
-                                setState(() {
-                                  passwordCorrect =
-                                      !value.contains(usernameController.text);
-                                });
-                              },
                               textInputAction: TextInputAction.done,
+                              onChanged: (value) => setState(() {
+                                passwordEmpty = value.isEmpty;
+                              }),
                             ),
-                            // SizedBox(
-                            //     height: MediaQuery.of(ctx).size.height * 0.005),
-                            // Text(
-                            //   usernameError
-                            //       ? "This user name is already taken"
-                            //       : "",
-                            //   style: const TextStyle(
-                            //     color: Colors.red,
-                            //   ),
-                            // ),
-                            // SizedBox(
-                            //     height: MediaQuery.of(ctx).size.height * 0.005),
                           ],
                         ),
                       ),
+                    ),
+                    SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.005),
+                    TextButton(
+                      onPressed: (() {
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pushNamed(forgetPasswordAndroid);
+                      }),
+                      child: const Text(
+                        "Forget password",
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.red,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.2),
+                    RichText(
+                      textAlign: TextAlign.center,
+                      text: TextSpan(children: [
+                        createTextSpan(
+                            "By continuing, you agree to our ", false),
+                        createTextSpan("User Agreement ", true,
+                            url:
+                                "https://www.redditinc.com/policies/user-agreement"),
+                        createTextSpan("and ", false),
+                        createTextSpan("Privacy Policy ", true,
+                            url:
+                                "https://www.reddit.com/policies/privacy-policy"),
+                        createTextSpan(".", false),
+                      ]),
                     ),
                     Container(
                       width: double.infinity,
@@ -391,7 +356,9 @@ class _LoginMobileState extends State<LoginMobile> {
                       padding: const EdgeInsets.all(15),
                       color: Theme.of(context).scaffoldBackgroundColor,
                       child: ElevatedButton(
-                        onPressed: () => loginContinue(context),
+                        onPressed: !usernameEmpty && !passwordEmpty
+                            ? () => loginContinue(context)
+                            : null,
                         style: const ButtonStyle(
                           shape: MaterialStatePropertyAll(
                             RoundedRectangleBorder(
@@ -404,15 +371,17 @@ class _LoginMobileState extends State<LoginMobile> {
                               MaterialStatePropertyAll(EdgeInsets.all(0.0)),
                         ),
                         child: Ink(
-                          decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                Color.fromARGB(255, 139, 9, 0),
-                                Color.fromARGB(255, 255, 136, 0)
-                              ],
-                            ),
+                          decoration: BoxDecoration(
+                            gradient: !usernameEmpty && !passwordEmpty
+                                ? const LinearGradient(
+                                    colors: [
+                                      Color.fromARGB(255, 139, 9, 0),
+                                      Color.fromARGB(255, 255, 136, 0)
+                                    ],
+                                  )
+                                : null,
                             borderRadius:
-                                BorderRadius.all(Radius.circular(80.0)),
+                                const BorderRadius.all(Radius.circular(80.0)),
                           ),
                           child: Container(
                             constraints: const BoxConstraints(

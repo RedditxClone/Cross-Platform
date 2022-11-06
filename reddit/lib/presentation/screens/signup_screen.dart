@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:reddit/constants/strings.dart';
 import 'package:reddit/data/model/signin.dart';
-import 'package:reddit/presentation/screens/home.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../data/web_services/authorization/login_conroller.dart';
 import '../../helper/dio.dart';
 
@@ -55,34 +59,59 @@ class _SignupMobileState extends State<SignupMobile> {
   // }
 
   void signUpContinue(BuildContext ctx) async {
-    if (emailCorrect && !usernameError) {
-      var res = await DioHelper.postData(url: '/api/auth/signup', data: {
-        "email": emailController.text,
-        "password": passwordController.text,
-        "name": usernameController.text,
-      }) as Response;
-      if (res.statusCode == 201) {
-        print(res.data);
-        Navigator.of(ctx).pushNamed(
-          "Home",
-          arguments: res.data,
+    await DioHelper.postData(url: '/api/auth/signup', data: {
+      "password": passwordController.text,
+      "name": usernameController.text,
+      "email": emailController.text,
+    }).then((value) {
+      if (value.statusCode == 201) {
+        print(value.data);
+        newUser = User.fromJson(jsonDecode(value.data));
+        Navigator.of(ctx).pop();
+        Navigator.of(ctx).pushReplacementNamed(
+          HOME_PAGE,
+          arguments: newUser,
         );
       } else {
-        setState(() {
-          usernameError = true;
-        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(
+                  Icons.error,
+                  color: Colors.red,
+                ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.01,
+                ),
+                const Text(
+                  'Username or password is incorrect',
+                  style: TextStyle(
+                    color: Colors.red,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
       }
-    }
+    });
   }
 
-  TextSpan createTextSpan(String txt, bool isUrl) {
+  TextSpan createTextSpan(String txt, bool isUrl, {String url = ""}) {
     return TextSpan(
       text: txt,
       style: TextStyle(
-        fontSize: 14,
-        color: isUrl ? Colors.blue : Colors.grey,
+        fontSize: 15,
+        color: isUrl ? Colors.red : Colors.grey,
         decoration: isUrl ? TextDecoration.underline : TextDecoration.none,
       ),
+      recognizer: TapGestureRecognizer()
+        ..onTap = () {
+          if (isUrl) {
+            launchUrl(Uri.parse(url));
+          }
+        },
     );
   }
 
@@ -117,30 +146,38 @@ class _SignupMobileState extends State<SignupMobile> {
     }
   }
 
-  void signInWithFacebook() async {
-    // try {
-    // var facebookAccount = await FacebookAuth.instance.login();
-    // if (facebookAccount != null) {
-    //   Navigator.of(context).pushReplacement(
-    //     MaterialPageRoute(
-    //       builder: (context) => Home(facebookSignInAccount: facebookAccount),
-    //     ),
-    // );
-    // } else {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(
-    //       content: Text("Error in Signing in with Facebook"),
-    //     ),
-    //   );
-    // }
-    // } catch (e) {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(
-    //       content: Text("Error in Signing in with Facebook"),
-    //     ),
-    //   );
-    // }
+  Future signInWithFacebook() async {
+    try {
+      var loginResult = await FacebookSignInApi.login();
+      if (loginResult != null) {
+        var fbUser = await FacebookSignInApi
+            .getUserData(); //post request to add user data
+        newUser = User(
+          name: fbUser['name'] as String,
+          email: fbUser['email'] as String,
+          imageUrl: fbUser['picture']['data']['url'] as String,
+          userId: fbUser['id'] as String,
+        );
+        Navigator.of(context).pushNamed(
+          HOME_PAGE,
+          arguments: newUser,
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Error in Signing in with Facebook"),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+        ),
+      );
+    }
   }
+
   Widget createContinueWithButton(String lable) {
     return OutlinedButton(
       onPressed: lable == 'google' ? signInWithGoogle : signInWithFacebook,
@@ -171,7 +208,10 @@ class _SignupMobileState extends State<SignupMobile> {
       title: Logo(Logos.reddit),
       actions: [
         TextButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.of(ctx).pop();
+            Navigator.of(ctx).pushReplacementNamed(loginScreen);
+          },
           child: const Text(
             "Log in",
             style: TextStyle(fontSize: 20, color: Colors.white),
@@ -187,7 +227,7 @@ class _SignupMobileState extends State<SignupMobile> {
         isScrollControlled: true,
         enableDrag: false,
         constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(ctx).size.height -
+            minHeight: MediaQuery.of(ctx).size.height -
                 MediaQuery.of(ctx).padding.top -
                 appBar.preferredSize
                     .height), //the page height - appbar height - status bar height
@@ -205,9 +245,11 @@ class _SignupMobileState extends State<SignupMobile> {
                       child: SingleChildScrollView(
                         child: Column(
                           children: [
-                            const Text("Hi new friend, welcome to Reddit",
-                                style: TextStyle(
-                                    fontSize: 30, fontWeight: FontWeight.bold)),
+                            const Text(
+                              "Hi new friend, welcome to Reddit",
+                              style: TextStyle(
+                                  fontSize: 30, fontWeight: FontWeight.bold),
+                            ),
                             const SizedBox(height: 20),
                             RichText(
                               text: TextSpan(children: [
@@ -347,24 +389,12 @@ class _SignupMobileState extends State<SignupMobile> {
                               onChanged: (value) {
                                 setState(() {
                                   passwordCorrect =
-                                      value.contains(usernameController.text);
+                                      !value.contains(usernameController.text);
                                 });
                               },
                               textInputAction: TextInputAction.done,
                               onEditingComplete: () => signUpContinue(context),
                             ),
-                            // SizedBox(
-                            //     height: MediaQuery.of(ctx).size.height * 0.005),
-                            // Text(
-                            //   usernameError
-                            //       ? "This user name is already taken"
-                            //       : "",
-                            //   style: const TextStyle(
-                            //     color: Colors.red,
-                            //   ),
-                            // ),
-                            // SizedBox(
-                            //     height: MediaQuery.of(ctx).size.height * 0.005),
                           ],
                         ),
                       ),

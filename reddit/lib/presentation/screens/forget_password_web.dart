@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:reddit/constants/strings.dart';
 
-class ForgetPassword extends StatefulWidget {
-  const ForgetPassword({super.key});
+class ForgetPasswordWeb extends StatefulWidget {
+  const ForgetPasswordWeb({super.key});
 
   @override
-  State<ForgetPassword> createState() => _ForgetPasswordState();
+  State<ForgetPasswordWeb> createState() => _ForgetPasswordWebState();
 }
 
-class _ForgetPasswordState extends State<ForgetPassword> {
+class _ForgetPasswordWebState extends State<ForgetPasswordWeb> {
   var emailController = TextEditingController();
   bool emailCorrect = false;
   bool emailEmpty = false;
@@ -34,8 +34,8 @@ class _ForgetPasswordState extends State<ForgetPassword> {
             ),
             Container(
               height: MediaQuery.of(context).size.height,
-              padding:
-                  EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.02),
+              padding: EdgeInsets.only(
+                  left: MediaQuery.of(context).size.width * 0.02),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -45,11 +45,11 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                     children: [
                       //insert logo here
                       Logo(Logos.reddit, size: 40),
-      
+
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.01,
                       ),
-      
+
                       RichText(
                         text: const TextSpan(
                           children: [
@@ -116,7 +116,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                             setState(() {
                               //TODO: check if username is used
                               //api call to check if username is used
-      
+
                               // if (//check on the returned value from the api
                               //     ) {
                               //   usernameUsed = true;
@@ -126,7 +126,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                             });
                           },
                         ),
-                               SizedBox(
+                        SizedBox(
                           height: MediaQuery.of(context).size.height * 0.02,
                         ),
                         TextField(
@@ -200,8 +200,8 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                           height: MediaQuery.of(context).size.height * 0.02,
                         ),
                         TextButton(
-                          onPressed: () =>
-                              Navigator.of(context).pushNamed(forgetUsername),
+                          onPressed: () => Navigator.of(context)
+                              .pushNamed(forgetUsernameWeb),
                           child: const Text(
                             "FORGOT USERNAME?",
                             style: TextStyle(
