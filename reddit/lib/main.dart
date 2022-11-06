@@ -39,7 +39,9 @@ class MyApp extends StatelessWidget {
       onGenerateInitialRoutes: (String initialRouteName) {
         return [
           appRouter.generateRoute(RouteSettings(
-              name: isLoggedIn ? homePageRout : popularPageRout,
+              name: kIsWeb
+                  ? (isLoggedIn ? homePageRout : popularPageRout)
+                  : homePageRout,
               arguments: {"isLoggedIn": isLoggedIn}))!,
         ];
       },
