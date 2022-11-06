@@ -24,7 +24,7 @@ class HomeNotLoggedIn extends StatelessWidget {
                 radius: 60,
                 child: Image.asset('assets/images/welcome1.jpg'),
               ),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,7 +106,7 @@ class HomeNotLoggedIn extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25))),
                 child: const Text(
-                  "Sign In",
+                  "SIGN UP",
                   style: TextStyle(color: Colors.white, fontSize: 16),
                 ),
               ),
@@ -119,7 +119,7 @@ class HomeNotLoggedIn extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25))),
                 child: const Text(
-                  "Sign In",
+                  "SIGN IN",
                   style: TextStyle(color: Colors.blue, fontSize: 16),
                 ),
               )

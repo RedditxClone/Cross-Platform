@@ -30,7 +30,6 @@ class _PopularWebState extends State<PopularWeb> {
                 : const AppBarWebNotLoggedIn(screen: 'Popular')),
         body: Container(
           color: defaultWebBackgroundColor,
-
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

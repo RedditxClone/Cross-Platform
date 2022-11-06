@@ -8,7 +8,6 @@ import 'package:reddit/presentation/screens/recaptcha_screen.dart'
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reddit/business_logic/cubit/settings/safety_settings_cubit.dart';
-import 'package:reddit/constants/strings.dart';
 import 'package:reddit/data/repository/safety_settings_repository.dart';
 import 'package:reddit/data/web_services/safety_settings_web_services.dart';
 import 'package:reddit/presentation/screens/home/home_page_mobile.dart';
