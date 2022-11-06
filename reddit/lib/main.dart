@@ -25,6 +25,12 @@ class MyApp extends StatelessWidget {
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
+        textButtonTheme: TextButtonThemeData(
+          style: ButtonStyle(
+            foregroundColor: MaterialStateProperty.all(Colors.white),
+          ),
+        ),
+
       ),
       themeMode: ThemeMode.dark,
       debugShowCheckedModeBanner: false,
@@ -38,6 +44,7 @@ class MyApp extends StatelessWidget {
               arguments: {"isLoggedIn": isLoggedIn}))!,
         ];
       },
+
     );
   }
 }
