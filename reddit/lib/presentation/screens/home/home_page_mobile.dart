@@ -6,6 +6,7 @@ import 'package:reddit/presentation/screens/test_home_screens/chat.dart';
 import 'package:reddit/presentation/screens/test_home_screens/explore.dart';
 import 'package:reddit/presentation/screens/test_home_screens/notifications.dart';
 import 'package:reddit/presentation/widgets/home_widgets/end_drawer.dart';
+import 'package:reddit/presentation/widgets/home_widgets/left_drawer.dart';
 import 'package:reddit/presentation/widgets/posts/add_post.dart';
 
 class HomePage extends StatefulWidget {
@@ -183,7 +184,7 @@ class _HomePageState extends State<HomePage> {
             bottomNavBarItem(
                 4, Icons.notifications, Icons.notifications_outlined),
           ]),
-      drawer: const Drawer(),
+      drawer: LeftDrawer(false),
       endDrawer: EndDrawer(_isLoggedin),
     );
   }
