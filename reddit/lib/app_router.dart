@@ -38,7 +38,6 @@ import 'package:reddit/presentation/screens/account_settings/manage_blocked_acco
 import 'package:reddit/presentation/screens/account_settings/manage_notifications_screen.dart';
 import 'package:reddit/presentation/screens/account_settings/update_email_address_screen.dart';
 
-
 class AppRouter {
   // platform
   bool get isMobile =>
@@ -48,12 +47,12 @@ class AppRouter {
 
   late AccountSettingsRepository accountSettingsRepository;
   late AccountSettingsCubit accountSettingsCubit;
-  
+
   late SafetySettingsRepository safetySettingsRepository;
   late SafetySettingsCubit safetySettingsCubit;
   late SettingsRepository settingsRepository;
   late SettingsCubit settingsCubit;
-  
+
   late EmailSettingsRepository emailSettingsReposity;
   late EmailSettingsCubit emailSettingsCubit;
   late EmailSettingsWebServices emailSettingsWebServices;
@@ -67,7 +66,7 @@ class AppRouter {
     emailSettingsWebServices = EmailSettingsWebServices();
     emailSettingsReposity = EmailSettingsRepository(emailSettingsWebServices);
     emailSettingsCubit = EmailSettingsCubit(emailSettingsReposity);
-    
+
     accountSettingsRepository =
         AccountSettingsRepository(AccountSettingsWebServices());
     accountSettingsCubit = AccountSettingsCubit(accountSettingsRepository);
@@ -75,12 +74,12 @@ class AppRouter {
   Route? generateRoute(RouteSettings settings) {
     final arguments = settings.arguments;
     switch (settings.name) {
-      case homePageRout:
+      case homePageRoute:
         Map<String, dynamic> argMap = arguments as Map<String, dynamic>;
         return MaterialPageRoute(
           builder: (_) => kIsWeb
               ? HomePageWeb(isLoggedIn: argMap["isLoggedIn"])
-              : HomePage(arguments),
+              : HomePage(argMap["isLoggedIn"]),
         );
 
       case emailSettingsWebScreenRoute:
@@ -102,7 +101,7 @@ class AppRouter {
           ),
         );
       */
-      case popularPageRout:
+      case popularPageRoute:
         Map<String, dynamic> argMap = arguments as Map<String, dynamic>;
         return MaterialPageRoute(
             builder: (_) => kIsWeb
@@ -113,7 +112,6 @@ class AppRouter {
         // return MaterialPageRoute(builder: (_) => const RecaptchaScreenWeb());
         return MaterialPageRoute(
             builder: (_) => const recaptcha_screen.RecaptchaScreen());
-
 
       case accountSettingsRoute:
         return MaterialPageRoute(
@@ -147,7 +145,6 @@ class AppRouter {
       case manageBlockedAccountsRoute:
         return MaterialPageRoute(
             builder: (_) => const ManageBlockedAccountsScreen());
-
 
       case safetySettingsRoute:
         return MaterialPageRoute(

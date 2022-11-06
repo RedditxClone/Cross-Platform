@@ -1,6 +1,7 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:reddit/presentation/screens/home/home.dart';
+import 'package:reddit/presentation/screens/home/home_not_loggedin_mobile.dart';
 import 'package:reddit/presentation/screens/popular/popular.dart';
 import 'package:reddit/presentation/screens/test_home_screens/chat.dart';
 import 'package:reddit/presentation/screens/test_home_screens/explore.dart';
@@ -8,12 +9,8 @@ import 'package:reddit/presentation/screens/test_home_screens/notifications.dart
 import 'package:reddit/presentation/widgets/posts/add_post.dart';
 
 class HomePage extends StatefulWidget {
-  late bool isLoggedin;
-  final Object? arguments;
-  HomePage(this.arguments, {Key? key}) : super(key: key) {
-    Map<String, bool> argMap = arguments as Map<String, bool>;
-    isLoggedin = argMap["isLoggedin"] ?? false;
-  }
+  bool isLoggedin;
+  HomePage(this.isLoggedin, {Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -23,12 +20,6 @@ class _HomePageState extends State<HomePage> {
   int _selectedPageIndex = 0;
   String _screen = 'Home';
   IconData dropDownArrow = Icons.keyboard_arrow_down;
-  bool passwordVisible = true;
-  void togglePasswordVisible() {
-    setState(() {
-      passwordVisible = !passwordVisible;
-    });
-  }
 
   Widget buildHomeAppBar() {
     return Container(
@@ -73,7 +64,11 @@ class _HomePageState extends State<HomePage> {
     switch (index) {
       case 0:
         return {
-          'page': _screen == 'Home' ? const Home() : const Popular(),
+          'page': _screen == 'Home'
+              ? widget.isLoggedin
+                  ? const Home()
+                  : const HomeNotLoggedIn()
+              : const Popular(),
           'appbar_title': Container(
             decoration: BoxDecoration(
               color: const Color.fromRGBO(90, 90, 90, 100),
@@ -83,7 +78,8 @@ class _HomePageState extends State<HomePage> {
           ),
           'appbar_action': IconButton(
               onPressed: () {},
-              icon: const Icon(Icons.search, color: Colors.grey, size: 40)),
+              icon: const Icon(Icons.search_outlined,
+                  color: Colors.grey, size: 40)),
         };
       case 1:
         return {

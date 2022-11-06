@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/constants/strings.dart';
+import 'package:reddit/constants/theme_colors.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PopupMenuLoggedIn extends StatelessWidget {
   const PopupMenuLoggedIn({Key? key}) : super(key: key);
+  Future<void> _launchUrl(String link) async {
+    Uri url = Uri.parse(link);
+    if (!await launchUrl(url)) {
+      throw 'Could not launch $url';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +70,7 @@ class PopupMenuLoggedIn extends StatelessWidget {
               ),
             ],
           )),
+      const PopupMenuDivider(),
       PopupMenuItem(
           value: 4,
           child:
@@ -85,8 +94,21 @@ class PopupMenuLoggedIn extends StatelessWidget {
             )
           ])),
       PopupMenuItem(
-          key: const Key('loggout'),
           value: 6,
+          child: Row(
+            children: const [
+              Icon(Icons.help_outline_sharp),
+              SizedBox(width: 10),
+              Text(
+                'Help center',
+                style: TextStyle(fontSize: 15),
+              ),
+            ],
+          )),
+      const PopupMenuDivider(),
+      PopupMenuItem(
+          key: const Key('loggout'),
+          value: 7,
           child:
               Row(mainAxisAlignment: MainAxisAlignment.start, children: const [
             Icon(Icons.logout_outlined),
@@ -109,16 +131,20 @@ class PopupMenuLoggedIn extends StatelessWidget {
           ])),
     ];
     return PopupMenuButton(
+      color: defaultSecondaryColor,
       key: const Key('popup-menu'),
-      padding: const EdgeInsets.all(0),
+      padding: const EdgeInsets.all(0.4),
       offset: Offset.fromDirection(0, 150),
       position: PopupMenuPosition.under,
       itemBuilder: (_) => optionsList,
-      constraints: const BoxConstraints.expand(width: 200, height: 450),
+      constraints: const BoxConstraints.expand(width: 230, height: 530),
       onSelected: (value) {
         switch (value) {
           case 3:
             Navigator.pushReplacementNamed(context, profileSettingsRoute);
+            break;
+          case 6:
+            _launchUrl('https://www.reddithelp.com/hc/en-us');
             break;
           default:
             break;

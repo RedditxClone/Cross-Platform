@@ -18,11 +18,11 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
   void routeToPage(val) {
     switch (val) {
       case 'Home':
-        Navigator.pushNamed(context, homePageRout,
+        Navigator.pushNamed(context, homePageRoute,
             arguments: {"isLoggedIn": true});
         break;
       case 'Popular':
-        Navigator.pushNamed(context, popularPageRout,
+        Navigator.pushNamed(context, popularPageRoute,
             arguments: {"isLoggedIn": true});
         break;
       case 'User settings':
@@ -121,7 +121,7 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         InkWell(
-          onTap: () => Navigator.pushNamed(context, homePageRout,
+          onTap: () => Navigator.pushNamed(context, homePageRoute,
               arguments: {"isLoggedIn": true}),
           hoverColor: Colors.transparent,
           child: Row(
@@ -175,7 +175,7 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
               ? const SizedBox(width: 0)
               : Row(children: [
                   appBardIcon(Icons.arrow_circle_up_rounded, () {
-                    Navigator.pushReplacementNamed(context, popularPageRout);
+                    Navigator.pushReplacementNamed(context, popularPageRoute);
                   }),
                   appBardIcon(Icons.circle_outlined, () {}),
                   appBardIcon(Icons.chat, () {}),

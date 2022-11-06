@@ -21,15 +21,14 @@ class _PopularWebState extends State<PopularWeb> {
     responsive = Responsive(context);
     return Scaffold(
         appBar: AppBar(
+            shape: const Border(
+                bottom: BorderSide(color: Colors.grey, width: 0.5)),
             automaticallyImplyLeading: false,
             backgroundColor: defaultAppbarBackgroundColor,
             title: widget.isLoggedIn
                 ? const AppBarWebLoggedIn(screen: 'Popular')
                 : const AppBarWebNotLoggedIn(screen: 'Popular')),
-        body:
-            //  SingleChildScrollView(
-            // child:
-            Container(
+        body: Container(
           color: defaultWebBackgroundColor,
 
           child: Row(
@@ -70,16 +69,14 @@ class _PopularWebState extends State<PopularWeb> {
                                       child: Container(
                                         // put your popular card here istead of container
                                         width: 245.6,
-                                        color: const Color.fromRGBO(
-                                            70, 70, 70, 100),
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                            color: const Color.fromRGBO(
+                                                70, 70, 70, 100)),
                                       ),
                                     ),
-                                    SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width <
-                                                    600
-                                                ? 0
-                                                : 15),
+                                    const SizedBox(width: 15),
                                     Expanded(
                                       flex: MediaQuery.of(context).size.width <
                                               800
@@ -89,14 +86,22 @@ class _PopularWebState extends State<PopularWeb> {
                                         // put your popular card here istead of container
                                         width:
                                             MediaQuery.of(context).size.width <
-                                                    700
+                                                    800
                                                 ? 0
                                                 : 245.6,
-                                        color: const Color.fromRGBO(
-                                            70, 70, 70, 100),
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                            color: const Color.fromRGBO(
+                                                70, 70, 70, 100)),
                                       ),
                                     ),
-                                    const SizedBox(width: 15),
+                                    SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width <
+                                                    800
+                                                ? 0
+                                                : 15),
                                     Expanded(
                                       flex: MediaQuery.of(context).size.width >
                                               1200
@@ -109,8 +114,11 @@ class _PopularWebState extends State<PopularWeb> {
                                                     1000
                                                 ? 0
                                                 : 245.6,
-                                        color: const Color.fromRGBO(
-                                            70, 70, 70, 100),
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                            color: const Color.fromRGBO(
+                                                70, 70, 70, 100)),
                                       ),
                                     ),
                                     SizedBox(
@@ -131,8 +139,11 @@ class _PopularWebState extends State<PopularWeb> {
                                                     1200
                                                 ? 0
                                                 : 245.6,
-                                        color: const Color.fromRGBO(
-                                            70, 70, 70, 100),
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                            color: const Color.fromRGBO(
+                                                70, 70, 70, 100)),
                                       ),
                                     ),
                                   ],
@@ -150,29 +161,41 @@ class _PopularWebState extends State<PopularWeb> {
                                         children: [
                                           Container(
                                             height: 130,
-                                            color: const Color.fromRGBO(
-                                                70, 70, 70, 100),
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                                color: const Color.fromRGBO(
+                                                    70, 70, 70, 100)),
                                             margin: const EdgeInsets.only(
                                                 bottom: 15),
                                           ),
                                           Container(
                                             height: 130,
-                                            color: const Color.fromRGBO(
-                                                70, 70, 70, 100),
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                                color: const Color.fromRGBO(
+                                                    70, 70, 70, 100)),
                                             margin: const EdgeInsets.only(
                                                 bottom: 15),
                                           ),
                                           Container(
                                             height: 400,
-                                            color: const Color.fromRGBO(
-                                                70, 70, 70, 100),
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                                color: const Color.fromRGBO(
+                                                    70, 70, 70, 100)),
                                             margin: const EdgeInsets.only(
                                                 bottom: 15),
                                           ),
                                           Container(
                                             height: 400,
-                                            color: const Color.fromRGBO(
-                                                70, 70, 70, 100),
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                                color: const Color.fromRGBO(
+                                                    70, 70, 70, 100)),
                                             margin: const EdgeInsets.only(
                                                 bottom: 15),
                                           ),
@@ -181,7 +204,7 @@ class _PopularWebState extends State<PopularWeb> {
                                     ),
                                   ),
                                   const SizedBox(width: 15),
-                                  MediaQuery.of(context).size.width < 900
+                                  MediaQuery.of(context).size.width < 1000
                                       ? const SizedBox(width: 0)
                                       : Expanded(
                                           flex: 3,
@@ -217,7 +240,10 @@ class _PopularWebState extends State<PopularWeb> {
                         ),
                       ),
                       Expanded(
-                          flex: responsive.isSmallSizedScreen() ? 0 : 1,
+                          flex: responsive.isSmallSizedScreen() |
+                                  responsive.isMediumSizedScreen()
+                              ? 0
+                              : 1,
                           child: SizedBox(
                               width: responsive.isSmallSizedScreen() ? 0 : 10))
                     ],
