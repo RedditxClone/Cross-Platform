@@ -35,6 +35,7 @@ dependencies:
   flutter_facebook_auth: ^5.0.1
   google_sign_in: ^5.4.2
   icons_plus: ^3.0.0
+  image_picker: ^0.8.6
   shared_preferences: ^2.0.15
   url_launcher: ^6.1.6
 
