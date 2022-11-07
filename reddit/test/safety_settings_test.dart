@@ -23,18 +23,8 @@ void main() async {
   late SafetySettingsCubit accountSettingsCubit;
   late MockAccountSettingsCubit mockAccountSettingsCubit;
   const String settingsFromWebServices = '''{
-    "profile":
-        "https://image.shutterstock.com/mosaic_250/2780032/1854697390/stock-photo-head-shot-young-attractive-businessman-in-glasses-standing-in-modern-office-pose-for-camera-1854697390.jpg",
-    "cover":
-        "https://images.fineartamerica.com/images/artworkimages/mediumlarge/2/1-mcway-waterfall-with-small-cove-ingmar-wesemann.jpg",
-    "nsfw": true,
-    "displayName": "Markos",
-    "about": "I am a computer engineer student",
-    "allowPeopleToFollowYou": false,
-    "activeInCommunitiesVisibility": true,
-    "contentVisibility": false,
-    "disroptiveSettings": "MEDIUM",
-    "showUnInSearch": true,
+    "badCommentAutoCollapse": "MEDIUM",
+    "showInSearch": true,
     "blocked": ["@_Mark1"],
     "personalizeAllOfReddit": false,
     "personalizeAds_information": true,
@@ -50,16 +40,6 @@ void main() async {
         'https://preview.keenthemes.com/metronic-v4/theme_rtl/assets/pages/media/profile/profile_user.jpg'
   };
   final settingsFromRepository = SafetySettings(
-      profile:
-          'https://image.shutterstock.com/mosaic_250/2780032/1854697390/stock-photo-head-shot-young-attractive-businessman-in-glasses-standing-in-modern-office-pose-for-camera-1854697390.jpg',
-      cover:
-          'https://images.fineartamerica.com/images/artworkimages/mediumlarge/2/1-mcway-waterfall-with-small-cove-ingmar-wesemann.jpg',
-      displayName: 'Markos',
-      about: 'I am a computer engineer student',
-      nsfw: true,
-      allowPeopleToFollowYou: false,
-      activeInCommunitiesVisibility: true,
-      contentVisibility: false,
       disroptiveSettings: 'MEDIUM',
       blocked: ['@_Mark1'],
       showUnInSearch: true,
@@ -96,15 +76,15 @@ void main() async {
     blocTest<SafetySettingsCubit, SafetySettingsState>(
       'Settings loaded state is emitted correctly after updating settings',
       setUp: () {
-        when(() => mockAccountSettingsWebService.updatePrefs({'cover': ''}))
-            .thenAnswer(
-                (_) async => "{\"cover\": \"${patchResponse['cover']!}\"}");
+        when(() => mockAccountSettingsWebService
+                .updatePrefs({'disroptiveSettings': 'MEDIUM'}))
+            .thenAnswer((_) async => 200);
       },
       build: () {
         return accountSettingsCubit;
       },
-      act: (SafetySettingsCubit cubit) =>
-          cubit.changeCoverphoto(settingsFromRepository, ''),
+      act: (SafetySettingsCubit cubit) => cubit.updateSettings(
+          settingsFromRepository, {"disroptiveSettings": "MEDIUM"}),
       expect: () => [isA<SafetySettingsChanged>()],
     );
   });
@@ -150,6 +130,7 @@ void main() async {
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key("showUnInSearch")));
       verify(() => mockAccountSettingsCubit.updateSettings(
+          settingsFromRepository,
           {"showUnInSearch": settingsFromRepository.showUnInSearch})).called(1);
     });
   });

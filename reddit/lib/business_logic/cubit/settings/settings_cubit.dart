@@ -9,7 +9,7 @@ part 'settings_state.dart';
 
 class SettingsCubit extends Cubit<SettingsState> {
   final SettingsRepository settingsRepository;
-  Settings? settings;
+  ProfileSettings? settings;
   SettingsCubit(this.settingsRepository) : super(SettingsInitial());
 
   /// Get all user settings @initial build of any settings widget
@@ -21,7 +21,7 @@ class SettingsCubit extends Cubit<SettingsState> {
   }
 
   /// change the cover photo from mobile: send to the backend the new image
-  void changeCoverphoto(Settings settings, File img) {
+  void changeCoverphoto(ProfileSettings settings, File img) {
     settingsRepository.updateImage('coverphoto', img).then((image) {
       settings.cover = image;
       print(image);
@@ -30,7 +30,7 @@ class SettingsCubit extends Cubit<SettingsState> {
   }
 
   /// change the cover photo from web: send to the backend the new image
-  void changeCoverphotoWeb(Settings settings, Uint8List fileAsBytes) {
+  void changeCoverphotoWeb(ProfileSettings settings, Uint8List fileAsBytes) {
     settingsRepository.updateImageWeb('coverphoto', fileAsBytes).then((image) {
       settings.cover = image;
       emit(SettingsChanged(settings));
@@ -38,7 +38,7 @@ class SettingsCubit extends Cubit<SettingsState> {
   }
 
   /// change the profile photo from mobile: send to the backend the new image
-  void changeProfilephoto(Settings settings, File img) {
+  void changeProfilephoto(ProfileSettings settings, File img) {
     settingsRepository.updateImage('profilephoto', img).then((image) {
       settings.profile = image;
       emit(SettingsChanged(settings));
@@ -46,7 +46,7 @@ class SettingsCubit extends Cubit<SettingsState> {
   }
 
   /// change the profile photo from web: send to the backend the new image
-  void changeProfilephotoWeb(Settings settings, Uint8List fileAsBytes) {
+  void changeProfilephotoWeb(ProfileSettings settings, Uint8List fileAsBytes) {
     settingsRepository
         .updateImageWeb('profilephoto', fileAsBytes)
         .then((image) {
@@ -56,7 +56,7 @@ class SettingsCubit extends Cubit<SettingsState> {
   }
 
   /// change user profile settings
-  void updateSettings(Settings settings, Map changed) {
+  void updateSettings(ProfileSettings settings, Map changed) {
     settingsRepository.updatePrefs(changed).then((val) {
       settings.displayName = val;
       emit(SettingsChanged(settings));

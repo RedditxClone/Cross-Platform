@@ -22,7 +22,7 @@ class ProfileSettingsWeb extends StatefulWidget {
 }
 
 class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
-  Settings? profileSettings;
+  ProfileSettings? profileSettings;
   late Responsive responsive;
   late TextEditingController displayName;
   late TextEditingController about;

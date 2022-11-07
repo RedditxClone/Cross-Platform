@@ -33,6 +33,59 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
     BlocProvider.of<SafetySettingsCubit>(context).getUserSettings();
   }
 
+  void blockUser(String username) {
+    bool success = BlocProvider.of<SafetySettingsCubit>(context)
+        .blockUser(safetySettings!, username);
+    if (success) {
+      displayMsg(context, Colors.blue, '${blockedUsers.text} is now blocked');
+    } else {
+      displayMsg(
+          context, Colors.red, 'An error has occured. please try again later');
+    }
+    blockedUsers.text = '';
+  }
+
+  Widget _createBlockedList(BuildContext ctx) {
+    List<dynamic> blocked = safetySettings!.blocked;
+    return Container(
+      constraints: const BoxConstraints(maxHeight: 500),
+      child: ListView.builder(
+        shrinkWrap: true,
+        itemCount: blocked.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: Container(
+              padding: const EdgeInsets.all(5),
+              height: 30,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      InkWell(
+                          onTap: () {},
+                          child: Text(blocked[index],
+                              style: const TextStyle(fontSize: 15))),
+                      const SizedBox(width: 10),
+                      const Text('just now',
+                          style: TextStyle(fontSize: 13, color: Colors.grey)),
+                    ],
+                  ),
+                  InkWell(
+                      onTap: () => BlocProvider.of<SafetySettingsCubit>(context)
+                          .unBlockUser(safetySettings!, blocked[index]),
+                      child: const Text('Remove',
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.bold))),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   /// creates the text in the top of the page
   TextSpan createTextSpan(String txt, bool isUrl) {
     return TextSpan(
@@ -143,12 +196,7 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
               title('People You’ve Blocked',
                   'Blocked people can’t send you chat requests or private messages.'),
               TextField(
-                  onSubmitted: (value) {
-                    BlocProvider.of<SafetySettingsCubit>(context)
-                        .updateSettings({'blocked': value});
-                    displayMsg(context, Colors.blue,
-                        '${blockedUsers.text} is now blocked');
-                  },
+                  onSubmitted: (username) => blockUser(username),
                   controller: blockedUsers,
                   style: const TextStyle(fontSize: 16),
                   keyboardType: TextInputType.text,
@@ -159,19 +207,7 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
                             _AddColor = isHoverd ? Colors.white : Colors.grey;
                           });
                         },
-                        onPressed: () {
-                          //if(){ // if the user added exist
-                          // BlocProvider.of<SettingsCubit>(context)
-                          //     .updateSettings({'blocked': blockedUsers.text});
-                          // displayMsg(context, Colors.blue, '${blockedUsers.text} is now blocked');
-                          //}
-                          //else{
-
-                          displayMsg(context, Colors.red,
-                              'An error has occured. Please try again later');
-                          //}
-                          blockedUsers.text = '';
-                        },
+                        onPressed: () => blockUser(blockedUsers.text),
                         child: Text(
                           'Add',
                           style: TextStyle(fontSize: 16, color: _AddColor),
@@ -183,6 +219,8 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
                     hintStyle: const TextStyle(fontSize: 13),
                   )),
               const SizedBox(height: 25),
+              _createBlockedList(context),
+              //------------- Collapse potentially disruptive comments--------------
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -206,7 +244,8 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
                           safetySettings!.disroptiveSettings = val as String;
                           disruptiveComments = val;
                           BlocProvider.of<SafetySettingsCubit>(context)
-                              .updateSettings({'disruptiveComments': val});
+                              .updateSettings(
+                                  safetySettings!, {'disruptiveComments': val});
                           displayMsg(context, Colors.blue, 'Changes Saved');
                         });
                       })
@@ -227,7 +266,8 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
                   setState(() {
                     safetySettings!.showUnInSearch = var1 = newValue;
                     BlocProvider.of<SafetySettingsCubit>(context)
-                        .updateSettings({'showUnInSearch': newValue});
+                        .updateSettings(
+                            safetySettings!, {'showUnInSearch': newValue});
                     displayMsg(context, Colors.blue, 'Changes Saved');
                   });
                 },
@@ -247,7 +287,8 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
                   setState(() {
                     safetySettings!.personalizeAllOfReddit = var2 = newValue;
                     BlocProvider.of<SafetySettingsCubit>(context)
-                        .updateSettings({'personalizeAllOfReddit': newValue});
+                        .updateSettings(safetySettings!,
+                            {'personalizeAllOfReddit': newValue});
                     displayMsg(context, Colors.blue, 'Changes Saved');
                   });
                 },
@@ -268,7 +309,7 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
                   setState(() {
                     safetySettings!.personalizeAdsInformation = var3 = newValue;
                     BlocProvider.of<SafetySettingsCubit>(context)
-                        .updateSettings(
+                        .updateSettings(safetySettings!,
                             {'personalizeAdsInformation': newValue});
                     displayMsg(context, Colors.blue, 'Changes Saved');
                   });
@@ -310,7 +351,7 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
                     safetySettings!.personalizeRecGeneralLocation =
                         var5 = newValue;
                     BlocProvider.of<SafetySettingsCubit>(context)
-                        .updateSettings(
+                        .updateSettings(safetySettings!,
                             {'personalizeRecGeneralLocation': newValue});
                     displayMsg(context, Colors.blue, 'Changes Saved');
                   });
@@ -332,7 +373,7 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
                   setState(() {
                     safetySettings!.personalizeRecOurPartners = var6 = newValue;
                     BlocProvider.of<SafetySettingsCubit>(context)
-                        .updateSettings(
+                        .updateSettings(safetySettings!,
                             {'personalizeRecOurPartners': newValue});
                     displayMsg(context, Colors.blue, 'Changes Saved');
                   });
@@ -359,7 +400,7 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
                     safetySettings!.useTwoFactorAuthentication =
                         var7 = newValue;
                     BlocProvider.of<SafetySettingsCubit>(context)
-                        .updateSettings(
+                        .updateSettings(safetySettings!,
                             {'useTwoFactorAuthentication': newValue});
                     displayMsg(context, Colors.blue, 'Changes Saved');
                   });

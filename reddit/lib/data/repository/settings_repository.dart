@@ -11,9 +11,9 @@ class SettingsRepository {
   SettingsRepository(this.settingsWebServices);
 
   /// ### Returns all user settings from json to Settings class object
-  Future<Settings> getUserSettings() async {
+  Future<ProfileSettings> getUserSettings() async {
     final settings = await settingsWebServices.getUserSettings();
-    return Settings.fromjson(jsonDecode(settings));
+    return ProfileSettings.fromjson(jsonDecode(settings));
   }
 
   Future<dynamic> updateImage(String key, File val) async {

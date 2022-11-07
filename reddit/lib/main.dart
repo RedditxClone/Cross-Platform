@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
       // initialRoute: kIsWeb
       //     ? (isLoggedIn ? homePageRoute : popularPageRoute)
       //     : homePageRoute,
-      initialRoute: profileSettingsRoute,
+      initialRoute: safetySettingsRoute,
       // onGenerateInitialRoutes: (String initialRouteName) {
       //   return [
       //     appRouter.generateRoute(RouteSettings(
