@@ -78,7 +78,7 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
                 color: Colors.white,
                 size: 20,
               ),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Text(
                 title,
                 style: const TextStyle(fontSize: 16, color: Colors.white),

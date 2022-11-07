@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dotted_border/dotted_border.dart';
@@ -81,21 +83,18 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
   /// ## Parameters
   /// ### src : the image source can be ImageSource.gallery or ImageSource.camera
   /// ### dest : the image destination can be 'cover' for cover photo or 'profile' fom profile photo
-  Future pickImage(ImageSource src, String dest) async {
+  Future pickImageWeb(ImageSource src, String dest) async {
     try {
-      final image = await ImagePicker().pickImage(source: src);
-      if (image == null) return;
-      final f = await image.readAsBytes();
+      final imagePicker = await ImagePicker().pickImage(source: src);
+      if (imagePicker == null) return;
+      Uint8List imageBytes = await imagePicker.readAsBytes();
       setState(() {
         if (dest == 'profile') {
-          // webImgProfile = f;
-          // isThereImageProfile = true;
-          BlocProvider.of<SettingsCubit>(context).changeProfilephoto('');
-        } else if (dest == 'cover') {
-          // webImgCover = f;
-          // isThereImageCover = true;
           BlocProvider.of<SettingsCubit>(context)
-              .changeCoverphoto(profileSettings!, '');
+              .changeProfilephotoWeb(profileSettings!, imageBytes);
+        } else if (dest == 'cover') {
+          BlocProvider.of<SettingsCubit>(context)
+              .changeCoverphotoWeb(profileSettings!, imageBytes);
         }
         displayMsg(context, Colors.blue, 'Changes Saved');
       });
@@ -166,8 +165,8 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
                   'Set a display name. This does not change your username.'),
               TextField(
                   onEditingComplete: () {
-                    BlocProvider.of<SettingsCubit>(context)
-                        .updateSettings({'displayName': displayName.text});
+                    BlocProvider.of<SettingsCubit>(context).updateSettings(
+                        profileSettings!, {'displayName': displayName.text});
                     displayMsg(context, Colors.blue, 'Changes Saved');
                   },
                   controller: displayName,
@@ -185,8 +184,8 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
                   'A brief description of yourself shown on your profile.'),
               TextField(
                   onEditingComplete: () {
-                    BlocProvider.of<SettingsCubit>(context)
-                        .updateSettings({'about': about.text});
+                    BlocProvider.of<SettingsCubit>(context).updateSettings(
+                        profileSettings!, {'about': about.text});
                     displayMsg(context, Colors.blue, 'Changes Saved');
                   },
                   controller: about,
@@ -244,8 +243,8 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
                         decoration: const BoxDecoration(shape: BoxShape.circle),
                         child: (profileSettings!.profile != '')
                             ? GestureDetector(
-                                onTap: () =>
-                                    pickImage(ImageSource.gallery, 'profile'),
+                                onTap: () => pickImageWeb(
+                                    ImageSource.gallery, 'profile'),
                                 child: ClipOval(
                                   child: Image.network(
                                     profileSettings!.profile,
@@ -256,8 +255,8 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
                                 ),
                               )
                             : ElevatedButton(
-                                onPressed: () =>
-                                    pickImage(ImageSource.gallery, 'profile'),
+                                onPressed: () => pickImageWeb(
+                                    ImageSource.gallery, 'profile'),
                                 style: ElevatedButton.styleFrom(
                                   primary: Colors.white,
                                   shape: RoundedRectangleBorder(
@@ -279,7 +278,7 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
                   ),
                   const SizedBox(width: 10),
                   InkWell(
-                    onTap: () => pickImage(ImageSource.gallery, 'cover'),
+                    onTap: () => pickImageWeb(ImageSource.gallery, 'cover'),
                     child: DottedBorder(
                       dashPattern: const [3, 2],
                       borderType: BorderType.RRect,
@@ -340,7 +339,7 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
                     profileSettings!.nsfw = newValue;
                     nsfw = newValue;
                     BlocProvider.of<SettingsCubit>(context)
-                        .updateSettings({'nsfw': newValue});
+                        .updateSettings(profileSettings!, {'nsfw': newValue});
                     displayMsg(context, Colors.blue, 'Changes Saved');
                   });
                 },
@@ -365,8 +364,8 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
                   setState(() {
                     profileSettings!.allowPeopleToFollowYou = newValue;
                     allowPeopleToFollowYou = newValue;
-                    BlocProvider.of<SettingsCubit>(context)
-                        .updateSettings({'allowPeopleToFollowYou': newValue});
+                    BlocProvider.of<SettingsCubit>(context).updateSettings(
+                        profileSettings!, {'allowPeopleToFollowYou': newValue});
                     displayMsg(context, Colors.blue, 'Changes Saved');
                   });
                 },
@@ -385,8 +384,8 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
                   setState(() {
                     profileSettings!.contentVisibility = newValue;
                     contentVisibility = newValue;
-                    BlocProvider.of<SettingsCubit>(context)
-                        .updateSettings({'contentVisibility': newValue});
+                    BlocProvider.of<SettingsCubit>(context).updateSettings(
+                        profileSettings!, {'contentVisibility': newValue});
                     displayMsg(context, Colors.blue, 'Changes Saved');
                   });
                 },
@@ -406,6 +405,7 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
                     profileSettings!.activeInCommunitiesVisibility = newValue;
                     showActiveCommunities = newValue;
                     BlocProvider.of<SettingsCubit>(context).updateSettings(
+                        profileSettings!,
                         {'activeInCommunitiesVisibility': newValue});
                     displayMsg(context, Colors.blue, 'Changes Saved');
                   });

@@ -40,8 +40,8 @@ class Settings {
 
   /// ### Transform the data from json to Settings Class object
   Settings.fromjson(Map<String, dynamic> json) {
-    profile = json['profile'];
-    cover = json['cover'];
+    profile = json['profilephoto'];
+    cover = json['coverphoto'];
     displayName = json['displayName'];
     about = json['about'];
     nsfw = json['nsfw'];

@@ -86,11 +86,12 @@ class _ProfileSettingsState extends State<ProfileSettings> {
         case 'cover':
           // imgCover = imageTemp;
           BlocProvider.of<SettingsCubit>(context)
-              .changeCoverphoto(profileSettings!, '');
+              .changeCoverphoto(profileSettings!, imageTemp);
           break;
         case 'profile':
-          // imgProfile = imageTemp;
-          BlocProvider.of<SettingsCubit>(context).changeProfilephoto('');
+          imgProfile = imageTemp;
+          BlocProvider.of<SettingsCubit>(context)
+              .changeProfilephoto(profileSettings!, imageTemp);
 
           break;
         default:
@@ -492,7 +493,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
 
                   if (changed.isNotEmpty) {
                     BlocProvider.of<SettingsCubit>(context)
-                        .updateSettings(changed);
+                        .updateSettings(profileSettings!, changed);
                   }
                   // BlocProvider.of<SettingsCubit>(context).changeAbout(about.text)
                   // BlocProvider.of<SettingsCubit>(context).updateContentVisiblity(contentVisibility);
