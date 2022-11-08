@@ -3,6 +3,7 @@
 //---------------------------------------
 // Backend URL
 const baseUrl = '';
+const mockUrl = 'https://a8eda59d-d8f3-4ef2-9581-29e6473824d9.mock.pstmn.io/';
 // Use mock server instead of our backend server
 const useMockServerForAllWebServices = true;
 //---------------------------------------
@@ -22,6 +23,7 @@ const settingTabUiRoute = '/setting_tab_ui';
 //---------------------------------------
 // ------Account settings routes---------
 //---------------------------------------
+const settingsTabsRoute = "/tabs";
 const accountSettingsRoute = "/account_settings";
 const updateEmailAddressRoute = "/account_settings/update_email_address";
 const changePasswordRoute = "/account_settings/change_password";

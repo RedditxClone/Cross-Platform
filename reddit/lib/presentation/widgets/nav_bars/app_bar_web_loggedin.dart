@@ -26,8 +26,7 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
             arguments: {"isLoggedIn": true});
         break;
       case 'User settings':
-        Navigator.pushNamed(context, profileSettingsRoute,
-            arguments: {"isLoggedIn": true});
+        Navigator.pushNamed(context, settingsTabsRoute);
         break;
       default:
     }

@@ -74,7 +74,6 @@ class AppRouter {
   Route? generateRoute(RouteSettings settings) {
     final arguments = settings.arguments;
     switch (settings.name) {
-
       case homePageRoute:
         Map<String, dynamic> argMap = arguments as Map<String, dynamic>;
         return MaterialPageRoute(
@@ -83,12 +82,12 @@ class AppRouter {
               : HomePage(argMap["isLoggedIn"]),
         );
 
-      case emailSettingsWebScreenRoute:
-        return MaterialPageRoute(
-            builder: (_) => BlocProvider.value(
-                  value: emailSettingsCubit,
-                  child: const EmailSettingsWeb(),
-                ));
+      // case emailSettingsWebScreenRoute:
+      //   return MaterialPageRoute(
+      //       builder: (_) => BlocProvider.value(
+      //             value: emailSettingsCubit,
+      //             child: const EmailSettingsWeb(),
+      //           ));
       case settingTabUiRoute:
         return MaterialPageRoute(builder: (_) => const SettingTabUi());
 
@@ -132,6 +131,9 @@ class AppRouter {
       case updateEmailAddressRoute:
         return MaterialPageRoute(
             builder: (_) => UpdateEmailAddressScreen(arguments));
+      case settingsTabsRoute:
+        return MaterialPageRoute(builder: (_) => const SettingTabUi());
+
       case changePasswordRoute:
         return MaterialPageRoute(builder: (context) {
           Map<String, dynamic> argMap = arguments as Map<String, dynamic>;
@@ -150,19 +152,17 @@ class AppRouter {
         return MaterialPageRoute(
             builder: (_) => const ManageBlockedAccountsScreen());
 
-      case safetySettingsRoute:
-        return MaterialPageRoute(
-            builder: (_) => BlocProvider(
-                  create: (BuildContext context) => safetySettingsCubit,
-                  child: const SafetySettingsWeb(),
-                ));
+      // case safetySettingsRoute:
+      //   return MaterialPageRoute(
+      //       builder: (_) => BlocProvider(
+      //             create: (BuildContext context) => safetySettingsCubit,
+      //             child: const SafetySettingsWeb(),
+      //           ));
       case profileSettingsRoute:
         return MaterialPageRoute(
             builder: (_) => BlocProvider(
                   create: (BuildContext context) => settingsCubit,
-                  child: kIsWeb
-                      ? const ProfileSettingsWeb()
-                      : const ProfileSettingsScreen(),
+                  child: ProfileSettingsScreen(),
                 ));
 
       default:

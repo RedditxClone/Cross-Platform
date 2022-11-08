@@ -3,17 +3,11 @@ import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:http_parser/http_parser.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:reddit/constants/strings.dart';
 
 class SettingsWebServices {
   late Dio dio;
-  // String mockUrl = TargetPlatform.android == defaultTargetPlatform
-  //     ? "http://10.0.2.2:3000/"
-  //     : "http://127.0.0.1:3000/";
-  String mockUrl =
-      'https://e47fd685-ac6a-438e-bfed-3ffd3b1465c8.mock.pstmn.io/';
-  bool isMockerServer = true;
+  bool isMockerServer = useMockServerForAllWebServices;
   SettingsWebServices() {
     BaseOptions options = BaseOptions(
       baseUrl: isMockerServer ? mockUrl : baseUrl,
@@ -31,7 +25,7 @@ class SettingsWebServices {
       Response response = await dio.get('prefs');
       return response.data;
     } catch (e) {
-      return '';
+      return null;
     }
   }
 
@@ -39,7 +33,6 @@ class SettingsWebServices {
   Future<String> updateImage(File file, String key) async {
     try {
       String fileName = file.path.split('/').last;
-
       FormData formData = FormData.fromMap({
         "file": await MultipartFile.fromFile(file.path, filename: fileName)
       });
