@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:reddit/data/model/user_settings.dart';
@@ -7,7 +9,7 @@ part 'settings_state.dart';
 
 class SettingsCubit extends Cubit<SettingsState> {
   final SettingsRepository settingsRepository;
-  Settings? settings;
+  ProfileSettings? settings;
   SettingsCubit(this.settingsRepository) : super(SettingsInitial());
 
   /// Get all user settings @initial build of any settings widget
@@ -18,37 +20,47 @@ class SettingsCubit extends Cubit<SettingsState> {
     });
   }
 
-  /// change the cover photo : send to the backend the new image
-  String changeCoverphoto(Settings settings, String img) {
-    String newImg = '';
-    this.settings = settings;
-    settingsRepository.updateImage('cover', img).then((image) {
+  /// change the cover photo from mobile: send to the backend the new image
+  void changeCoverphoto(ProfileSettings settings, File img) {
+    settingsRepository.updateImage('coverphoto', img).then((image) {
+      settings.cover = image;
+      print(image);
+      emit(SettingsChanged(settings));
+    });
+  }
+
+  /// change the cover photo from web: send to the backend the new image
+  void changeCoverphotoWeb(ProfileSettings settings, Uint8List fileAsBytes) {
+    settingsRepository.updateImageWeb('coverphoto', fileAsBytes).then((image) {
       settings.cover = image;
       emit(SettingsChanged(settings));
-      newImg = image;
     });
-    return newImg;
   }
 
-  /// change the profile photo : send to the backend the new image
-  String changeProfilephoto(String img) {
-    String newImg = '';
-    settingsRepository.updateImage('profile', img).then((image) {
-      settings!.profile = image;
-      emit(SettingsChanged(settings!));
-      newImg = image;
+  /// change the profile photo from mobile: send to the backend the new image
+  void changeProfilephoto(ProfileSettings settings, File img) {
+    settingsRepository.updateImage('profilephoto', img).then((image) {
+      settings.profile = image;
+      emit(SettingsChanged(settings));
     });
-    return newImg;
   }
 
-  /// change display name of the user
-  int updateSettings(Map changed) {
-    int statusCode = 500;
+  /// change the profile photo from web: send to the backend the new image
+  void changeProfilephotoWeb(ProfileSettings settings, Uint8List fileAsBytes) {
+    settingsRepository
+        .updateImageWeb('profilephoto', fileAsBytes)
+        .then((image) {
+      settings.profile = image;
+      emit(SettingsChanged(settings));
+    });
+  }
+
+  /// change user profile settings
+  void updateSettings(ProfileSettings settings, Map changed) {
     settingsRepository.updatePrefs(changed).then((val) {
-      settings!.displayName = val;
-      emit(SettingsChanged(settings!));
+      settings.displayName = val;
+      emit(SettingsChanged(settings));
     });
-    return statusCode;
   }
 
   // /// change display name of the user

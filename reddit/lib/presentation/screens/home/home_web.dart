@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/presentation/widgets/home_widgets/left_list_not_logged_in.dart';
+import 'package:reddit/presentation/widgets/posts/posts_web.dart';
 
 class HomeWeb extends StatefulWidget {
   final bool isLoggedIn;
@@ -68,22 +69,10 @@ class _HomeWebState extends State<HomeWeb> {
                                 color: const Color.fromRGBO(70, 70, 70, 100)),
                             margin: const EdgeInsets.only(bottom: 15),
                           ),
-                          Container(
-                            // feed posts 1
-                            height: 400,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
-                                color: const Color.fromRGBO(70, 70, 70, 100)),
-                            margin: const EdgeInsets.only(bottom: 15),
-                          ),
-                          Container(
-                            // feed posts 2
-                            height: 400,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
-                                color: const Color.fromRGBO(70, 70, 70, 100)),
-                            margin: const EdgeInsets.only(bottom: 15),
-                          ),
+                          PostsWeb(),
+                          PostsWeb(),
+                          PostsWeb(),
+                          PostsWeb(),
                         ],
                       ),
                     ),

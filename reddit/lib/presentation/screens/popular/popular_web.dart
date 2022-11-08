@@ -4,6 +4,7 @@ import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/presentation/widgets/home_widgets/left_list_not_logged_in.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_Not_loggedin.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
+import 'package:reddit/presentation/widgets/posts/posts_web.dart';
 
 class PopularWeb extends StatefulWidget {
   final bool isLoggedIn;
@@ -159,7 +160,8 @@ class _PopularWebState extends State<PopularWeb> {
                                       child: Column(
                                         children: [
                                           Container(
-                                            height: 130,
+                                            // add post
+                                            height: 70,
                                             decoration: BoxDecoration(
                                                 borderRadius:
                                                     BorderRadius.circular(5),
@@ -169,7 +171,8 @@ class _PopularWebState extends State<PopularWeb> {
                                                 bottom: 15),
                                           ),
                                           Container(
-                                            height: 130,
+                                            // sort post
+                                            height: 70,
                                             decoration: BoxDecoration(
                                                 borderRadius:
                                                     BorderRadius.circular(5),
@@ -178,26 +181,10 @@ class _PopularWebState extends State<PopularWeb> {
                                             margin: const EdgeInsets.only(
                                                 bottom: 15),
                                           ),
-                                          Container(
-                                            height: 400,
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(5),
-                                                color: const Color.fromRGBO(
-                                                    70, 70, 70, 100)),
-                                            margin: const EdgeInsets.only(
-                                                bottom: 15),
-                                          ),
-                                          Container(
-                                            height: 400,
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(5),
-                                                color: const Color.fromRGBO(
-                                                    70, 70, 70, 100)),
-                                            margin: const EdgeInsets.only(
-                                                bottom: 15),
-                                          ),
+                                          PostsWeb(),
+                                          PostsWeb(),
+                                          PostsWeb(),
+                                          PostsWeb(),
                                         ],
                                       ),
                                     ),
@@ -208,6 +195,7 @@ class _PopularWebState extends State<PopularWeb> {
                                       : Expanded(
                                           flex: 3,
                                           child: Column(
+                                            // there are the right cards
                                             children: [
                                               Container(
                                                 height: 500,

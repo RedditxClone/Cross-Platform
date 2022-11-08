@@ -157,7 +157,7 @@ class AppRouter {
                   create: (BuildContext context) => settingsCubit,
                   child: kIsWeb
                       ? const ProfileSettingsWeb()
-                      : const ProfileSettings(),
+                      : const ProfileSettingsScreen(),
                 ));
 
       default:

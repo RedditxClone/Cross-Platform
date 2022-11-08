@@ -7,15 +7,15 @@ import 'package:image_picker/image_picker.dart';
 import 'package:reddit/business_logic/cubit/settings/settings_cubit.dart';
 import 'package:reddit/data/model/user_settings.dart';
 
-class ProfileSettings extends StatefulWidget {
-  const ProfileSettings({Key? key}) : super(key: key);
+class ProfileSettingsScreen extends StatefulWidget {
+  const ProfileSettingsScreen({Key? key}) : super(key: key);
 
   @override
-  State<ProfileSettings> createState() => _ProfileSettingsState();
+  State<ProfileSettingsScreen> createState() => _ProfileSettingsScreenState();
 }
 
-class _ProfileSettingsState extends State<ProfileSettings> {
-  Settings? profileSettings;
+class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
+  ProfileSettings? profileSettings;
   late TextEditingController displayName;
   Map changed = {};
   late TextEditingController about;
@@ -86,11 +86,12 @@ class _ProfileSettingsState extends State<ProfileSettings> {
         case 'cover':
           // imgCover = imageTemp;
           BlocProvider.of<SettingsCubit>(context)
-              .changeCoverphoto(profileSettings!, '');
+              .changeCoverphoto(profileSettings!, imageTemp);
           break;
         case 'profile':
-          // imgProfile = imageTemp;
-          BlocProvider.of<SettingsCubit>(context).changeProfilephoto('');
+          imgProfile = imageTemp;
+          BlocProvider.of<SettingsCubit>(context)
+              .changeProfilephoto(profileSettings!, imageTemp);
 
           break;
         default:
@@ -492,7 +493,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
 
                   if (changed.isNotEmpty) {
                     BlocProvider.of<SettingsCubit>(context)
-                        .updateSettings(changed);
+                        .updateSettings(profileSettings!, changed);
                   }
                   // BlocProvider.of<SettingsCubit>(context).changeAbout(about.text)
                   // BlocProvider.of<SettingsCubit>(context).updateContentVisiblity(contentVisibility);

@@ -1,4 +1,9 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:dio/dio.dart';
+import 'package:http_parser/http_parser.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:reddit/constants/strings.dart';
 
 class SettingsWebServices {
@@ -7,7 +12,7 @@ class SettingsWebServices {
   //     ? "http://10.0.2.2:3000/"
   //     : "http://127.0.0.1:3000/";
   String mockUrl =
-      'https://ee2e6548-8637-491e-ac9f-5109ed246fd1.mock.pstmn.io/';
+      'https://e47fd685-ac6a-438e-bfed-3ffd3b1465c8.mock.pstmn.io/';
   bool isMockerServer = true;
   SettingsWebServices() {
     BaseOptions options = BaseOptions(
@@ -31,9 +36,30 @@ class SettingsWebServices {
   }
 
   /// updates a image
-  Future<String> updateImage(String key, value) async {
+  Future<String> updateImage(File file, String key) async {
     try {
-      Response response = await dio.patch('prefs', data: {key: value});
+      String fileName = file.path.split('/').last;
+
+      FormData formData = FormData.fromMap({
+        "file": await MultipartFile.fromFile(file.path, filename: fileName)
+      });
+      Response response = await dio.patch(key, data: formData);
+      return response.data;
+    } catch (e) {
+      // print(e.toString());
+      return '';
+    }
+  }
+
+  /// updates a image
+  Future<String> updateImageWeb(Uint8List fileAsBytes, String key) async {
+    try {
+      FormData formData = FormData.fromMap({
+        "file": MultipartFile.fromBytes(fileAsBytes,
+            contentType: MediaType('application', 'json'), filename: key)
+      });
+      Response response = await dio.patch(key, data: formData);
+
       return response.data;
     } catch (e) {
       // print(e.toString());

@@ -1,16 +1,16 @@
 import 'dart:convert';
 
+import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:reddit/business_logic/cubit/cubit/account_settings_cubit.dart';
 import 'package:reddit/data/model/account_settings_model.dart';
 import 'package:reddit/data/model/change_password_model.dart';
 import 'package:reddit/data/repository/account_settings_repository.dart';
 import 'package:reddit/data/web_services/account_settings_web_services.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
-import 'package:bloc_test/bloc_test.dart';
-import '../lib/presentation/screens/account_settings/account_settings_screen.dart';
+import 'package:reddit/presentation/screens/account_settings/account_settings_screen.dart';
 
 class MockAccountSettingsWebService extends Mock
     implements AccountSettingsWebServices {}

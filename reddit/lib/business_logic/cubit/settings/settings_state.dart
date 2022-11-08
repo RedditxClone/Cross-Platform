@@ -6,12 +6,12 @@ abstract class SettingsState {}
 class SettingsInitial extends SettingsState {}
 
 class SettingsAvailable extends SettingsState {
-  final Settings settings;
+  final ProfileSettings settings;
   SettingsAvailable(this.settings);
 }
 
 class SettingsChanged extends SettingsState {
-  final Settings settings;
+  final ProfileSettings settings;
   SettingsChanged(this.settings);
 }
 

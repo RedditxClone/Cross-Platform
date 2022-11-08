@@ -13,11 +13,28 @@ class SafetySettingsRepository {
     return SafetySettings.fromjson(jsonDecode(settings));
   }
 
-  /// patch to update cover and profile photo
-  Future<dynamic> updateImage(String key, val) async {
-    Map newImage = {key: val};
-    final newVal = await settingsWebServices.updatePrefs(newImage);
-    return jsonDecode(newVal)[key];
+  /// check if the username entered exist
+  Future<dynamic> checkUsernameAvailable(String username) async {
+    final newVal = await settingsWebServices.checkUsernameAvailable(username);
+    return newVal;
+  }
+
+  /// block a user if existed
+  Future<dynamic> blockUser(String username) async {
+    final newVal = await settingsWebServices.blockUser(username);
+    return newVal;
+  }
+
+  /// unblock a user if existed
+  Future<dynamic> unBlockUser(String username) async {
+    final newVal = await settingsWebServices.unBlockUser(username);
+    return newVal;
+  }
+
+  /// get the list of blocked users blocked by the me
+  Future<List<dynamic>> getBlockedUsers() async {
+    final newVal = await settingsWebServices.getBlockedUsers();
+    return newVal;
   }
 
   /// patch to update all user settings
