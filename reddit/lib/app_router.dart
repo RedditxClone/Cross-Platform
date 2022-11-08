@@ -26,8 +26,8 @@ class AppRouter {
       case '/':
         // final user = settings.arguments as User;
         return MaterialPageRoute(
-          builder: (_) => InteresetesAndroid(
-            newUser: User(email: 'j',name: 'jk',imageUrl: 'yi',userId: 'sad'),
+          builder: (_) => Home(
+            user: User(email: 'j', name: 'jk', imageUrl: 'yi', userId: 'sad'),
           ),
         );
       case HOME_PAGE:
@@ -81,9 +81,10 @@ class AppRouter {
         );
       case chooseProfileImgScreen:
         final user = settings.arguments as User;
-
         return MaterialPageRoute(
-          builder: (_) => const ChooseProfileImgAndroid(),
+          builder: (_) => ChooseProfileImgAndroid(
+            newUser: user,
+          ),
         );
       case chooseGenderScreen:
         final user = settings.arguments as User;

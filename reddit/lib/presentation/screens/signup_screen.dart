@@ -72,7 +72,7 @@ class _SignupMobileState extends State<SignupMobile> {
 
   //call back function for password focus node to be called of the focus changes
   void _onFocusChangePassword() {
-    debugPrint("Focus on password: ${emailFocusNode.hasFocus.toString()}");
+    debugPrint("Focus on password: ${passwordFocusNode.hasFocus.toString()}");
   }
 
 //toggle the password visibility
@@ -83,7 +83,7 @@ class _SignupMobileState extends State<SignupMobile> {
   //function takes the username and checks if it is valid or not
   //this fucntion is called if the user pressed next after typing the username or if the focus is lost from the username field
   void checkOnUsername(String usrName) async {
-    await DioHelper.getData(url: '/api/user/usernamecheck', query: {
+    await DioHelper.postData(url: '/api/user/check-available-username', data: {
       'username': usrName,
     }).then((value) {
       setState(() {

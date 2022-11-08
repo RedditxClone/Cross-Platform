@@ -1,7 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:icons_plus/icons_plus.dart';
 import 'package:reddit/constants/strings.dart';
 import '../../data/model/signin.dart';
+import '../../helper/dio.dart';
 
 class SignupWeb2 extends StatefulWidget {
   const SignupWeb2({super.key, required this.user});
@@ -11,13 +13,109 @@ class SignupWeb2 extends StatefulWidget {
 }
 
 class _SignupWeb2State extends State<SignupWeb2> {
-  final User user;
+  late User user;
   _SignupWeb2State({required this.user});
   var usernameController = TextEditingController();
   var passwordController = TextEditingController();
   bool passwordCorrect = false;
   bool usernameUsed = false;
   bool passwordVisible = true;
+  bool usernameLengthError = false;
+  bool passwordLengthError = false;
+  bool usernameEmpty = true;
+  bool passwordEmpty = true;
+  bool redundantUsername = false;
+  bool usernameError = false;
+
+  FocusNode usernameFocusNode = FocusNode();
+  FocusNode passwordFocusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    usernameController.text = "";
+    passwordController.text = "";
+    usernameFocusNode.addListener(_onFocusChangeUsername);
+    passwordFocusNode.addListener(_onFocusChangePassword);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    usernameFocusNode.removeListener(_onFocusChangeUsername);
+    usernameFocusNode.dispose();
+    passwordFocusNode.removeListener(_onFocusChangePassword);
+    passwordFocusNode.dispose();
+  }
+
+  //call back function for username focus node to be called of the focus changes
+  void _onFocusChangeUsername() {
+    debugPrint("Focus on username: ${usernameFocusNode.hasFocus.toString()}");
+    if (!usernameFocusNode.hasFocus) {
+      checkOnUsername(usernameController.text);
+    }
+  }
+
+  //call back function for password focus node to be called of the focus changes
+  void _onFocusChangePassword() {
+    debugPrint("Focus on password: ${passwordFocusNode.hasFocus.toString()}");
+  }
+
+//function takes the username and checks if it is valid or not
+  //this fucntion is called if the user pressed next after typing the username or if the focus is lost from the username field
+  void checkOnUsername(String usrName) async {
+    await DioHelper.postData(url: '/api/user/check-available-username', data: {
+      'username': usrName,
+    }).then((value) {
+      setState(() {
+        if (value.statusCode == 200) {
+          redundantUsername = false;
+          debugPrint("Username is available");
+        } else {
+          redundantUsername = true;
+        }
+      });
+    });
+  }
+
+  //function to sign up with reddit accound it's called when the user presses the sign up button or if the user pressed done after typing the password
+  void signUpContinue(BuildContext ctx) async {
+    await DioHelper.postData(url: '/api/auth/signup', data: {
+      "password": passwordController.text,
+      "name": usernameController.text,
+      "email": user.email,
+    }).then((value) {
+      if (value.statusCode == 201) {
+        user = User.fromJson(jsonDecode(value.data));
+        Navigator.of(ctx).pushReplacementNamed(
+          HOME_PAGE,
+          arguments: user,
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(
+                  Icons.error,
+                  color: Colors.red,
+                ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.01,
+                ),
+                const Text(
+                  'Username or password is incorrect',
+                  style: TextStyle(
+                    color: Colors.red,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,55 +159,80 @@ class _SignupWeb2State extends State<SignupWeb2> {
               child: Column(
                 children: [
                   TextField(
+                    focusNode: usernameFocusNode,
                     controller: usernameController,
-                    decoration: const InputDecoration(
-                      hintText: "CHOOSE A USERNAME",
-                      label: Text("CHOOSE A USERNAME"),
-                      hintStyle: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12,
-                        color: Colors.grey,
-                      ),
+                    style: const TextStyle(fontSize: 18),
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(8),
-                        ),
+                        borderRadius: BorderRadius.circular(10),
                       ),
+                      contentPadding: const EdgeInsets.all(20),
+                      hintText: 'Username',
+                      labelText: 'Username',
+                      errorText: usernameEmpty
+                          ? null
+                          : usernameError
+                              ? "Username can only contain letters, numbers,'-' and '_'"
+                              : usernameLengthError
+                                  ? "Username must be between 3 and 20 characters"
+                                  : null,
+                      suffixIcon: usernameEmpty && !usernameFocusNode.hasFocus
+                          ? null
+                          : !usernameEmpty && usernameFocusNode.hasFocus
+                              ? IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      usernameController.text = "";
+                                      usernameEmpty = true;
+                                    });
+                                  },
+                                  icon: const Icon(
+                                    Icons.clear,
+                                    color: Colors.grey,
+                                  ),
+                                )
+                              : !usernameFocusNode.hasFocus &&
+                                      !usernameLengthError &&
+                                      !usernameError &&
+                                      !usernameEmpty &&
+                                      !redundantUsername
+                                  ? const Icon(
+                                      IconData(0xf635,
+                                          fontFamily: 'MaterialIcons'),
+                                      color: Colors.green,
+                                    )
+                                  : null,
                     ),
-                    maxLines: 1,
-                    textInputAction: TextInputAction.unspecified,
-                    onEditingComplete: () {
+                    onChanged: (value) {
                       setState(() {
-                        //TODO: check if username is used
-                        //api call to check if username is used
-
-                        // if (//check on the returned value from the api
-                        //     ) {
-                        //   usernameUsed = true;
-                        // } else {
-                        //   usernameUsed = false;
-                        // }
+                        usernameEmpty = value.isEmpty;
+                        usernameError =
+                            value.contains(RegExp(r'[^a-zA-Z0-9_-]'));
+                        usernameLengthError =
+                            value.length < 3 || value.length > 20;
                       });
+                    },
+                    textInputAction: TextInputAction.next,
+                    onEditingComplete: () {
+                      checkOnUsername(usernameController.text);
+                      passwordFocusNode.requestFocus();
                     },
                   ),
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.05,
                   ),
                   TextField(
+                    focusNode: passwordFocusNode,
                     controller: passwordController,
+                    style: const TextStyle(fontSize: 18),
+                    obscureText: passwordVisible,
+                    keyboardType: TextInputType.visiblePassword,
                     decoration: InputDecoration(
-                      hintText: "PASSWORD",
-                      label: const Text("PASSWORD"),
-                      hintStyle: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12,
-                        color: Colors.grey,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                      border: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(8),
-                        ),
-                      ),
+                      contentPadding: const EdgeInsets.all(20),
                       suffixIcon: IconButton(
                         onPressed: () => setState(() {
                           passwordVisible = !passwordVisible;
@@ -118,11 +241,12 @@ class _SignupWeb2State extends State<SignupWeb2> {
                           passwordVisible
                               ? Icons.visibility
                               : Icons.visibility_off,
+                          color: Colors.grey,
                         ),
                       ),
-                      prefixIcon: passwordController.text.isEmpty
+                      prefixIcon: passwordEmpty
                           ? null
-                          : passwordCorrect
+                          : passwordCorrect && !passwordLengthError
                               ? const Icon(
                                   IconData(0xf635, fontFamily: 'MaterialIcons'),
                                   color: Colors.green,
@@ -131,19 +255,32 @@ class _SignupWeb2State extends State<SignupWeb2> {
                                   IconData(0xf713, fontFamily: 'MaterialIcons'),
                                   color: Colors.red,
                                 ),
-                      errorText: passwordController.text.isEmpty
+                      hintText: 'Password',
+                      labelText: 'Password',
+                      errorText: passwordEmpty
                           ? null
-                          : passwordCorrect
-                              ? null
-                              : "Password cannot contain your username",
+                          : !passwordCorrect
+                              ? "Password cannot contain your username"
+                              : passwordLengthError
+                                  ? "Password must be at least 8 characters"
+                                  : null,
                     ),
-                    maxLines: 1,
-                    obscureText: passwordVisible,
-                    keyboardType: TextInputType.visiblePassword,
-                    onChanged: (value) => setState(() {
-                      passwordCorrect =
-                          !value.contains(usernameController.text);
-                    }),
+                    onChanged: (value) {
+                      setState(() {
+                        passwordLengthError = value.length < 8;
+                        passwordEmpty = value.isEmpty;
+                        passwordCorrect =
+                            !value.contains(usernameController.text);
+                      });
+                    },
+                    textInputAction: TextInputAction.done,
+                    onEditingComplete: !usernameFocusNode.hasFocus &&
+                            !usernameLengthError &&
+                            !usernameError &&
+                            !usernameEmpty &&
+                            !redundantUsername
+                        ? () => signUpContinue(context)
+                        : null,
                   ),
                 ],
               ),

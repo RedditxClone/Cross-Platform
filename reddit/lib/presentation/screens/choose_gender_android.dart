@@ -19,9 +19,12 @@ class _ChooseGenderAndroidState extends State<ChooseGenderAndroid> {
   var buttonColor2 = const Color.fromARGB(255, 58, 57, 57);
   var buttonColor3 = const Color.fromARGB(255, 58, 57, 57);
   var buttonColor4 = const Color.fromARGB(255, 58, 57, 57);
-  final User newUser;
+  late User newUser;
 
   _ChooseGenderAndroidState(this.newUser);
+
+  //This function takes the selected gender and sends it to the server
+  //gender will be null if not selected
   void selectGender(String gender) async {
     newUser.gender = gender;
     await DioHelper.patchData(url: "/api/user/me/prefs", data: {

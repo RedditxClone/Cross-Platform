@@ -1,57 +1,61 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:reddit/constants/strings.dart';
 import '../../data/model/signin.dart';
 
 class ChooseProfileImgAndroid extends StatefulWidget {
-  const ChooseProfileImgAndroid({super.key});
+  const ChooseProfileImgAndroid({super.key, required this.newUser});
+  final User newUser;
   @override
   State<ChooseProfileImgAndroid> createState() =>
-      _ChooseProfileImgAndroidState();
+      _ChooseProfileImgAndroidState(newUser);
 }
 
 class _ChooseProfileImgAndroidState extends State<ChooseProfileImgAndroid> {
+  final User newUser;
   File? imgCover;
+
+  _ChooseProfileImgAndroidState(this.newUser);
   void displayMsg(
       BuildContext context, Color color, String title, String subtitle) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Container(
-          padding: const EdgeInsets.all(5),
-          decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.all(Radius.circular(10))),
-          height: 70,
-          child: Row(
-            children: [
-              Container(
-                margin: const EdgeInsets.only(right: 10),
-                decoration: BoxDecoration(
-                    color: color,
-                    borderRadius: const BorderRadius.all(Radius.circular(10))),
-                width: 7,
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(fontSize: 20, color: color),
-                  ),
-                  Text(
-                    subtitle,
-                    style: TextStyle(fontSize: 13, color: color),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            ],
-          )),
+        padding: const EdgeInsets.all(5),
+        decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(10))),
+        height: 70,
+        child: Row(
+          children: [
+            Container(
+              margin: const EdgeInsets.only(right: 10),
+              decoration: BoxDecoration(
+                  color: color,
+                  borderRadius: const BorderRadius.all(Radius.circular(10))),
+              width: 7,
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(fontSize: 20, color: color),
+                ),
+                Text(
+                  subtitle,
+                  style: TextStyle(fontSize: 13, color: color),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
       behavior: SnackBarBehavior.floating,
       backgroundColor: Colors.transparent,
       elevation: 0,

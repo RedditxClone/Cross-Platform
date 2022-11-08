@@ -85,7 +85,7 @@ class User {
       password; //in case of reddit sign in it will be the password else it will be null
   late String? accessToken;
   late String? serverAuthCode;
-  late String gender;
+  late String? gender;//could be null if the user didn't choose
   late Map<String, dynamic> interests;
   User(
       {required this.userId,
