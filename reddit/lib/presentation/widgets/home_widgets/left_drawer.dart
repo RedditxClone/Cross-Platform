@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:reddit/business_logic/cubit/right_drawer/left_drawer_cubit.dart';
-import 'package:reddit/constants/strings.dart';
 import 'package:reddit/data/model/left_drawer/left_drawer_model.dart';
 
 import '../../../data/repository/left_drawer/left_drawer_repository.dart';
@@ -21,10 +20,6 @@ class _LeftDrawerState extends State<LeftDrawer> {
   late bool _isLoggedIn;
   late LeftDrawerRepository leftDrawerRepository =
       LeftDrawerRepository(LeftDrawerWebServices());
-  // late LeftDrawerCubit moderatingCubit;
-  // late LeftDrawerCubit yourCommunitiesCubit;
-  // late LeftDrawerCubit followingCubit;
-  // late LeftDrawerCubit favouritesCubit;
 
   List<LeftDrawerModel>? _moderating;
   List<LeftDrawerModel>? _yourCommunities;
@@ -35,14 +30,7 @@ class _LeftDrawerState extends State<LeftDrawer> {
   void initState() {
     super.initState();
     if (_isLoggedIn) {
-      // moderatingCubit = LeftDrawerCubit(leftDrawerRepository);
-      // yourCommunitiesCubit = LeftDrawerCubit(leftDrawerRepository);
-      // followingCubit = LeftDrawerCubit(leftDrawerRepository);
-      // favouritesCubit = LeftDrawerCubit(leftDrawerRepository);
       BlocProvider.of<LeftDrawerCubit>(context).getLeftDrawerData();
-      // yourCommunitiesCubit.getYourCommunities();
-      // followingCubit.getFollowingUsers();
-      // favouritesCubit.getFollowingUsers();
     }
   }
 
@@ -100,9 +88,40 @@ class _LeftDrawerState extends State<LeftDrawer> {
                 _moderating = state.moderating;
                 _yourCommunities = state.yourCommunities;
                 _following = state.following;
+                _favorites = state.favorites;
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    _favorites!.isNotEmpty
+                        ? ExpansionTile(
+                            initiallyExpanded: true,
+                            textColor: Colors.white,
+                            iconColor: Colors.white,
+                            maintainState: true,
+                            title: const Text("Favorites"),
+                            // Children are the subreddits that you are currently moderating
+                            children: [
+                              ..._favorites!.map(
+                                (e) {
+                                  return ListTile(
+                                    onTap: () {},
+                                    leading: CircleAvatar(
+                                      radius: 15.0,
+                                      backgroundImage: NetworkImage(e.image!),
+                                      backgroundColor: Colors.transparent,
+                                    ),
+                                    title: Text("r/${e.name}"),
+                                    trailing: IconButton(
+                                        onPressed: () {
+                                          _removeFromFavorites(e);
+                                        },
+                                        icon: const Icon(Icons.star)),
+                                  );
+                                },
+                              ).toList(),
+                            ],
+                          )
+                        : const SizedBox(),
                     ExpansionTile(
                       initiallyExpanded: true,
                       textColor: Colors.white,
@@ -124,14 +143,14 @@ class _LeftDrawerState extends State<LeftDrawer> {
                               trailing: e.favorite!
                                   ? IconButton(
                                       onPressed: () {
-                                        _removeFromFavorites();
+                                        _removeFromFavorites(e);
                                       },
-                                      icon: const Icon(Icons.star_border))
+                                      icon: const Icon(Icons.star))
                                   : IconButton(
                                       onPressed: () {
-                                        _addToFavorites();
+                                        _addToFavorites(e);
                                       },
-                                      icon: const Icon(Icons.star)),
+                                      icon: const Icon(Icons.star_border)),
                             );
                           },
                         ).toList(),
@@ -165,14 +184,14 @@ class _LeftDrawerState extends State<LeftDrawer> {
                               trailing: e.favorite!
                                   ? IconButton(
                                       onPressed: () {
-                                        _removeFromFavorites();
+                                        _removeFromFavorites(e);
                                       },
-                                      icon: const Icon(Icons.star_border))
+                                      icon: const Icon(Icons.star))
                                   : IconButton(
                                       onPressed: () {
-                                        _addToFavorites();
+                                        _addToFavorites(e);
                                       },
-                                      icon: const Icon(Icons.star)),
+                                      icon: const Icon(Icons.star_border)),
                             );
                           },
                         ).toList(),
@@ -199,156 +218,19 @@ class _LeftDrawerState extends State<LeftDrawer> {
                               trailing: e.favorite!
                                   ? IconButton(
                                       onPressed: () {
-                                        _removeFromFavorites();
+                                        _removeFromFavorites(e);
                                       },
-                                      icon: const Icon(Icons.star_border))
+                                      icon: const Icon(Icons.star))
                                   : IconButton(
                                       onPressed: () {
-                                        _addToFavorites();
+                                        _addToFavorites(e);
                                       },
-                                      icon: const Icon(Icons.star)),
+                                      icon: const Icon(Icons.star_border)),
                             );
                           },
                         ).toList(),
                       ],
                     ),
-                    // BlocBuilder<LeftDrawerCubit, LeftDrawerState>(
-                    //   bloc: moderatingCubit,
-                    //   builder: (context, state) {
-                    //     if (state is ModeratingCommunitiesLoaded) {
-                    //       _moderating = state.leftDrawerCommunityModel;
-                    //       return ExpansionTile(
-                    //         initiallyExpanded: true,
-                    //         textColor: Colors.white,
-                    //         iconColor: Colors.white,
-                    //         maintainState: true,
-                    //         title: const Text("Moderation"),
-                    //         // Children are the subreddits that you are currently moderating
-                    //         children: [
-                    //           ..._moderating!.map(
-                    //             (e) {
-                    //               return ListTile(
-                    //                 onTap: () {},
-                    //                 leading: CircleAvatar(
-                    //                   radius: 15.0,
-                    //                   backgroundImage: NetworkImage(e.image!),
-                    //                   backgroundColor: Colors.transparent,
-                    //                 ),
-                    //                 title: Text("r/${e.name}"),
-                    //                 trailing: e.favorite!
-                    //                     ? IconButton(
-                    //                         onPressed: () {
-                    //                           _removeFromFavorites();
-                    //                         },
-                    //                         icon: const Icon(Icons.star_border))
-                    //                     : IconButton(
-                    //                         onPressed: () {
-                    //                           _addToFavorites();
-                    //                         },
-                    //                         icon: const Icon(Icons.star)),
-                    //               );
-                    //             },
-                    //           ).toList(),
-                    //         ],
-                    //       );
-                    //     }
-                    //     return Container();
-                    //   },
-                    // ),
-
-                    // BlocBuilder<LeftDrawerCubit, LeftDrawerState>(
-                    //   bloc: yourCommunitiesCubit,
-                    //   builder: (context, state) {
-                    //     if (state is YourCommunitiesLoaded) {
-                    //       _yourCommunities = state.leftDrawerCommunityModel;
-                    //       return ExpansionTile(
-                    //         initiallyExpanded: true,
-                    //         textColor: Colors.white,
-                    //         iconColor: Colors.white,
-                    //         maintainState: true,
-                    //         title: const Text("Your Communities"),
-                    //         // Children are the subreddits that you joined
-                    //         children: [
-                    //           ListTile(
-                    //             leading: const FaIcon(FontAwesomeIcons.plus),
-                    //             title: const Text("Create a community"),
-                    //             onTap: () {
-                    //               // TODO: got to create community page
-                    //             },
-                    //           ),
-                    //           ..._yourCommunities!.map(
-                    //             (e) {
-                    //               return ListTile(
-                    //                 onTap: () {},
-                    //                 leading: CircleAvatar(
-                    //                   radius: 15.0,
-                    //                   backgroundImage: NetworkImage(e.image!),
-                    //                   backgroundColor: Colors.transparent,
-                    //                 ),
-                    //                 title: Text("r/${e.name}"),
-                    //                 trailing: e.favorite!
-                    //                     ? IconButton(
-                    //                         onPressed: () {
-                    //                           _removeFromFavorites();
-                    //                         },
-                    //                         icon: const Icon(Icons.star_border))
-                    //                     : IconButton(
-                    //                         onPressed: () {
-                    //                           _addToFavorites();
-                    //                         },
-                    //                         icon: const Icon(Icons.star)),
-                    //               );
-                    //             },
-                    //           ).toList(),
-                    //         ],
-                    //       );
-                    //     }
-                    //     return Container();
-                    //   },
-                    // ),
-                    // BlocBuilder<LeftDrawerCubit, LeftDrawerState>(
-                    //   bloc: followingCubit,
-                    //   builder: (context, state) {
-                    //     if (state is FollowingUsersLoaded) {
-                    //       _following = state.leftDrawerCommunityModel;
-                    //       return ExpansionTile(
-                    //         initiallyExpanded: true,
-                    //         textColor: Colors.white,
-                    //         iconColor: Colors.white,
-                    //         maintainState: true,
-                    //         title: const Text("Following"),
-                    //         // Children are the subreddits that you joined
-                    //         children: [
-                    //           ..._following!.map(
-                    //             (e) {
-                    //               return ListTile(
-                    //                 onTap: () {},
-                    //                 leading: CircleAvatar(
-                    //                   radius: 15.0,
-                    //                   backgroundImage: NetworkImage(e.image!),
-                    //                   backgroundColor: Colors.transparent,
-                    //                 ),
-                    //                 title: Text("u/${e.name}"),
-                    //                 trailing: e.favorite!
-                    //                     ? IconButton(
-                    //                         onPressed: () {
-                    //                           _removeFromFavorites();
-                    //                         },
-                    //                         icon: const Icon(Icons.star_border))
-                    //                     : IconButton(
-                    //                         onPressed: () {
-                    //                           _addToFavorites();
-                    //                         },
-                    //                         icon: const Icon(Icons.star)),
-                    //               );
-                    //             },
-                    //           ).toList(),
-                    //         ],
-                    //       );
-                    //     }
-                    //     return Container();
-                    //   },
-                    // ),
 
                     // All button
                     ListTile(
@@ -371,7 +253,12 @@ class _LeftDrawerState extends State<LeftDrawer> {
   }
 
   // TODO: complete these functions
-  void _addToFavorites() {}
+  void _addToFavorites(LeftDrawerModel leftDrawerModel) {
+    BlocProvider.of<LeftDrawerCubit>(context).addToFavorites(leftDrawerModel);
+  }
 
-  void _removeFromFavorites() {}
+  void _removeFromFavorites(LeftDrawerModel leftDrawerModel) {
+    BlocProvider.of<LeftDrawerCubit>(context)
+        .removeFromFavorites(leftDrawerModel);
+  }
 }

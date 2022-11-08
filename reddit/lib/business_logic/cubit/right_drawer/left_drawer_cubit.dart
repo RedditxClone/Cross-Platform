@@ -12,7 +12,7 @@ class LeftDrawerCubit extends Cubit<LeftDrawerState> {
   List<LeftDrawerModel>? moderatingCommunities;
   List<LeftDrawerModel>? yourCommunities;
   List<LeftDrawerModel>? following;
-  List<LeftDrawerModel> favorites = [];
+  List<LeftDrawerModel> favorites = <LeftDrawerModel>[];
   LeftDrawerCubit(this.leftDrawerRepository) : super(LeftDrawerInitial());
   void getLeftDrawerData() {
     // To avoid state error when you leave the settings page
@@ -27,58 +27,68 @@ class LeftDrawerCubit extends Cubit<LeftDrawerState> {
       moderatingCommunities = value[0];
       yourCommunities = value[1];
       following = value[2];
+      favorites.clear();
+      for (var i = 0; i < yourCommunities!.length; i++) {
+        if (yourCommunities![i].favorite!) {
+          favorites.add(yourCommunities![i]);
+        }
+      }
+      for (var i = 0; i < following!.length; i++) {
+        if (following![i].favorite!) {
+          favorites.add(following![i]);
+        }
+      }
+      // for (var i = 0; i < moderatingCommunities!.length; i++) {
+      //   if (moderatingCommunities![i].favorite!) {
+      //     favorites.add(following![i]);
+      //   }
+      // }
       emit(LeftDrawerDataLoaded(
-          moderatingCommunities!, yourCommunities!, following!));
+          moderatingCommunities!, yourCommunities!, following!, favorites));
     });
   }
 
-  void getModeratingCommunities() {
-    // To avoid state error when you leave the settings page
-    if (isClosed) return;
-    // emit(moderatingCommunitiesLoading());
-    leftDrawerRepository
-        .getModeratingCommunities()
-        .then((moderatingCommunities) {
-      // start the state existing in characters_state
-      // here you sent characters list to characters loaded state
-      emit(ModeratingCommunitiesLoaded(moderatingCommunities));
-      this.moderatingCommunities = moderatingCommunities;
-    });
+  void addToFavorites(LeftDrawerModel leftDrawerModel) {
+    favorites.add(leftDrawerModel);
+
+    for (var i = 0; i < yourCommunities!.length; i++) {
+      if (yourCommunities![i].name == leftDrawerModel.name) {
+        yourCommunities![i].favorite = true;
+      }
+    }
+    for (var i = 0; i < moderatingCommunities!.length; i++) {
+      if (moderatingCommunities![i].name == leftDrawerModel.name) {
+        moderatingCommunities![i].favorite = true;
+      }
+    }
+    for (var i = 0; i < following!.length; i++) {
+      if (following![i].name == leftDrawerModel.name) {
+        following![i].favorite = true;
+      }
+    }
+    emit(LeftDrawerDataLoaded(
+        moderatingCommunities!, yourCommunities!, following!, favorites));
   }
 
-  void getYourCommunities() {
-    // To avoid state error when you leave the settings page
-    if (isClosed) return;
-    // emit(moderatingCommunitiesLoading());
-    leftDrawerRepository.getYourCommunities().then((yourCommunities) {
-      // start the state existing in characters_state
-      // here you sent characters list to characters loaded state
-      emit(YourCommunitiesLoaded(yourCommunities));
-      this.yourCommunities = yourCommunities;
-    });
-  }
+  void removeFromFavorites(LeftDrawerModel leftDrawerModel) {
+    favorites.remove(leftDrawerModel);
+    for (var i = 0; i < yourCommunities!.length; i++) {
+      if (yourCommunities![i].name == leftDrawerModel.name) {
+        yourCommunities![i].favorite = false;
+      }
+    }
+    for (var i = 0; i < moderatingCommunities!.length; i++) {
+      if (moderatingCommunities![i].name == leftDrawerModel.name) {
+        moderatingCommunities![i].favorite = false;
+      }
+    }
+    for (var i = 0; i < following!.length; i++) {
+      if (following![i].name == leftDrawerModel.name) {
+        following![i].favorite = false;
+      }
+    }
 
-  void getFollowingUsers() {
-    // To avoid state error when you leave the settings page
-    if (isClosed) return;
-    // emit(moderatingCommunitiesLoading());
-    leftDrawerRepository.getFollowingUsers().then((following) {
-      // start the state existing in characters_state
-      // here you sent characters list to characters loaded state
-      emit(FollowingUsersLoaded(following));
-      this.following = following;
-    });
-  }
-
-  void getFavourites() {
-    // To avoid state error when you leave the settings page
-    if (isClosed) return;
-    // emit(moderatingCommunitiesLoading());
-    leftDrawerRepository.getFollowingUsers().then((following) {
-      // start the state existing in characters_state
-      // here you sent characters list to characters loaded state
-      emit(FollowingUsersLoaded(following));
-      this.following = following;
-    });
+    emit(LeftDrawerDataLoaded(
+        moderatingCommunities!, yourCommunities!, following!, favorites));
   }
 }

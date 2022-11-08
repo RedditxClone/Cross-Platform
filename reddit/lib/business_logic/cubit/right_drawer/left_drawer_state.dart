@@ -9,8 +9,10 @@ class LeftDrawerDataLoaded extends LeftDrawerState {
   final List<LeftDrawerModel> moderating;
   final List<LeftDrawerModel> yourCommunities;
   final List<LeftDrawerModel> following;
+  final List<LeftDrawerModel> favorites;
 
-  LeftDrawerDataLoaded(this.moderating, this.yourCommunities, this.following);
+  LeftDrawerDataLoaded(
+      this.moderating, this.yourCommunities, this.following, this.favorites);
 }
 
 class ModeratingCommunitiesLoaded extends LeftDrawerState {
