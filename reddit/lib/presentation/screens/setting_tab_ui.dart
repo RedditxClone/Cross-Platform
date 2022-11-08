@@ -11,10 +11,17 @@ class _SettingTabUiState extends State<SettingTabUi> {
   var whiteColor = Colors.white;
   var blackColor = Colors.black;
 
+  ///Its value changes according to Application Mode.
+  ///
+  ///Default is Light Mode.
   late var labelColor = blackColor;
 
+  ///Its value changes according to Application Mode.
+  ///
+  ///Default is Light Mode.
   late var backgroundColor = whiteColor;
 
+  ///Changing the dark mode to light mode versa.
   void switchMode() {
     if (backgroundColor == blackColor) {
       labelColor = blackColor;
@@ -34,6 +41,12 @@ class _SettingTabUiState extends State<SettingTabUi> {
         child: Padding(
           padding: const EdgeInsets.fromLTRB(150, 10, 150, 0),
           child: Scaffold(
+            // ///For testing switching between modes only.
+            // floatingActionButton: FloatingActionButton(
+            //   onPressed: () => setState(() {
+            //     switchMode();
+            //   }),
+            // ),
             backgroundColor: backgroundColor,
             appBar: AppBar(
               automaticallyImplyLeading: false,
