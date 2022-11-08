@@ -13,12 +13,6 @@ class FeedSettingState extends State<FeedSetting> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // ///For testing switching between modes only.
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () => setState(() {
-      //     switchMode();
-      //   }),
-      // ),
       backgroundColor: Colors.black,
       body: Padding(
         padding: const EdgeInsets.fromLTRB(150, 40, 600, 200),
