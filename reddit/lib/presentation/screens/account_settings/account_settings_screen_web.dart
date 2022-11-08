@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reddit/constants/theme_colors.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../business_logic/cubit/cubit/account_settings_cubit.dart';
@@ -68,80 +69,52 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: backgroundColor,
-      body: BlocBuilder<AccountSettingsCubit, AccountSettingsState>(
-        builder: (context, state) {
-          if (state is AccountSettingsLoaded) {
-            accountSettings = state.accSettings;
-            _isMale = accountSettings!.gender == "M" ? 1 : 0;
-            return buildAccountSettingsUI();
-          } else if (state is PasswordUpdatedSuccessfully) {
-            // displayMsg(context, Colors.white, Colors.green,
-            //     "Password updated successfully");
-            return buildAccountSettingsUI();
-          } else if (state is WrongPassword) {
-            // displayMsg(context, Colors.white, Colors.green, "Wrong password");
-            return buildAccountSettingsUI();
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(
-                color: Colors.yellow,
-              ),
-            );
-          }
-        },
-      ),
+    return BlocBuilder<AccountSettingsCubit, AccountSettingsState>(
+      builder: (context, state) {
+        if (state is AccountSettingsLoaded) {
+          accountSettings = state.accSettings;
+          _isMale = accountSettings!.gender == "M" ? 1 : 0;
+          return buildAccountSettingsUI();
+        } else if (state is PasswordUpdatedSuccessfully) {
+          // displayMsg(context, Colors.white, Colors.green,
+          //     "Password updated successfully");
+          return buildAccountSettingsUI();
+        } else if (state is WrongPassword) {
+          // displayMsg(context, Colors.white, Colors.green, "Wrong password");
+          return buildAccountSettingsUI();
+        } else {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+      },
     );
   }
 
   Widget buildAccountSettingsUI() {
-    return Row(
-      children: [
-        Expanded(
-          flex: 1,
-          child: Container(),
-        ),
-        Expanded(
-          flex: _isLargeSizedScreen()
-              ? 4
-              : _isMediumSizedScreen()
-                  ? 5
-                  : 9,
-          child: Container(
-            constraints: const BoxConstraints(maxWidth: 800),
-            child: ListView(
-              children: [
-                // title
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
-                  child: Text(
-                    "Account Settings",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
-                      color: titleColor,
-                    ),
-                  ),
-                ),
-                // subtitle
-                _accountPreferencesWidget(),
-                _connectedAccountsWidget(),
-                _deleteAccountWidget()
-                //
-              ],
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: ListView(
+        children: [
+          // title
+          Padding(
+            padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
+            child: Text(
+              "Account Settings",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w500,
+                color: titleColor,
+              ),
             ),
           ),
-        ),
-        Expanded(
-          flex: _isLargeSizedScreen()
-              ? 3
-              : _isMediumSizedScreen()
-                  ? 2
-                  : 1,
-          child: Container(),
-        ),
-      ],
+          // subtitle
+          _accountPreferencesWidget(),
+          _connectedAccountsWidget(),
+          _deleteAccountWidget()
+          //
+        ],
+      ),
     );
   }
 

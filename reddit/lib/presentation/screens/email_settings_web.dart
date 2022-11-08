@@ -179,61 +179,50 @@ class _EmailSettingsWebState extends State<EmailSettingsWeb> {
         builder: (context, state) {
       if (state is EmailSettingsLoaded) {
         _emailSettings = (state).emailSettings;
-        return SingleChildScrollView(
-            child: LayoutBuilder(
-          builder: (context, constraints) => Padding(
-            padding: EdgeInsets.fromLTRB(
-                constraints.maxWidth > 900
-                    ? MediaQuery.of(context).size.width / 10
-                    : MediaQuery.of(context).size.width / 14,
-                20,
-                10,
-                20),
-            child: SizedBox(
-              width: constraints.maxWidth > 720
-                  ? 720 - 35
-                  : MediaQuery.of(context).size.width,
-              child: Column(
+        return LayoutBuilder(
+          builder: (context, constraints) => SizedBox(
+            width: constraints.maxWidth > 720
+                ? 720 - 35
+                : MediaQuery.of(context).size.width,
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              const Padding(
+                padding: EdgeInsets.fromLTRB(0, 20, 0, 25),
+                child: Text(
+                  "Manage Emails",
+                  style: TextStyle(fontSize: 25, color: Colors.white),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 45),
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.fromLTRB(0, 20, 0, 25),
-                      child: Text(
-                        "Manage Emails",
-                        style: TextStyle(fontSize: 25, color: Colors.white),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 45),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: _createSection("MESSAGES", section1),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 45),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: _createSection("ACTIVITY", section2),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 45),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: _createSection("NEWSLETTERS", section3),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 45, bottom: 30),
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: _createSection("", section4)),
-                    )
-                  ]),
-            ),
+                  children: _createSection("MESSAGES", section1),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 45),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: _createSection("ACTIVITY", section2),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 45),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: _createSection("NEWSLETTERS", section3),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 45, bottom: 30),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: _createSection("", section4)),
+              )
+            ]),
           ),
-        ));
+        );
       } else {
         return const Center(
           child: CircularProgressIndicator(
@@ -255,7 +244,7 @@ class _EmailSettingsWebState extends State<EmailSettingsWeb> {
         },
         child: _buildSettingsList(),
       ),
-      backgroundColor: const Color.fromARGB(195, 37, 38, 39),
+      backgroundColor: Colors.transparent,
     );
   }
 }

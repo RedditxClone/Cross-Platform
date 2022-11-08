@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   final AppRouter appRouter;
   MyApp({Key? key, required this.appRouter}) : super(key: key);
 
-  bool isLoggedIn = false;
+  bool isLoggedIn = true;
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {

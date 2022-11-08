@@ -4,12 +4,7 @@ import 'package:reddit/constants/strings.dart';
 // This class is responsible of making request to the server
 class SafetySettingsWebServices {
   late Dio dio;
-  // String mockUrl = TargetPlatform.android == defaultTargetPlatform
-  //     ? "http://10.0.2.2:3000/"
-  //     : "http://127.0.0.1:3000/";
-  String mockUrl =
-      'https://e47fd685-ac6a-438e-bfed-3ffd3b1465c8.mock.pstmn.io/';
-  bool isMockerServer = true;
+  bool isMockerServer = useMockServerForAllWebServices;
   SafetySettingsWebServices() {
     BaseOptions options = BaseOptions(
       baseUrl: isMockerServer ? mockUrl : baseUrl,
