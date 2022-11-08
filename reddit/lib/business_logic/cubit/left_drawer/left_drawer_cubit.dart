@@ -1,10 +1,12 @@
 import 'package:async/async.dart';
 import 'package:bloc/bloc.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
 import 'package:reddit/data/model/left_drawer/left_drawer_model.dart';
 
 import '../../../data/repository/left_drawer/left_drawer_repository.dart';
 
+import 'dart:developer';
 part 'left_drawer_state.dart';
 
 class LeftDrawerCubit extends Cubit<LeftDrawerState> {
@@ -54,16 +56,19 @@ class LeftDrawerCubit extends Cubit<LeftDrawerState> {
     for (var i = 0; i < yourCommunities!.length; i++) {
       if (yourCommunities![i].name == leftDrawerModel.name) {
         yourCommunities![i].favorite = true;
+        break;
       }
     }
     for (var i = 0; i < moderatingCommunities!.length; i++) {
       if (moderatingCommunities![i].name == leftDrawerModel.name) {
         moderatingCommunities![i].favorite = true;
+        break;
       }
     }
     for (var i = 0; i < following!.length; i++) {
       if (following![i].name == leftDrawerModel.name) {
         following![i].favorite = true;
+        break;
       }
     }
     emit(LeftDrawerDataLoaded(
@@ -71,7 +76,15 @@ class LeftDrawerCubit extends Cubit<LeftDrawerState> {
   }
 
   void removeFromFavorites(LeftDrawerModel leftDrawerModel) {
-    favorites.remove(leftDrawerModel);
+    String name = leftDrawerModel.name!;
+    for (var i = 0; i < favorites.length; i++) {
+      if (favorites[i].name == name) {
+        log(favorites[i].name!);
+        favorites.removeAt(i);
+        log("Removed from fav");
+        break;
+      }
+    }
     for (var i = 0; i < yourCommunities!.length; i++) {
       if (yourCommunities![i].name == leftDrawerModel.name) {
         yourCommunities![i].favorite = false;

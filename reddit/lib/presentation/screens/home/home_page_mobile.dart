@@ -12,7 +12,7 @@ import 'package:reddit/presentation/widgets/home_widgets/end_drawer.dart';
 import 'package:reddit/presentation/widgets/home_widgets/left_drawer.dart';
 import 'package:reddit/presentation/widgets/posts/add_post.dart';
 
-import '../../../business_logic/cubit/right_drawer/left_drawer_cubit.dart';
+import '../../../business_logic/cubit/left_drawer/left_drawer_cubit.dart';
 
 class HomePage extends StatefulWidget {
   late bool _isLoggedin;
