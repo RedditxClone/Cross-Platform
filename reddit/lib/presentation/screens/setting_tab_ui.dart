@@ -27,7 +27,7 @@ class _SettingTabUiState extends State<SettingTabUi> {
               ),
               bottom: const TabBar(
                 labelColor: Colors.white,
-                unselectedLabelColor: const Color.fromARGB(255, 131, 122, 122),
+                unselectedLabelColor: Color.fromARGB(255, 131, 122, 122),
                 tabs: <Widget>[
                   Tab(
                     child: Text("Account"),
