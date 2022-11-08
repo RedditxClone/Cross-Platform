@@ -1,0 +1,95 @@
+import 'package:dio/dio.dart';
+import 'package:reddit/constants/strings.dart';
+
+// This class is responsible of making request to the server
+class SafetySettingsWebServices {
+  late Dio dio;
+  // String mockUrl = TargetPlatform.android == defaultTargetPlatform
+  //     ? "http://10.0.2.2:3000/"
+  //     : "http://127.0.0.1:3000/";
+  String mockUrl =
+      'https://e47fd685-ac6a-438e-bfed-3ffd3b1465c8.mock.pstmn.io/';
+  bool isMockerServer = true;
+  SafetySettingsWebServices() {
+    BaseOptions options = BaseOptions(
+      baseUrl: isMockerServer ? mockUrl : baseUrl,
+      receiveDataWhenStatusError: true,
+      connectTimeout: 30 * 1000,
+      receiveTimeout: 30 * 1000,
+    );
+
+    dio = Dio(options);
+  }
+
+  /// Returns all user settings : Performs get request to the endpoint /prefs to get all user settings from the API
+  Future<dynamic> getUserSettings() async {
+    try {
+      Response response = await dio.get('prefs');
+      return response.data;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// patch request to update cover and profile photo
+  Future<String> updateImage(String key, value) async {
+    try {
+      Response response = await dio.patch('prefs', data: {key: value});
+      return response.data;
+    } catch (e) {
+      return '';
+    }
+  }
+
+  /// patch request to updates any user settings
+  Future<int> updatePrefs(Map changed) async {
+    try {
+      Response response = await dio.patch('prefs', data: changed);
+      return response.statusCode!;
+    } catch (e) {
+      return 400;
+    }
+  }
+
+  /// get request to check if the username available. used in safety settings to block someone
+  Future<dynamic> checkUsernameAvailable(String username) async {
+    try {
+      Response response = await dio.get('check-available-username',
+          queryParameters: {'username': username});
+      return response.data;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// get request to get user's blocked list
+  Future<dynamic> blockUser(String username) async {
+    try {
+      Response response = await dio.post('block', data: {'username': username});
+      return response.data;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  /// get request to get user's blocked list
+  Future<dynamic> unBlockUser(String username) async {
+    try {
+      Response response =
+          await dio.post('unblock', data: {'username': username});
+      return response.data;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  /// get request to get user's blocked list
+  Future<List<dynamic>> getBlockedUsers() async {
+    try {
+      Response response = await dio.get('blocked');
+      return response.data;
+    } catch (e) {
+      return [];
+    }
+  }
+}

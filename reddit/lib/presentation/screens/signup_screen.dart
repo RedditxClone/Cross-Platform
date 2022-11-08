@@ -177,6 +177,7 @@ class SignUp {
                         // shape: RoundedRectangleBorder(
                         //     borderRadius: BorderRadius.circular(80.0)),
                         // padding: const EdgeInsets.all(0.0),
+
                         child: Ink(
                           decoration: const BoxDecoration(
                             gradient: LinearGradient(
