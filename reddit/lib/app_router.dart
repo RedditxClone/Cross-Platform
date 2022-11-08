@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'presentation/screens/setting_tab_ui.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/presentation/screens/recaptcha_screen.dart'
     if (dart.library.html) 'package:reddit/presentation/screens/recaptcha_screen_web.dart'
@@ -73,6 +74,7 @@ class AppRouter {
   Route? generateRoute(RouteSettings settings) {
     final arguments = settings.arguments;
     switch (settings.name) {
+
       case homePageRoute:
         Map<String, dynamic> argMap = arguments as Map<String, dynamic>;
         return MaterialPageRoute(
@@ -87,6 +89,9 @@ class AppRouter {
                   value: emailSettingsCubit,
                   child: const EmailSettingsWeb(),
                 ));
+      case settingTabUiRoute:
+        return MaterialPageRoute(builder: (_) => const SettingTabUi());
+
       /*
       case example:
       case '/':

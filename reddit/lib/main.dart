@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/constants/strings.dart';
+
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'app_router.dart';
 

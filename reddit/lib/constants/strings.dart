@@ -16,6 +16,10 @@ const popularPageRoute = '/popular';
 const logInRoute = "/login";
 const signUpRoute = "/signup";
 //---------------------------------------
+// ----------Settings routes-------------
+//---------------------------------------
+const settingTabUiRoute = '/setting_tab_ui';
+//---------------------------------------
 // ------Account settings routes---------
 //---------------------------------------
 const accountSettingsRoute = "/account_settings";

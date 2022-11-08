@@ -11,6 +11,7 @@ class SignUp {
   }
 
   void signUpContinue() {
+    // ignore: avoid_print
     print("Email : ${emailController.text}");
   }
 
@@ -173,12 +174,10 @@ class SignUp {
                         onPressed: () => setState(() {
                           signUpContinue();
                         }),
-                        style: ButtonStyle(
-                            shape: MaterialStateProperty.all<
-                                    RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.circular(80.0)))),
+                        // shape: RoundedRectangleBorder(
+                        //     borderRadius: BorderRadius.circular(80.0)),
+                        // padding: const EdgeInsets.all(0.0),
+
                         child: Ink(
                           decoration: const BoxDecoration(
                             gradient: LinearGradient(
