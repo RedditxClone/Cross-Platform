@@ -1,5 +1,8 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reddit/data/repository/left_drawer/left_drawer_repository.dart';
+import 'package:reddit/data/web_services/left_drawer/left_drawer_web_services.dart';
 import 'package:reddit/presentation/screens/home/home.dart';
 import 'package:reddit/presentation/screens/popular/popular.dart';
 import 'package:reddit/presentation/screens/test_home_screens/chat.dart';
@@ -8,6 +11,8 @@ import 'package:reddit/presentation/screens/test_home_screens/notifications.dart
 import 'package:reddit/presentation/widgets/home_widgets/end_drawer.dart';
 import 'package:reddit/presentation/widgets/home_widgets/left_drawer.dart';
 import 'package:reddit/presentation/widgets/posts/add_post.dart';
+
+import '../../../business_logic/cubit/right_drawer/left_drawer_cubit.dart';
 
 class HomePage extends StatefulWidget {
   late bool _isLoggedin;
@@ -22,6 +27,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  LeftDrawerCubit leftDrawerCubit =
+      LeftDrawerCubit(LeftDrawerRepository(LeftDrawerWebServices()));
   int _selectedPageIndex = 0;
   String _screen = 'Home';
   IconData dropDownArrow = Icons.keyboard_arrow_down;
@@ -184,7 +191,10 @@ class _HomePageState extends State<HomePage> {
             bottomNavBarItem(
                 4, Icons.notifications, Icons.notifications_outlined),
           ]),
-      drawer: LeftDrawer(false),
+      drawer: BlocProvider(
+        create: (context) => leftDrawerCubit,
+        child: LeftDrawer(true),
+      ),
       endDrawer: EndDrawer(_isLoggedin),
     );
   }
