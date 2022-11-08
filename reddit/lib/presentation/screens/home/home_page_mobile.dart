@@ -27,8 +27,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  LeftDrawerCubit leftDrawerCubit =
-      LeftDrawerCubit(LeftDrawerRepository(LeftDrawerWebServices()));
+  // LeftDrawerCubit leftDrawerCubit =
+  //     LeftDrawerCubit(LeftDrawerRepository(LeftDrawerWebServices()));
   int _selectedPageIndex = 0;
   String _screen = 'Home';
   IconData dropDownArrow = Icons.keyboard_arrow_down;
@@ -192,10 +192,11 @@ class _HomePageState extends State<HomePage> {
                 4, Icons.notifications, Icons.notifications_outlined),
           ]),
       drawer: BlocProvider(
-        create: (context) => leftDrawerCubit,
+        create: (context) =>
+            LeftDrawerCubit(LeftDrawerRepository(LeftDrawerWebServices())),
         child: LeftDrawer(true),
       ),
-      endDrawer: EndDrawer(_isLoggedin),
+      endDrawer: EndDrawer(true),
     );
   }
 }
