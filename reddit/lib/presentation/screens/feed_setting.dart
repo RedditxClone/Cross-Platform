@@ -10,36 +10,6 @@ class FeedSettingState extends State<FeedSetting> {
   bool _isActiveAdultContent = false;
   bool _isActiveAutoplayMedia = false;
 
-  var whiteColor = Colors.white;
-  var blackColor = Colors.black;
-  var lightGrayColor0 = const Color.fromARGB(255, 207, 201, 201);
-  var lightGrayColor1 = const Color.fromARGB(255, 125, 124, 124);
-  var darkGrayColor = const Color.fromARGB(255, 34, 33, 33);
-
-  late var trackColor = lightGrayColor0;
-
-  late var titleColor = blackColor;
-
-  late var subTitleColor = lightGrayColor1;
-
-  late var backgroundColor = whiteColor;
-
-  void switchMode() {
-    if (backgroundColor == blackColor) {
-      ///Light Mode
-      titleColor = blackColor;
-      subTitleColor = lightGrayColor1;
-      backgroundColor = whiteColor;
-      trackColor = lightGrayColor0;
-    } else {
-      ///Dark Mode
-      titleColor = whiteColor;
-      subTitleColor = lightGrayColor1;
-      backgroundColor = blackColor;
-      trackColor = darkGrayColor;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,7 +19,7 @@ class FeedSettingState extends State<FeedSetting> {
       //     switchMode();
       //   }),
       // ),
-      backgroundColor: backgroundColor,
+      backgroundColor: Colors.black,
       body: Padding(
         padding: const EdgeInsets.fromLTRB(150, 40, 600, 200),
         child: ListView(
@@ -61,26 +31,24 @@ class FeedSettingState extends State<FeedSetting> {
                 style: Theme.of(context)
                     .textTheme
                     .headline5!
-                    .merge(TextStyle(color: titleColor)),
+                    .merge(const TextStyle(color: Colors.white)),
               ),
             ),
             Text(
               "CONTENT PREFERENCES",
-              style: Theme.of(context)
-                  .textTheme
-                  .caption!
-                  .merge(TextStyle(color: subTitleColor)),
+              style: Theme.of(context).textTheme.caption!.merge(
+                  const TextStyle(color: Color.fromARGB(255, 125, 124, 124))),
             ),
             const Divider(),
             SwitchListTile(
-              inactiveTrackColor: trackColor,
-              title: Text(
+              inactiveTrackColor: const Color.fromARGB(255, 34, 33, 33),
+              title: const Text(
                 "Adult content",
-                style: TextStyle(color: titleColor),
+                style: TextStyle(color: Colors.white),
               ),
-              subtitle: Text(
+              subtitle: const Text(
                 "Enable to view adult and NSFW (not safe for work) content in your feed and search results.",
-                style: TextStyle(color: subTitleColor),
+                style: TextStyle(color: Color.fromARGB(255, 125, 124, 124)),
               ),
               isThreeLine: true,
               value: _isActiveAdultContent,
@@ -91,14 +59,14 @@ class FeedSettingState extends State<FeedSetting> {
               },
             ),
             SwitchListTile(
-              inactiveTrackColor: trackColor,
-              title: Text(
+              inactiveTrackColor: const Color.fromARGB(255, 34, 33, 33),
+              title: const Text(
                 "Autoplay media",
-                style: TextStyle(color: titleColor),
+                style: TextStyle(color: Colors.white),
               ),
-              subtitle: Text(
+              subtitle: const Text(
                 "Play videos and gifs automatically when in the viewport.",
-                style: TextStyle(color: subTitleColor),
+                style: TextStyle(color: Color.fromARGB(255, 125, 124, 124)),
               ),
               isThreeLine: true,
               value: _isActiveAutoplayMedia,
