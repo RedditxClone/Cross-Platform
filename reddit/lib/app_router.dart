@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'constants/strings.dart';
 import 'presentation/screens/setting_tab_ui.dart';
 
