@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/constants/strings.dart';
+import 'package:reddit/presentation/screens/choose_gender_android.dart';
 import 'package:reddit/presentation/screens/choose_screen_android.dart';
 import 'package:reddit/presentation/screens/forget_password_android.dart';
 import 'package:reddit/presentation/screens/forget_password_web.dart';
@@ -23,8 +24,11 @@ class AppRouter {
   Route? generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case '/':
+        // final user = settings.arguments as User;
         return MaterialPageRoute(
-          builder: (_) => const InteresetesAndroid(),
+          builder: (_) => InteresetesAndroid(
+            newUser: User(email: 'j',name: 'jk',imageUrl: 'yi',userId: 'sad'),
+          ),
         );
       case HOME_PAGE:
         final user = settings.arguments as User;
@@ -64,9 +68,29 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => const LoginMobile(),
         );
-        case forgetUsernameAndroid:
+      case forgetUsernameAndroid:
         return MaterialPageRoute(
           builder: (_) => const ForgetUsernameAndroid(),
+        );
+      case interesetesScreen:
+        final user = settings.arguments as User;
+        return MaterialPageRoute(
+          builder: (_) => InteresetesAndroid(
+            newUser: user,
+          ),
+        );
+      case chooseProfileImgScreen:
+        final user = settings.arguments as User;
+
+        return MaterialPageRoute(
+          builder: (_) => const ChooseProfileImgAndroid(),
+        );
+      case chooseGenderScreen:
+        final user = settings.arguments as User;
+        return MaterialPageRoute(
+          builder: (_) => ChooseGenderAndroid(
+            newUser: user,
+          ),
         );
       /*
       case example:

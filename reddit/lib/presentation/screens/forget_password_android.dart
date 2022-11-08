@@ -2,10 +2,8 @@ import 'dart:convert';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
-import 'package:reddit/data/model/signin.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../constants/strings.dart';
-import '../../data/web_services/authorization/login_conroller.dart';
 import '../../helper/dio.dart';
 
 class ForgetPasswordAndroid extends StatefulWidget {
@@ -82,7 +80,14 @@ class _ForgetPasswordAndroidState extends State<ForgetPasswordAndroid> {
     //initialize the textfields to be empty when the bottom sheet is opened
     var appBar = AppBar(
       centerTitle: true,
-      title: Logo(Logos.reddit),
+      title: CircleAvatar(
+        backgroundColor: Colors.red,
+        child: Logo(
+          Logos.reddit,
+          color: Colors.white,
+          size: 25,
+        ),
+      ),
       actions: [
         TextButton(
           onPressed: () {
@@ -90,7 +95,7 @@ class _ForgetPasswordAndroidState extends State<ForgetPasswordAndroid> {
           },
           child: const Text(
             "Log in",
-            style: TextStyle(fontSize: 20, color: Colors.grey),
+            style: TextStyle(fontSize: 20, color: Colors.white),
           ),
         ),
       ],
@@ -99,105 +104,107 @@ class _ForgetPasswordAndroidState extends State<ForgetPasswordAndroid> {
     return Scaffold(
       appBar: appBar,
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(15),
-              child: Column(
-                children: [
-                  const Text(
-                    "Forgot your password?",
-                    style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                    ),
+        child: Container(
+          padding: const EdgeInsets.all(10),
+          alignment: Alignment.center,
+          child: Column(
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  "Forgot your password?",
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
                   ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.05),
-                  TextField(
-                    controller: usernameController,
-                    style: const TextStyle(fontSize: 18),
-                    keyboardType: TextInputType.text,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8)),
-                      contentPadding: const EdgeInsets.all(15),
-                      hintText: 'Username',
-                      suffixIcon: usernameEmpty
-                          ? null
-                          : IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  usernameController.text = "";
-                                  usernameEmpty = true;
-                                });
-                              },
-                              icon: const Icon(
-                                Icons.clear,
-                                color: Colors.grey,
-                              )),
-                    ),
-                    textInputAction: TextInputAction.next,
-                    onChanged: (value) => setState(() {
-                      usernameEmpty = value.isEmpty;
-                    }),
-                  ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.05),
-                  TextField(
-                    controller: emailController,
-                    style: const TextStyle(fontSize: 18),
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      contentPadding: const EdgeInsets.all(15),
-                      hintText: 'Email',
-                      prefixIcon: emailEmpty
-                          ? null
-                          : emailCorrect
-                              ? const Icon(
-                                  IconData(0xf635, fontFamily: 'MaterialIcons'),
-                                  color: Colors.green,
-                                )
-                              : const Icon(
-                                  IconData(0xf713, fontFamily: 'MaterialIcons'),
-                                  color: Colors.red,
-                                ),
-                      suffixIcon: emailEmpty
-                          ? null
-                          : IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  emailController.text = "";
-                                  emailEmpty = true;
-                                });
-                              },
-                              icon: const Icon(
-                                Icons.clear,
-                                color: Colors.grey,
-                              ),
-                            ),
-                    ),
-                    maxLines: 1,
-                    onChanged: (value) {
-                      setState(() {
-                        emailEmpty = value.isEmpty;
-                        int index = value.indexOf('@');
-                        if (index != -1) {
-                          emailCorrect = value.contains('.', index + 2) &&
-                              value[value.length - 1] != '.' &&
-                              value[value.length - 1] != ' ';
-                        }
-                      });
-                    },
-                    textInputAction: TextInputAction.done,
-                  ),
-                ],
+                ),
               ),
-            ),
-            Container(
-              padding: const EdgeInsets.all(15),
-              child: Column(
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 30, 0, 10),
+                child: TextField(
+                  controller: usernameController,
+                  style: const TextStyle(fontSize: 18),
+                  keyboardType: TextInputType.text,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8)),
+                    contentPadding: const EdgeInsets.all(20),
+                    hintText: 'Username',
+                    labelText: 'Username',
+                    suffixIcon: usernameEmpty
+                        ? null
+                        : IconButton(
+                            onPressed: () {
+                              setState(() {
+                                usernameController.text = "";
+                                usernameEmpty = true;
+                              });
+                            },
+                            icon: const Icon(
+                              Icons.clear,
+                              color: Colors.grey,
+                            )),
+                  ),
+                  textInputAction: TextInputAction.next,
+                  onChanged: (value) => setState(() {
+                    usernameEmpty = value.isEmpty;
+                  }),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 0, 30),
+                child: TextField(
+                  controller: emailController,
+                  style: const TextStyle(fontSize: 18),
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    contentPadding: const EdgeInsets.all(20),
+                    hintText: 'Email',
+                    prefixIcon: emailEmpty
+                        ? null
+                        : emailCorrect
+                            ? const Icon(
+                                IconData(0xf635, fontFamily: 'MaterialIcons'),
+                                color: Colors.green,
+                              )
+                            : const Icon(
+                                IconData(0xf713, fontFamily: 'MaterialIcons'),
+                                color: Colors.red,
+                              ),
+                    suffixIcon: emailEmpty
+                        ? null
+                        : IconButton(
+                            onPressed: () {
+                              setState(() {
+                                emailController.text = "";
+                                emailEmpty = true;
+                              });
+                            },
+                            icon: const Icon(
+                              Icons.clear,
+                              color: Colors.grey,
+                            ),
+                          ),
+                  ),
+                  maxLines: 1,
+                  onChanged: (value) {
+                    setState(() {
+                      emailEmpty = value.isEmpty;
+                      int index = value.indexOf('@');
+                      if (index != -1) {
+                        emailCorrect = value.contains('.', index + 2) &&
+                            value[value.length - 1] != '.' &&
+                            value[value.length - 1] != ' ';
+                      }
+                    });
+                  },
+                  textInputAction: TextInputAction.done,
+                ),
+              ),
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   RichText(
@@ -240,50 +247,51 @@ class _ForgetPasswordAndroidState extends State<ForgetPasswordAndroid> {
                   ),
                 ],
               ),
-            ),
-            Container(
-              width: double.infinity,
-              height: 80,
-              padding: const EdgeInsets.all(15),
-              color: Theme.of(context).scaffoldBackgroundColor,
-              child: ElevatedButton(
-                onPressed: !usernameEmpty && emailCorrect ? emailMe : null,
-                style: const ButtonStyle(
-                  shape: MaterialStatePropertyAll(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(25),
+              Container(
+                width: double.infinity,
+                height: 80,
+                padding: const EdgeInsets.all(15),
+                color: Theme.of(context).scaffoldBackgroundColor,
+                child: ElevatedButton(
+                  onPressed: !usernameEmpty && emailCorrect ? emailMe : null,
+                  style: const ButtonStyle(
+                    shape: MaterialStatePropertyAll(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(25),
+                        ),
                       ),
                     ),
+                    padding: MaterialStatePropertyAll(EdgeInsets.all(0.0)),
                   ),
-                  padding: MaterialStatePropertyAll(EdgeInsets.all(0.0)),
-                ),
-                child: Ink(
-                  decoration: BoxDecoration(
-                    gradient: !usernameEmpty && emailCorrect
-                        ? const LinearGradient(
-                            colors: [
-                              Color.fromARGB(255, 139, 9, 0),
-                              Color.fromARGB(255, 255, 136, 0)
-                            ],
-                          )
-                        : null,
-                    borderRadius: const BorderRadius.all(Radius.circular(80.0)),
-                  ),
-                  child: Container(
-                    constraints:
-                        const BoxConstraints(minWidth: 88.0, minHeight: 50.0),
-                    alignment: Alignment.center,
-                    child: const Text(
-                      'Email me',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 20),
+                  child: Ink(
+                    decoration: BoxDecoration(
+                      gradient: !usernameEmpty && emailCorrect
+                          ? const LinearGradient(
+                              colors: [
+                                Color.fromARGB(255, 139, 9, 0),
+                                Color.fromARGB(255, 255, 136, 0)
+                              ],
+                            )
+                          : null,
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(80.0)),
+                    ),
+                    child: Container(
+                      constraints:
+                          const BoxConstraints(minWidth: 88.0, minHeight: 50.0),
+                      alignment: Alignment.center,
+                      child: const Text(
+                        'Email me',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 20),
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

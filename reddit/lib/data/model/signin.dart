@@ -84,7 +84,9 @@ class User {
   late String?
       password; //in case of reddit sign in it will be the password else it will be null
   late String? accessToken;
-
+  late String? serverAuthCode;
+  late String gender;
+  late Map<String, dynamic> interests;
   User(
       {required this.userId,
       required this.name,
@@ -96,6 +98,7 @@ class User {
     email = json['email'];
     imageUrl = json['image'];
     accessToken = json['accessToken'];
-    _type = json['type'];
+    _type = json['_type'];
+    serverAuthCode = json['serverAuthCode'];
   }
 }

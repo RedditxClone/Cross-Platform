@@ -20,13 +20,20 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Reddit',
       theme: ThemeData(
-        // This is the theme of your application.
-        primarySwatch: Colors.blue,
-      ),
+          // This is the theme of your application.
+          primarySwatch: Colors.grey,
+          scaffoldBackgroundColor: Colors.black,
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Colors.black,
+          )),
       debugShowCheckedModeBanner: false,
       onGenerateRoute: appRouter.generateRoute,
       darkTheme: ThemeData(
         brightness: Brightness.dark,
+        scaffoldBackgroundColor: Colors.black,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.black,
+        ),
       ),
       themeMode: ThemeMode.dark,
     );

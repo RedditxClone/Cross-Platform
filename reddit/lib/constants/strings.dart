@@ -14,3 +14,6 @@ const signupScreen = '/signupScreen';
 const loginScreen = '/loginScreen';
 const forgetPasswordAndroid = '/forgetPasswordAndroud';
 const forgetUsernameAndroid = '/forgetUsernameAndroud';
+const interesetesScreen = '/interesetesScreen';
+const chooseGenderScreen = '/chooseGenderScreen';
+const chooseProfileImgScreen = '/chooseProfileImgScreen';

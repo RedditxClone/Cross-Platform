@@ -1,752 +1,70 @@
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
-
+import 'package:reddit/helper/dio.dart';
 import '../../constants/strings.dart';
+import '../../data/model/signin.dart';
 
 class InteresetesAndroid extends StatefulWidget {
-  const InteresetesAndroid({super.key});
-
+  const InteresetesAndroid({super.key, required this.newUser});
+  final User newUser;
   @override
-  State<InteresetesAndroid> createState() => _InteresetesAndroidState();
+  State<InteresetesAndroid> createState() => _InteresetesAndroidState(newUser);
 }
 
 class _InteresetesAndroidState extends State<InteresetesAndroid> {
   int intersetsCount = 0;
-  List<Card> intersets = [
-    Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(40),
-        side: const BorderSide(
-          color: Colors.red,
-          width: 1,
-        ),
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        child: TextButton.icon(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.computer,
-              color: Colors.white,
-            ),
-            label: const Text(
-              "Programming",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-                color: Colors.white,
+  final User newUser;
+
+  Map<String, String> interests = {
+    "Funny": '🤣',
+    "Jokes": '😂',
+    "Interesting": '🤔',
+    'Memes': '💩',
+    'Lifehacks': '💡',
+    'Nature': '🌿',
+    'History': '📜',
+    'Tech': '📱',
+    'Science': '🔬',
+    'News': '📰',
+    'Career': '👔',
+    'Books': '📚',
+    'Programming': '👨‍💻',
+    'Sports': '⚽',
+    'space': '🚀',
+    'Travel': '✈',
+    'Fishing': '🎣',
+  };
+  Map<String, dynamic> selectedInterests = {};
+  _InteresetesAndroidState(this.newUser);
+  //this function is used to add the user interests to the database
+  void addInterests() async {
+    newUser.interests.addAll(selectedInterests);
+    DioHelper.patchData(url: '/api/user/me/prefs', data: selectedInterests)
+        .then((value) {
+      if (value.statusCode == 200) {
+        Navigator.of(context)
+            .pushReplacementNamed(chooseProfileImgScreen, arguments: newUser);
+      } else {
+        SnackBar(
+          content: Row(
+            children: const [
+              Icon(
+                Icons.error,
+                color: Colors.red,
               ),
-            )),
-      ),
-    ),
-    Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(40), //<-- SEE HERE
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        child: TextButton.icon(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.sports_basketball,
-              color: Colors.white,
-            ),
-            label: const Text(
-              "NBA",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-                color: Colors.white,
+              SizedBox(
+                width: 10,
               ),
-            )),
-      ),
-    ),
-    Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(40), //<-- SEE HERE
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        child: TextButton.icon(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.sports_basketball,
-              color: Colors.white,
-            ),
-            label: const Text(
-              "NBA",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-                color: Colors.white,
+              Text(
+                'Error in storing your data please try again',
+                style: TextStyle(
+                  color: Colors.red,
+                ),
               ),
-            )),
-      ),
-    ),
-    Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(40), //<-- SEE HERE
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        child: TextButton.icon(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.sports_basketball,
-              color: Colors.white,
-            ),
-            label: const Text(
-              "NBA",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-                color: Colors.white,
-              ),
-            )),
-      ),
-    ),
-    Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(40), //<-- SEE HERE
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        child: TextButton.icon(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.sports_basketball,
-              color: Colors.white,
-            ),
-            label: const Text(
-              "NBA",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-                color: Colors.white,
-              ),
-            )),
-      ),
-    ),
-    Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(40), //<-- SEE HERE
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        child: TextButton.icon(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.sports_basketball,
-              color: Colors.white,
-            ),
-            label: const Text(
-              "NBA",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-                color: Colors.white,
-              ),
-            )),
-      ),
-    ),
-    Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(40), //<-- SEE HERE
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        child: TextButton.icon(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.sports_basketball,
-              color: Colors.white,
-            ),
-            label: const Text(
-              "NBA",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-                color: Colors.white,
-              ),
-            )),
-      ),
-    ),
-    Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(40), //<-- SEE HERE
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        child: TextButton.icon(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.sports_basketball,
-              color: Colors.white,
-            ),
-            label: const Text(
-              "NBA",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-                color: Colors.white,
-              ),
-            )),
-      ),
-    ),
-    Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(40), //<-- SEE HERE
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        child: TextButton.icon(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.sports_basketball,
-              color: Colors.white,
-            ),
-            label: const Text(
-              "NBA",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-                color: Colors.white,
-              ),
-            )),
-      ),
-    ),
-    Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(40), //<-- SEE HERE
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        child: TextButton.icon(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.sports_basketball,
-              color: Colors.white,
-            ),
-            label: const Text(
-              "NBA",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-                color: Colors.white,
-              ),
-            )),
-      ),
-    ),
-    Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(40), //<-- SEE HERE
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        child: TextButton.icon(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.sports_basketball,
-              color: Colors.white,
-            ),
-            label: const Text(
-              "NBA",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-                color: Colors.white,
-              ),
-            )),
-      ),
-    ),
-    Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(40), //<-- SEE HERE
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        child: TextButton.icon(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.sports_basketball,
-              color: Colors.white,
-            ),
-            label: const Text(
-              "NBA",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-                color: Colors.white,
-              ),
-            )),
-      ),
-    ),
-    Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(40), //<-- SEE HERE
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        child: TextButton.icon(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.sports_basketball,
-              color: Colors.white,
-            ),
-            label: const Text(
-              "NBA",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-                color: Colors.white,
-              ),
-            )),
-      ),
-    ),
-    Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(40), //<-- SEE HERE
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        child: TextButton.icon(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.sports_basketball,
-              color: Colors.white,
-            ),
-            label: const Text(
-              "NBA",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-                color: Colors.white,
-              ),
-            )),
-      ),
-    ),
-    Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(40), //<-- SEE HERE
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        child: TextButton.icon(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.sports_basketball,
-              color: Colors.white,
-            ),
-            label: const Text(
-              "NBA",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-                color: Colors.white,
-              ),
-            )),
-      ),
-    ),
-    Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(40), //<-- SEE HERE
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        child: TextButton.icon(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.sports_basketball,
-              color: Colors.white,
-            ),
-            label: const Text(
-              "NBA",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-                color: Colors.white,
-              ),
-            )),
-      ),
-    ),
-    Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(40), //<-- SEE HERE
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        child: TextButton.icon(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.sports_basketball,
-              color: Colors.white,
-            ),
-            label: const Text(
-              "NBA",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-                color: Colors.white,
-              ),
-            )),
-      ),
-    ),
-    Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(40), //<-- SEE HERE
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        child: TextButton.icon(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.sports_basketball,
-              color: Colors.white,
-            ),
-            label: const Text(
-              "NBA",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-                color: Colors.white,
-              ),
-            )),
-      ),
-    ),
-    Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(40), //<-- SEE HERE
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        child: TextButton.icon(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.sports_basketball,
-              color: Colors.white,
-            ),
-            label: const Text(
-              "NBA",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-                color: Colors.white,
-              ),
-            )),
-      ),
-    ),
-    Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(40), //<-- SEE HERE
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        child: TextButton.icon(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.sports_basketball,
-              color: Colors.white,
-            ),
-            label: const Text(
-              "NBA",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-                color: Colors.white,
-              ),
-            )),
-      ),
-    ),
-    Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(40), //<-- SEE HERE
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        child: TextButton.icon(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.sports_basketball,
-              color: Colors.white,
-            ),
-            label: const Text(
-              "NBA",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-                color: Colors.white,
-              ),
-            )),
-      ),
-    ),
-    Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(40), //<-- SEE HERE
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        child: TextButton.icon(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.sports_basketball,
-              color: Colors.white,
-            ),
-            label: const Text(
-              "NBA",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-                color: Colors.white,
-              ),
-            )),
-      ),
-    ),
-    Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(40), //<-- SEE HERE
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        child: TextButton.icon(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.sports_basketball,
-              color: Colors.white,
-            ),
-            label: const Text(
-              "NBA",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-                color: Colors.white,
-              ),
-            )),
-      ),
-    ),
-    Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(40), //<-- SEE HERE
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        child: TextButton.icon(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.sports_basketball,
-              color: Colors.white,
-            ),
-            label: const Text(
-              "NBA",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-                color: Colors.white,
-              ),
-            )),
-      ),
-    ),
-    Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(40), //<-- SEE HERE
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        child: TextButton.icon(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.sports_basketball,
-              color: Colors.white,
-            ),
-            label: const Text(
-              "NBA",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-                color: Colors.white,
-              ),
-            )),
-      ),
-    ),
-    Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(40), //<-- SEE HERE
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        child: TextButton.icon(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.sports_basketball,
-              color: Colors.white,
-            ),
-            label: const Text(
-              "NBA",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-                color: Colors.white,
-              ),
-            )),
-      ),
-    ),
-    Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(40), //<-- SEE HERE
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        child: TextButton.icon(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.sports_basketball,
-              color: Colors.white,
-            ),
-            label: const Text(
-              "NBA",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-                color: Colors.white,
-              ),
-            )),
-      ),
-    ),
-    Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(40), //<-- SEE HERE
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        child: TextButton.icon(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.sports_basketball,
-              color: Colors.white,
-            ),
-            label: const Text(
-              "NBA",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-                color: Colors.white,
-              ),
-            )),
-      ),
-    ),
-    Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(40), //<-- SEE HERE
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        child: TextButton.icon(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.sports_basketball,
-              color: Colors.white,
-            ),
-            label: const Text(
-              "NBA",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-                color: Colors.white,
-              ),
-            )),
-      ),
-    ),
-    Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(40), //<-- SEE HERE
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        child: TextButton.icon(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.sports_basketball,
-              color: Colors.white,
-            ),
-            label: const Text(
-              "NBA",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-                color: Colors.white,
-              ),
-            )),
-      ),
-    ),
-    Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(40), //<-- SEE HERE
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        child: TextButton.icon(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.sports_basketball,
-              color: Colors.white,
-            ),
-            label: const Text(
-              "NBA",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-                color: Colors.white,
-              ),
-            )),
-      ),
-    ),
-    Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(40), //<-- SEE HERE
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        child: TextButton.icon(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.sports_basketball,
-              color: Colors.white,
-            ),
-            label: const Text(
-              "NBA",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-                color: Colors.white,
-              ),
-            )),
-      ),
-    ),
-    Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(40), //<-- SEE HERE
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        child: TextButton.icon(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.sports_basketball,
-              color: Colors.white,
-            ),
-            label: const Text(
-              "NBA",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-                color: Colors.white,
-              ),
-            )),
-      ),
-    ),
-  ];
-  void addToInterests() {
-    setState(() {
-      intersetsCount++;
+            ],
+          ),
+        );
+      }
     });
   }
 
@@ -754,6 +72,14 @@ class _InteresetesAndroidState extends State<InteresetesAndroid> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: BackButton(
+          onPressed: () {
+            Navigator.of(context).pushReplacementNamed(
+              chooseGenderScreen,
+              arguments: newUser,
+            );
+          },
+        ),
         title: CircleAvatar(
           backgroundColor: Colors.red,
           child: Logo(
@@ -763,20 +89,20 @@ class _InteresetesAndroidState extends State<InteresetesAndroid> {
           ),
         ),
         centerTitle: true,
-        actions: [
-          TextButton(
-            onPressed: (() {
-              Navigator.of(context).pushReplacementNamed(HOME_PAGE);
-            }),
-            child: const Text(
-              "Skip",
-              style: TextStyle(
-                color: Colors.grey,
-                fontSize: 20,
-              ),
-            ),
-          ),
-        ],
+        // actions: [
+        //   TextButton(
+        //     onPressed: (() {
+        //       Navigator.of(context).pushReplacementNamed(HOME_PAGE);
+        //     }),
+        //     child: const Text(
+        //       "Skip",
+        //       style: TextStyle(
+        //         color: Colors.grey,
+        //         fontSize: 20,
+        //       ),
+        //     ),
+        //   ),
+        // ],
       ),
       body: Container(
         padding: const EdgeInsets.all(10),
@@ -805,17 +131,65 @@ class _InteresetesAndroidState extends State<InteresetesAndroid> {
               ),
             ),
             Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
                   height: MediaQuery.of(context).size.height * 0.6,
+                  alignment: Alignment.centerLeft,
                   child: SingleChildScrollView(
                     child: Wrap(
                       alignment: WrapAlignment.start,
-                      spacing: 10,
-                      runSpacing: 10,
+                      spacing: 2,
+                      runSpacing: 2,
                       children: [
-                        ...intersets.map((e) => e).toList(),
+                        ...interests.entries.map((e) {
+                          return Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(40),
+                              side: selectedInterests.containsKey(e.key)
+                                  ? const BorderSide(
+                                      color: Colors.red,
+                                      width: 1,
+                                    )
+                                  : BorderSide.none,
+                            ),
+                            color: selectedInterests.containsKey(e.key)
+                                ? const Color.fromARGB(255, 82, 46, 46)
+                                : Color(const Color.fromARGB(255, 50, 49, 49)
+                                    .value),
+                            child: Container(
+                              padding: const EdgeInsets.fromLTRB(5, 3, 5, 3),
+                              child: TextButton.icon(
+                                onPressed: () {
+                                  setState(() {
+                                    if (!selectedInterests.containsKey(e.key)) {
+                                      selectedInterests.addEntries([
+                                        e
+                                      ]); //add the selected interest to the map
+                                      intersetsCount++;
+                                    } else {
+                                      intersetsCount--;
+                                      selectedInterests.remove(e.key);
+                                    }
+                                  });
+                                  debugPrint(selectedInterests.toString());
+                                },
+                                icon: Text(
+                                  e.value,
+                                  style: const TextStyle(fontSize: 20),
+                                ),
+                                label: Text(
+                                  e.key,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        }).toList(),
                       ],
                     ),
                   ),
@@ -824,11 +198,10 @@ class _InteresetesAndroidState extends State<InteresetesAndroid> {
                   width: double.infinity,
                   height: 80,
                   padding: const EdgeInsets.all(15),
-                  color: Theme.of(context).scaffoldBackgroundColor,
+                  // color: Theme.of(context).scaffoldBackgroundColor,
+
                   child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pushReplacementNamed(HOME_PAGE);
-                    },
+                    onPressed: intersetsCount >= 3 ? addInterests : null,
                     style: const ButtonStyle(
                       shape: MaterialStatePropertyAll(
                         RoundedRectangleBorder(
@@ -840,24 +213,38 @@ class _InteresetesAndroidState extends State<InteresetesAndroid> {
                       padding: MaterialStatePropertyAll(EdgeInsets.all(0.0)),
                     ),
                     child: Ink(
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Color.fromARGB(255, 139, 9, 0),
-                            Color.fromARGB(255, 255, 136, 0)
-                          ],
-                        ),
-                        borderRadius: BorderRadius.all(Radius.circular(80.0)),
+                      decoration: BoxDecoration(
+                        gradient: intersetsCount >= 3
+                            ? const LinearGradient(
+                                colors: [
+                                  Color.fromARGB(255, 139, 9, 0),
+                                  Color.fromARGB(255, 255, 136, 0)
+                                ],
+                              )
+                            : const LinearGradient(
+                                colors: [
+                                  Color.fromARGB(50, 139, 9, 0),
+                                  Color.fromARGB(50, 255, 136, 0)
+                                ],
+                              ),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(80.0)),
                       ),
                       child: Container(
                         constraints: const BoxConstraints(
                             minWidth: 88.0, minHeight: 50.0),
                         alignment: Alignment.center,
-                        child: Text(
-                          '$intersetsCount of 3 Selected',
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 20),
-                        ),
+                        child: intersetsCount < 3
+                            ? Text(
+                                '$intersetsCount of 3 Selected',
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(fontSize: 20),
+                              )
+                            : const Text(
+                                'Continue',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: 20),
+                              ),
                       ),
                     ),
                   ),

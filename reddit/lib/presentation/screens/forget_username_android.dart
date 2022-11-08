@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -77,7 +76,14 @@ class _ForgetUsernameAndroidState extends State<ForgetUsernameAndroid> {
     //initialize the textfields to be empty when the bottom sheet is opened
     var appBar = AppBar(
       centerTitle: true,
-      title: Logo(Logos.reddit),
+      title: CircleAvatar(
+        backgroundColor: Colors.red,
+        child: Logo(
+          Logos.reddit,
+          color: Colors.white,
+          size: 25,
+        ),
+      ),
       actions: [
         TextButton(
           onPressed: () {
@@ -85,7 +91,7 @@ class _ForgetUsernameAndroidState extends State<ForgetUsernameAndroid> {
           },
           child: const Text(
             "Log in",
-            style: TextStyle(fontSize: 20, color: Colors.grey),
+            style: TextStyle(fontSize: 20, color: Colors.white),
           ),
         ),
       ],
@@ -97,17 +103,19 @@ class _ForgetUsernameAndroidState extends State<ForgetUsernameAndroid> {
         child: Column(
           children: [
             Container(
-              padding: const EdgeInsets.all(15),
+              padding: const EdgeInsets.all(10),
               child: Column(
                 children: [
-                  const Text(
-                    "Recover username",
-                    style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(0, 15, 0, 30),
+                    child: Text(
+                      "Recover username",
+                      style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.05),
                   TextField(
                     controller: emailController,
                     style: const TextStyle(fontSize: 18),
@@ -116,8 +124,9 @@ class _ForgetUsernameAndroidState extends State<ForgetUsernameAndroid> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      contentPadding: const EdgeInsets.all(15),
+                      contentPadding: const EdgeInsets.all(20),
                       hintText: 'Email',
+                      labelText: 'Email',
                       prefixIcon: emailEmpty
                           ? null
                           : emailCorrect
@@ -161,39 +170,39 @@ class _ForgetUsernameAndroidState extends State<ForgetUsernameAndroid> {
                 ],
               ),
             ),
-            Container(
-              padding: const EdgeInsets.all(15),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    RichText(
-                      text: TextSpan(
-                        children: [
-                          createTextSpan(
-                              "Unfortunately, if you have never given us your email,\n",
-                              false),
-                          createTextSpan(
-                              "you won't be able to reset your password.",
-                              false),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                    TextButton(
-                      onPressed: () => launchUrl(
-                        Uri.parse(
-                            "https://reddit.zendesk.com/hc/en-us/articles/205240005-How-do-I-log-in-to-Reddit-if-I-forgot-my-password-"),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                RichText(
+                  text: TextSpan(
+                    children: [
+                      createTextSpan(
+                          "Unfortunately, if you have never given us your email,\n",
+                          false),
+                      createTextSpan(
+                          "you won't be able to reset your password.", false),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(
+                      0, 20, 0, MediaQuery.of(context).size.height * 0.4),
+                  child: TextButton(
+                    onPressed: () => launchUrl(
+                      Uri.parse(
+                          "https://reddit.zendesk.com/hc/en-us/articles/205240005-How-do-I-log-in-to-Reddit-if-I-forgot-my-password-"),
                       mode: LaunchMode.externalApplication,
-                      ),
-                      child: const Text(
-                        "Having trouble?",
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.red,
-                        ),
+                    ),
+                    child: const Text(
+                      "Having trouble?",
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.red,
                       ),
                     ),
-                  ]),
+                  ),
+                ),
+              ],
             ),
             Container(
               width: double.infinity,
