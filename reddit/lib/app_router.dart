@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'presentation/screens/setting_tab_ui.dart';
-import 'package:reddit/constants/strings.dart';
 import 'package:reddit/presentation/screens/recaptcha_screen.dart'
     if (dart.library.html) 'package:reddit/presentation/screens/recaptcha_screen_web.dart'
     as recaptcha_screen;
@@ -15,18 +14,14 @@ import 'package:reddit/presentation/screens/home/home_page_mobile.dart';
 import 'package:reddit/presentation/screens/home/home_page_web.dart';
 import 'package:reddit/presentation/screens/popular/popular.dart';
 import 'package:reddit/presentation/screens/popular/popular_web.dart';
-import 'package:reddit/presentation/screens/safety_settings_web.dart';
 import 'package:reddit/business_logic/cubit/settings/settings_cubit.dart';
 import 'package:reddit/data/repository/settings_repository.dart';
 import 'package:reddit/data/web_services/settings_web_services.dart';
 import 'package:reddit/presentation/screens/profile_settings_screen.dart';
-import 'package:reddit/presentation/screens/profile_settings_web.dart';
 import 'package:reddit/business_logic/cubit/email_settings_cubit.dart';
 import 'package:reddit/data/repository/email_settings_repo.dart';
 import 'package:reddit/data/web_services/email_settings_web_services.dart';
 import 'package:reddit/business_logic/cubit/cubit/account_settings_cubit.dart';
-import 'constants/strings.dart';
-import 'presentation/screens/email_settings_web.dart';
 
 import 'package:reddit/data/repository/account_settings_repository.dart';
 import 'package:reddit/data/web_services/account_settings_web_services.dart';
@@ -37,6 +32,22 @@ import 'package:reddit/presentation/screens/account_settings/country_screen.dart
 import 'package:reddit/presentation/screens/account_settings/manage_blocked_accounts_screen.dart';
 import 'package:reddit/presentation/screens/account_settings/manage_notifications_screen.dart';
 import 'package:reddit/presentation/screens/account_settings/update_email_address_screen.dart';
+import 'package:reddit/constants/strings.dart';
+import 'package:reddit/presentation/screens/choose_gender_android.dart';
+import 'package:reddit/presentation/screens/choose_profile_screen.dart';
+import 'package:reddit/presentation/screens/forget_password_android.dart';
+import 'package:reddit/presentation/screens/forget_password_web.dart';
+import 'package:reddit/presentation/screens/forget_username_android.dart';
+import 'package:reddit/presentation/screens/forget_username_web.dart';
+import 'package:reddit/presentation/screens/home.dart';
+import 'package:reddit/presentation/screens/intesrests_android.dart';
+import 'package:reddit/presentation/screens/login_page.dart';
+import 'package:reddit/presentation/screens/login_screen.dart';
+import 'package:reddit/presentation/screens/signup_page.dart';
+import 'package:reddit/presentation/screens/signup_page2.dart';
+import 'package:reddit/presentation/screens/signup_screen.dart';
+
+import 'data/model/signin.dart';
 
 class AppRouter {
   // platform
@@ -91,6 +102,69 @@ class AppRouter {
       case settingTabUiRoute:
         return MaterialPageRoute(builder: (_) => const SettingTabUi());
 
+      case HOME_PAGE:
+        final user = settings.arguments as User;
+        return MaterialPageRoute(
+          builder: (_) => Home(user: user),
+        );
+      case SIGNU_PAGE2:
+        final user = settings.arguments as User;
+        return MaterialPageRoute(
+          builder: (_) => SignupWeb2(user: user),
+        );
+      case forgetUsernameWeb:
+        return MaterialPageRoute(
+          builder: (_) => const ForgetUsernameWeb(),
+        );
+      case forgetPasswordWeb:
+        return MaterialPageRoute(
+          builder: (_) => const ForgetPasswordWeb(),
+        );
+      case SIGNU_PAGE1:
+        return MaterialPageRoute(
+          builder: (_) => const SignupWeb(),
+        );
+      case loginPage:
+        return MaterialPageRoute(
+          builder: (_) => const LoginWeb(),
+        );
+      case signupScreen:
+        return MaterialPageRoute(
+          builder: (_) => const SignupMobile(),
+        );
+      case forgetPasswordAndroid:
+        return MaterialPageRoute(
+          builder: (_) => const ForgetPasswordAndroid(),
+        );
+      case loginScreen:
+        return MaterialPageRoute(
+          builder: (_) => const LoginMobile(),
+        );
+      case forgetUsernameAndroid:
+        return MaterialPageRoute(
+          builder: (_) => const ForgetUsernameAndroid(),
+        );
+      case interesetesScreen:
+        final user = settings.arguments as User;
+        return MaterialPageRoute(
+          builder: (_) => InteresetesAndroid(
+            newUser: user,
+          ),
+        );
+      case chooseProfileImgScreen:
+        final user = settings.arguments as User;
+        return MaterialPageRoute(
+          builder: (_) => ChooseProfileImgAndroid(
+            newUser: user,
+          ),
+        );
+      case chooseGenderScreen:
+        final user = settings.arguments as User;
+        return MaterialPageRoute(
+          builder: (_) => ChooseGenderAndroid(
+            newUser: user,
+          ),
+        );
       /*
       case example:
       case '/':

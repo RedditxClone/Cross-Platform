@@ -3,9 +3,13 @@ import 'package:reddit/constants/strings.dart';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'app_router.dart';
+import 'helper/dio.dart';
+import 'helper/utils/shared_pref.dart';
 
 void main() {
   runApp(MyApp(appRouter: AppRouter()));
+  DioHelper.init();
+  PreferenceUtils.init();
 }
 
 class MyApp extends StatelessWidget {
@@ -24,13 +28,16 @@ class MyApp extends StatelessWidget {
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
-        textButtonTheme: TextButtonThemeData(
-          style: ButtonStyle(
-            foregroundColor: MaterialStateProperty.all(Colors.white),
-          ),
+        scaffoldBackgroundColor: Colors.black,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.black,
         ),
+        backgroundColor: Colors.black,
+        primaryColorDark: Colors.black,
+        primaryColor: Colors.black,
+        dialogBackgroundColor: Colors.black,
       ),
-      themeMode: ThemeMode.dark,
+      themeMode: kIsWeb ? ThemeMode.light : ThemeMode.dark,
       debugShowCheckedModeBanner: false,
       onGenerateRoute: appRouter.generateRoute,
       initialRoute: kIsWeb

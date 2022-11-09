@@ -46,3 +46,21 @@ const emailSettingsWebScreenRoute = "/emailSettings";
 // -----------reCaptcha routes-----------
 //---------------------------------------
 const recaptchaRoute = "/recaptcha";
+const SIGNU_PAGE1 = '/signup1';
+const SIGNU_PAGE2 = '/signup2';
+const HOME_PAGE = '/home';
+const loginPage = '/login';
+const FACEBOOK_APP_ID = '3404099966577167';
+const USER_AGGREMENT = 'https://www.redditinc.com/policies/user-agreement';
+const PRIVACY_POLICY = 'https://www.redditinc.com/policies/privacy-policy';
+const forgetPasswordWeb = '/forgetPassword';
+const forgetUsernameWeb = '/forgetUsername';
+const getHelpPage =
+    'https://reddithelp.com/hc/en-us/sections/360008917491-Account-Security';
+const signupScreen = '/signupScreen';
+const loginScreen = '/loginScreen';
+const forgetPasswordAndroid = '/forgetPasswordAndroud';
+const forgetUsernameAndroid = '/forgetUsernameAndroud';
+const interesetesScreen = '/interesetesScreen';
+const chooseGenderScreen = '/chooseGenderScreen';
+const chooseProfileImgScreen = '/chooseProfileImgScreen';
