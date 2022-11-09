@@ -1,8 +1,11 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reddit/business_logic/cubit/end_drawer/end_drawer_cubit.dart';
+import 'package:reddit/data/repository/end_drawer/end_drawer_repository.dart';
 import 'package:reddit/data/repository/left_drawer/left_drawer_repository.dart';
 import 'package:reddit/data/web_services/left_drawer/left_drawer_web_services.dart';
+import 'package:reddit/data/web_services/settings_web_services.dart';
 import 'package:reddit/presentation/screens/home/home.dart';
 import 'package:reddit/presentation/screens/popular/popular.dart';
 import 'package:reddit/presentation/screens/test_home_screens/chat.dart';
@@ -196,7 +199,11 @@ class _HomePageState extends State<HomePage> {
             LeftDrawerCubit(LeftDrawerRepository(LeftDrawerWebServices())),
         child: LeftDrawer(true),
       ),
-      endDrawer: EndDrawer(true),
+      endDrawer: BlocProvider(
+        create: (context) =>
+            EndDrawerCubit(EndDrawerRepository(SettingsWebServices())),
+        child: EndDrawer(true),
+      ),
     );
   }
 }

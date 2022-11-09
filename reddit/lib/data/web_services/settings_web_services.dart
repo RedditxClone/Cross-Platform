@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:reddit/constants/strings.dart';
 
@@ -7,7 +9,7 @@ class SettingsWebServices {
   //     ? "http://10.0.2.2:3000/"
   //     : "http://127.0.0.1:3000/";
   String mockUrl =
-      'https://ee2e6548-8637-491e-ac9f-5109ed246fd1.mock.pstmn.io/';
+      'https://a8eda59d-d8f3-4ef2-9581-29e6473824d9.mock.pstmn.io/';
   bool isMockerServer = true;
   SettingsWebServices() {
     BaseOptions options = BaseOptions(
@@ -31,12 +33,16 @@ class SettingsWebServices {
   }
 
   /// updates a image
-  Future<String> updateImage(String key, value) async {
+  Future<String> updateImage(File file, String key) async {
     try {
-      Response response = await dio.patch('prefs', data: {key: value});
+      String fileName = file.path.split('/').last;
+      FormData formData = FormData.fromMap({
+        "file": await MultipartFile.fromFile(file.path, filename: fileName)
+      });
+      Response response = await dio.patch(key, data: formData);
       return response.data;
     } catch (e) {
-      // print(e.toString());
+      print(e.toString());
       return '';
     }
   }
