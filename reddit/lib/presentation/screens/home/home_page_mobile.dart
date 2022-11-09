@@ -202,7 +202,8 @@ class _HomePageState extends State<HomePage> {
       endDrawer: BlocProvider(
         create: (context) =>
             EndDrawerCubit(EndDrawerRepository(SettingsWebServices())),
-        child: EndDrawer(true),
+        child: EndDrawer(
+            true, "bemoierian", "https://picsum.photos/100/100", 2, 35),
       ),
     );
   }

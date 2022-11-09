@@ -8,14 +8,18 @@ import 'package:image_picker/image_picker.dart';
 import 'package:reddit/business_logic/cubit/end_drawer/end_drawer_cubit.dart';
 import 'package:reddit/constants/strings.dart';
 
+/// Class that build the UI of the homepage end drawer
 class EndDrawer extends StatelessWidget {
-  final int _karma = 2;
-  final int _redditAge = 34;
-  final String _username = "bemoierian";
-  final String _profilePicture = "";
+  late int _karma;
+  late int _redditAge;
+  late String _username;
+  late String _profilePicture;
   late bool _isLoggedIn;
   File? imgProfile;
-  EndDrawer(this._isLoggedIn, {Key? key}) : super(key: key);
+  EndDrawer(this._isLoggedIn, this._username, this._profilePicture, this._karma,
+      this._redditAge,
+      {Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +32,7 @@ class EndDrawer extends StatelessWidget {
     );
   }
 
+  /// Build the UI of the end drawer when the user is logged in
   Widget _buildLoggedInEndDrawer(context) {
     return SafeArea(
       child: Column(
@@ -44,7 +49,7 @@ class EndDrawer extends StatelessWidget {
               ),
             ],
           ),
-          _buildKarmaAndRedditCake(),
+          _buildKarmaAndRedditAge(),
           _buildScrollViewButtons(),
           _buildSettingsButton(context),
         ],
@@ -52,6 +57,7 @@ class EndDrawer extends StatelessWidget {
     );
   }
 
+  /// Build the UI of the end drawer when the user is logged out
   Widget _buildLoggedOutEndDrawer(context) {
     return SafeArea(
       child: Column(
@@ -98,6 +104,7 @@ class EndDrawer extends StatelessWidget {
     );
   }
 
+  /// Build the UI of the profile picture, only when user is logged in
   Widget _buildProfilePicture(context) {
     return BlocBuilder<EndDrawerCubit, EndDrawerState>(
       builder: (context, state) {
@@ -117,15 +124,22 @@ class EndDrawer extends StatelessWidget {
           onTap: () {
             chooseProfilePhotoBottomSheet(context);
           },
-          child: const Icon(
-            Icons.person_pin,
-            size: 240,
-          ),
+          child: _profilePicture == ""
+              ? const Icon(
+                  Icons.person_pin,
+                  size: 240,
+                )
+              : CircleAvatar(
+                  radius: 120.0,
+                  backgroundImage: NetworkImage(_profilePicture),
+                  backgroundColor: Colors.transparent,
+                ),
         );
       },
     );
   }
 
+  /// Build the bottom settings button of the drawer
   Widget _buildSettingsButton(context) {
     return ListTile(
       leading: const Icon(Icons.settings),
@@ -138,6 +152,7 @@ class EndDrawer extends StatelessWidget {
     );
   }
 
+  /// Build the scroll view buttons of the drawer
   Widget _buildScrollViewButtons() {
     return Expanded(
       child: SingleChildScrollView(
@@ -183,7 +198,8 @@ class EndDrawer extends StatelessWidget {
     );
   }
 
-  Widget _buildKarmaAndRedditCake() {
+  /// Build the UI of Karma and Reddit age of the drawer
+  Widget _buildKarmaAndRedditAge() {
     return Column(
       children: [
         SizedBox(
@@ -230,6 +246,8 @@ class EndDrawer extends StatelessWidget {
     );
   }
 
+  /// Build the UI of the online status bar in the drawer,
+  /// It is UI only (no functionality)
   Widget _buildOnlineStatus() {
     return Container(
       decoration: BoxDecoration(
@@ -262,6 +280,7 @@ class EndDrawer extends StatelessWidget {
     );
   }
 
+  /// Build the UI of the username button
   Widget _buildUsernameButton(context) {
     return TextButton(
       onPressed: () => _accountsBottomSheet(context),
@@ -280,6 +299,7 @@ class EndDrawer extends StatelessWidget {
     );
   }
 
+  /// Opens bottom sheet to see the selected account and log out
   void _accountsBottomSheet(context) {
     showModalBottomSheet<void>(
       context: context,
@@ -356,6 +376,7 @@ class EndDrawer extends StatelessWidget {
     );
   }
 
+  /// Opens the log out bottom sheet
   void _logOutBottomSheet(context) {
     showModalBottomSheet<void>(
       context: context,
@@ -417,6 +438,7 @@ class EndDrawer extends StatelessWidget {
     );
   }
 
+  /// Pick the image when changing profile picture
   Future pickImage(ImageSource src, context) async {
     try {
       Navigator.pop(context);
@@ -432,6 +454,7 @@ class EndDrawer extends StatelessWidget {
     }
   }
 
+  /// Opens bottom sheet to select the destination of the photo (Camera, Library)
   void chooseProfilePhotoBottomSheet(BuildContext ctx) {
     showModalBottomSheet(
       context: ctx,
@@ -490,6 +513,7 @@ class EndDrawer extends StatelessWidget {
     );
   }
 
+  /// Display message when the profile photo is changed successfully
   void displayMsg(
       BuildContext context, Color color, String title, String subtitle) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(

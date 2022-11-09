@@ -7,6 +7,7 @@ import 'package:reddit/data/model/left_drawer/left_drawer_model.dart';
 import '../../../data/repository/left_drawer/left_drawer_repository.dart';
 import '../../../data/web_services/left_drawer/left_drawer_web_services.dart';
 
+/// Build the UI of the left drawer of home page on android.
 class LeftDrawer extends StatefulWidget {
   late bool _isLoggedIn;
 
@@ -45,6 +46,7 @@ class _LeftDrawerState extends State<LeftDrawer> {
     );
   }
 
+  /// Build the UI of the left drawer when the user is logged in
   Widget _buildLoggedInEndDrawer(context) {
     return SafeArea(
       child: Column(
@@ -55,6 +57,7 @@ class _LeftDrawerState extends State<LeftDrawer> {
     );
   }
 
+  /// Build the UI of the end drawer when the user is logged out
   Widget _buildLoggedOutEndDrawer(context) {
     return SafeArea(
         child: Column(
@@ -77,6 +80,7 @@ class _LeftDrawerState extends State<LeftDrawer> {
     ));
   }
 
+  /// Build the UI of the scroll view buttons of the right drawer
   Widget _buildScrollViewButtons() {
     return Expanded(
       child: SingleChildScrollView(
@@ -252,11 +256,12 @@ class _LeftDrawerState extends State<LeftDrawer> {
     );
   }
 
-  // TODO: complete these functions
+  /// Add a subreddit or user to favorites
   void _addToFavorites(LeftDrawerModel leftDrawerModel) {
     BlocProvider.of<LeftDrawerCubit>(context).addToFavorites(leftDrawerModel);
   }
 
+  /// Remove a subreddit or user from favorites
   void _removeFromFavorites(LeftDrawerModel leftDrawerModel) {
     BlocProvider.of<LeftDrawerCubit>(context)
         .removeFromFavorites(leftDrawerModel);
