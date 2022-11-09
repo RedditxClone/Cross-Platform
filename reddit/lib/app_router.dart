@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/presentation/screens/choose_gender_android.dart';
-import 'package:reddit/presentation/screens/choose_screen_android.dart';
+import 'package:reddit/presentation/screens/choose_profile_screen.dart';
 import 'package:reddit/presentation/screens/forget_password_android.dart';
 import 'package:reddit/presentation/screens/forget_password_web.dart';
 import 'package:reddit/presentation/screens/forget_username_android.dart';

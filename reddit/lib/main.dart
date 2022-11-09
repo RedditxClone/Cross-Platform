@@ -26,7 +26,6 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       onGenerateRoute: appRouter.generateRoute,
       darkTheme: ThemeData(
-        primarySwatch: Colors.grey,
         brightness: Brightness.dark,
         scaffoldBackgroundColor: Colors.black,
         appBarTheme: const AppBarTheme(

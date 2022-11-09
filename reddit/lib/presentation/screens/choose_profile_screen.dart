@@ -11,16 +11,18 @@ class ChooseProfileImgAndroid extends StatefulWidget {
   final User newUser;
   @override
   State<ChooseProfileImgAndroid> createState() =>
-      _ChooseProfileImgAndroidState(newUser);
+      ChooseProfileImgAndroidState(newUser);
 }
 
-class _ChooseProfileImgAndroidState extends State<ChooseProfileImgAndroid> {
+class ChooseProfileImgAndroidState extends State<ChooseProfileImgAndroid> {
   final User newUser;
   File? imgCover;
 
-  _ChooseProfileImgAndroidState(this.newUser);
+  ChooseProfileImgAndroidState(this.newUser);
+  //this function to display the image if selected and if not it will show a static icon
   void displayMsg(
-      BuildContext context, Color color, String title, String subtitle) {
+      BuildContext context, Color color, String title, String subtitle) 
+      {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Container(
         padding: const EdgeInsets.all(5),
@@ -61,7 +63,7 @@ class _ChooseProfileImgAndroidState extends State<ChooseProfileImgAndroid> {
       elevation: 0,
     ));
   }
-
+//this function to create the bottom sheet resposible to choose the image
   void chooseProfilePhotoBottomSheet(BuildContext ctx) {
     showModalBottomSheet(
         context: ctx,
@@ -119,6 +121,7 @@ class _ChooseProfileImgAndroidState extends State<ChooseProfileImgAndroid> {
         });
   }
 
+//this function to get the image from the gallery or take it by the camera
   Future pickImage(ImageSource src, String dest) async {
     try {
       Navigator.pop(context);
@@ -163,122 +166,130 @@ class _ChooseProfileImgAndroidState extends State<ChooseProfileImgAndroid> {
         ],
       ),
       body: Container(
-        padding: const EdgeInsets.fromLTRB(10, 20, 0, 0),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
-                    child: Text(
-                      'Choose your profile photo',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 30,
-                      ),
+        padding: const EdgeInsets.all(8),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Text(
+                    'Choose your profile photo',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 30,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 30),
-                    child: RichText(
-                        text: const TextSpan(children: [
-                      TextSpan(
-                        text: "This how people will see you on Reddit.\n",
-                        style: TextStyle(
-                          fontSize: 17,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 40),
+                  child: RichText(
+                    textAlign: TextAlign.center,
+                    text: const TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "This how people will see you on Reddit.\n",
+                          style: TextStyle(
+                            fontSize: 17,
+                          ),
                         ),
-                      ),
-                      TextSpan(
-                        text: "(You can change it later if you'd like)",
-                        style: TextStyle(
-                          fontSize: 17,
+                        TextSpan(
+                          text: "(You can change it later if you'd like)",
+                          style: TextStyle(
+                            fontSize: 17,
+                          ),
                         ),
-                      ),
-                    ])),
+                      ],
+                    ),
                   ),
-                  Container(
-                    alignment: Alignment.center,
-                    decoration: const BoxDecoration(shape: BoxShape.circle),
-                    child: imgCover != null
-                        ? ClipOval(
-                            child: InkWell(
-                              onTap: () =>
-                                  chooseProfilePhotoBottomSheet(context),
-                              child: Image.file(
-                                imgCover!,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          )
-                        : ElevatedButton(
-                            onPressed: () =>
-                                chooseProfilePhotoBottomSheet(context),
-                            style: ElevatedButton.styleFrom(
-                              primary: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(80.0),
-                              ),
-                            ),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 20, horizontal: 5),
-                              child: const Icon(
-                                Icons.person,
-                                size: 40,
-                                color: Colors.black,
-                              ),
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  height: MediaQuery.of(context).size.width * 0.8,
+                  alignment: Alignment.center,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                  ),
+                  child: imgCover != null
+                      ? ClipOval(
+                          child: InkWell(
+                            onTap: () => chooseProfilePhotoBottomSheet(context),
+                            child: Image.file(
+                              imgCover!,
+                              fit: BoxFit.fill,
                             ),
                           ),
-                  ),
-                ],
-              ),
-              Container(
-                width: double.infinity,
-                height: 80,
-                padding: const EdgeInsets.all(15),
-                color: Theme.of(context).scaffoldBackgroundColor,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pushReplacementNamed(HOME_PAGE);
-                  },
-                  style: const ButtonStyle(
-                    shape: MaterialStatePropertyAll(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(25),
+                        )
+                      : ElevatedButton(
+                          onPressed: () =>
+                              chooseProfilePhotoBottomSheet(context),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(80.0),
+                            ),
+                          ),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 20, horizontal: 5),
+                            child: const Icon(
+                              Icons.person,
+                              size: 40,
+                              color: Colors.black,
+                            ),
+                          ),
                         ),
+                ),
+              ],
+            ),
+            Container(
+              width: double.infinity,
+              height: 80,
+              padding: const EdgeInsets.all(15),
+              color: Theme.of(context).scaffoldBackgroundColor,
+              child: ElevatedButton(
+                onPressed: () {
+                  // newUser.imageUrl = imgCover!.readAsString() as String?;
+                  Navigator.of(context).pushReplacementNamed(
+                    HOME_PAGE,
+                    arguments: newUser,
+                  );
+                },
+                style: const ButtonStyle(
+                  shape: MaterialStatePropertyAll(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(25),
                       ),
                     ),
-                    padding: MaterialStatePropertyAll(EdgeInsets.all(0.0)),
                   ),
-                  child: Ink(
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Color.fromARGB(255, 139, 9, 0),
-                          Color.fromARGB(255, 255, 136, 0)
-                        ],
-                      ),
-                      borderRadius: BorderRadius.all(Radius.circular(80.0)),
+                  padding: MaterialStatePropertyAll(EdgeInsets.all(0.0)),
+                ),
+                child: Ink(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Color.fromARGB(255, 139, 9, 0),
+                        Color.fromARGB(255, 255, 136, 0)
+                      ],
                     ),
-                    child: Container(
-                      constraints:
-                          const BoxConstraints(minWidth: 88.0, minHeight: 50.0),
-                      alignment: Alignment.center,
-                      child: const Text(
-                        'Save and Continue',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 20),
-                      ),
+                    borderRadius: BorderRadius.all(Radius.circular(80.0)),
+                  ),
+                  child: Container(
+                    constraints:
+                        const BoxConstraints(minWidth: 88.0, minHeight: 50.0),
+                    alignment: Alignment.center,
+                    child: const Text(
+                      'Save and Continue',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 20),
                     ),
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
