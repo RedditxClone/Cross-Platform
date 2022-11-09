@@ -11,17 +11,17 @@ import 'package:reddit/data/repository/safety_settings_repository.dart';
 import 'package:reddit/data/web_services/safety_settings_web_services.dart';
 import 'package:reddit/presentation/screens/safety_settings_web.dart';
 
-class MockAccountSettingsWebService extends Mock
+class MockSafetySettingsWebService extends Mock
     implements SafetySettingsWebServices {}
 
-class MockAccountSettingsCubit extends MockCubit<SafetySettingsState>
+class MockSafetySettingsCubit extends MockCubit<SafetySettingsState>
     implements SafetySettingsCubit {}
 
 void main() async {
-  late MockAccountSettingsWebService mockAccountSettingsWebService;
-  late SafetySettingsRepository accountSettingsRepository;
-  late SafetySettingsCubit accountSettingsCubit;
-  late MockAccountSettingsCubit mockAccountSettingsCubit;
+  late MockSafetySettingsWebService mockSafetySettingsWebService;
+  late SafetySettingsRepository safetySettingsRepository;
+  late SafetySettingsCubit safetySettingsCubit;
+  late MockSafetySettingsCubit mockSafetySettingsCubit;
   const String settingsFromWebServices = '''{
     "badCommentAutoCollapse": "MEDIUM",
     "showInSearch": true,
@@ -33,13 +33,7 @@ void main() async {
     "personalizeRec_ourPartners": true,
     "useTwoFactorAuthentication": false
   }''';
-  const Map<String, String> patchResponse = {
-    'cover':
-        'https://images.unsplash.com/photo-1504805572947-34fad45aed93?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8Y292ZXIlMjBwaG90b3xlbnwwfHwwfHw%3D&w=1000&q=80',
-    'profile':
-        'https://preview.keenthemes.com/metronic-v4/theme_rtl/assets/pages/media/profile/profile_user.jpg'
-  };
-  final settingsFromRepository = SafetySettings(
+  final safetySettingsFromRepository = SafetySettings(
       disroptiveSettings: 'MEDIUM',
       blocked: ['@_Mark1'],
       showUnInSearch: true,
@@ -52,10 +46,10 @@ void main() async {
 
   group("State test", () {
     setUp(() {
-      mockAccountSettingsWebService = MockAccountSettingsWebService();
-      accountSettingsRepository =
-          SafetySettingsRepository(mockAccountSettingsWebService);
-      accountSettingsCubit = SafetySettingsCubit(accountSettingsRepository);
+      mockSafetySettingsWebService = MockSafetySettingsWebService();
+      safetySettingsRepository =
+          SafetySettingsRepository(mockSafetySettingsWebService);
+      safetySettingsCubit = SafetySettingsCubit(safetySettingsRepository);
     });
 
     /// Calling getAccountSettings() function returns the correct state
@@ -63,12 +57,12 @@ void main() async {
     blocTest<SafetySettingsCubit, SafetySettingsState>(
       'Settings loaded state is emitted correctly after getting settings data from server',
       setUp: () {
-        when(() => mockAccountSettingsWebService.getUserSettings()).thenAnswer(
+        when(() => mockSafetySettingsWebService.getUserSettings()).thenAnswer(
           (_) async => settingsFromWebServices,
         );
       },
       build: () {
-        return accountSettingsCubit;
+        return safetySettingsCubit;
       },
       act: (SafetySettingsCubit cubit) => cubit.getUserSettings(),
       expect: () => [isA<SafetySettingsAvailable>()],
@@ -76,15 +70,15 @@ void main() async {
     blocTest<SafetySettingsCubit, SafetySettingsState>(
       'Settings loaded state is emitted correctly after updating settings',
       setUp: () {
-        when(() => mockAccountSettingsWebService
+        when(() => mockSafetySettingsWebService
                 .updatePrefs({'disroptiveSettings': 'MEDIUM'}))
             .thenAnswer((_) async => 200);
       },
       build: () {
-        return accountSettingsCubit;
+        return safetySettingsCubit;
       },
       act: (SafetySettingsCubit cubit) => cubit.updateSettings(
-          settingsFromRepository, {"disroptiveSettings": "MEDIUM"}),
+          safetySettingsFromRepository, {"disroptiveSettings": "MEDIUM"}),
       expect: () => [isA<SafetySettingsChanged>()],
     );
   });
@@ -94,7 +88,7 @@ void main() async {
     test('Model is generated correctly', () {
       expect(
         SafetySettings.fromjson(jsonDecode(settingsFromWebServices)),
-        settingsFromRepository,
+        safetySettingsFromRepository,
       );
     });
   });
@@ -103,19 +97,21 @@ void main() async {
   /// Check if update settings function is called when updating any value from UI.
   group("UI data matches response data", () {
     setUp(() {
-      mockAccountSettingsCubit = MockAccountSettingsCubit();
-      when(() => mockAccountSettingsCubit.state)
-          .thenReturn(SafetySettingsAvailable(settingsFromRepository));
+      mockSafetySettingsCubit = MockSafetySettingsCubit();
+      when(() => mockSafetySettingsCubit.state)
+          .thenReturn(SafetySettingsChanged(safetySettingsFromRepository));
     });
-    testWidgets('Account settings screen', (WidgetTester tester) async {
+    testWidgets('Safety settings screen', (WidgetTester tester) async {
       await tester.pumpWidget(
         MultiBlocProvider(
           providers: [
             BlocProvider<SafetySettingsCubit>(
-              create: (context) => mockAccountSettingsCubit,
+              create: (context) => mockSafetySettingsCubit,
             )
           ],
-          child: const MaterialApp(home: SafetySettingsWeb()),
+          child: const MaterialApp(
+              home: Scaffold(
+                  body: SingleChildScrollView(child: SafetySettingsWeb()))),
         ),
       );
       // Allow people to follow you toggle is displayed correctly
@@ -123,15 +119,16 @@ void main() async {
           find.byWidgetPredicate((widget) =>
               widget is SwitchListTile &&
               widget.key == const Key("showUnInSearch") &&
-              widget.value == settingsFromRepository.showUnInSearch),
+              widget.value == safetySettingsFromRepository.showUnInSearch),
           findsOneWidget);
       // Update settings function is called after pressing on the switch
       await tester.ensureVisible(find.byKey(const Key("showUnInSearch")));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key("showUnInSearch")));
-      verify(() => mockAccountSettingsCubit.updateSettings(
-          settingsFromRepository,
-          {"showUnInSearch": settingsFromRepository.showUnInSearch})).called(1);
+      verify(() => mockSafetySettingsCubit.updateSettings(
+              safetySettingsFromRepository,
+              {"showInSearch": safetySettingsFromRepository.showUnInSearch}))
+          .called(1);
     });
   });
 }
