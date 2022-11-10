@@ -116,7 +116,7 @@ class _LoginWebState extends State<LoginWeb> {
           userId: value?.id,
         );
         Navigator.of(context).pushNamed(
-          HOME_PAGE,
+          homePageRoute,
           arguments: newUser,
         );
       });
@@ -144,7 +144,8 @@ class _LoginWebState extends State<LoginWeb> {
         }).then((value) {
           if (value.statusCode == 201) {
             newUser = User.fromJson(value.data);
-            Navigator.of(context).pushNamed(HOME_PAGE); //navigate to home page
+            Navigator.of(context)
+                .pushNamed(homePageRoute); //navigate to home page
           } else {
             setState(() {
               loginCorrect = false;
@@ -177,227 +178,36 @@ class _LoginWebState extends State<LoginWeb> {
     );
     return Scaffold(
       appBar: null,
-      body: Row(
-        children: [
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.09,
-            height: MediaQuery.of(context).size.height,
-            child: Image.asset(
-              'assets/images/sidelogo.png',
-              fit: BoxFit.fitHeight,
+      body: Container(
+        // color: Colors.white,
+        child: Row(
+          children: [
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.09,
+              height: MediaQuery.of(context).size.height,
+              child: Image.asset(
+                'assets/images/sidelogo.png',
+                fit: BoxFit.fitHeight,
+              ),
             ),
-          ),
-          Container(
-            height: MediaQuery.of(context).size.height,
-            // width: MediaQuery.of(context).size.width * 0.4,
-            padding:
-                EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.02),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Log in",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.01,
-                    ),
-                    Row(
-                      children: [
-                        const Text(
-                          "By continuing, you agree to our ",
-                          style: textStyleForPolicy,
-                        ),
-                        Link(
-                          uri: userAgreementUrl,
-                          target: LinkTarget.blank,
-                          builder: (context, followLink) => InkWell(
-                            onTap: followLink,
-                            child: const Text(
-                              "User Agreement",
-                              style: textStyleForLinks,
-                            ),
-                          ),
-                        ),
-                        const Text(" and ", style: textStyleForPolicy),
-                        Link(
-                          uri: privacyPolicyUrl,
-                          target: LinkTarget.blank,
-                          builder: (context, followLink) => InkWell(
-                            onTap: followLink,
-                            child: const Text(
-                              "Privacy Policy.",
-                              style: textStyleForLinks,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                Column(
-                  children: [
-                    createContinueWithButton("google"),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.01,
-                    ),
-                    createContinueWithButton("facebook"),
-                  ],
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.2,
-                  child: Column(
+            Container(
+              height: MediaQuery.of(context).size.height,
+              // width: MediaQuery.of(context).size.width * 0.4,
+              padding: EdgeInsets.only(
+                  left: MediaQuery.of(context).size.width * 0.02),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: const [
-                          Expanded(
-                            child: Divider(
-                              thickness: 1,
-                              indent: 30,
-                              endIndent: 30,
-                            ),
-                          ),
-                          Center(
-                            child: Text(
-                              "OR",
-                              style: TextStyle(
-                                color: Color.fromARGB(255, 85, 83, 83),
-                                fontSize: 17,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Divider(
-                              thickness: 1,
-                              indent: 30,
-                              endIndent: 30,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.01,
-                      ),
-                      TextField(
-                        controller: usernameController,
-                        decoration: InputDecoration(
-                          hintText: "CHOOSE A USERNAME",
-                          label: const Text("CHOOSE A USERNAME"),
-                          hintStyle: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                            color: Colors.grey,
-                          ),
-                          border: const OutlineInputBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(8),
-                            ),
-                          ),
-                          prefixIcon: usernameController.text.isEmpty
-                              ? null
-                              : usernameCorrect
-                                  ? const Icon(
-                                      IconData(0xf635,
-                                          fontFamily: 'MaterialIcons'),
-                                      color: Colors.green,
-                                    )
-                                  : const Icon(
-                                      IconData(0xf713,
-                                          fontFamily: 'MaterialIcons'),
-                                      color: Colors.red,
-                                    ),
-                          errorText: usernameController.text.isEmpty ||
-                                  usernameCorrect
-                              ? null
-                              : "Username must be between 3 and 20 characters",
+                      const Text(
+                        "Log in",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
                         ),
-                        maxLines: 1,
-                        // maxLength: 20,
-                        textInputAction: TextInputAction.unspecified,
-                        onChanged: (value) {
-                          setState(() {
-                            usernameCorrect =
-                                value.length >= 3 && value.length <= 20;
-                          });
-                        },
-                      ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.01,
-                      ),
-                      TextField(
-                        controller: passwordController,
-                        decoration: InputDecoration(
-                          hintText: "PASSWORD",
-                          label: const Text("PASSWORD"),
-                          hintStyle: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                            color: Colors.grey,
-                          ),
-                          border: const OutlineInputBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(8),
-                            ),
-                          ),
-                          suffixIcon: IconButton(
-                            onPressed: () => setState(() {
-                              passwordVisible = !passwordVisible;
-                            }),
-                            icon: Icon(
-                              passwordVisible
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
-                            ),
-                          ),
-                          prefixIcon: passwordController.text.isEmpty
-                              ? null
-                              : loginCorrect
-                                  ? const Icon(
-                                      IconData(0xf635,
-                                          fontFamily: 'MaterialIcons'),
-                                      color: Colors.green,
-                                    )
-                                  : const Icon(
-                                      IconData(0xf713,
-                                          fontFamily: 'MaterialIcons'),
-                                      color: Colors.red,
-                                    ),
-                          errorText:
-                              passwordController.text.isEmpty || loginCorrect
-                                  ? null
-                                  : "Incorrect is password",
-                        ),
-                        maxLines: 1,
-                        obscureText: passwordVisible,
-                        keyboardType: TextInputType.visiblePassword,
-                      ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.01,
-                      ),
-                      ElevatedButton(
-                        onPressed: continueLogin,
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(
-                            const Color.fromARGB(255, 42, 94, 137),
-                          ),
-                          shape: MaterialStateProperty.all(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          padding: MaterialStateProperty.all(
-                            const EdgeInsets.fromLTRB(120, 25, 120, 25),
-                          ),
-                        ),
-                        child: const Text("LOG IN"),
                       ),
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.01,
@@ -405,40 +215,29 @@ class _LoginWebState extends State<LoginWeb> {
                       Row(
                         children: [
                           const Text(
-                            "Forgot your ",
-                            style: TextStyle(
-                              color: Color.fromARGB(255, 85, 83, 83),
-                              fontSize: 14,
-                            ),
+                            "By continuing, you agree to our ",
+                            style: textStyleForPolicy,
                           ),
-                          InkWell(
-                            onTap: () => Navigator.of(context).pushNamed(
-                                forgetUsernameWeb), //navigate to login page
-                            child: const Text(
-                              "username",
-                              style: TextStyle(
-                                color: Color.fromARGB(255, 42, 94, 137),
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
+                          Link(
+                            uri: userAgreementUrl,
+                            target: LinkTarget.blank,
+                            builder: (context, followLink) => InkWell(
+                              onTap: followLink,
+                              child: const Text(
+                                "User Agreement",
+                                style: textStyleForLinks,
                               ),
                             ),
                           ),
-                          const Text(
-                            " or ",
-                            style: TextStyle(
-                              color: Color.fromARGB(255, 85, 83, 83),
-                              fontSize: 14,
-                            ),
-                          ),
-                          InkWell(
-                            onTap: () => Navigator.of(context).pushNamed(
-                                forgetPasswordWeb), //navigate to login page
-                            child: const Text(
-                              "password ?",
-                              style: TextStyle(
-                                color: Color.fromARGB(255, 42, 94, 137),
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
+                          const Text(" and ", style: textStyleForPolicy),
+                          Link(
+                            uri: privacyPolicyUrl,
+                            target: LinkTarget.blank,
+                            builder: (context, followLink) => InkWell(
+                              onTap: followLink,
+                              child: const Text(
+                                "Privacy Policy.",
+                                style: textStyleForLinks,
                               ),
                             ),
                           ),
@@ -446,11 +245,216 @@ class _LoginWebState extends State<LoginWeb> {
                       ),
                     ],
                   ),
-                ),
-              ],
-            ),
-          )
-        ],
+                  Column(
+                    children: [
+                      createContinueWithButton("google"),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.01,
+                      ),
+                      createContinueWithButton("facebook"),
+                    ],
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.2,
+                    child: Column(
+                      children: [
+                        Row(
+                          children: const [
+                            Expanded(
+                              child: Divider(
+                                thickness: 1,
+                                indent: 30,
+                                endIndent: 30,
+                              ),
+                            ),
+                            Center(
+                              child: Text(
+                                "OR",
+                                style: TextStyle(
+                                  color: Color.fromARGB(255, 85, 83, 83),
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Divider(
+                                thickness: 1,
+                                indent: 30,
+                                endIndent: 30,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.01,
+                        ),
+                        TextField(
+                          controller: usernameController,
+                          decoration: InputDecoration(
+                            hintText: "CHOOSE A USERNAME",
+                            label: const Text("CHOOSE A USERNAME"),
+                            hintStyle: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                              color: Colors.grey,
+                            ),
+                            border: const OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(8),
+                              ),
+                            ),
+                            prefixIcon: usernameController.text.isEmpty
+                                ? null
+                                : usernameCorrect
+                                    ? const Icon(
+                                        IconData(0xf635,
+                                            fontFamily: 'MaterialIcons'),
+                                        color: Colors.green,
+                                      )
+                                    : const Icon(
+                                        IconData(0xf713,
+                                            fontFamily: 'MaterialIcons'),
+                                        color: Colors.red,
+                                      ),
+                            errorText: usernameController.text.isEmpty ||
+                                    usernameCorrect
+                                ? null
+                                : "Username must be between 3 and 20 characters",
+                          ),
+                          maxLines: 1,
+                          // maxLength: 20,
+                          textInputAction: TextInputAction.unspecified,
+                          onChanged: (value) {
+                            setState(() {
+                              usernameCorrect =
+                                  value.length >= 3 && value.length <= 20;
+                            });
+                          },
+                        ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.01,
+                        ),
+                        TextField(
+                          controller: passwordController,
+                          decoration: InputDecoration(
+                            hintText: "PASSWORD",
+                            label: const Text("PASSWORD"),
+                            hintStyle: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                              color: Colors.grey,
+                            ),
+                            border: const OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(8),
+                              ),
+                            ),
+                            suffixIcon: IconButton(
+                              onPressed: () => setState(() {
+                                passwordVisible = !passwordVisible;
+                              }),
+                              icon: Icon(
+                                passwordVisible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                              ),
+                            ),
+                            prefixIcon: passwordController.text.isEmpty
+                                ? null
+                                : loginCorrect
+                                    ? const Icon(
+                                        IconData(0xf635,
+                                            fontFamily: 'MaterialIcons'),
+                                        color: Colors.green,
+                                      )
+                                    : const Icon(
+                                        IconData(0xf713,
+                                            fontFamily: 'MaterialIcons'),
+                                        color: Colors.red,
+                                      ),
+                            errorText:
+                                passwordController.text.isEmpty || loginCorrect
+                                    ? null
+                                    : "Incorrect is password",
+                          ),
+                          maxLines: 1,
+                          obscureText: passwordVisible,
+                          keyboardType: TextInputType.visiblePassword,
+                        ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.01,
+                        ),
+                        ElevatedButton(
+                          onPressed: continueLogin,
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all(
+                              const Color.fromARGB(255, 42, 94, 137),
+                            ),
+                            shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            padding: MaterialStateProperty.all(
+                              const EdgeInsets.fromLTRB(120, 25, 120, 25),
+                            ),
+                          ),
+                          child: const Text("LOG IN"),
+                        ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.01,
+                        ),
+                        Row(
+                          children: [
+                            const Text(
+                              "Forgot your ",
+                              style: TextStyle(
+                                color: Color.fromARGB(255, 85, 83, 83),
+                                fontSize: 14,
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () => Navigator.of(context).pushNamed(
+                                  forgetUsernameWeb), //navigate to login page
+                              child: const Text(
+                                "username",
+                                style: TextStyle(
+                                  color: Color.fromARGB(255, 42, 94, 137),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            const Text(
+                              " or ",
+                              style: TextStyle(
+                                color: Color.fromARGB(255, 85, 83, 83),
+                                fontSize: 14,
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () => Navigator.of(context).pushNamed(
+                                  forgetPasswordWeb), //navigate to login page
+                              child: const Text(
+                                "password ?",
+                                style: TextStyle(
+                                  color: Color.fromARGB(255, 42, 94, 137),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

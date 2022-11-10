@@ -14,16 +14,13 @@ const popularPageRoute = '/popular';
 //---------------------------------------
 // -----------Log in / Sign up-----------
 //---------------------------------------
-const logInRoute = "/login";
-const signUpRoute = "/signup";
 //---------------------------------------
 // ----------Settings routes-------------
 //---------------------------------------
-const settingTabUiRoute = '/setting_tab_ui';
+const settingsTabsRoute = "/tabs";
 //---------------------------------------
 // ------Account settings routes---------
 //---------------------------------------
-const settingsTabsRoute = "/tabs";
 const accountSettingsRoute = "/account_settings";
 const updateEmailAddressRoute = "/account_settings/update_email_address";
 const changePasswordRoute = "/account_settings/change_password";
@@ -48,7 +45,6 @@ const emailSettingsWebScreenRoute = "/emailSettings";
 const recaptchaRoute = "/recaptcha";
 const SIGNU_PAGE1 = '/signup1';
 const SIGNU_PAGE2 = '/signup2';
-const HOME_PAGE = '/home';
 const loginPage = '/login';
 const FACEBOOK_APP_ID = '3404099966577167';
 const USER_AGGREMENT = 'https://www.redditinc.com/policies/user-agreement';

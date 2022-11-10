@@ -30,7 +30,7 @@ class _HomeWebState extends State<HomeWeb> {
               ? const LeftList()
               : const SizedBox(width: 0),
           Container(
-            width: widget.isLoggedIn
+            width: widget.isLoggedIn || MediaQuery.of(context).size.width < 1300
                 ? MediaQuery.of(context).size.width
                 : MediaQuery.of(context).size.width - 280,
             child: SingleChildScrollView(
@@ -45,9 +45,13 @@ class _HomeWebState extends State<HomeWeb> {
                           : responsive.isLargeSizedScreen()
                               ? 1
                               : 2,
-                      child: const SizedBox(width: 10)),
+                      child: const SizedBox(width: 0)),
                   Expanded(
-                    flex: 5,
+                    flex: responsive.isLargeSizedScreen()
+                        ? 8
+                        : responsive.isXLargeSizedScreen()
+                            ? 6
+                            : 7,
                     child: Container(
                       padding: const EdgeInsets.all(15),
                       width: 10,
@@ -119,7 +123,7 @@ class _HomeWebState extends State<HomeWeb> {
                           : responsive.isLargeSizedScreen()
                               ? 1
                               : 2,
-                      child: const SizedBox(width: 10))
+                      child: const SizedBox(width: 0))
                 ],
               ),
             ),

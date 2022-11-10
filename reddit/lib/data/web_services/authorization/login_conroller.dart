@@ -12,7 +12,7 @@ class GoogleSingInApi {
 
   static Future<GoogleSignInAccount?> loginMob() => _googleSignInMob.signIn();
   static Future<GoogleSignInAccount?> logoutMob() => _googleSignInMob
-      .signOut(); //this signout is for mobile but it saves your account
+      .signOut(); //this signout is for mobile but it saves your account`
   static Future<GoogleSignInAccount?> signoutMob() => _googleSignInMob
       .disconnect(); //this signout is for mobile and it deletes your account
 

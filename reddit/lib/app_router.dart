@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:reddit/business_logic/cubit/choose_profile_image_login_cubit.dart';
 import 'presentation/screens/setting_tab_ui.dart';
 import 'package:reddit/presentation/screens/recaptcha_screen.dart'
     if (dart.library.html) 'package:reddit/presentation/screens/recaptcha_screen_web.dart'
@@ -63,10 +64,13 @@ class AppRouter {
   late SafetySettingsCubit safetySettingsCubit;
   late SettingsRepository settingsRepository;
   late SettingsCubit settingsCubit;
+  late ChooseProfileImageLoginCubit chooseProfileImageLoginCubit;
 
   late EmailSettingsRepository emailSettingsReposity;
   late EmailSettingsCubit emailSettingsCubit;
   late EmailSettingsWebServices emailSettingsWebServices;
+
+  static User? user;
   AppRouter() {
     // initialise repository and cubit objects
     safetySettingsRepository =
@@ -74,6 +78,8 @@ class AppRouter {
     safetySettingsCubit = SafetySettingsCubit(safetySettingsRepository);
     settingsRepository = SettingsRepository(SettingsWebServices());
     settingsCubit = SettingsCubit(settingsRepository);
+    chooseProfileImageLoginCubit =
+        ChooseProfileImageLoginCubit(settingsRepository);
     emailSettingsWebServices = EmailSettingsWebServices();
     emailSettingsReposity = EmailSettingsRepository(emailSettingsWebServices);
     emailSettingsCubit = EmailSettingsCubit(emailSettingsReposity);
@@ -86,12 +92,15 @@ class AppRouter {
     final arguments = settings.arguments;
     switch (settings.name) {
       case homePageRoute:
-        Map<String, dynamic> argMap = arguments as Map<String, dynamic>;
+        user = settings.arguments as User?;
         return MaterialPageRoute(
-          builder: (_) => kIsWeb
-              ? HomePageWeb(isLoggedIn: argMap["isLoggedIn"])
-              : HomePage(argMap["isLoggedIn"]),
+          builder: (_) => kIsWeb ? HomePageWeb(user) : HomePage(user),
         );
+
+      case popularPageRoute:
+        final user = settings.arguments as User?;
+        return MaterialPageRoute(
+            builder: (_) => kIsWeb ? PopularWeb(user) : const Popular());
 
       // case emailSettingsWebScreenRoute:
       //   return MaterialPageRoute(
@@ -99,14 +108,12 @@ class AppRouter {
       //             value: emailSettingsCubit,
       //             child: const EmailSettingsWeb(),
       //           ));
-      case settingTabUiRoute:
-        return MaterialPageRoute(builder: (_) => const SettingTabUi());
+      // case HOME_PAGE:
+      //   final user = settings.arguments as User;
+      //   return MaterialPageRoute(
+      //     builder: (_) => Home(user: user),
+      //   );
 
-      case HOME_PAGE:
-        final user = settings.arguments as User;
-        return MaterialPageRoute(
-          builder: (_) => Home(user: user),
-        );
       case SIGNU_PAGE2:
         final user = settings.arguments as User;
         return MaterialPageRoute(
@@ -154,8 +161,11 @@ class AppRouter {
       case chooseProfileImgScreen:
         final user = settings.arguments as User;
         return MaterialPageRoute(
-          builder: (_) => ChooseProfileImgAndroid(
-            newUser: user,
+          builder: (_) => BlocProvider(
+            create: (context) => chooseProfileImageLoginCubit,
+            child: ChooseProfileImgAndroid(
+              newUser: user,
+            ),
           ),
         );
       case chooseGenderScreen:
@@ -178,12 +188,6 @@ class AppRouter {
           ),
         );
       */
-      case popularPageRoute:
-        Map<String, dynamic> argMap = arguments as Map<String, dynamic>;
-        return MaterialPageRoute(
-            builder: (_) => kIsWeb
-                ? PopularWeb(isLoggedIn: argMap["isLoggedIn"])
-                : const Popular());
 
       case recaptchaRoute:
         // return MaterialPageRoute(builder: (_) => const RecaptchaScreenWeb());
@@ -206,7 +210,7 @@ class AppRouter {
         return MaterialPageRoute(
             builder: (_) => UpdateEmailAddressScreen(arguments));
       case settingsTabsRoute:
-        return MaterialPageRoute(builder: (_) => const SettingTabUi());
+        return MaterialPageRoute(builder: (_) => SettingTabUi(user: user));
 
       case changePasswordRoute:
         return MaterialPageRoute(builder: (context) {

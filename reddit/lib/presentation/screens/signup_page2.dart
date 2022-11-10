@@ -9,12 +9,14 @@ class SignupWeb2 extends StatefulWidget {
   const SignupWeb2({super.key, required this.user});
   final User user;
   @override
-  State<SignupWeb2> createState() => _SignupWeb2State(user: user);
+  State<SignupWeb2> createState() => _SignupWeb2State(user);
 }
 
 class _SignupWeb2State extends State<SignupWeb2> {
   late User user;
-  _SignupWeb2State({required this.user});
+  _SignupWeb2State(User user) {
+    this.user = user;
+  }
   var usernameController = TextEditingController();
   var passwordController = TextEditingController();
   bool passwordCorrect = false;
@@ -88,10 +90,11 @@ class _SignupWeb2State extends State<SignupWeb2> {
       if (value.statusCode == 201) {
         user = User.fromJson(jsonDecode(value.data));
         Navigator.of(ctx).pushReplacementNamed(
-          HOME_PAGE,
+          homePageRoute,
           arguments: user,
         );
       } else {
+        print(user);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Row(
@@ -314,14 +317,18 @@ class _SignupWeb2State extends State<SignupWeb2> {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        if (passwordCorrect && !usernameUsed) {
-                          user.name = usernameController.text;
-                          user.password = passwordController.text;
-                          Navigator.of(context).pushReplacementNamed(
-                            HOME_PAGE,
-                            arguments: user,
-                          ); //to the home page
-                        }
+                        // TODO : solve this condition (peter)
+                        // !usernameLengthError &&
+                        //         !passwordLengthError &&
+                        //         passwordCorrect &&
+                        //         !passwordEmpty &&
+                        //         !usernameError &&
+                        //         !usernameEmpty &&
+                        //         !redundantUsername
+                        //? () =>
+
+                        signUpContinue(context);
+                        //: null;
                       },
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all(

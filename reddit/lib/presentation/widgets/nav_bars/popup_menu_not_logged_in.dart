@@ -57,7 +57,7 @@ class PopupMenuNotLoggedIn extends StatelessWidget {
             _launchUrl('https://www.reddithelp.com/hc/en-us');
             break;
           case 1:
-            Navigator.pushNamed(context, logInRoute);
+            Navigator.pushNamed(context, loginPage);
             break;
           default:
             break;

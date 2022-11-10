@@ -7,6 +7,7 @@ import 'package:reddit/business_logic/cubit/settings/safety_settings_cubit.dart'
 import 'package:reddit/business_logic/cubit/settings/settings_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/theme_colors.dart';
+import 'package:reddit/data/model/signin.dart';
 import 'package:reddit/data/repository/account_settings_repository.dart';
 import 'package:reddit/data/repository/email_settings_repo.dart';
 import 'package:reddit/data/repository/safety_settings_repository.dart';
@@ -22,7 +23,8 @@ import 'package:reddit/presentation/screens/safety_settings_web.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 
 class SettingTabUi extends StatefulWidget {
-  const SettingTabUi({super.key});
+  User? user;
+  SettingTabUi({super.key, required this.user});
 
   @override
   State<SettingTabUi> createState() => _SettingTabUiState();
@@ -41,9 +43,8 @@ class _SettingTabUiState extends State<SettingTabUi> {
               const Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
           automaticallyImplyLeading: false,
           backgroundColor: defaultSecondaryColor,
-          title: const AppBarWebLoggedIn(
-            screen: 'User settings',
-          )),
+          title:
+              AppBarWebLoggedIn(user: widget.user!, screen: 'User settings')),
       body: SingleChildScrollView(
         child: Row(
           children: [

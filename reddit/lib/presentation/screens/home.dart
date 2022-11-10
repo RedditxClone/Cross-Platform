@@ -578,7 +578,7 @@ class _HomeState extends State<Home> {
                   onPressed: (() {
                     Navigator.pop(context);
                     Navigator.of(context).pushReplacementNamed(
-                      HOME_PAGE,
+                      homePageRoute,
                       arguments: user,
                     );
                   }),
@@ -689,7 +689,7 @@ class _HomeState extends State<Home> {
                         // newUser.imageUrl = imgCover!.readAsString() as String?;
                         Navigator.pop(context);
                         Navigator.of(context).pushReplacementNamed(
-                          HOME_PAGE,
+                          homePageRoute,
                           arguments: user,
                         );
                       },

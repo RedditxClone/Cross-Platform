@@ -366,7 +366,7 @@ class _SignupMobileState extends State<SignupMobile> {
         leading: BackButton(
           onPressed: () {
             Navigator.of(context).pushReplacementNamed(
-              HOME_PAGE,
+              homePageRoute,
               arguments: newUser,
             );
           },

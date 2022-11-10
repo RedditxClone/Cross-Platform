@@ -1,5 +1,7 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:reddit/constants/strings.dart';
+import 'package:reddit/data/model/signin.dart';
 import 'package:reddit/presentation/screens/home/home.dart';
 import 'package:reddit/presentation/screens/home/home_not_loggedin_mobile.dart';
 import 'package:reddit/presentation/screens/popular/popular.dart';
@@ -9,17 +11,26 @@ import 'package:reddit/presentation/screens/test_home_screens/notifications.dart
 import 'package:reddit/presentation/widgets/posts/add_post.dart';
 
 class HomePage extends StatefulWidget {
-  bool isLoggedin;
-  HomePage(this.isLoggedin, {Key? key}) : super(key: key);
+  User? user;
+  HomePage(this.user, {Key? key}) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<HomePage> createState() => _HomePageState(user: user);
 }
 
 class _HomePageState extends State<HomePage> {
+  User? user;
+  _HomePageState({required this.user});
   int _selectedPageIndex = 0;
   String _screen = 'Home';
   IconData dropDownArrow = Icons.keyboard_arrow_down;
+  late bool isLoggedin;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    isLoggedin = user != null;
+  }
 
   Widget buildHomeAppBar() {
     return Container(
@@ -65,7 +76,7 @@ class _HomePageState extends State<HomePage> {
       case 0:
         return {
           'page': _screen == 'Home'
-              ? widget.isLoggedin
+              ? isLoggedin
                   ? const Home()
                   : const HomeNotLoggedIn()
               : const Popular(),
@@ -154,7 +165,17 @@ class _HomePageState extends State<HomePage> {
                 onPressed: () {
                   Scaffold.of(context).openEndDrawer();
                 },
-                icon: const Icon(Icons.person, color: Colors.grey, size: 40));
+                icon: CircleAvatar(
+                    child: isLoggedin && user!.imageUrl != null
+                        ? Image.network(
+                            user!.imageUrl!,
+                            fit: BoxFit.cover,
+                          )
+                        : Icon(Icons.person,
+                            color: isLoggedin && user!.imageUrl == null
+                                ? Colors.orange
+                                : Colors.grey,
+                            size: 40)));
           })
         ],
       ),
@@ -177,7 +198,22 @@ class _HomePageState extends State<HomePage> {
                 4, Icons.notifications, Icons.notifications_outlined),
           ]),
       drawer: const Drawer(),
-      endDrawer: const Drawer(),
+      endDrawer: isLoggedin
+          ? Drawer(
+              child: Column(children: [
+                Text(user!.name!),
+                Text(user!.email!),
+                CircleAvatar(
+                  child: user!.imageUrl != null
+                      ? Image.network(
+                          user!.imageUrl!,
+                          fit: BoxFit.cover,
+                        )
+                      : const Icon(Icons.person),
+                )
+              ]),
+            )
+          : const SizedBox(width: 10),
     );
   }
 }

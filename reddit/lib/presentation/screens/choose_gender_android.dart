@@ -91,7 +91,7 @@ class _ChooseGenderAndroidState extends State<ChooseGenderAndroid> {
         leading: BackButton(
           onPressed: () {
             Navigator.of(context).pushReplacementNamed(
-              HOME_PAGE,
+              homePageRoute,
               arguments: newUser,
             );
           },
@@ -108,7 +108,7 @@ class _ChooseGenderAndroidState extends State<ChooseGenderAndroid> {
         actions: [
           TextButton(
             onPressed: (() {
-              Navigator.of(context).pushReplacementNamed(HOME_PAGE);
+              Navigator.of(context).pushReplacementNamed(homePageRoute);
             }),
             child: const Text(
               "Skip",

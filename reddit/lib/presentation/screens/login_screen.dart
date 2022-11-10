@@ -47,7 +47,7 @@ class _LoginMobileState extends State<LoginMobile> {
         debugPrint('success login');
         newUser = User.fromJson(jsonDecode(value.data));
         Navigator.of(ctx).pushReplacementNamed(
-          HOME_PAGE,
+          homePageRoute,
           arguments: newUser,
         );
       } else {
@@ -113,7 +113,7 @@ class _LoginMobileState extends State<LoginMobile> {
           if (value.statusCode == 201) {
             newUser = User.fromJson(jsonDecode(value.data));
             Navigator.of(context).pushReplacementNamed(
-              HOME_PAGE,
+              homePageRoute,
               arguments: newUser,
             );
           } else {
@@ -339,7 +339,7 @@ class _LoginMobileState extends State<LoginMobile> {
         leading: BackButton(
           onPressed: () {
             Navigator.of(context).pushReplacementNamed(
-              HOME_PAGE,
+              homePageRoute,
               arguments: newUser,
             );
           },

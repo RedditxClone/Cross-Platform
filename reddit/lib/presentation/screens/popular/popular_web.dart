@@ -1,21 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/theme_colors.dart';
+import 'package:reddit/data/model/signin.dart';
 import 'package:reddit/presentation/widgets/home_widgets/left_list_not_logged_in.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_Not_loggedin.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 import 'package:reddit/presentation/widgets/posts/posts_web.dart';
 
 class PopularWeb extends StatefulWidget {
-  final bool isLoggedIn;
-  const PopularWeb({Key? key, required this.isLoggedIn}) : super(key: key);
+  User? user;
+  PopularWeb(this.user, {Key? key}) : super(key: key);
 
   @override
-  State<PopularWeb> createState() => _PopularWebState();
+  State<PopularWeb> createState() => _PopularWebState(user: user);
 }
 
 class _PopularWebState extends State<PopularWeb> {
   late Responsive responsive;
+  late bool isLoggedIn;
+  User? user;
+  _PopularWebState({required this.user});
+  @override
+  void initState() {
+    super.initState();
+    isLoggedIn = user != null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,21 +35,20 @@ class _PopularWebState extends State<PopularWeb> {
                 bottom: BorderSide(color: Colors.grey, width: 0.5)),
             automaticallyImplyLeading: false,
             backgroundColor: defaultAppbarBackgroundColor,
-            title: widget.isLoggedIn
-                ? const AppBarWebLoggedIn(screen: 'Popular')
+            title: isLoggedIn
+                ? AppBarWebLoggedIn(user: user!, screen: 'Popular')
                 : const AppBarWebNotLoggedIn(screen: 'Popular')),
         body: Container(
           color: defaultWebBackgroundColor,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              !widget.isLoggedIn && MediaQuery.of(context).size.width > 1300
+              !isLoggedIn && MediaQuery.of(context).size.width > 1300
                   ? const LeftList()
                   : const SizedBox(width: 0),
               Container(
                 padding: const EdgeInsets.only(top: 15),
-                width: widget.isLoggedIn ||
-                        MediaQuery.of(context).size.width < 1300
+                width: isLoggedIn || MediaQuery.of(context).size.width < 1300
                     ? MediaQuery.of(context).size.width
                     : MediaQuery.of(context).size.width - 280,
                 child: SingleChildScrollView(
@@ -55,7 +63,11 @@ class _PopularWebState extends State<PopularWeb> {
                               : 1,
                           child: const SizedBox(width: 10)),
                       Expanded(
-                        flex: 5,
+                        flex: responsive.isLargeSizedScreen()
+                            ? 8
+                            : responsive.isXLargeSizedScreen()
+                                ? 6
+                                : 7,
                         child: SizedBox(
                           width: 100,
                           child: Column(
