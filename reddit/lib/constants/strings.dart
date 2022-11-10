@@ -14,16 +14,13 @@ const popularPageRoute = '/popular';
 //---------------------------------------
 // -----------Log in / Sign up-----------
 //---------------------------------------
-const logInRoute = "/login";
-const signUpRoute = "/signup";
 //---------------------------------------
 // ----------Settings routes-------------
 //---------------------------------------
-const settingTabUiRoute = '/setting_tab_ui';
+const settingsTabsRoute = "/tabs";
 //---------------------------------------
 // ------Account settings routes---------
 //---------------------------------------
-const settingsTabsRoute = "/tabs";
 const accountSettingsRoute = "/account_settings";
 const updateEmailAddressRoute = "/account_settings/update_email_address";
 const changePasswordRoute = "/account_settings/change_password";
@@ -46,3 +43,20 @@ const emailSettingsWebScreenRoute = "/emailSettings";
 // -----------reCaptcha routes-----------
 //---------------------------------------
 const recaptchaRoute = "/recaptcha";
+const SIGNU_PAGE1 = '/signup1';
+const SIGNU_PAGE2 = '/signup2';
+const loginPage = '/login';
+const FACEBOOK_APP_ID = '3404099966577167';
+const USER_AGGREMENT = 'https://www.redditinc.com/policies/user-agreement';
+const PRIVACY_POLICY = 'https://www.redditinc.com/policies/privacy-policy';
+const forgetPasswordWeb = '/forgetPassword';
+const forgetUsernameWeb = '/forgetUsername';
+const getHelpPage =
+    'https://reddithelp.com/hc/en-us/sections/360008917491-Account-Security';
+const signupScreen = '/signupScreen';
+const loginScreen = '/loginScreen';
+const forgetPasswordAndroid = '/forgetPasswordAndroud';
+const forgetUsernameAndroid = '/forgetUsernameAndroud';
+const interesetesScreen = '/interesetesScreen';
+const chooseGenderScreen = '/chooseGenderScreen';
+const chooseProfileImgScreen = '/chooseProfileImgScreen';
