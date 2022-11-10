@@ -40,7 +40,6 @@ import 'package:reddit/presentation/screens/forget_password_android.dart';
 import 'package:reddit/presentation/screens/forget_password_web.dart';
 import 'package:reddit/presentation/screens/forget_username_android.dart';
 import 'package:reddit/presentation/screens/forget_username_web.dart';
-import 'package:reddit/presentation/screens/home.dart';
 import 'package:reddit/presentation/screens/intesrests_android.dart';
 import 'package:reddit/presentation/screens/login_page.dart';
 import 'package:reddit/presentation/screens/login_screen.dart';

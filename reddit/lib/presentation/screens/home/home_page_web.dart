@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/data/model/signin.dart';
-import 'package:reddit/presentation/screens/Home/home_web.dart';
+import 'package:reddit/presentation/screens/home/home_web.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_Not_loggedin.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 
