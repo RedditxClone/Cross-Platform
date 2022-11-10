@@ -1,0 +1,16 @@
+version: "3.9"
+services:
+  crossplatform:
+    container_name: cross
+    build:
+      context: .
+      dockerfile: devops.Dockerfile
+    networks:
+      - proxy-network
+    volumes:
+      - ./:/app
+    restart: always
+    
+networks:
+  proxy-network:
+    external: true
