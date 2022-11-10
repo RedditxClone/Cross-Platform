@@ -40,6 +40,7 @@ class SafetySettingsWebServices {
   Future<int> updatePrefs(Map changed) async {
     try {
       Response response = await dio.patch('prefs', data: changed);
+      print('status code : ${response.statusCode}');
       return response.statusCode!;
     } catch (e) {
       return 400;

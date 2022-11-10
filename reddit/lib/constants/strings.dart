@@ -3,7 +3,7 @@
 //---------------------------------------
 // Backend URL
 const baseUrl = '';
-const mockUrl = 'https://a8eda59d-d8f3-4ef2-9581-29e6473824d9.mock.pstmn.io/';
+const mockUrl = 'https://a3a539c4-1746-44d4-8e06-d579a1d30d53.mock.pstmn.io/';
 // Use mock server instead of our backend server
 const useMockServerForAllWebServices = true;
 //---------------------------------------
