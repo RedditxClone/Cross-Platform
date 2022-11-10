@@ -31,7 +31,7 @@ class LeftList extends StatelessWidget {
                     child: InkWell(
                         onTap: () {
                           Navigator.pushNamed(context, homePageRoute,
-                              arguments: {"isLoggedIn": false});
+                              arguments: null);
                         },
                         child: Row(children: const [
                           Icon(Icons.home_filled, size: 20),
@@ -45,7 +45,7 @@ class LeftList extends StatelessWidget {
                     child: InkWell(
                         onTap: () {
                           Navigator.pushNamed(context, popularPageRoute,
-                              arguments: {"isLoggedIn": false});
+                              arguments: null);
                         },
                         child: Row(children: const [
                           Icon(Icons.arrow_circle_up_outlined, size: 20),
@@ -162,9 +162,9 @@ class LeftList extends StatelessWidget {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () => Navigator.pushNamed(context, signUpRoute),
+                    onPressed: () => Navigator.pushNamed(context, SIGNU_PAGE1),
                     style: ElevatedButton.styleFrom(
-                        primary: Colors.white,
+                        backgroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(
                             vertical: 20, horizontal: 80),
                         shape: RoundedRectangleBorder(

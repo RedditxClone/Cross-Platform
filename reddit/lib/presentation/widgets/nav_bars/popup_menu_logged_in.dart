@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
+import 'package:reddit/data/model/signin.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PopupMenuLoggedIn extends StatelessWidget {
-  const PopupMenuLoggedIn({Key? key}) : super(key: key);
+  User user;
+  PopupMenuLoggedIn({required this.user, Key? key}) : super(key: key);
   Future<void> _launchUrl(String link) async {
     Uri url = Uri.parse(link);
     if (!await launchUrl(url)) {
@@ -141,7 +143,7 @@ class PopupMenuLoggedIn extends StatelessWidget {
       onSelected: (value) {
         switch (value) {
           case 3:
-            Navigator.pushReplacementNamed(context, profileSettingsRoute);
+            Navigator.pushReplacementNamed(context, settingsTabsRoute);
             break;
           case 6:
             _launchUrl('https://www.reddithelp.com/hc/en-us');
@@ -152,15 +154,18 @@ class PopupMenuLoggedIn extends StatelessWidget {
       },
       child: Row(
         children: [
-          const CircleAvatar(child: Icon(Icons.person)),
+          CircleAvatar(
+              child: user.imageUrl == null
+                  ? const Icon(Icons.person)
+                  : Image.network(user.imageUrl!, fit: BoxFit.cover)),
           const SizedBox(width: 10),
           MediaQuery.of(context).size.width < 950
               ? const SizedBox(width: 0)
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Text('user_name', style: TextStyle(fontSize: 15)),
-                    Text('karma', style: TextStyle(fontSize: 10)),
+                  children: [
+                    Text(user.name!, style: const TextStyle(fontSize: 15)),
+                    const Text('karma', style: TextStyle(fontSize: 10)),
                   ],
                 )
         ],

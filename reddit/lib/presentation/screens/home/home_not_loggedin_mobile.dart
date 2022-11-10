@@ -1,7 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
 
@@ -50,7 +47,7 @@ class HomeNotLoggedIn extends StatelessWidget {
                 radius: 60,
                 child: Image.asset('assets/images/welcome2.jpg'),
               ),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -76,7 +73,7 @@ class HomeNotLoggedIn extends StatelessWidget {
                 radius: 60,
                 child: Image.asset('assets/images/welcome3.jpg'),
               ),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -98,9 +95,9 @@ class HomeNotLoggedIn extends StatelessWidget {
           Column(
             children: [
               ElevatedButton(
-                onPressed: () => Navigator.pushNamed(context, signUpRoute),
+                onPressed: () => Navigator.pushNamed(context, signupScreen),
                 style: ElevatedButton.styleFrom(
-                    primary: Colors.blue,
+                    backgroundColor: Colors.blue,
                     padding: const EdgeInsets.symmetric(
                         vertical: 10, horizontal: 130),
                     shape: RoundedRectangleBorder(
@@ -111,9 +108,9 @@ class HomeNotLoggedIn extends StatelessWidget {
                 ),
               ),
               ElevatedButton(
-                onPressed: () => Navigator.pushNamed(context, logInRoute),
+                onPressed: () => Navigator.pushNamed(context, loginScreen),
                 style: ElevatedButton.styleFrom(
-                    primary: defaultWebBackgroundColor,
+                    backgroundColor: defaultWebBackgroundColor,
                     padding: const EdgeInsets.symmetric(
                         vertical: 10, horizontal: 130),
                     shape: RoundedRectangleBorder(

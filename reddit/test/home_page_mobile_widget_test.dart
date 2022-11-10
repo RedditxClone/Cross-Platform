@@ -6,7 +6,7 @@ void main() {
   setUp(() {});
   Widget createWidgetUnderTest() {
     return MaterialApp(
-      home: HomePage(true),
+      home: HomePage(null),
     );
   }
 

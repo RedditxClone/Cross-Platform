@@ -21,11 +21,13 @@ class _AppBarWebNotLoggedInState extends State<AppBarWebNotLoggedIn> {
       children: [
         InkWell(
           onTap: () => Navigator.pushReplacementNamed(context, homePageRoute,
-              arguments: {"isLoggedIn": false}),
+              arguments: null),
           hoverColor: Colors.transparent,
           child: Row(
             children: [
-              Logo(Logos.reddit, size: 30),
+              CircleAvatar(
+                  backgroundColor: Colors.red,
+                  child: Logo(Logos.reddit, color: Colors.white, size: 30)),
               const SizedBox(width: 10),
               MediaQuery.of(context).size.width < 940
                   ? const SizedBox(width: 0)
@@ -34,20 +36,20 @@ class _AppBarWebNotLoggedInState extends State<AppBarWebNotLoggedIn> {
           ),
         ),
         SizedBox(
-          width: 90,
+          width: 80,
           child: InkWell(
             onTap: () => Navigator.pushReplacementNamed(
                 context, popularPageRoute,
-                arguments: {"isLoggedIn": false}),
+                arguments: null),
             hoverColor: Colors.transparent,
             child: Row(
               children: [
-                const Icon(Icons.arrow_circle_up_rounded, size: 27),
-                const SizedBox(width: 5),
+                const Icon(Icons.arrow_circle_up_rounded, size: 25),
+                const SizedBox(width: 4),
                 MediaQuery.of(context).size.width > 1000
                     ? Text(
                         widget.screen,
-                        style: const TextStyle(fontSize: 14),
+                        style: const TextStyle(fontSize: 13),
                       )
                     : const SizedBox(width: 0)
               ],
@@ -55,7 +57,7 @@ class _AppBarWebNotLoggedInState extends State<AppBarWebNotLoggedIn> {
           ),
         ),
         SizedBox(
-          width: 0.4 * MediaQuery.of(context).size.width,
+          width: 0.38 * MediaQuery.of(context).size.width,
           height: 40,
           child: TextField(
               textAlignVertical: TextAlignVertical.center,
@@ -80,7 +82,7 @@ class _AppBarWebNotLoggedInState extends State<AppBarWebNotLoggedIn> {
           children: [
             MediaQuery.of(context).size.width > 800
                 ? OutlinedButton(
-                    onPressed: () => Navigator.pushNamed(context, signUpRoute),
+                    onPressed: () => Navigator.pushNamed(context, SIGNU_PAGE1),
                     style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                             vertical: 15, horizontal: 25),
@@ -96,9 +98,9 @@ class _AppBarWebNotLoggedInState extends State<AppBarWebNotLoggedIn> {
             const SizedBox(width: 20),
             MediaQuery.of(context).size.width > 800
                 ? ElevatedButton(
-                    onPressed: () => Navigator.pushNamed(context, logInRoute),
+                    onPressed: () => Navigator.pushNamed(context, loginPage),
                     style: ElevatedButton.styleFrom(
-                        primary: Colors.white,
+                        backgroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(
                             vertical: 15, horizontal: 25),
                         shape: RoundedRectangleBorder(
