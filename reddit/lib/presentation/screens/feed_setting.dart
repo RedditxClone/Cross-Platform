@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reddit/business_logic/cubit/feed_settings_cubit.dart';
 
 class FeedSetting extends StatefulWidget {
   const FeedSetting({super.key});
@@ -9,6 +11,14 @@ class FeedSetting extends StatefulWidget {
 class FeedSettingState extends State<FeedSetting> {
   bool _isActiveAdultContent = false;
   bool _isActiveAutoplayMedia = false;
+
+  late int status;
+  @override
+  void initState() {
+    super.initState();
+    status = BlocProvider.of<FeedSettingsCubit>(context)
+        .updateFeedSettings(_isActiveAdultContent, _isActiveAutoplayMedia);
+  }
 
   @override
   Widget build(BuildContext context) {

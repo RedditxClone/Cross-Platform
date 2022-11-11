@@ -11,6 +11,7 @@ class SignUp {
   }
 
   void signUpContinue() {
+    // ignore: avoid_print
     print("Email : ${emailController.text}");
   }
 
