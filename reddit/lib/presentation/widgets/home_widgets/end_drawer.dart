@@ -44,7 +44,7 @@ class EndDrawer extends StatelessWidget {
             children: [
               _buildProfilePicture(context),
               _buildUsernameButton(context),
-              _buildOnlineStatus(),
+              //_buildOnlineStatus(),
               const SizedBox(
                 height: 50,
                 width: double.infinity,

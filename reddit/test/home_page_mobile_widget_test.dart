@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:reddit/data/model/signin.dart';
 import 'package:reddit/presentation/screens/home/home_page_mobile.dart';
 
+late User user;
 void main() {
-  setUp(() {});
+  setUp(() {
+    user = User(
+        userId: '1',
+        name: 'mark_yasser',
+        email: 'mark@hotmai.com',
+        imageUrl: null);
+  });
   Widget createWidgetUnderTest() {
     return MaterialApp(
-      home: HomePage(null),
+      home: HomePage(user),
     );
   }
 

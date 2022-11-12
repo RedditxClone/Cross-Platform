@@ -185,7 +185,7 @@ class _HomePageState extends State<HomePage> {
                             color: isLoggedin && user!.imageUrl == null
                                 ? Colors.orange
                                 : Colors.grey,
-                            size: 40)));
+                            size: 25)));
           })
         ],
       ),

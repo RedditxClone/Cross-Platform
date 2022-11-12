@@ -50,9 +50,9 @@ class SafetySettingsWebServices {
   /// get request to check if the username available. used in safety settings to block someone
   Future<dynamic> checkUsernameAvailable(String username) async {
     try {
-      Response response = await dio.get('check-available-username',
+      Response response = await dio.post('user/check-available-username',
           queryParameters: {'username': username});
-      return response.data;
+      return response.statusCode;
     } catch (e) {
       return null;
     }
@@ -61,8 +61,9 @@ class SafetySettingsWebServices {
   /// get request to get user's blocked list
   Future<dynamic> blockUser(String username) async {
     try {
-      Response response = await dio.post('block', data: {'username': username});
-      return response.data;
+      Response response =
+          await dio.post('user/1/block', data: {'username': username});
+      return response.statusCode;
     } catch (e) {
       return [];
     }
@@ -72,17 +73,17 @@ class SafetySettingsWebServices {
   Future<dynamic> unBlockUser(String username) async {
     try {
       Response response =
-          await dio.post('unblock', data: {'username': username});
-      return response.data;
+          await dio.post('user/1/unblock', data: {'username': username});
+      return response.statusCode;
     } catch (e) {
       return [];
     }
   }
 
   /// get request to get user's blocked list
-  Future<List<dynamic>> getBlockedUsers() async {
+  Future<dynamic> getBlockedUsers() async {
     try {
-      Response response = await dio.get('blocked');
+      Response response = await dio.get('user/block');
       return response.data;
     } catch (e) {
       return [];

@@ -140,7 +140,12 @@ void main() async {
               create: (context) => mockAccountSettingsCubit,
             )
           ],
-          child: const MaterialApp(home: AccountSettingsScreen()),
+          child: MaterialApp(
+              home: AccountSettingsScreen(const {
+            "username": "bemoierian",
+            "email": "bemoi.erian@gmail.com",
+            "gender": true
+          })),
         ),
       );
       // Gender is displayed correctly
