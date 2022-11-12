@@ -1,7 +1,4 @@
 import 'dart:convert';
-
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:bloc_test/bloc_test.dart';
@@ -9,7 +6,6 @@ import 'package:reddit/business_logic/cubit/settings/safety_settings_cubit.dart'
 import 'package:reddit/data/model/safety_user_settings.dart';
 import 'package:reddit/data/repository/safety_settings_repository.dart';
 import 'package:reddit/data/web_services/safety_settings_web_services.dart';
-import 'package:reddit/presentation/screens/safety_settings_web.dart';
 
 class MockSafetySettingsWebService extends Mock
     implements SafetySettingsWebServices {}
@@ -21,11 +17,9 @@ void main() async {
   late MockSafetySettingsWebService mockSafetySettingsWebService;
   late SafetySettingsRepository safetySettingsRepository;
   late SafetySettingsCubit safetySettingsCubit;
-  late MockSafetySettingsCubit mockSafetySettingsCubit;
   const String settingsFromWebServices = '''{
     "badCommentAutoCollapse": "MEDIUM",
     "showInSearch": true,
-    "blocked": ["@_Mark1"],
     "personalizeAllOfReddit": false,
     "personalizeAds_information": true,
     "personalizeAds_yourActivity": false,
@@ -35,7 +29,7 @@ void main() async {
   }''';
   final safetySettingsFromRepository = SafetySettings(
       disroptiveSettings: 'MEDIUM',
-      blocked: ['@_Mark1'],
+      blocked: [],
       showUnInSearch: true,
       personalizeAllOfReddit: false,
       personalizeAdsInformation: true,
@@ -59,6 +53,11 @@ void main() async {
       setUp: () {
         when(() => mockSafetySettingsWebService.getUserSettings()).thenAnswer(
           (_) async => settingsFromWebServices,
+        );
+        when(() => mockSafetySettingsWebService.getBlockedUsers()).thenAnswer(
+          (_) async => {
+            "blocked": ["mark"]
+          },
         );
       },
       build: () {
