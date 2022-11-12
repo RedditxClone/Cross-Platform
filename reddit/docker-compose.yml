@@ -7,8 +7,8 @@ services:
       dockerfile: devops.Dockerfile
     networks:
       - proxy-network
-    volumes:
-      - ./:/app
+    environment:
+      - BASE_URL
     restart: always
     
 networks:
