@@ -20,21 +20,39 @@ void main() async {
   late EmailSettingsRepository emailSettingsRepository;
   late EmailSettingsCubit emailSettingsCubit;
   late MockEmailSettingsCubit mockEmailSettingsCubit;
-  final Map<String, dynamic> settingsFromWebServices = {
-    'inbox_messages': true,
-    'chat_requests': true,
-    'new_user_welcome': true,
-    'comments_on_post': true,
-    'replies_to_comments': true,
-    'upvotes_on_post': true,
-    'upvotes_on_comments': true,
-    'username_mentions': true,
-    'new_followers': true,
-    'daily_digest': true,
-    'weekly_recap': true,
-    'community_discovery': true,
-    'unsubscribe_emails': false,
+
+    const String settingsFromWebServicesString = '''{
+    "inbox_messages": true,
+    "chat_requests": true,
+    "new_user_welcome": true,
+    "comments_on_post": true,
+    "replies_to_comments": true,
+    "upvotes_on_post": true,
+    "upvotes_on_comments": true,
+    "username_mentions": true,
+    "new_followers": true,
+    "daily_digest": true,
+    "weekly_recap": true,
+    "community_discovery": true,
+    "unsubscribe_emails": false
+  }''';
+    final Map<String, dynamic> settingsFromWebServices = {
+    "inbox_messages": true,
+    "chat_requests": true,
+    "new_user_welcome": true,
+    "comments_on_post": true,
+    "replies_to_comments": true,
+    "upvotes_on_post": true,
+    "upvotes_on_comments": true,
+    "username_mentions": true,
+    "new_followers": true,
+    "daily_digest": true,
+    "weekly_recap": true,
+    "community_discovery": true,
+    "unsubscribe_emails": false,
   };
+
+
   final settingsFromRepository = EmailSettings(
     inboxMessages: true,
     chatRequests: true,
@@ -62,10 +80,10 @@ void main() async {
     // emailSettingsLoading means that the request is sent and we are waiting for the response
     // emailSettingsLoaded means that the response is received and UI is built based on this responce
     blocTest<EmailSettingsCubit, EmailSettingsState>(
-      'Settings loaded state is emitted correctly after getting settings data from server',
+      'Settings loading, loaded states are emitted correctly after getting settings data from server',
       setUp: () {
         when(() => mockEmailSettingsWebService.getEmailSettings()).thenAnswer(
-          (_) async => settingsFromWebServices,
+          (_) async => settingsFromWebServicesString,
         );
       },
       build: () {
@@ -75,7 +93,7 @@ void main() async {
       expect: () => [isA<EmailSettingsLoading>(), isA<EmailSettingsLoaded>()],
     );
     blocTest<EmailSettingsCubit, EmailSettingsState>(
-      'Settings loaded state is emitted correctly after updating settings',
+      'Settings updated, loaded states are emitted correctly after updating settings',
       setUp: () {
         when(() => mockEmailSettingsWebService.updateEmailSettings(
             settingsFromWebServices)).thenAnswer((_) async => 200);
@@ -85,7 +103,7 @@ void main() async {
       },
       act: (EmailSettingsCubit cubit) =>
           cubit.updateEmailSettings(settingsFromRepository),
-      expect: () => [isA<EmailSettingsLoaded>()],
+      expect: () => [isA<EmailSettingsUpdated>(), isA<EmailSettingsLoaded>()],
     );
   });
   // Test if mapping from Json to model is correct
