@@ -1,16 +1,13 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:reddit/constants/strings.dart';
 
 class SettingsWebServices {
   late Dio dio;
-  // String mockUrl = TargetPlatform.android == defaultTargetPlatform
-  //     ? "http://10.0.2.2:3000/"
-  //     : "http://127.0.0.1:3000/";
-  String mockUrl =
-      'https://a8eda59d-d8f3-4ef2-9581-29e6473824d9.mock.pstmn.io/';
-  bool isMockerServer = true;
+  bool isMockerServer = useMockServerForAllWebServices;
   SettingsWebServices() {
     BaseOptions options = BaseOptions(
       baseUrl: isMockerServer ? mockUrl : baseUrl,
@@ -28,7 +25,7 @@ class SettingsWebServices {
       Response response = await dio.get('prefs');
       return response.data;
     } catch (e) {
-      return '';
+      return null;
     }
   }
 
@@ -40,6 +37,22 @@ class SettingsWebServices {
         "file": await MultipartFile.fromFile(file.path, filename: fileName)
       });
       Response response = await dio.patch(key, data: formData);
+      return response.data;
+    } catch (e) {
+      // print(e.toString());
+      return '';
+    }
+  }
+
+  /// updates a image
+  Future<String> updateImageWeb(Uint8List fileAsBytes, String key) async {
+    try {
+      FormData formData = FormData.fromMap({
+        "file": MultipartFile.fromBytes(fileAsBytes,
+            contentType: MediaType('application', 'json'), filename: key)
+      });
+      Response response = await dio.patch(key, data: formData);
+
       return response.data;
     } catch (e) {
       print(e.toString());

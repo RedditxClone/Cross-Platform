@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/presentation/widgets/home_widgets/left_list_not_logged_in.dart';
+import 'package:reddit/presentation/widgets/posts/posts_web.dart';
 
 class HomeWeb extends StatefulWidget {
   final bool isLoggedIn;
@@ -29,7 +30,7 @@ class _HomeWebState extends State<HomeWeb> {
               ? const LeftList()
               : const SizedBox(width: 0),
           Container(
-            width: widget.isLoggedIn
+            width: widget.isLoggedIn || MediaQuery.of(context).size.width < 1300
                 ? MediaQuery.of(context).size.width
                 : MediaQuery.of(context).size.width - 280,
             child: SingleChildScrollView(
@@ -44,40 +45,42 @@ class _HomeWebState extends State<HomeWeb> {
                           : responsive.isLargeSizedScreen()
                               ? 1
                               : 2,
-                      child: const SizedBox(width: 10)),
+                      child: const SizedBox(width: 0)),
                   Expanded(
-                    flex: 5,
+                    flex: responsive.isLargeSizedScreen()
+                        ? 8
+                        : responsive.isXLargeSizedScreen()
+                            ? 6
+                            : 7,
                     child: Container(
                       padding: const EdgeInsets.all(15),
                       width: 10,
                       child: Column(
                         children: [
                           Container(
-                            height: 130,
-                            color: const Color.fromRGBO(70, 70, 70, 100),
+                            // add new post
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: const Color.fromRGBO(70, 70, 70, 100)),
+                            height: 70,
                             margin: const EdgeInsets.only(bottom: 15),
                           ),
                           Container(
-                            height: 130,
-                            color: const Color.fromRGBO(70, 70, 70, 100),
+                            // sort posts
+                            height: 70,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: const Color.fromRGBO(70, 70, 70, 100)),
                             margin: const EdgeInsets.only(bottom: 15),
                           ),
-                          Container(
-                            height: 400,
-                            color: const Color.fromRGBO(70, 70, 70, 100),
-                            margin: const EdgeInsets.only(bottom: 15),
-                          ),
-                          Container(
-                            height: 400,
-                            color: const Color.fromRGBO(70, 70, 70, 100),
-                            margin: const EdgeInsets.only(bottom: 15),
-                          ),
+                          PostsWeb(),
+                          PostsWeb(),
+                          PostsWeb(),
+                          PostsWeb(),
                         ],
                       ),
                     ),
                   ),
-                  // SizedBox(
-                  //     width: MediaQuery.of(context).size.width < 900 ? 0 : 15),
                   MediaQuery.of(context).size.width < 900
                       ? const SizedBox(width: 0)
                       : Expanded(
@@ -88,17 +91,26 @@ class _HomeWebState extends State<HomeWeb> {
                               children: [
                                 Container(
                                   height: 500,
-                                  color: const Color.fromRGBO(70, 70, 70, 100),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5),
+                                      color: const Color.fromRGBO(
+                                          70, 70, 70, 100)),
                                   margin: const EdgeInsets.only(bottom: 15),
                                 ),
                                 Container(
                                   height: 200,
-                                  color: const Color.fromRGBO(70, 70, 70, 100),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5),
+                                      color: const Color.fromRGBO(
+                                          70, 70, 70, 100)),
                                   margin: const EdgeInsets.only(bottom: 15),
                                 ),
                                 Container(
                                   height: 200,
-                                  color: const Color.fromRGBO(70, 70, 70, 100),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5),
+                                      color: const Color.fromRGBO(
+                                          70, 70, 70, 100)),
                                   margin: const EdgeInsets.only(bottom: 15),
                                 ),
                               ],
@@ -111,7 +123,7 @@ class _HomeWebState extends State<HomeWeb> {
                           : responsive.isLargeSizedScreen()
                               ? 1
                               : 2,
-                      child: const SizedBox(width: 10))
+                      child: const SizedBox(width: 0))
                 ],
               ),
             ),

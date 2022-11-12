@@ -3,13 +3,21 @@
 //---------------------------------------
 // Backend URL
 const baseUrl = '';
+const mockUrl = 'https://a3a539c4-1746-44d4-8e06-d579a1d30d53.mock.pstmn.io/';
 // Use mock server instead of our backend server
 const useMockServerForAllWebServices = true;
 //---------------------------------------
 // -----------homepage routes-----------
 //---------------------------------------
-const homePageRout = '/home';
-const popularPageRout = '/popular';
+const homePageRoute = '/home';
+const popularPageRoute = '/popular';
+//---------------------------------------
+// -----------Log in / Sign up-----------
+//---------------------------------------
+//---------------------------------------
+// ----------Settings routes-------------
+//---------------------------------------
+const settingsTabsRoute = "/tabs";
 //---------------------------------------
 // ------Account settings routes---------
 //---------------------------------------
@@ -35,3 +43,20 @@ const emailSettingsWebScreenRoute = "/emailSettings";
 // -----------reCaptcha routes-----------
 //---------------------------------------
 const recaptchaRoute = "/recaptcha";
+const SIGNU_PAGE1 = '/signup1';
+const SIGNU_PAGE2 = '/signup2';
+const loginPage = '/login';
+const FACEBOOK_APP_ID = '3404099966577167';
+const USER_AGGREMENT = 'https://www.redditinc.com/policies/user-agreement';
+const PRIVACY_POLICY = 'https://www.redditinc.com/policies/privacy-policy';
+const forgetPasswordWeb = '/forgetPassword';
+const forgetUsernameWeb = '/forgetUsername';
+const getHelpPage =
+    'https://reddithelp.com/hc/en-us/sections/360008917491-Account-Security';
+const signupScreen = '/signupScreen';
+const loginScreen = '/loginScreen';
+const forgetPasswordAndroid = '/forgetPasswordAndroud';
+const forgetUsernameAndroid = '/forgetUsernameAndroud';
+const interesetesScreen = '/interesetesScreen';
+const chooseGenderScreen = '/chooseGenderScreen';
+const chooseProfileImgScreen = '/chooseProfileImgScreen';

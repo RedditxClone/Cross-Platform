@@ -6,7 +6,10 @@ import 'package:reddit/data/repository/end_drawer/end_drawer_repository.dart';
 import 'package:reddit/data/repository/left_drawer/left_drawer_repository.dart';
 import 'package:reddit/data/web_services/left_drawer/left_drawer_web_services.dart';
 import 'package:reddit/data/web_services/settings_web_services.dart';
+import 'package:reddit/constants/strings.dart';
+import 'package:reddit/data/model/signin.dart';
 import 'package:reddit/presentation/screens/home/home.dart';
+import 'package:reddit/presentation/screens/home/home_not_loggedin_mobile.dart';
 import 'package:reddit/presentation/screens/popular/popular.dart';
 import 'package:reddit/presentation/screens/test_home_screens/chat.dart';
 import 'package:reddit/presentation/screens/test_home_screens/explore.dart';
@@ -18,30 +21,25 @@ import 'package:reddit/presentation/widgets/posts/add_post.dart';
 import '../../../business_logic/cubit/left_drawer/left_drawer_cubit.dart';
 
 class HomePage extends StatefulWidget {
-  late bool _isLoggedin;
-  final Object? arguments;
-  HomePage(this.arguments, {Key? key}) : super(key: key) {
-    Map<String, bool> argMap = arguments as Map<String, bool>;
-    _isLoggedin = argMap["isLoggedin"] ?? false;
-  }
+  User? user;
+  HomePage(this.user, {Key? key}) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState(_isLoggedin);
+  State<HomePage> createState() => _HomePageState(user: user);
 }
 
 class _HomePageState extends State<HomePage> {
-  // LeftDrawerCubit leftDrawerCubit =
-  //     LeftDrawerCubit(LeftDrawerRepository(LeftDrawerWebServices()));
+  User? user;
+  _HomePageState({required this.user});
   int _selectedPageIndex = 0;
   String _screen = 'Home';
   IconData dropDownArrow = Icons.keyboard_arrow_down;
-  bool passwordVisible = true;
-  late bool _isLoggedin;
-  _HomePageState(this._isLoggedin);
-  void togglePasswordVisible() {
-    setState(() {
-      passwordVisible = !passwordVisible;
-    });
+  late bool isLoggedin;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    isLoggedin = user != null;
   }
 
   Widget buildHomeAppBar() {
@@ -87,7 +85,11 @@ class _HomePageState extends State<HomePage> {
     switch (index) {
       case 0:
         return {
-          'page': _screen == 'Home' ? const Home() : const Popular(),
+          'page': _screen == 'Home'
+              ? isLoggedin
+                  ? const Home()
+                  : const HomeNotLoggedIn()
+              : const Popular(),
           'appbar_title': Container(
             decoration: BoxDecoration(
               color: const Color.fromRGBO(90, 90, 90, 100),
@@ -97,7 +99,8 @@ class _HomePageState extends State<HomePage> {
           ),
           'appbar_action': IconButton(
               onPressed: () {},
-              icon: const Icon(Icons.search, color: Colors.grey, size: 40)),
+              icon: const Icon(Icons.search_outlined,
+                  color: Colors.grey, size: 40)),
         };
       case 1:
         return {
@@ -172,7 +175,17 @@ class _HomePageState extends State<HomePage> {
                 onPressed: () {
                   Scaffold.of(context).openEndDrawer();
                 },
-                icon: const Icon(Icons.person, color: Colors.grey, size: 40));
+                icon: CircleAvatar(
+                    child: isLoggedin && user!.imageUrl != null
+                        ? Image.network(
+                            user!.imageUrl!,
+                            fit: BoxFit.cover,
+                          )
+                        : Icon(Icons.person,
+                            color: isLoggedin && user!.imageUrl == null
+                                ? Colors.orange
+                                : Colors.grey,
+                            size: 40)));
           })
         ],
       ),
@@ -197,13 +210,13 @@ class _HomePageState extends State<HomePage> {
       drawer: BlocProvider(
         create: (context) =>
             LeftDrawerCubit(LeftDrawerRepository(LeftDrawerWebServices())),
-        child: LeftDrawer(true),
+        child: LeftDrawer(isLoggedin),
       ),
       endDrawer: BlocProvider(
         create: (context) =>
             EndDrawerCubit(EndDrawerRepository(SettingsWebServices())),
-        child: EndDrawer(
-            true, "bemoierian", "https://picsum.photos/100/100", 2, 35),
+        child: EndDrawer(isLoggedin, user == null ? "" : user!.name ?? "",
+            user == null ? "" : user!.imageUrl ?? "", 2, 35),
       ),
     );
   }

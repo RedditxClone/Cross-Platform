@@ -4,12 +4,7 @@ import 'package:reddit/constants/strings.dart';
 // This class is responsible of making request to the server
 class SafetySettingsWebServices {
   late Dio dio;
-  // String mockUrl = TargetPlatform.android == defaultTargetPlatform
-  //     ? "http://10.0.2.2:3000/"
-  //     : "http://127.0.0.1:3000/";
-  String mockUrl =
-      'https://ee2e6548-8637-491e-ac9f-5109ed246fd1.mock.pstmn.io/';
-  bool isMockerServer = true;
+  bool isMockerServer = useMockServerForAllWebServices;
   SafetySettingsWebServices() {
     BaseOptions options = BaseOptions(
       baseUrl: isMockerServer ? mockUrl : baseUrl,
@@ -27,7 +22,7 @@ class SafetySettingsWebServices {
       Response response = await dio.get('prefs');
       return response.data;
     } catch (e) {
-      return '';
+      return null;
     }
   }
 
@@ -42,12 +37,55 @@ class SafetySettingsWebServices {
   }
 
   /// patch request to updates any user settings
-  Future<String> updatePrefs(Map changed) async {
+  Future<int> updatePrefs(Map changed) async {
     try {
       Response response = await dio.patch('prefs', data: changed);
+      print('status code : ${response.statusCode}');
+      return response.statusCode!;
+    } catch (e) {
+      return 400;
+    }
+  }
+
+  /// get request to check if the username available. used in safety settings to block someone
+  Future<dynamic> checkUsernameAvailable(String username) async {
+    try {
+      Response response = await dio.get('check-available-username',
+          queryParameters: {'username': username});
       return response.data;
     } catch (e) {
-      return '';
+      return null;
+    }
+  }
+
+  /// get request to get user's blocked list
+  Future<dynamic> blockUser(String username) async {
+    try {
+      Response response = await dio.post('block', data: {'username': username});
+      return response.data;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  /// get request to get user's blocked list
+  Future<dynamic> unBlockUser(String username) async {
+    try {
+      Response response =
+          await dio.post('unblock', data: {'username': username});
+      return response.data;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  /// get request to get user's blocked list
+  Future<List<dynamic>> getBlockedUsers() async {
+    try {
+      Response response = await dio.get('blocked');
+      return response.data;
+    } catch (e) {
+      return [];
     }
   }
 }

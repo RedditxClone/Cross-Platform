@@ -1,9 +1,6 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:reddit/constants/strings.dart';
-import 'package:reddit/presentation/widgets/nav_bars/popup_menu_logged_in.dart';
 import 'package:reddit/presentation/widgets/nav_bars/popup_menu_not_logged_in.dart';
 
 class AppBarWebNotLoggedIn extends StatefulWidget {
@@ -23,12 +20,14 @@ class _AppBarWebNotLoggedInState extends State<AppBarWebNotLoggedIn> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         InkWell(
-          onTap: () => Navigator.pushReplacementNamed(context, homePageRout,
-              arguments: {"isLoggedIn": false}),
+          onTap: () => Navigator.pushReplacementNamed(context, homePageRoute,
+              arguments: null),
           hoverColor: Colors.transparent,
           child: Row(
             children: [
-              Logo(Logos.reddit, size: 30),
+              CircleAvatar(
+                  backgroundColor: Colors.red,
+                  child: Logo(Logos.reddit, color: Colors.white, size: 30)),
               const SizedBox(width: 10),
               MediaQuery.of(context).size.width < 940
                   ? const SizedBox(width: 0)
@@ -37,20 +36,20 @@ class _AppBarWebNotLoggedInState extends State<AppBarWebNotLoggedIn> {
           ),
         ),
         SizedBox(
-          width: 90,
+          width: 80,
           child: InkWell(
             onTap: () => Navigator.pushReplacementNamed(
-                context, popularPageRout,
-                arguments: {"isLoggedIn": false}),
+                context, popularPageRoute,
+                arguments: null),
             hoverColor: Colors.transparent,
             child: Row(
               children: [
-                const Icon(Icons.arrow_circle_up_rounded, size: 27),
-                const SizedBox(width: 5),
+                const Icon(Icons.arrow_circle_up_rounded, size: 25),
+                const SizedBox(width: 4),
                 MediaQuery.of(context).size.width > 1000
                     ? Text(
                         widget.screen,
-                        style: const TextStyle(fontSize: 14),
+                        style: const TextStyle(fontSize: 13),
                       )
                     : const SizedBox(width: 0)
               ],
@@ -58,7 +57,7 @@ class _AppBarWebNotLoggedInState extends State<AppBarWebNotLoggedIn> {
           ),
         ),
         SizedBox(
-          width: 0.4 * MediaQuery.of(context).size.width,
+          width: 0.38 * MediaQuery.of(context).size.width,
           height: 40,
           child: TextField(
               textAlignVertical: TextAlignVertical.center,
@@ -83,7 +82,7 @@ class _AppBarWebNotLoggedInState extends State<AppBarWebNotLoggedIn> {
           children: [
             MediaQuery.of(context).size.width > 800
                 ? OutlinedButton(
-                    onPressed: () {},
+                    onPressed: () => Navigator.pushNamed(context, SIGNU_PAGE1),
                     style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                             vertical: 15, horizontal: 25),
@@ -99,9 +98,9 @@ class _AppBarWebNotLoggedInState extends State<AppBarWebNotLoggedIn> {
             const SizedBox(width: 20),
             MediaQuery.of(context).size.width > 800
                 ? ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () => Navigator.pushNamed(context, loginPage),
                     style: ElevatedButton.styleFrom(
-                        primary: Colors.white,
+                        backgroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(
                             vertical: 15, horizontal: 25),
                         shape: RoundedRectangleBorder(

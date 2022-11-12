@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:reddit/constants/strings.dart';
+import 'package:reddit/data/model/signin.dart';
 import 'package:reddit/presentation/widgets/nav_bars/popup_menu_logged_in.dart';
 
 class AppBarWebLoggedIn extends StatefulWidget {
   final String screen;
-
-  const AppBarWebLoggedIn({Key? key, required this.screen}) : super(key: key);
+  final User user;
+  const AppBarWebLoggedIn({Key? key, required this.screen, required this.user})
+      : super(key: key);
 
   @override
   State<AppBarWebLoggedIn> createState() => _AppBarWebLoggedInState();
@@ -18,16 +20,13 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
   void routeToPage(val) {
     switch (val) {
       case 'Home':
-        Navigator.pushNamed(context, homePageRout,
-            arguments: {"isLoggedIn": true});
+        Navigator.pushNamed(context, homePageRoute, arguments: widget.user);
         break;
       case 'Popular':
-        Navigator.pushNamed(context, popularPageRout,
-            arguments: {"isLoggedIn": true});
+        Navigator.pushNamed(context, popularPageRoute, arguments: widget.user);
         break;
       case 'User settings':
-        Navigator.pushNamed(context, profileSettingsRoute,
-            arguments: {"isLoggedIn": true});
+        Navigator.pushNamed(context, settingsTabsRoute);
         break;
       default:
     }
@@ -121,12 +120,13 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         InkWell(
-          onTap: () => Navigator.pushNamed(context, homePageRout,
-              arguments: {"isLoggedIn": true}),
+          onTap: () => Navigator.pushNamed(context, homePageRoute),
           hoverColor: Colors.transparent,
           child: Row(
             children: [
-              Logo(Logos.reddit, size: 30),
+              CircleAvatar(
+                  backgroundColor: Colors.red,
+                  child: Logo(Logos.reddit, color: Colors.white, size: 28)),
               const SizedBox(width: 10),
               MediaQuery.of(context).size.width < 940
                   ? const SizedBox(width: 0)
@@ -175,7 +175,7 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
               ? const SizedBox(width: 0)
               : Row(children: [
                   appBardIcon(Icons.arrow_circle_up_rounded, () {
-                    Navigator.pushReplacementNamed(context, popularPageRout);
+                    Navigator.pushReplacementNamed(context, popularPageRoute);
                   }),
                   appBardIcon(Icons.circle_outlined, () {}),
                   appBardIcon(Icons.chat, () {}),
@@ -196,7 +196,9 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
         ]),
         MediaQuery.of(context).size.width < 520
             ? const SizedBox(width: 0)
-            : const PopupMenuLoggedIn(),
+            : PopupMenuLoggedIn(
+                user: widget.user,
+              ),
       ],
     );
   }
