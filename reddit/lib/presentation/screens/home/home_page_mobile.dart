@@ -215,8 +215,14 @@ class _HomePageState extends State<HomePage> {
       endDrawer: BlocProvider(
         create: (context) =>
             EndDrawerCubit(EndDrawerRepository(SettingsWebServices())),
-        child: EndDrawer(isLoggedin, user == null ? "" : user!.name ?? "",
-            user == null ? "" : user!.imageUrl ?? "", 2, 35),
+        child: EndDrawer(
+            isLoggedin,
+            user == null ? "" : user!.name ?? "",
+            user == null ? "" : user!.imageUrl ?? "",
+            2,
+            35,
+            true,
+            user == null ? "" : user!.email ?? ""),
       ),
     );
   }

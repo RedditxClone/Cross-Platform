@@ -39,7 +39,7 @@ class _ManageNotificationsScreenState extends State<ManageNotificationsScreen> {
     if (prefs == null) {
       await getSharedPrefsInstance();
     }
-    _initSharedPreferencesIfNull();
+    await _initSharedPreferencesIfNull();
     _inboxMessage = prefs!.getBool('inboxMessage');
     _chatMessage = prefs!.getBool('chatMessage');
     _chatRequest = prefs!.getBool('chatRequest');

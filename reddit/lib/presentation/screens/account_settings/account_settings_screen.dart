@@ -9,10 +9,13 @@ import '../../../constants/country_names.dart';
 
 ///Widget that constructs the Account Settings screen on Android
 class AccountSettingsScreen extends StatefulWidget {
-  const AccountSettingsScreen({Key? key}) : super(key: key);
+  late Object? arguments;
+
+  AccountSettingsScreen(this.arguments, {Key? key}) : super(key: key);
 
   @override
-  State<AccountSettingsScreen> createState() => _AccountSettingsScreenState();
+  State<AccountSettingsScreen> createState() =>
+      _AccountSettingsScreenState(arguments);
 }
 
 class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
@@ -21,10 +24,17 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
   bool _isMan = true;
   String _country = "";
   // get these value from server
-  final String _email = "bemoi.erian@gmail.com";
-  final String _username = "bemoierian";
+  late String _email = "bemoi.erian@gmail.com";
+  late String _username = "bemoierian";
   final Uri _countryLearnMoreUrl =
       Uri.parse('https://reddithelp.com/hc/en-us/articles/360062429491');
+  late Object? arguments;
+  _AccountSettingsScreenState(this.arguments) {
+    Map<String, Object>? argMap = arguments as Map<String, Object>?;
+    _email = argMap == null ? "" : argMap["email"] as String? ?? "";
+    _username = argMap == null ? "" : argMap["username"] as String? ?? "";
+    _isMan = argMap == null ? true : argMap["gender"] as bool? ?? true;
+  }
 
   /// Calling bloc BlocProvider inside initState
   ///

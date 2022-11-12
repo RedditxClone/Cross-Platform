@@ -14,10 +14,12 @@ class EndDrawer extends StatelessWidget {
   late int _redditAge;
   late String _username;
   late String _profilePicture;
+  late String _email;
   late bool _isLoggedIn;
+  late bool _isMan;
   File? imgProfile;
   EndDrawer(this._isLoggedIn, this._username, this._profilePicture, this._karma,
-      this._redditAge,
+      this._redditAge, this._isMan, this._email,
       {Key? key})
       : super(key: key);
 
@@ -147,7 +149,11 @@ class EndDrawer extends StatelessWidget {
       onTap: () {
         // TODO: this may be changed by another settings page
         // Navigator.of(context).pop();
-        Navigator.of(context).pushNamed(accountSettingsRoute);
+        Navigator.of(context).pushNamed(accountSettingsRoute, arguments: {
+          "username": _username,
+          "email": _email,
+          "gender": _isMan,
+        });
       },
     );
   }
