@@ -198,7 +198,7 @@ class AppRouter {
           builder: (_) => isMobile
               ? BlocProvider(
                   create: (context) => accountSettingsCubit,
-                  child: const AccountSettingsScreen(),
+                  child: AccountSettingsScreen(arguments),
                 )
               : BlocProvider(
                   create: (context) => accountSettingsCubit,

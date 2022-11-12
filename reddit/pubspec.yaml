@@ -44,6 +44,8 @@ dependencies:
   image_picker: ^0.8.6
   mocktail: ^0.3.0
   shared_preferences: ^2.0.15
+  async: ^2.8.2
+
   url_launcher: ^6.1.6
   webview_flutter_plus: ^0.3.0+2
 

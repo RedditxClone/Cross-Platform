@@ -1,5 +1,11 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reddit/business_logic/cubit/end_drawer/end_drawer_cubit.dart';
+import 'package:reddit/data/repository/end_drawer/end_drawer_repository.dart';
+import 'package:reddit/data/repository/left_drawer/left_drawer_repository.dart';
+import 'package:reddit/data/web_services/left_drawer/left_drawer_web_services.dart';
+import 'package:reddit/data/web_services/settings_web_services.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/data/model/signin.dart';
 import 'package:reddit/presentation/screens/home/home.dart';
@@ -8,7 +14,11 @@ import 'package:reddit/presentation/screens/popular/popular.dart';
 import 'package:reddit/presentation/screens/test_home_screens/chat.dart';
 import 'package:reddit/presentation/screens/test_home_screens/explore.dart';
 import 'package:reddit/presentation/screens/test_home_screens/notifications.dart';
+import 'package:reddit/presentation/widgets/home_widgets/end_drawer.dart';
+import 'package:reddit/presentation/widgets/home_widgets/left_drawer.dart';
 import 'package:reddit/presentation/widgets/posts/add_post.dart';
+
+import '../../../business_logic/cubit/left_drawer/left_drawer_cubit.dart';
 
 class HomePage extends StatefulWidget {
   User? user;
@@ -197,23 +207,23 @@ class _HomePageState extends State<HomePage> {
             bottomNavBarItem(
                 4, Icons.notifications, Icons.notifications_outlined),
           ]),
-      drawer: const Drawer(),
-      endDrawer: isLoggedin
-          ? Drawer(
-              child: Column(children: [
-                Text(user!.name!),
-                Text(user!.email!),
-                CircleAvatar(
-                  child: user!.imageUrl != null
-                      ? Image.network(
-                          user!.imageUrl!,
-                          fit: BoxFit.cover,
-                        )
-                      : const Icon(Icons.person),
-                )
-              ]),
-            )
-          : const SizedBox(width: 10),
+      drawer: BlocProvider(
+        create: (context) =>
+            LeftDrawerCubit(LeftDrawerRepository(LeftDrawerWebServices())),
+        child: LeftDrawer(isLoggedin),
+      ),
+      endDrawer: BlocProvider(
+        create: (context) =>
+            EndDrawerCubit(EndDrawerRepository(SettingsWebServices())),
+        child: EndDrawer(
+            isLoggedin,
+            user == null ? "" : user!.name ?? "",
+            user == null ? "" : user!.imageUrl ?? "",
+            2,
+            35,
+            true,
+            user == null ? "" : user!.email ?? ""),
+      ),
     );
   }
 }
