@@ -8,7 +8,7 @@ void main() {
   Widget createWidgetUnderTest() {
     return MaterialApp(
       home: HomePageWeb(
-          User(userId: '', name: 'name', email: 'email', imageUrl: 'imageUrl')),
+          User(userId: '', name: 'name', email: 'email', imageUrl: null)),
     );
   }
 
