@@ -16,3 +16,10 @@ class SafetySettingsChanged extends SafetySettingsState {
   final SafetySettings settings;
   SafetySettingsChanged(this.settings);
 }
+
+// emitted on every update in the safety settings page
+class BlockListUpdated extends SafetySettingsState {
+  final SafetySettings settings;
+  final String name;
+  BlockListUpdated(this.settings, this.name);
+}

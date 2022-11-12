@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 /// Safety Settings data model
 class SafetySettings {
   late String disroptiveSettings;
-  late List<dynamic> blocked;
+  List<dynamic> blocked = [];
   late bool showUnInSearch;
   late bool personalizeAllOfReddit;
   late bool personalizeAdsInformation;
@@ -25,7 +25,6 @@ class SafetySettings {
   ///  Transform the data from json to Settings Class object
   SafetySettings.fromjson(Map<String, dynamic> json) {
     disroptiveSettings = json['badCommentAutoCollapse'];
-    blocked = json['blocked'];
     showUnInSearch = json['showInSearch'];
     personalizeAllOfReddit = json['personalizeAllOfReddit'];
     personalizeAdsInformation = json['personalizeAds_information'];

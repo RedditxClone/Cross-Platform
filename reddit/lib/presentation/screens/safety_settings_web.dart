@@ -20,6 +20,7 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
   late Responsive responsive;
   String disruptiveComments = 'OFF';
   Color _AddColor = Colors.grey;
+  late int oldSized;
   bool var1 = true;
   bool var2 = true;
   bool var3 = true;
@@ -34,14 +35,15 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
   }
 
   void blockUser(String username) {
-    bool success = BlocProvider.of<SafetySettingsCubit>(context)
+    BlocProvider.of<SafetySettingsCubit>(context)
         .blockUser(safetySettings!, username);
-    if (success) {
-      displayMsg(context, Colors.blue, '${blockedUsers.text} is now blocked');
-    } else {
-      displayMsg(
-          context, Colors.red, 'An error has occured. please try again later');
-    }
+
+    // if () {
+    //   displayMsg(context, Colors.blue, '${blockedUsers.text} is now blocked');
+    // } else {
+    //   displayMsg(
+    //       context, Colors.red, 'An error has occured. please try again later');
+    // }
     blockedUsers.text = '';
   }
 
@@ -408,20 +410,42 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
-      child: BlocBuilder<SafetySettingsCubit, SafetySettingsState>(
-        builder: (context, state) {
-          if (state is SafetySettingsAvailable) {
-            responsive = Responsive(context);
+      child: BlocListener<SafetySettingsCubit, SafetySettingsState>(
+        listener: (context, state) {
+          if (state is BlockListUpdated) {
             safetySettings = state.settings;
-            blockedUsers = TextEditingController();
-            return buildBody();
-          } else if (state is SafetySettingsChanged) {
-            safetySettings = state.settings;
-            return buildBody();
-          } else {
-            return const Center(child: CircularProgressIndicator());
+            if (oldSized < safetySettings!.blocked.length) {
+              displayMsg(context, Colors.blue, '${state.name} is now blocked');
+            } else if (oldSized > safetySettings!.blocked.length) {
+              displayMsg(
+                  context, Colors.blue, '${state.name} is now unblocked');
+            } else {
+              displayMsg(context, Colors.red,
+                  'An error has occured. please try again later');
+            }
           }
         },
+        child: BlocBuilder<SafetySettingsCubit, SafetySettingsState>(
+          builder: (context, state) {
+            if (state is SafetySettingsAvailable) {
+              responsive = Responsive(context);
+              safetySettings = state.settings;
+              blockedUsers = TextEditingController();
+              oldSized = safetySettings!.blocked.length;
+              return buildBody();
+            } else if (state is SafetySettingsChanged) {
+              safetySettings = state.settings;
+              oldSized = safetySettings!.blocked.length;
+              return buildBody();
+            } else if (state is BlockListUpdated) {
+              safetySettings = state.settings;
+              oldSized = safetySettings!.blocked.length;
+              return buildBody();
+            } else {
+              return const Center(child: CircularProgressIndicator());
+            }
+          },
+        ),
       ),
     );
   }
