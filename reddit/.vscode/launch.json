@@ -8,7 +8,12 @@
             "name": "reddit",
             "request": "launch",
             "type": "dart",
-            "args": ["--web-port","5000"]
+            "args": [
+                "--web-port",
+                "5000",
+                "--dart-define",
+                "BASE_URL=testurlfromcmd",
+            ]
         },
         {
             "name": "reddit (profile mode)",
