@@ -16,7 +16,7 @@ class AccountSettingsRepository {
     final accSettings = await accountSettingsWebServices.getAccountSettings();
     print("Account settings from repo:");
     print("$accSettings");
-    return AccountSettingsModel.fromJson(jsonDecode(accSettings));
+    return AccountSettingsModel.fromJson(accSettings);
   }
 
   /// Map new settings to Json and send it to web services class to make the PATCH request.

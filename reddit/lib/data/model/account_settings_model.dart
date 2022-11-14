@@ -4,7 +4,6 @@ class AccountSettingsModel {
   late bool enableFollowers;
   late String gender;
   late bool over18;
-  late int numComments;
   late bool emailUpvotePost;
   late bool emailUpvoteComment;
   late bool emailMessages;
@@ -15,7 +14,6 @@ class AccountSettingsModel {
       required this.enableFollowers,
       required this.gender,
       required this.over18,
-      required this.numComments,
       required this.emailUpvotePost,
       required this.emailUpvoteComment,
       required this.emailMessages,
@@ -31,7 +29,6 @@ class AccountSettingsModel {
           enableFollowers == other.enableFollowers &&
           gender == other.gender &&
           over18 == other.over18 &&
-          numComments == other.numComments &&
           emailUpvotePost == other.emailUpvotePost &&
           emailUpvoteComment == other.emailUpvoteComment &&
           emailMessages == other.emailMessages &&
@@ -43,17 +40,17 @@ class AccountSettingsModel {
   AccountSettingsModel.fromJson(Map<String, dynamic> json) {
     print("Account settings from model:");
     print("$json");
-    countryCode = json['country_code'];
-    enableFollowers = json['enable_followers'];
+    countryCode = json['countryCode'] == "" ? "EG" : json['countryCode'];
+    enableFollowers = json['allowFollow'];
 
-    over18 = json['over_18'];
-    numComments = json['num_comments'];
-    emailUpvotePost = json['email_upvote_post'];
-    emailUpvoteComment = json['email_upvote_comment'];
-    emailMessages = json['email_messages'];
-    defaultCommentSort = json['default_comment_sort'];
-    showFlair = json['show_flair'];
-    gender = json['gender'];
+    over18 = json['adultContent'];
+    emailUpvotePost = json['upvotePosts'];
+    emailUpvoteComment = json['upvoteComments'];
+    gender = json['gender'] == "" ? "male" : json['gender'];
+    // ???
+    emailMessages = json['email_messages'] ?? false;
+    defaultCommentSort = json['default_comment_sort'] ?? 0;
+    showFlair = json['show_flair'] ?? false;
   }
   // Trial to update only certain settings
   // Map<String, dynamic> toJson(
@@ -61,7 +58,6 @@ class AccountSettingsModel {
   //     enableFollowers,
   //     gender,
   //     over18,
-  //     numComments,
   //     emailUpvotePost,
   //     emailUpvoteComment,
   //     emailMessages,
@@ -74,7 +70,6 @@ class AccountSettingsModel {
   //     'country_code': countryCode,
   //     'enable_followers': enableFollowers,
   //     'over_18': over18,
-  //     'num_comments': numComments,
   //     'email_upvote_post': emailUpvotePost,
   //     'email_upvote_comment': emailUpvoteComment,
   //     'email_messages': emailMessages,
@@ -88,15 +83,15 @@ class AccountSettingsModel {
   // }
   /// Map settings from model to Json to be sent to web services.
   Map<String, dynamic> toJson() => {
-        'country_code': countryCode,
-        'enable_followers': enableFollowers,
-        'over_18': over18,
-        'num_comments': numComments,
-        'email_upvote_post': emailUpvotePost,
-        'email_upvote_comment': emailUpvoteComment,
-        'email_messages': emailMessages,
-        'default_comment_sort': defaultCommentSort,
-        'show_flair': showFlair,
-        'gender': gender,
+        "countryCode": countryCode,
+        "allowFollow": enableFollowers,
+        "adultContent": over18,
+        "upvotePosts": emailUpvotePost,
+        "upvoteComments": emailUpvoteComment,
+        "gender": gender,
+        // ??
+        // "email_messages": emailMessages,
+        // "default_comment_sort": defaultCommentSort,
+        // "show_flair": showFlair,
       };
 }
