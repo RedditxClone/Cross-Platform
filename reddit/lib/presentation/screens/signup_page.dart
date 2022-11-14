@@ -1,5 +1,7 @@
-import 'dart:convert';
+// ignore_for_file: use_build_context_synchronously
 
+import 'dart:convert';
+import 'package:url_launcher/link.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -21,6 +23,17 @@ class _SignupWebState extends State<SignupWeb> {
   late User newUser;
   var emailController = TextEditingController();
   bool emailCorrect = false;
+  final userAgreementUrl = Uri.parse(USER_AGGREMENT);
+  final privacyPolicyUrl = Uri.parse(PRIVACY_POLICY);
+  final textStyleForPolicy = const TextStyle(
+    fontSize: 12,
+    color: Colors.black,
+  );
+  final textStyleForLinks = const TextStyle(
+    fontSize: 12,
+    color: Colors.blue,
+    fontWeight: FontWeight.bold,
+  );
 
   @override
   void initState() {
@@ -185,12 +198,6 @@ class _SignupWebState extends State<SignupWeb> {
             );
           }
         });
-        // newUser = User(
-        //   name: fbUser['name'] as String,
-        //   email: fbUser['email'] as String,
-        //   imageUrl: fbUser['picture']['data']['url'] as String,
-        //   userId: fbUser['id'] as String,
-        // );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -252,217 +259,257 @@ class _SignupWebState extends State<SignupWeb> {
   }
 
   void continieSignUp() {
-    if (emailCorrect) {
-      newUser = User(
-        name: null,
-        email: emailController.text, //set the email takes from the text field
-        imageUrl: null,
-        userId: null,
-      );
-      Navigator.of(context).pushNamed(
-        SIGNU_PAGE2,
-        arguments: newUser,
-      );
-    }
+    newUser = User(
+      name: null,
+      email: emailController.text, //set the email takes from the text field
+      imageUrl: null,
+      userId: null,
+    );
+    Navigator.of(context).pushNamed(
+      SIGNU_PAGE2,
+      arguments: newUser,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: null,
-      body: Row(
-        children: [
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.09,
-            height: MediaQuery.of(context).size.height,
-            child: Image.asset(
-              'assets/images/sidelogo.png',
-              fit: BoxFit.fitHeight,
-            ),
-          ),
-          Container(
-            height: MediaQuery.of(context).size.height,
-            // width: MediaQuery.of(context).size.width * 0.4,
-            padding:
-                EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.02),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        "Sign Up",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    RichText(
-                      text: TextSpan(
-                        children: [
-                          createTextSpan(
-                              "By continuing, you are setting up a Reddit\n",
-                              false),
-                          createTextSpan("account and agree to our ", false),
-                          createTextSpan("User Agreement ", true,
-                              url:
-                                  "https://www.redditinc.com/policies/user-agreement"),
-                          createTextSpan("\nand ", false),
-                          createTextSpan("Privacy Policy.", true,
-                              url:
-                                  "https://www.reddit.com/policies/privacy-policy"),
-                        ],
-                      ),
-                    ),
-                  ],
+      backgroundColor: Colors.white,
+      body: Theme(
+        data: ThemeData.light(),
+        child: SingleChildScrollView(
+          child: Row(
+            children: [
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.09,
+                height: MediaQuery.of(context).size.height,
+                child: Image.asset(
+                  'assets/images/sidelogo.png',
+                  fit: BoxFit.fitHeight,
                 ),
-                Column(
-                  children: [
-                    createContinueWithButton("google"),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.01,
-                    ),
-                    createContinueWithButton("facebook"),
-                  ],
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.2,
-                  child: Column(
-                    children: [
-                      Row(
-                        children: const [
-                          Expanded(
-                            child: Divider(
-                              thickness: 1,
-                              indent: 30,
-                              endIndent: 30,
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.3,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.only(left: 40),
+                          child: Text(
+                            "Sign up",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
                             ),
                           ),
-                          Center(
-                            child: Text(
-                              "OR",
-                              style: TextStyle(
-                                color: Color.fromARGB(255, 85, 83, 83),
-                                fontSize: 17,
-                                fontWeight: FontWeight.bold,
+                        ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.01,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 40),
+                          child: Wrap(
+                            children: [
+                              Text(
+                                "By continuing, you are setting up a Reddit ",
+                                style: textStyleForPolicy,
+                              ),
+                              Text(
+                                "account and agree to our ",
+                                style: textStyleForPolicy,
+                              ),
+                              Link(
+                                uri: userAgreementUrl,
+                                target: LinkTarget.blank,
+                                builder: (context, followLink) => InkWell(
+                                  onTap: followLink,
+                                  child: Text(
+                                    "User Agreement",
+                                    style: textStyleForLinks,
+                                  ),
+                                ),
+                              ),
+                              Text(" and ", style: textStyleForPolicy),
+                              Link(
+                                uri: privacyPolicyUrl,
+                                target: LinkTarget.blank,
+                                builder: (context, followLink) => InkWell(
+                                  onTap: followLink,
+                                  child: Text(
+                                    "Privacy Policy.",
+                                    style: textStyleForLinks,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.07,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      createContinueWithButton("google"),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.01,
+                      ),
+                      createContinueWithButton("facebook"),
+                    ],
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.05,
+                  ),
+                  SizedBox(
+                    width: 320,
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Expanded(
+                              child: Divider(
+                                thickness: 1,
+                                indent: 30,
+                                endIndent: 30,
                               ),
                             ),
-                          ),
-                          Expanded(
-                            child: Divider(
-                              thickness: 1,
-                              indent: 30,
-                              endIndent: 30,
+                            Center(
+                              child: Text(
+                                "OR",
+                                style: TextStyle(
+                                  color: Color.fromARGB(255, 85, 83, 83),
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.01,
-                      ),
-                      TextField(
-                        controller: emailController,
-                        decoration: InputDecoration(
-                          border: const OutlineInputBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(8),
+                            Expanded(
+                              child: Divider(
+                                thickness: 1,
+                                indent: 30,
+                                endIndent: 30,
+                              ),
                             ),
-                          ),
-                          labelText: 'Email',
-                          helperText: 'Email',
-                          errorText: emailCorrect
-                              ? null
-                              : 'Please fix your email to continue',
-                          suffixIcon: emailController.text.isEmpty
-                              ? null
-                              : emailCorrect
-                                  ? const Icon(
-                                      IconData(0xf635,
-                                          fontFamily: 'MaterialIcons'),
-                                      color: Colors.green,
-                                    )
-                                  : const Icon(
-                                      IconData(0xf713,
-                                          fontFamily: 'MaterialIcons'),
-                                      color: Colors.red,
-                                    ),
+                          ],
                         ),
-                        maxLines: 1,
-                        keyboardType: TextInputType.emailAddress,
-                        onChanged: (value) {
-                          setState(() {
-                            int index = value.indexOf('@');
-                            if (index != -1) {
-                              emailCorrect = value.contains('.', index + 2) &&
-                                  value[value.length - 1] != '.' &&
-                                  value[value.length - 1] != ' ';
-                            }
-                          });
-                        },
-                      ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.01,
-                      ),
-                      ElevatedButton(
-                        onPressed: emailCorrect ? continieSignUp : null,
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(
-                            const Color.fromARGB(255, 42, 94, 137),
-                          ),
-                          shape: MaterialStateProperty.all(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.05,
+                        ),
+                        SizedBox(
+                          width: 270,
+                          child: TextField(
+                            controller: emailController,
+                            decoration: InputDecoration(
+                              border: const OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(8),
+                                ),
+                              ),
+                              labelText: 'Email',
+                              helperText: 'Email',
+                              errorText:
+                                  emailCorrect || emailController.text.isEmpty
+                                      ? null
+                                      : 'Please fix your email to continue',
+                              suffixIcon: emailController.text.isEmpty
+                                  ? null
+                                  : emailCorrect
+                                      ? const Icon(
+                                          IconData(0xf635,
+                                              fontFamily: 'MaterialIcons'),
+                                          color: Colors.green,
+                                        )
+                                      : const Icon(
+                                          IconData(0xf713,
+                                              fontFamily: 'MaterialIcons'),
+                                          color: Colors.red,
+                                        ),
                             ),
-                          ),
-                          padding: MaterialStateProperty.all(
-                            const EdgeInsets.fromLTRB(120, 25, 120, 25),
+                            maxLines: 1,
+                            keyboardType: TextInputType.emailAddress,
+                            onChanged: (value) {
+                              setState(() {
+                                int index = value.indexOf('@');
+                                if (index != -1) {
+                                  emailCorrect =
+                                      value.contains('.', index + 2) &&
+                                          value[value.length - 1] != '.' &&
+                                          value[value.length - 1] != ' ';
+                                }
+                              });
+                            },
                           ),
                         ),
-                        child: const Text(
-                          "Continue",
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.05,
                         ),
-                      ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.01,
-                      ),
-                      Row(
-                        children: [
-                          const Text(
-                            "Already a redditor?",
-                            style: TextStyle(
-                              color: Color.fromARGB(255, 85, 83, 83),
-                              fontSize: 14,
+                        SizedBox(
+                          width: 270,
+                          height: 45,
+                          child: ElevatedButton(
+                            onPressed: emailCorrect ? continieSignUp : null,
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(
+                                const Color.fromARGB(255, 42, 94, 137),
+                              ),
+                              shape: MaterialStateProperty.all(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
                             ),
-                          ),
-                          InkWell(
-                            onTap: () => Navigator.of(context)
-                                .pushNamed(loginPage), //navigate to login page
                             child: const Text(
-                              " Log in",
+                              "Continue",
                               style: TextStyle(
-                                color: Color.fromARGB(255, 42, 94, 137),
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
-                        ],
-                      ),
-                    ],
+                        ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.05,
+                        ),
+                        Row(
+                          children: [
+                            const Text(
+                              "Already a redditor?",
+                              style: TextStyle(
+                                color: Color.fromARGB(255, 85, 83, 83),
+                                fontSize: 14,
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () => Navigator.of(context).pushNamed(
+                                  loginPage), //navigate to login page
+                              child: const Text(
+                                " Log in",
+                                style: TextStyle(
+                                  color: Color.fromARGB(255, 42, 94, 137),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-          )
-        ],
+                ],
+              )
+            ],
+          ),
+        ),
       ),
     );
   }

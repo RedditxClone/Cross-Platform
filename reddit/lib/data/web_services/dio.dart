@@ -36,6 +36,14 @@ class DioHelper {
     return response.data;
   }
 
+  static Future patchData({
+    required String url,
+    required Map<String, dynamic> data,
+  }) async {
+    var response = await dio.patch(url, data: data);
+    return response;
+  }
+
   static Future postData({
     required String url,
     required Map<String, dynamic> data,

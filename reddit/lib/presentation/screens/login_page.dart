@@ -1,8 +1,10 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:reddit/helper/dio.dart';
 import 'package:url_launcher/link.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../constants/strings.dart';
 import '../../data/model/signin.dart';
@@ -24,26 +26,188 @@ class _LoginWebState extends State<LoginWeb> {
   var passwordController = TextEditingController();
   bool loginCorrect = true;
   bool usernameCorrect = true;
-  // bool passwordEmpty = false;
-  // bool usernameEmpty = false;
-  bool usernameUsed = false;
+  bool passwordEmpty = false;
   bool passwordVisible = true;
+  final textStyleForPolicy = const TextStyle(
+    fontSize: 12,
+    color: Colors.black,
+  );
+  final textStyleForLinks = const TextStyle(
+    fontSize: 12,
+    color: Colors.blue,
+    fontWeight: FontWeight.bold,
+  );
   @override
   void initState() {
     super.initState();
-    // FacebookSignInApi.init();
+    FacebookSignInApi.init();
   }
 
-  Future<void> _launchUrl(Uri url) async {
-    if (await canLaunchUrl(url)) {
-      await launchUrl(
-        url,
+  //this an async fucntion to log in with google account and store the result in database
+  Future signInWithGoogle() async {
+    try {
+      var googleAccount = await GoogleSingInApi.loginWeb();
+      if (googleAccount != null) {
+        DioHelper.postData(url: '/api/auth/signup', data: {
+          "userId": googleAccount.id,
+          "email": googleAccount.email,
+          "name": googleAccount.displayName,
+          "imageUrl": googleAccount.photoUrl,
+          "_type": "google",
+          "serverAuthCode": googleAccount.serverAuthCode,
+        }).then((value) {
+          if (value.statusCode == 201) {
+            newUser = User.fromJson(jsonDecode(value.data));
+            Navigator.of(context).pushReplacementNamed(
+              homePageRoute,
+              arguments: newUser,
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Row(
+                  children: [
+                    const Icon(
+                      Icons.error,
+                      color: Colors.red,
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.01,
+                    ),
+                    const Text(
+                      "Error in Signing in with Google",
+                      style: TextStyle(
+                        color: Colors.red,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(
+                  Icons.error,
+                  color: Colors.red,
+                ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.01,
+                ),
+                const Text(
+                  "Error in Signing in with Google",
+                  style: TextStyle(
+                    color: Colors.red,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(
+                Icons.error,
+                color: Colors.red,
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.01,
+              ),
+              const Text(
+                "Error in Signing in with Google",
+                style: TextStyle(
+                  color: Colors.red,
+                ),
+              ),
+            ],
+          ),
+        ),
       );
-    } else {
-      throw 'Could not launch $url';
     }
   }
 
+//this an async fucntion to log in with facebook account and store the result in database
+  Future signInWithFacebook() async {
+    try {
+      var loginResult = await FacebookSignInApi.login();
+      if (loginResult != null) {
+        var fbUser = await FacebookSignInApi
+            .getUserData(); //post request to add user data
+        DioHelper.postData(url: '/api/auth/signup', data: {
+          "name": fbUser['name'] as String,
+          "email": fbUser['email'] as String,
+          "imageUrl": fbUser['picture']['data']['url'] as String,
+          "userId": loginResult.accessToken?.userId,
+          "_type": "facebook",
+          "accessToken": loginResult.accessToken?.token,
+        }).then((value) {
+          if (value.statusCode == 201) {
+            newUser = User.fromJson(jsonDecode(value.data));
+            Navigator.of(context).pushReplacementNamed(
+              homePageRoute,
+              arguments: newUser,
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Row(
+                  children: [
+                    const Icon(
+                      Icons.error,
+                      color: Colors.red,
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.01,
+                    ),
+                    const Text(
+                      "Error in Signing in with Facebook",
+                      style: TextStyle(
+                        color: Colors.red,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(
+                Icons.error,
+                color: Colors.red,
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.01,
+              ),
+              const Text(
+                "Error in Signing in with Facebook",
+                style: TextStyle(
+                  color: Colors.red,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+  }
+
+//This function creates buttonns for login with google and facebook
+//it takes a string that determines the function of the button depends on the passed value
+//is it for google or facebook
   Widget createContinueWithButton(String lable) {
     return OutlinedButton.icon(
       onPressed: lable == 'google' ? signInWithGoogle : signInWithFacebook,
@@ -59,7 +223,10 @@ class _LoginWebState extends State<LoginWeb> {
           )),
       style: ButtonStyle(
         side: MaterialStateProperty.all(
-          const BorderSide(color: Color.fromARGB(255, 9, 51, 85), width: 1),
+          const BorderSide(
+            color: Color.fromARGB(255, 9, 51, 85),
+            width: 1,
+          ),
         ),
         shape: MaterialStateProperty.all(
           RoundedRectangleBorder(
@@ -75,177 +242,116 @@ class _LoginWebState extends State<LoginWeb> {
     );
   }
 
-  Future signInWithFacebook() async {
-    try {
-      // var loginResult = await FacebookSignInApi.login();
-      // if (loginResult != null) {
-      //   var fbUser = await FacebookSignInApi.getUserData();
-      //   newUser = User(
-      //     name: fbUser['name'] as String,
-      //     email: fbUser['email'] as String,
-      //     imageUrl: fbUser['picture']['data']['url'] as String,
-      //     userId: fbUser['id'] as String,
-      //   );
-      //   Navigator.of(context).pushNamed(
-      //     HOME_PAGE,
-      //     arguments: newUser,
-      //   );
-      // } else {
-      //   ScaffoldMessenger.of(context).showSnackBar(
-      //     const SnackBar(
-      //       content: Text("Error in Signing in with Facebook"),
-      //     ),
-      //   );
-      // }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString()),
-        ),
-      );
-    }
-  }
-
-  Future signInWithGoogle() async {
-    try {
-      var googleAccount = await GoogleSingInApi.loginWeb().then((value) {
-        newUser = User(
-          name: value?.displayName,
-          email: value?.email,
-          imageUrl: value?.photoUrl,
-          userId: value?.id,
-        );
-        Navigator.of(context).pushNamed(
-          homePageRoute,
-          arguments: newUser,
-        );
-      });
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Error in Signing in with Google"),
-        ),
-      );
-    }
-  }
-
   void continueLogin() {
-    if (usernameController.text.isEmpty || passwordController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Please fill out the empty fields"),
-        ),
-      );
-    } else {
-      if (loginCorrect) {
-        DioHelper.postData(url: "/api/auth/login", data: {
-          "username": usernameController.text,
-          "password": passwordController.text,
-        }).then((value) {
-          if (value.statusCode == 201) {
-            newUser = User.fromJson(value.data);
-            Navigator.of(context)
-                .pushNamed(homePageRoute); //navigate to home page
-          } else {
-            setState(() {
-              loginCorrect = false;
-            });
-          }
-        });
-      } else {
-        if (!loginCorrect) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Username or Password incorrect"),
-            ),
-          );
-          return;
+    if (loginCorrect) {
+      DioHelper.postData(url: "/api/auth/login", data: {
+        "username": usernameController.text,
+        "password": passwordController.text,
+      }).then((value) {
+        if (value.statusCode == 201) {
+          newUser = User.fromJson(jsonDecode(value.data));
+          Navigator.of(context).pushReplacementNamed(homePageRoute,
+              arguments: newUser); //navigate to home page
+        } else {
+          setState(() {
+            loginCorrect = false;
+          });
         }
+      });
+    } else {
+      if (!loginCorrect) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Username or Password incorrect"),
+          ),
+        );
+        return;
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    const textStyleForPolicy = TextStyle(
-      fontSize: 12,
-      color: Colors.black,
-    );
-    const textStyleForLinks = TextStyle(
-      fontSize: 12,
-      color: Colors.blue,
-      fontWeight: FontWeight.bold,
-    );
     return Scaffold(
       appBar: null,
-      body: Container(
-        // color: Colors.white,
-        child: Row(
-          children: [
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.09,
-              height: MediaQuery.of(context).size.height,
-              child: Image.asset(
-                'assets/images/sidelogo.png',
-                fit: BoxFit.fitHeight,
+      backgroundColor: Colors.white,
+      body: Theme(
+        data: ThemeData.light(),
+        child: SingleChildScrollView(
+          child: Row(
+            children: [
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.09,
+                height: MediaQuery.of(context).size.height,
+                child: Image.asset(
+                  'assets/images/sidelogo.png',
+                  fit: BoxFit.fitHeight,
+                ),
               ),
-            ),
-            Container(
-              height: MediaQuery.of(context).size.height,
-              // width: MediaQuery.of(context).size.width * 0.4,
-              padding: EdgeInsets.only(
-                  left: MediaQuery.of(context).size.width * 0.02),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        "Log in",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.3,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.only(left: 40),
+                          child: Text(
+                            "Log in",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.01,
-                      ),
-                      Row(
-                        children: [
-                          const Text(
-                            "By continuing, you agree to our ",
-                            style: textStyleForPolicy,
-                          ),
-                          Link(
-                            uri: userAgreementUrl,
-                            target: LinkTarget.blank,
-                            builder: (context, followLink) => InkWell(
-                              onTap: followLink,
-                              child: const Text(
-                                "User Agreement",
-                                style: textStyleForLinks,
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.01,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 40),
+                          child: Wrap(
+                            children: [
+                              Text(
+                                "By continuing, you agree to our ",
+                                style: textStyleForPolicy,
                               ),
-                            ),
-                          ),
-                          const Text(" and ", style: textStyleForPolicy),
-                          Link(
-                            uri: privacyPolicyUrl,
-                            target: LinkTarget.blank,
-                            builder: (context, followLink) => InkWell(
-                              onTap: followLink,
-                              child: const Text(
-                                "Privacy Policy.",
-                                style: textStyleForLinks,
+                              Link(
+                                uri: userAgreementUrl,
+                                target: LinkTarget.blank,
+                                builder: (context, followLink) => InkWell(
+                                  onTap: followLink,
+                                  child: Text(
+                                    "User Agreement",
+                                    style: textStyleForLinks,
+                                  ),
+                                ),
                               ),
-                            ),
+                              Text(" and ", style: textStyleForPolicy),
+                              Link(
+                                uri: privacyPolicyUrl,
+                                target: LinkTarget.blank,
+                                builder: (context, followLink) => InkWell(
+                                  onTap: followLink,
+                                  child: Text(
+                                    "Privacy Policy.",
+                                    style: textStyleForLinks,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.07,
                   ),
                   Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       createContinueWithButton("google"),
                       SizedBox(
@@ -255,16 +361,21 @@ class _LoginWebState extends State<LoginWeb> {
                     ],
                   ),
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.2,
+                    height: MediaQuery.of(context).size.height * 0.05,
+                  ),
+                  SizedBox(
+                    width: 320,
                     child: Column(
                       children: [
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: const [
                             Expanded(
                               child: Divider(
                                 thickness: 1,
                                 indent: 30,
                                 endIndent: 30,
+                                color: Colors.grey,
                               ),
                             ),
                             Center(
@@ -282,128 +393,188 @@ class _LoginWebState extends State<LoginWeb> {
                                 thickness: 1,
                                 indent: 30,
                                 endIndent: 30,
+                                color: Colors.grey,
                               ),
                             ),
                           ],
                         ),
                         SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.01,
+                          height: MediaQuery.of(context).size.height * 0.05,
                         ),
-                        TextField(
-                          controller: usernameController,
-                          decoration: InputDecoration(
-                            hintText: "CHOOSE A USERNAME",
-                            label: const Text("CHOOSE A USERNAME"),
-                            hintStyle: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                              color: Colors.grey,
+                        SizedBox(
+                          width: 270,
+                          child: TextField(
+                            controller: usernameController,
+                            style: const TextStyle(
+                              color: Colors.black,
                             ),
-                            border: const OutlineInputBorder(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(8),
+
+                            decoration: InputDecoration(
+                              hintText: "CHOOSE A USERNAME",
+                              label: const Text("CHOOSE A USERNAME"),
+                              labelStyle: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                                color: Colors.grey,
                               ),
+                              hintStyle: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                                color: Colors.grey,
+                              ),
+                              border: const OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(8),
+                                ),
+                                borderSide: BorderSide(
+                                  color: Colors.grey,
+                                  width: 1,
+                                ),
+                              ),
+                              enabledBorder: const OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(8),
+                                ),
+                                borderSide: BorderSide(
+                                  color: Colors.grey,
+                                  width: 1,
+                                ),
+                              ),
+                              prefixIcon: usernameController.text.isEmpty
+                                  ? null
+                                  : usernameCorrect
+                                      ? const Icon(
+                                          IconData(0xf635,
+                                              fontFamily: 'MaterialIcons'),
+                                          color: Colors.green,
+                                        )
+                                      : const Icon(
+                                          IconData(0xf713,
+                                              fontFamily: 'MaterialIcons'),
+                                          color: Colors.red,
+                                        ),
+                              errorText: usernameController.text.isEmpty ||
+                                      usernameCorrect
+                                  ? null
+                                  : "Username must be between 3 & 20 characters",
                             ),
-                            prefixIcon: usernameController.text.isEmpty
-                                ? null
-                                : usernameCorrect
-                                    ? const Icon(
-                                        IconData(0xf635,
-                                            fontFamily: 'MaterialIcons'),
-                                        color: Colors.green,
-                                      )
-                                    : const Icon(
-                                        IconData(0xf713,
-                                            fontFamily: 'MaterialIcons'),
-                                        color: Colors.red,
-                                      ),
-                            errorText: usernameController.text.isEmpty ||
-                                    usernameCorrect
-                                ? null
-                                : "Username must be between 3 and 20 characters",
+                            maxLines: 1,
+                            // maxLength: 20,
+
+                            textInputAction: TextInputAction.unspecified,
+                            onChanged: (value) {
+                              setState(() {
+                                usernameCorrect =
+                                    value.length >= 3 && value.length <= 20;
+                              });
+                            },
                           ),
-                          maxLines: 1,
-                          // maxLength: 20,
-                          textInputAction: TextInputAction.unspecified,
-                          onChanged: (value) {
-                            setState(() {
-                              usernameCorrect =
-                                  value.length >= 3 && value.length <= 20;
-                            });
-                          },
                         ),
                         SizedBox(
                           height: MediaQuery.of(context).size.height * 0.01,
                         ),
-                        TextField(
-                          controller: passwordController,
-                          decoration: InputDecoration(
-                            hintText: "PASSWORD",
-                            label: const Text("PASSWORD"),
-                            hintStyle: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                              color: Colors.grey,
+                        SizedBox(
+                          width: 270,
+                          child: TextField(
+                            controller: passwordController,
+                            style: const TextStyle(
+                              color: Colors.black,
                             ),
-                            border: const OutlineInputBorder(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(8),
+                            decoration: InputDecoration(
+                              hintText: "PASSWORD",
+                              labelStyle: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                                color: Colors.grey,
                               ),
-                            ),
-                            suffixIcon: IconButton(
-                              onPressed: () => setState(() {
-                                passwordVisible = !passwordVisible;
-                              }),
-                              icon: Icon(
-                                passwordVisible
-                                    ? Icons.visibility
-                                    : Icons.visibility_off,
+                              label: const Text("PASSWORD"),
+                              hintStyle: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                                color: Colors.grey,
                               ),
+                              enabledBorder: const OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(8),
+                                ),
+                                borderSide: BorderSide(
+                                  color: Colors.grey,
+                                  width: 1,
+                                ),
+                              ),
+                              border: const OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(8),
+                                ),
+                                borderSide: BorderSide(
+                                  color: Colors.grey,
+                                  width: 1,
+                                ),
+                              ),
+                              suffixIcon: IconButton(
+                                onPressed: () => setState(() {
+                                  passwordVisible = !passwordVisible;
+                                }),
+                                icon: Icon(
+                                  passwordVisible
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                ),
+                              ),
+                              prefixIcon: passwordController.text.isEmpty
+                                  ? null
+                                  : loginCorrect
+                                      ? const Icon(
+                                          IconData(0xf635,
+                                              fontFamily: 'MaterialIcons'),
+                                          color: Colors.green,
+                                        )
+                                      : const Icon(
+                                          IconData(0xf713,
+                                              fontFamily: 'MaterialIcons'),
+                                          color: Colors.red,
+                                        ),
+                              errorText: passwordController.text.isEmpty ||
+                                      loginCorrect
+                                  ? null
+                                  : "Incorrect is password",
                             ),
-                            prefixIcon: passwordController.text.isEmpty
-                                ? null
-                                : loginCorrect
-                                    ? const Icon(
-                                        IconData(0xf635,
-                                            fontFamily: 'MaterialIcons'),
-                                        color: Colors.green,
-                                      )
-                                    : const Icon(
-                                        IconData(0xf713,
-                                            fontFamily: 'MaterialIcons'),
-                                        color: Colors.red,
-                                      ),
-                            errorText:
-                                passwordController.text.isEmpty || loginCorrect
-                                    ? null
-                                    : "Incorrect is password",
+                            maxLines: 1,
+                            obscureText: passwordVisible,
+                            keyboardType: TextInputType.visiblePassword,
+                            onChanged: (value) => setState(() {
+                              passwordEmpty = value.isEmpty;
+                            }),
                           ),
-                          maxLines: 1,
-                          obscureText: passwordVisible,
-                          keyboardType: TextInputType.visiblePassword,
                         ),
                         SizedBox(
                           height: MediaQuery.of(context).size.height * 0.01,
                         ),
-                        ElevatedButton(
-                          onPressed: continueLogin,
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all(
-                              const Color.fromARGB(255, 42, 94, 137),
-                            ),
-                            shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
+                        SizedBox(
+                          width: 270,
+                          height: 45,
+                          child: ElevatedButton(
+                            onPressed: usernameCorrect && !passwordEmpty
+                                ? continueLogin
+                                : null,
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(
+                                const Color.fromARGB(255, 42, 94, 137),
                               ),
+                              shape: MaterialStateProperty.all(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              // padding: MaterialStateProperty.all(
+                              //   const EdgeInsets.fromLTRB(120, 25, 120, 25),
+                              // ),
                             ),
-                            padding: MaterialStateProperty.all(
-                              const EdgeInsets.fromLTRB(120, 25, 120, 25),
-                            ),
+                            child: const Text("LOG IN"),
                           ),
-                          child: const Text("LOG IN"),
                         ),
                         SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.01,
+                          height: MediaQuery.of(context).size.height * 0.05,
                         ),
                         Row(
                           children: [
@@ -447,13 +618,39 @@ class _LoginWebState extends State<LoginWeb> {
                             ),
                           ],
                         ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.05,
+                        ),
+                        Row(
+                          children: [
+                            const Text(
+                              "New to Reddit? ",
+                              style: TextStyle(
+                                color: Color.fromARGB(255, 85, 83, 83),
+                                fontSize: 14,
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () => Navigator.of(context).pushNamed(
+                                  SIGNU_PAGE1), //navigate to login page
+                              child: const Text(
+                                "SIGN UP",
+                                style: TextStyle(
+                                  color: Color.fromARGB(255, 42, 94, 137),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
                 ],
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
       ),
     );
