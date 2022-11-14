@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-
-import 'package:image_picker/image_picker.dart';
 import 'package:reddit/data/model/user_settings.dart';
 import 'package:reddit/data/web_services/settings_web_services.dart';
 
@@ -13,7 +11,7 @@ class SettingsRepository {
   /// ### Returns all user settings from json to Settings class object
   Future<ProfileSettings> getUserSettings() async {
     final settings = await settingsWebServices.getUserSettings();
-    return ProfileSettings.fromjson(jsonDecode(settings));
+    return ProfileSettings.fromjson(settings);
   }
 
   Future<dynamic> updateImage(String key, File val) async {

@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 /// # Settings data model
 class ProfileSettings {
   late String profile;
@@ -23,10 +21,10 @@ class ProfileSettings {
 
   /// ### Transform the data from json to Settings Class object
   ProfileSettings.fromjson(Map<String, dynamic> json) {
-    profile = json['profilephoto'];
-    cover = json['coverphoto'];
-    displayName = json['displayName'];
-    about = json['about'];
+    profile = json['profilephoto'] ?? '';
+    cover = json['coverphoto'] ?? '';
+    displayName = json['displayName'] ?? '';
+    about = json['about'] ?? '';
     nsfw = json['nsfw'];
     allowPeopleToFollowYou = json['allowFollow'];
     activeInCommunitiesVisibility = json['activeInCommunitiesVisibility'];

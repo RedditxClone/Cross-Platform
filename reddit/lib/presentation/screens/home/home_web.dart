@@ -29,7 +29,7 @@ class _HomeWebState extends State<HomeWeb> {
           !widget.isLoggedIn && MediaQuery.of(context).size.width > 1300
               ? const LeftList()
               : const SizedBox(width: 0),
-          Container(
+          SizedBox(
             width: widget.isLoggedIn || MediaQuery.of(context).size.width < 1300
                 ? MediaQuery.of(context).size.width
                 : MediaQuery.of(context).size.width - 280,
@@ -73,10 +73,10 @@ class _HomeWebState extends State<HomeWeb> {
                                 color: const Color.fromRGBO(70, 70, 70, 100)),
                             margin: const EdgeInsets.only(bottom: 15),
                           ),
-                          PostsWeb(),
-                          PostsWeb(),
-                          PostsWeb(),
-                          PostsWeb(),
+                          const PostsWeb(),
+                          const PostsWeb(),
+                          const PostsWeb(),
+                          const PostsWeb(),
                         ],
                       ),
                     ),

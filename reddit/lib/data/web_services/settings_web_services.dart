@@ -2,15 +2,19 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:reddit/constants/strings.dart';
 
 class SettingsWebServices {
   late Dio dio;
-  bool isMockerServer = useMockServerForAllWebServices;
+  bool isMockerServer = false;
+  String token =
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzNzI0ZjQ3NTg0NmUxM2VmZjg4MDkxOSIsImlhdCI6MTY2ODQ0Njk1MSwiZXhwIjoxNjY5MzEwOTUxfQ.GuYEH3ZpIrMQxdzhYGIJGxCDTCyyesPaidIPOYNRQOA';
   SettingsWebServices() {
     BaseOptions options = BaseOptions(
-      baseUrl: isMockerServer ? mockUrl : baseUrl,
+      baseUrl:
+          isMockerServer ? mockUrl : 'https://swproject.demosfortest.com/api/',
       receiveDataWhenStatusError: true,
       connectTimeout: 30 * 1000,
       receiveTimeout: 30 * 1000,
@@ -22,7 +26,11 @@ class SettingsWebServices {
   /// Returns all user settings : Performs get request to the endpoint /prefs to get all user settings from the API
   Future<dynamic> getUserSettings() async {
     try {
-      Response response = await dio.get('prefs');
+      Response response = await dio.get('user/me/prefs',
+          options: Options(
+            headers: {"Authorization": "Bearer $token"},
+          ));
+      debugPrint(response.statusCode.toString());
       return response.data;
     } catch (e) {
       return null;
@@ -36,7 +44,12 @@ class SettingsWebServices {
       FormData formData = FormData.fromMap({
         "file": await MultipartFile.fromFile(file.path, filename: fileName)
       });
-      Response response = await dio.patch(key, data: formData);
+      Response response = await dio.patch('user/me/$key',
+          data: formData,
+          options: Options(
+            headers: {"Authorization": "Bearer $token"},
+          ));
+      debugPrint(response.statusCode.toString());
       return response.data;
     } catch (e) {
       // print(e.toString());
@@ -51,11 +64,15 @@ class SettingsWebServices {
         "file": MultipartFile.fromBytes(fileAsBytes,
             contentType: MediaType('application', 'json'), filename: key)
       });
-      Response response = await dio.patch(key, data: formData);
-
+      Response response = await dio.patch('user/me/$key',
+          data: formData,
+          options: Options(
+            headers: {"Authorization": "Bearer $token"},
+          ));
+      debugPrint(response.statusCode.toString());
       return response.data;
     } catch (e) {
-      print(e.toString());
+      debugPrint(e.toString());
       return '';
     }
   }
@@ -63,7 +80,12 @@ class SettingsWebServices {
   /// updates a user setting
   Future<String> updatePrefs(Map changed) async {
     try {
-      Response response = await dio.patch('prefs', data: changed);
+      Response response = await dio.patch('user/me/prefs',
+          data: changed,
+          options: Options(
+            headers: {"Authorization": "Bearer $token"},
+          ));
+      debugPrint(response.statusCode.toString());
       return response.data;
     } catch (e) {
       return '';

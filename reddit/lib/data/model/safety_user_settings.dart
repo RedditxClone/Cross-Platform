@@ -27,10 +27,10 @@ class SafetySettings {
     disroptiveSettings = json['badCommentAutoCollapse'];
     showUnInSearch = json['showInSearch'];
     personalizeAllOfReddit = json['personalizeAllOfReddit'];
-    personalizeAdsInformation = json['personalizeAds_information'];
-    personalizeAdsYourActivity = json['personalizeAds_yourActivity'];
-    personalizeRecGeneralLocation = json['personalizeRec_generalLocation'];
-    personalizeRecOurPartners = json['personalizeRec_ourPartners'];
+    personalizeAdsInformation = json['personalizeAdsInformation'];
+    personalizeAdsYourActivity = json['personalizeAdsYourActivity'];
+    personalizeRecGeneralLocation = json['personalizeRecGeneralLocation'];
+    personalizeRecOurPartners = json['personalizeRecOurPartners'];
     useTwoFactorAuthentication = json['useTwoFactorAuthentication'];
   }
   @override

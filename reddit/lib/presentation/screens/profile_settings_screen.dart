@@ -98,6 +98,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
           break;
       }
     } on PlatformException catch (e) {
+      debugPrint(e.toString());
       displayMsg(context, Colors.red, 'Error', 'Could not load image');
     }
   }
@@ -142,8 +143,8 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                 ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
-                      primary: const Color.fromRGBO(90, 90, 90, 100),
-                      onPrimary: Colors.grey,
+                      foregroundColor: Colors.grey,
+                      backgroundColor: const Color.fromRGBO(90, 90, 90, 100),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20.0)),
                     ),
@@ -201,8 +202,8 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                 ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
-                      primary: const Color.fromRGBO(90, 90, 90, 100),
-                      onPrimary: Colors.grey,
+                      foregroundColor: Colors.grey,
+                      backgroundColor: const Color.fromRGBO(90, 90, 90, 100),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20.0)),
                     ),
@@ -222,8 +223,8 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     return ElevatedButton(
         onPressed: () => addLinks(context),
         style: ElevatedButton.styleFrom(
-          primary: Colors.white,
-          onPrimary: Colors.black,
+          foregroundColor: Colors.black,
+          backgroundColor: Colors.white,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(40.0)),
         ),
@@ -320,7 +321,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                           onPressed: () =>
                               chooseProfilePhotoBottomSheet(context),
                           style: ElevatedButton.styleFrom(
-                            primary: Colors.white,
+                            backgroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(80.0)),
                           ),
@@ -417,8 +418,8 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                   child: ElevatedButton(
                       onPressed: () => addLinks(context),
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.white,
-                        onPrimary: Colors.black,
+                        foregroundColor: Colors.black,
+                        backgroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20.0)),
                       ),
