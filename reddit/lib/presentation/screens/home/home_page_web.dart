@@ -11,7 +11,7 @@ import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_Not_loggedin.da
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 import 'dart:io';
 import '../../../business_logic/cubit/choose_profile_image_login_cubit.dart';
-import '../../../data/web_services/dio.dart';
+import '../../../helper/dio.dart';
 
 class HomePageWeb extends StatefulWidget {
   User? user;

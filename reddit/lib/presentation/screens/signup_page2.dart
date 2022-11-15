@@ -1,3 +1,5 @@
+// ignore_for_file: no_logic_in_create_state
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -18,7 +20,6 @@ class _SignupWeb2State extends State<SignupWeb2> {
   var usernameController = TextEditingController();
   var passwordController = TextEditingController();
   bool passwordCorrect = false;
-  bool usernameUsed = false;
   bool passwordVisible = true;
   bool usernameLengthError = false;
   bool passwordLengthError = false;
@@ -29,6 +30,7 @@ class _SignupWeb2State extends State<SignupWeb2> {
   FocusNode usernameFocusNode = FocusNode();
   FocusNode passwordFocusNode = FocusNode();
   Map<String, dynamic> suggestedUsernames = {};
+
   @override
   void initState() {
     super.initState();
@@ -36,7 +38,10 @@ class _SignupWeb2State extends State<SignupWeb2> {
     passwordController.text = "";
     usernameFocusNode.addListener(_onFocusChangeUsername);
     passwordFocusNode.addListener(_onFocusChangePassword);
+    debugPrint("before it");
     getSuggestedUsernames();
+    usernameFocusNode.requestFocus();
+    debugPrint("after it");
   }
 
   @override
@@ -48,10 +53,30 @@ class _SignupWeb2State extends State<SignupWeb2> {
     passwordFocusNode.dispose();
   }
 
+  ///This function to get reccomended usernames from the server
+  Future getSuggestedUsernames() async {
+    await DioHelper.getData(url: "/api/auth/suggested_usernames", query: {})
+        .then((value) {
+      if (value.statusCode == 200) {
+        setState(() {
+          suggestedUsernames = value.data;
+        });
+        debugPrint("suggested usernames are ${suggestedUsernames['user1']}");
+      } else {
+        debugPrint("Error getting suggested usernames");
+      }
+    });
+  }
+
   //call back function for username focus node to be called of the focus changes
   void _onFocusChangeUsername() {
     debugPrint("Focus on username: ${usernameFocusNode.hasFocus.toString()}");
     if (!usernameFocusNode.hasFocus) {
+      usernameEmpty = usernameController.text.isEmpty;
+      usernameError =
+          usernameController.text.contains(RegExp(r'[^a-zA-Z0-9_-]'));
+      usernameLengthError = usernameController.text.length < 3 ||
+          usernameController.text.length > 20;
       checkOnUsername(usernameController.text);
     }
   }
@@ -61,7 +86,7 @@ class _SignupWeb2State extends State<SignupWeb2> {
     debugPrint("Focus on password: ${passwordFocusNode.hasFocus.toString()}");
   }
 
-//function takes the username and checks if it is valid or not
+  //function takes the username and checks if it is valid or not
   //this fucntion is called if the user pressed next after typing the username or if the focus is lost from the username field
   void checkOnUsername(String usrName) async {
     await DioHelper.postData(url: '/api/user/check-available-username', data: {
@@ -92,7 +117,7 @@ class _SignupWeb2State extends State<SignupWeb2> {
           arguments: user,
         );
       } else {
-        print(user);
+        debugPrint(user.toString());
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Row(
@@ -114,17 +139,6 @@ class _SignupWeb2State extends State<SignupWeb2> {
             ),
           ),
         );
-      }
-    });
-  }
-
-  Future getSuggestedUsernames() async {
-    await DioHelper.getData(url: "/api/auth/suggested_usernames", query: {})
-        .then((value) {
-      if (value.statusCode == 200) {
-        suggestedUsernames = jsonDecode(value.data);
-      } else {
-        debugPrint("Error getting suggested usernames");
       }
     });
   }
@@ -160,19 +174,20 @@ class _SignupWeb2State extends State<SignupWeb2> {
           backgroundColor: Colors.white,
         ),
       ),
-      // backgroundColor: Colors.white,
+      backgroundColor: Colors.white,
       body: Theme(
         data: ThemeData.light(),
         child: SingleChildScrollView(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    flex: 10,
-                    child: Container(
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.9,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
                       margin: const EdgeInsets.all(20),
                       width: MediaQuery.of(context).size.width * 0.3,
                       child: Column(
@@ -192,7 +207,7 @@ class _SignupWeb2State extends State<SignupWeb2> {
                               errorText: usernameEmpty
                                   ? null
                                   : usernameError
-                                      ? "Username can only contain letters, numbers,'-' and '_'"
+                                      ? "Username can only contain letters, numbers, '-' and '_'"
                                       : usernameLengthError
                                           ? "Username must be between 3 and 20 characters"
                                           : null,
@@ -235,8 +250,14 @@ class _SignupWeb2State extends State<SignupWeb2> {
                             },
                             textInputAction: TextInputAction.next,
                             onEditingComplete: () {
+                              usernameEmpty = usernameController.text.isEmpty;
+                              usernameError = usernameController.text
+                                  .contains(RegExp(r'[^a-zA-Z0-9_-]'));
+                              usernameLengthError =
+                                  usernameController.text.length < 3 ||
+                                      usernameController.text.length > 20;
                               checkOnUsername(usernameController.text);
-                              passwordFocusNode.requestFocus();
+                              usernameFocusNode.nextFocus();
                             },
                           ),
                           SizedBox(
@@ -307,93 +328,112 @@ class _SignupWeb2State extends State<SignupWeb2> {
                         ],
                       ),
                     ),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Column(
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        const Divider(
-                          thickness: 1,
-                          color: Colors.grey,
-                        ),
                         Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pushReplacementNamed(
-                                  SIGNU_PAGE1,
-                                ); //navigate to SIGN UP 1 page
-                              },
-                              child: const Text(
-                                "Back",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                            const Text(
+                              "Here are some username suggestions",
+                              style: TextStyle(
+                                fontSize: 15,
+                                color: Colors.black,
                               ),
+                              textAlign: TextAlign.left,
                             ),
-                            ElevatedButton(
+                            IconButton(
                               onPressed: () {
-                                // TODO : solve this condition (peter)
-                                // !usernameLengthError &&
-                                //         !passwordLengthError &&
-                                //         passwordCorrect &&
-                                //         !passwordEmpty &&
-                                //         !usernameError &&
-                                //         !usernameEmpty &&
-                                //         !redundantUsername
-                                //? () =>
-
-                                signUpContinue(context);
-                                //: null;
+                                getSuggestedUsernames();
                               },
-                              style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(
-                                  Colors.blue,
-                                ),
-                                shape: MaterialStateProperty.all(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(4),
-                                    side: const BorderSide(
-                                      color: Colors.blue,
-                                    ),
-                                  ),
-                                ),
-                                padding: MaterialStateProperty.all(
-                                  const EdgeInsets.fromLTRB(50, 18, 50, 18),
-                                ),
-                              ),
-                              child: const Text(
-                                "SIGN UP",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              icon: const Icon(
+                                Icons.refresh,
+                                color: Colors.blue,
                               ),
                             ),
                           ],
                         ),
+                        ...suggestedUsernames.entries.map((e) {
+                          return TextButton(
+                            onPressed: () {
+                              setState(() {
+                                usernameController.text = e.value;
+                              });
+                            },
+                            child: Text(
+                              e.value,
+                              style: const TextStyle(
+                                color: Colors.blue,
+                                fontSize: 15,
+                              ),
+                            ),
+                          );
+                        }).toList(),
                       ],
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-              Column(
-                children: [
-                  TextButton.icon(
-                      onPressed: () {
-                        setState(() {
-                          getSuggestedUsernames();
-                        });
-                      },
-                      icon: const Icon(Icons.refresh),
-                      label: const Text("Here are some username suggestions")),
-                  ...suggestedUsernames.entries.map((e) {
-                    return Text(e.value);
-                  }).toList(),
-                ],
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.1,
+                child: Column(
+                  children: [
+                    const Divider(
+                      thickness: 1,
+                      color: Colors.grey,
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pushReplacementNamed(
+                              SIGNU_PAGE1,
+                            ); //navigate to SIGN UP 1 page
+                          },
+                          child: const Text(
+                            "Back",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: !usernameLengthError &&
+                                  !passwordLengthError &&
+                                  passwordCorrect &&
+                                  !passwordEmpty &&
+                                  !usernameError &&
+                                  !usernameEmpty &&
+                                  !redundantUsername
+                              ? () => signUpContinue(context)
+                              : null,
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all(
+                              const Color.fromARGB(255, 42, 94, 137),
+                            ),
+                            shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
+                            padding: MaterialStateProperty.all(
+                              const EdgeInsets.fromLTRB(50, 18, 50, 18),
+                            ),
+                          ),
+                          child: const Text(
+                            "SIGN UP",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

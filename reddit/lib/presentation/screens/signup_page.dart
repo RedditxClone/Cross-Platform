@@ -407,6 +407,7 @@ class _SignupWebState extends State<SignupWeb> {
                         SizedBox(
                           width: 270,
                           child: TextField(
+                            autofocus: true,
                             controller: emailController,
                             decoration: InputDecoration(
                               border: const OutlineInputBorder(
@@ -447,6 +448,8 @@ class _SignupWebState extends State<SignupWeb> {
                                 }
                               });
                             },
+                            onEditingComplete:
+                                emailCorrect ? continieSignUp : null,
                           ),
                         ),
                         SizedBox(
