@@ -18,6 +18,7 @@ const popularPageRoute = '/popular';
 //--------------User Profile-------------
 //---------------------------------------
 const profilePageRoute = '/profile';
+const otherProfilePageRoute = '/OtherProfile';
 //---------------------------------------
 // ----------Settings routes-------------
 //---------------------------------------

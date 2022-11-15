@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/theme_colors.dart';
@@ -14,6 +13,138 @@ class HomeWeb extends StatefulWidget {
 
 class _HomeWebState extends State<HomeWeb> {
   late Responsive responsive;
+  String sortBy = 'best';
+  Widget _sortBy() {
+    return Container(
+      // sort posts
+      height: 70,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5), color: defaultSecondaryColor),
+      margin: const EdgeInsets.only(bottom: 15),
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Row(
+          children: [
+            ElevatedButton(
+                onPressed: () {
+                  // TODO : sort by new
+                  setState(() {
+                    sortBy = 'best';
+                  });
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.all(15),
+                  backgroundColor: sortBy == 'best'
+                      ? const Color.fromARGB(255, 68, 68, 68)
+                      : Colors.transparent,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0)),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    sortBy == 'best'
+                        ? const Icon(Icons.rocket)
+                        : const Icon(Icons.rocket_outlined),
+                    const SizedBox(width: 5),
+                    const Text(
+                      'Best',
+                      style: TextStyle(fontSize: 17),
+                    )
+                  ],
+                )),
+            const SizedBox(width: 10),
+            ElevatedButton(
+                onPressed: () {
+                  // TODO : sort by new
+                  setState(() {
+                    sortBy = 'new';
+                  });
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.all(15),
+                  backgroundColor: sortBy == 'new'
+                      ? const Color.fromARGB(255, 68, 68, 68)
+                      : Colors.transparent,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0)),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    sortBy == 'new'
+                        ? const Icon(Icons.new_releases_sharp)
+                        : const Icon(Icons.new_releases_outlined),
+                    const SizedBox(width: 5),
+                    const Text(
+                      'New',
+                      style: TextStyle(fontSize: 17),
+                    )
+                  ],
+                )),
+            const SizedBox(width: 10),
+            ElevatedButton(
+                onPressed: () {
+                  // TODO : sort by hot
+                  setState(() {
+                    sortBy = 'hot';
+                  });
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.all(15),
+                  backgroundColor: sortBy == 'hot'
+                      ? const Color.fromARGB(255, 68, 68, 68)
+                      : Colors.transparent,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0)),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    sortBy == 'hot'
+                        ? const Icon(Icons.local_fire_department)
+                        : const Icon(Icons.local_fire_department_outlined),
+                    const SizedBox(width: 5),
+                    const Text(
+                      'Hot',
+                      style: TextStyle(fontSize: 17),
+                    )
+                  ],
+                )),
+            const SizedBox(width: 10),
+            ElevatedButton(
+                onPressed: () {
+                  // TODO : sort by top
+                  setState(() {
+                    sortBy = 'top';
+                  });
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.all(15),
+                  backgroundColor: sortBy == 'top'
+                      ? const Color.fromARGB(255, 68, 68, 68)
+                      : Colors.transparent,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0)),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: const [
+                    Icon(Icons.trending_up_rounded),
+                    SizedBox(width: 5),
+                    Text(
+                      'Top',
+                      style: TextStyle(fontSize: 17),
+                    )
+                  ],
+                )),
+            const SizedBox(width: 10),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     responsive = Responsive(context);
@@ -65,14 +196,8 @@ class _HomeWebState extends State<HomeWeb> {
                             height: 70,
                             margin: const EdgeInsets.only(bottom: 15),
                           ),
-                          Container(
-                            // sort posts
-                            height: 70,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
-                                color: const Color.fromRGBO(70, 70, 70, 100)),
-                            margin: const EdgeInsets.only(bottom: 15),
-                          ),
+                          // sort posts
+                          _sortBy(),
                           const PostsWeb(),
                           const PostsWeb(),
                           const PostsWeb(),

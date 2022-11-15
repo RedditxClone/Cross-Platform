@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:reddit/business_logic/cubit/choose_profile_image_login_cubit.dart';
+import 'package:reddit/presentation/screens/profile/others_profile_page_web.dart';
 import 'package:reddit/presentation/screens/profile/profile_page_web.dart';
 import 'package:reddit/presentation/screens/profile/profile_screen.dart';
 import 'presentation/screens/setting_tab_ui.dart';
@@ -109,6 +110,11 @@ class AppRouter {
         return MaterialPageRoute(
             builder: (_) =>
                 kIsWeb ? const ProfilePageWeb() : const ProfileScreen());
+
+      case otherProfilePageRoute:
+        return MaterialPageRoute(
+            builder: (_) =>
+                kIsWeb ? const OtherProfilePageWeb() : const ProfileScreen());
 
       // case emailSettingsWebScreenRoute:
       //   return MaterialPageRoute(
