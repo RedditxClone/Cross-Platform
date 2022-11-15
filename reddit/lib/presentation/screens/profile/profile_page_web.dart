@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
@@ -19,6 +20,72 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
   late Responsive responsive;
   String outlineButtonLabel = 'Joined';
   String sortBy = 'new';
+
+  Widget socialLinks(Widget icon, String lable) {
+    return ActionChip(
+      backgroundColor: Color.fromARGB(255, 76, 76, 76),
+      label: Text(
+        lable,
+      ),
+      labelPadding: const EdgeInsets.fromLTRB(0, 5, 10, 5),
+      labelStyle: const TextStyle(fontSize: 13, color: Colors.white),
+      avatar: icon,
+      onPressed: () {},
+    );
+  }
+
+  void _addSocialLinks() {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) {
+          return AlertDialog(
+            backgroundColor: defaultSecondaryColor,
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const SizedBox(width: 20),
+                    const Text('Add Social Link'),
+                    IconButton(
+                        hoverColor: Colors.transparent,
+                        splashColor: Colors.transparent,
+                        focusColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        onPressed: () => Navigator.pop(context),
+                        icon: const Icon(Icons.close))
+                  ],
+                ),
+                const Divider(),
+              ],
+            ),
+            content: Container(
+              width: 420,
+              padding: const EdgeInsets.all(8.0),
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  socialLinks(Logo(Logos.reddit, size: 15), 'Reddit'),
+                  socialLinks(Logo(Logos.twitter, size: 15), 'Twitter'),
+                  socialLinks(Logo(Logos.tumblr, size: 15), 'Tumblr'),
+                  socialLinks(Logo(Logos.youtube, size: 15), 'Youtube'),
+                  socialLinks(Logo(Logos.whatsapp, size: 15), 'Whatsapp'),
+                  socialLinks(Logo(Logos.facebook_f, size: 15), 'Facebook'),
+                  socialLinks(Logo(Logos.instagram, size: 15), 'Instagram'),
+                  socialLinks(Logo(Logos.discord, size: 15), 'Discord'),
+                  socialLinks(Logo(Logos.spotify, size: 15), 'Spotify'),
+                  socialLinks(Logo(Logos.paypal, size: 15), 'Paypal'),
+                  socialLinks(Logo(Logos.twitch, size: 15), 'Twitch'),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
   Widget _sortBy() {
     return Padding(
       padding: const EdgeInsets.all(10),
@@ -276,7 +343,8 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
               width: 180,
               height: 40,
               child: ElevatedButton(
-                  onPressed: () {}, // TODO : add social links here
+                  onPressed: () =>
+                      _addSocialLinks(), // TODO : add social links here
                   style: ElevatedButton.styleFrom(
                     foregroundColor: const Color.fromARGB(255, 77, 77, 77),
                     backgroundColor: const Color.fromARGB(255, 116, 116, 116),
