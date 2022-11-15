@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:reddit/data/model/user_settings.dart';
@@ -16,12 +15,12 @@ class SettingsRepository {
 
   Future<dynamic> updateImage(String key, File val) async {
     final newVal = await settingsWebServices.updateImage(val, key);
-    return jsonDecode(newVal)[key];
+    return newVal[key];
   }
 
   Future<dynamic> updateImageWeb(String key, Uint8List fileAsBytes) async {
     final newVal = await settingsWebServices.updateImageWeb(fileAsBytes, key);
-    return jsonDecode(newVal)[key];
+    return newVal[key];
   }
 
   Future<dynamic> updatePrefs(Map changed) async {

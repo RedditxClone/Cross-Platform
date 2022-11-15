@@ -8,13 +8,11 @@ import 'package:reddit/constants/strings.dart';
 
 class SettingsWebServices {
   late Dio dio;
-  bool isMockerServer = false;
-  String token =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzNzI0ZjQ3NTg0NmUxM2VmZjg4MDkxOSIsImlhdCI6MTY2ODQ0Njk1MSwiZXhwIjoxNjY5MzEwOTUxfQ.GuYEH3ZpIrMQxdzhYGIJGxCDTCyyesPaidIPOYNRQOA';
+  bool isMockerServer = useMockServerForAllWebServices;
+  String token = '';
   SettingsWebServices() {
     BaseOptions options = BaseOptions(
-      baseUrl:
-          isMockerServer ? mockUrl : 'https://swproject.demosfortest.com/api/',
+      baseUrl: isMockerServer ? mockUrl : baseUrl,
       receiveDataWhenStatusError: true,
       connectTimeout: 30 * 1000,
       receiveTimeout: 30 * 1000,
@@ -38,7 +36,7 @@ class SettingsWebServices {
   }
 
   /// updates a image
-  Future<String> updateImage(File file, String key) async {
+  Future<dynamic> updateImage(File file, String key) async {
     try {
       String fileName = file.path.split('/').last;
       FormData formData = FormData.fromMap({
@@ -58,7 +56,7 @@ class SettingsWebServices {
   }
 
   /// updates a image
-  Future<String> updateImageWeb(Uint8List fileAsBytes, String key) async {
+  Future<dynamic> updateImageWeb(Uint8List fileAsBytes, String key) async {
     try {
       FormData formData = FormData.fromMap({
         "file": MultipartFile.fromBytes(fileAsBytes,
@@ -78,7 +76,7 @@ class SettingsWebServices {
   }
 
   /// updates a user setting
-  Future<String> updatePrefs(Map changed) async {
+  Future<dynamic> updatePrefs(Map changed) async {
     try {
       Response response = await dio.patch('user/me/prefs',
           data: changed,
@@ -88,7 +86,7 @@ class SettingsWebServices {
       debugPrint(response.statusCode.toString());
       return response.data;
     } catch (e) {
-      return '';
+      return null;
     }
   }
 }

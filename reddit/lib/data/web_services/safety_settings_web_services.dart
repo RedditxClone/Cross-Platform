@@ -5,13 +5,11 @@ import 'package:reddit/constants/strings.dart';
 // This class is responsible of making request to the server
 class SafetySettingsWebServices {
   late Dio dio;
-  bool isMockerServer = false;
-  String token =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzNzI0ZjQ3NTg0NmUxM2VmZjg4MDkxOSIsImlhdCI6MTY2ODQ0Njk1MSwiZXhwIjoxNjY5MzEwOTUxfQ.GuYEH3ZpIrMQxdzhYGIJGxCDTCyyesPaidIPOYNRQOA';
+  bool isMockerServer = useMockServerForAllWebServices;
+  String token = '';
   SafetySettingsWebServices() {
     BaseOptions options = BaseOptions(
-      baseUrl:
-          isMockerServer ? mockUrl : 'https://swproject.demosfortest.com/api/',
+      baseUrl: isMockerServer ? mockUrl : baseUrl,
       receiveDataWhenStatusError: true,
       connectTimeout: 30 * 1000,
       receiveTimeout: 30 * 1000,

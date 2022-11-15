@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter_test/flutter_test.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:reddit/business_logic/cubit/settings/settings_cubit.dart';
@@ -21,7 +19,7 @@ void main() async {
   late SettingsRepository accountSettingsRepository;
   late SettingsCubit accountSettingsCubit;
   File file = File('/test/asd.jpg');
-  const String settingsFromWebServices = '''{
+  const settingsFromWebServices = {
     "profilephoto":
         "https://image.shutterstock.com/mosaic_250/2780032/1854697390/stock-photo-head-shot-young-attractive-businessman-in-glasses-standing-in-modern-office-pose-for-camera-1854697390.jpg",
     "coverphoto":
@@ -32,7 +30,7 @@ void main() async {
     "allowFollow": false,
     "activeInCommunitiesVisibility": true,
     "contentVisibility": false
-  }''';
+  };
   const Map<String, String> patchResponse = {
     'coverphoto':
         'https://images.unsplash.com/photo-1504805572947-34fad45aed93?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8Y292ZXIlMjBwaG90b3xlbnwwfHwwfHw%3D&w=1000&q=80'
@@ -77,8 +75,8 @@ void main() async {
       setUp: () {
         when(() =>
                 mockAccountSettingsWebService.updateImage(file, 'coverphoto'))
-            .thenAnswer((_) async =>
-                "{\"coverphoto\": \"$patchResponse['coverphoto']\"}");
+            .thenAnswer(
+                (_) async => {"coverphoto": "$patchResponse['coverphoto']"});
       },
       build: () {
         return accountSettingsCubit;
@@ -92,7 +90,7 @@ void main() async {
   group('Model test', () {
     test('Model is generated correctly', () {
       expect(
-        ProfileSettings.fromjson(jsonDecode(settingsFromWebServices)),
+        ProfileSettings.fromjson(settingsFromWebServices),
         settingsFromRepository,
       );
     });
