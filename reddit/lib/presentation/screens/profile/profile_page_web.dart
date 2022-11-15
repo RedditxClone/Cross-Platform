@@ -18,6 +18,102 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
       User(userId: 'userId', name: 'name', email: 'email', imageUrl: null);
   late Responsive responsive;
   String outlineButtonLabel = 'Joined';
+  String sortBy = 'new';
+  Widget _sortBy() {
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: Row(
+        children: [
+          ElevatedButton(
+              onPressed: () {
+                // TODO : sort by new
+                setState(() {
+                  sortBy = 'new';
+                });
+              },
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.all(15),
+                backgroundColor: sortBy == 'new'
+                    ? const Color.fromARGB(255, 68, 68, 68)
+                    : Colors.transparent,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  sortBy == 'new'
+                      ? const Icon(Icons.new_releases_sharp)
+                      : const Icon(Icons.new_releases_outlined),
+                  const SizedBox(width: 5),
+                  const Text(
+                    'New',
+                    style: TextStyle(fontSize: 17),
+                  )
+                ],
+              )),
+          const SizedBox(width: 10),
+          ElevatedButton(
+              onPressed: () {
+                // TODO : sort by hot
+                setState(() {
+                  sortBy = 'hot';
+                });
+              },
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.all(15),
+                backgroundColor: sortBy == 'hot'
+                    ? const Color.fromARGB(255, 68, 68, 68)
+                    : Colors.transparent,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  sortBy == 'hot'
+                      ? const Icon(Icons.local_fire_department)
+                      : const Icon(Icons.local_fire_department_outlined),
+                  const SizedBox(width: 5),
+                  const Text(
+                    'Hot',
+                    style: TextStyle(fontSize: 17),
+                  )
+                ],
+              )),
+          const SizedBox(width: 10),
+          ElevatedButton(
+              onPressed: () {
+                // TODO : sort by top
+                setState(() {
+                  sortBy = 'top';
+                });
+              },
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.all(15),
+                backgroundColor: sortBy == 'top'
+                    ? const Color.fromARGB(255, 68, 68, 68)
+                    : Colors.transparent,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: const [
+                  Icon(Icons.trending_up_rounded),
+                  SizedBox(width: 5),
+                  Text(
+                    'Top',
+                    style: TextStyle(fontSize: 17),
+                  )
+                ],
+              )),
+          const SizedBox(width: 10),
+        ],
+      ),
+    );
+  }
+
   Widget _buildProflieCard() {
     return Column(
       children: [
@@ -341,8 +437,9 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
                             height: 70,
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(5),
-                                color: const Color.fromRGBO(70, 70, 70, 100)),
+                                color: defaultSecondaryColor),
                             margin: const EdgeInsets.only(bottom: 15),
+                            child: _sortBy(),
                           ),
                           const PostsWeb(),
                           const PostsWeb(),
