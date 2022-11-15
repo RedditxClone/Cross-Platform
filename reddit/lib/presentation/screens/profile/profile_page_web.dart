@@ -5,6 +5,7 @@ import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/data/model/signin.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
+import 'package:reddit/presentation/widgets/posts/posts.dart';
 import 'package:reddit/presentation/widgets/posts/posts_web.dart';
 
 class ProfilePageWeb extends StatefulWidget {
@@ -17,10 +18,10 @@ class ProfilePageWeb extends StatefulWidget {
 class _ProfilePageWebState extends State<ProfilePageWeb> {
   User user =
       User(userId: 'userId', name: 'name', email: 'email', imageUrl: null);
-  late Responsive responsive;
-  String outlineButtonLabel = 'Joined';
+  late Responsive _responsive;
+  String _outlineButtonLabel = 'Joined';
   String sortBy = 'new';
-
+  bool _isOverviewTab = true;
   Widget socialLinks(Widget icon, String lable) {
     return ActionChip(
       backgroundColor: Color.fromARGB(255, 76, 76, 76),
@@ -87,101 +88,108 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
   }
 
   Widget _sortBy() {
-    return Padding(
-      padding: const EdgeInsets.all(10),
-      child: Row(
-        children: [
-          ElevatedButton(
-              onPressed: () {
-                // TODO : sort by new
-                setState(() {
-                  sortBy = 'new';
-                });
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.all(15),
-                backgroundColor: sortBy == 'new'
-                    ? const Color.fromARGB(255, 68, 68, 68)
-                    : Colors.transparent,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.0)),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  sortBy == 'new'
-                      ? const Icon(Icons.new_releases_sharp)
-                      : const Icon(Icons.new_releases_outlined),
-                  const SizedBox(width: 5),
-                  const Text(
-                    'New',
-                    style: TextStyle(fontSize: 17),
-                  )
-                ],
-              )),
-          const SizedBox(width: 10),
-          ElevatedButton(
-              onPressed: () {
-                // TODO : sort by hot
-                setState(() {
-                  sortBy = 'hot';
-                });
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.all(15),
-                backgroundColor: sortBy == 'hot'
-                    ? const Color.fromARGB(255, 68, 68, 68)
-                    : Colors.transparent,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.0)),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  sortBy == 'hot'
-                      ? const Icon(Icons.local_fire_department)
-                      : const Icon(Icons.local_fire_department_outlined),
-                  const SizedBox(width: 5),
-                  const Text(
-                    'Hot',
-                    style: TextStyle(fontSize: 17),
-                  )
-                ],
-              )),
-          const SizedBox(width: 10),
-          ElevatedButton(
-              onPressed: () {
-                // TODO : sort by top
-                setState(() {
-                  sortBy = 'top';
-                });
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.all(15),
-                backgroundColor: sortBy == 'top'
-                    ? const Color.fromARGB(255, 68, 68, 68)
-                    : Colors.transparent,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.0)),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: const [
-                  Icon(Icons.trending_up_rounded),
-                  SizedBox(width: 5),
-                  Text(
-                    'Top',
-                    style: TextStyle(fontSize: 17),
-                  )
-                ],
-              )),
-          const SizedBox(width: 10),
-        ],
+    return Container(
+      // sort posts
+      height: 70,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5), color: defaultSecondaryColor),
+      margin: const EdgeInsets.only(bottom: 15),
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Row(
+          children: [
+            ElevatedButton(
+                onPressed: () {
+                  // TODO : sort by new
+                  setState(() {
+                    sortBy = 'new';
+                  });
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.all(15),
+                  backgroundColor: sortBy == 'new'
+                      ? const Color.fromARGB(255, 68, 68, 68)
+                      : Colors.transparent,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0)),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    sortBy == 'new'
+                        ? const Icon(Icons.new_releases_sharp)
+                        : const Icon(Icons.new_releases_outlined),
+                    const SizedBox(width: 5),
+                    const Text(
+                      'New',
+                      style: TextStyle(fontSize: 17),
+                    )
+                  ],
+                )),
+            const SizedBox(width: 10),
+            ElevatedButton(
+                onPressed: () {
+                  // TODO : sort by hot
+                  setState(() {
+                    sortBy = 'hot';
+                  });
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.all(15),
+                  backgroundColor: sortBy == 'hot'
+                      ? const Color.fromARGB(255, 68, 68, 68)
+                      : Colors.transparent,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0)),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    sortBy == 'hot'
+                        ? const Icon(Icons.local_fire_department)
+                        : const Icon(Icons.local_fire_department_outlined),
+                    const SizedBox(width: 5),
+                    const Text(
+                      'Hot',
+                      style: TextStyle(fontSize: 17),
+                    )
+                  ],
+                )),
+            const SizedBox(width: 10),
+            ElevatedButton(
+                onPressed: () {
+                  // TODO : sort by top
+                  setState(() {
+                    sortBy = 'top';
+                  });
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.all(15),
+                  backgroundColor: sortBy == 'top'
+                      ? const Color.fromARGB(255, 68, 68, 68)
+                      : Colors.transparent,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0)),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: const [
+                    Icon(Icons.trending_up_rounded),
+                    SizedBox(width: 5),
+                    Text(
+                      'Top',
+                      style: TextStyle(fontSize: 17),
+                    )
+                  ],
+                )),
+            const SizedBox(width: 10),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildProflieCard() {
+  Widget _buildProfileCard() {
     return Column(
       children: [
         Stack(
@@ -446,7 +454,7 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
               OutlinedButton(
                   onHover: ((value) {
                     setState(() {
-                      outlineButtonLabel = value ? 'Leave' : 'Joined';
+                      _outlineButtonLabel = value ? 'Leave' : 'Joined';
                     });
                   }),
                   onPressed: () {}, // TODO : on press => leave subreddit
@@ -455,7 +463,7 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
                         borderRadius: BorderRadius.circular(30.0))),
                   ),
                   child: Text(
-                    outlineButtonLabel,
+                    _outlineButtonLabel,
                     style: const TextStyle(
                         fontSize: 17,
                         color: Colors.grey,
@@ -477,22 +485,21 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
           SizedBox(
             width: MediaQuery.of(context).size.width,
             child: SingleChildScrollView(
-              controller: ScrollController(),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
-                      flex: responsive.isSmallSizedScreen() ||
-                              responsive.isMediumSizedScreen()
+                      flex: _responsive.isSmallSizedScreen() ||
+                              _responsive.isMediumSizedScreen()
                           ? 0
-                          : responsive.isLargeSizedScreen()
+                          : _responsive.isLargeSizedScreen()
                               ? 1
                               : 2,
                       child: const SizedBox(width: 0)),
                   Expanded(
-                    flex: responsive.isLargeSizedScreen()
+                    flex: _responsive.isLargeSizedScreen()
                         ? 7
-                        : responsive.isXLargeSizedScreen()
+                        : _responsive.isXLargeSizedScreen()
                             ? 5
                             : 7,
                     child: Container(
@@ -500,15 +507,7 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
                       width: 10,
                       child: Column(
                         children: [
-                          Container(
-                            // sort posts
-                            height: 70,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
-                                color: defaultSecondaryColor),
-                            margin: const EdgeInsets.only(bottom: 15),
-                            child: _sortBy(),
-                          ),
+                          _sortBy(),
                           const PostsWeb(),
                           const PostsWeb(),
                           const PostsWeb(),
@@ -520,8 +519,8 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
                   MediaQuery.of(context).size.width < 900
                       ? const SizedBox(width: 0)
                       : Expanded(
-                          flex: responsive.isLargeSizedScreen() ||
-                                  responsive.isMediumSizedScreen()
+                          flex: _responsive.isLargeSizedScreen() ||
+                                  _responsive.isMediumSizedScreen()
                               ? 3
                               : 2,
                           child: Padding(
@@ -534,7 +533,7 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
                                       borderRadius: BorderRadius.circular(5),
                                       color: defaultSecondaryColor),
                                   margin: const EdgeInsets.only(bottom: 15),
-                                  child: _buildProflieCard(),
+                                  child: _buildProfileCard(),
                                 ),
                                 Container(
                                   height: 120,
@@ -548,14 +547,14 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
                             ),
                           )),
                   Expanded(
-                      flex: responsive.isSmallSizedScreen() ||
-                              responsive.isMediumSizedScreen()
+                      flex: _responsive.isSmallSizedScreen() ||
+                              _responsive.isMediumSizedScreen()
                           ? 0
-                          : responsive.isLargeSizedScreen()
+                          : _responsive.isLargeSizedScreen()
                               ? 1
                               : 2,
                       child: SizedBox(
-                          width: responsive.isMediumSizedScreen() ? 15 : 0))
+                          width: _responsive.isMediumSizedScreen() ? 15 : 0))
                 ],
               ),
             ),
@@ -566,9 +565,110 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
     );
   }
 
+  Widget _myposts() {
+    // TODO : continue this function
+    return Container(
+      padding: const EdgeInsets.all(5),
+      height: 120,
+      color: defaultSecondaryColor,
+      child: Row(
+        children: [
+          Container(
+            color: defaultSecondaryColor.withOpacity(0.001),
+            child: Column(
+              children: const [
+                SizedBox(height: 10),
+                Icon(Icons.arrow_upward, color: Colors.grey),
+                SizedBox(height: 10),
+                Text("0", style: TextStyle(fontSize: 13)),
+                SizedBox(height: 10),
+                Icon(Icons.arrow_downward, color: Colors.grey),
+              ],
+            ),
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Here is a post label',
+                style: TextStyle(color: Colors.white, fontSize: 18),
+              ),
+              const Text('r/redditx_'),
+              Row(
+                children: [
+                  InkWell(
+                    onTap: () {},
+                    child: Row(children: const [
+                      Icon(Icons.mode_comment_outlined, color: Colors.grey),
+                      SizedBox(width: 5),
+                      Text("0", style: TextStyle(fontSize: 13)),
+                    ]),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPosts() {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: SingleChildScrollView(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              margin: MediaQuery.of(context).size.width < 1000
+                  ? const EdgeInsets.only(right: 0)
+                  : const EdgeInsets.only(right: 20),
+              width: MediaQuery.of(context).size.width < 1000
+                  ? MediaQuery.of(context).size.width - 40
+                  : MediaQuery.of(context).size.width - 380,
+              child: Column(
+                children: [
+                  _sortBy(),
+                  // TODO : add user posts here
+                  _myposts(),
+                ],
+              ),
+            ),
+            MediaQuery.of(context).size.width < 1000
+                ? const SizedBox(width: 0)
+                : Column(
+                    children: [
+                      Container(
+                        width: 320,
+                        height: 500,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            color: defaultSecondaryColor),
+                        margin: const EdgeInsets.only(bottom: 15),
+                        child: _buildProfileCard(),
+                      ),
+                      Container(
+                        width: 320,
+                        height: 120,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            color: defaultSecondaryColor),
+                        margin: const EdgeInsets.only(bottom: 15),
+                        child: _buildSecondProflieCard(),
+                      ),
+                    ],
+                  ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    responsive = Responsive(context);
+    _responsive = Responsive(context);
     return Scaffold(
       appBar: AppBar(
           shape:
@@ -586,68 +686,86 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
             shape: const Border(
                 bottom: BorderSide(color: Colors.grey, width: 0.5)),
             bottom: TabBar(
-              padding: EdgeInsets.symmetric(
-                  horizontal: MediaQuery.of(context).size.width * 0.2 > 300
-                      ? MediaQuery.of(context).size.width * 0.2
-                      : MediaQuery.of(context).size.width * 0.1 > 10 &&
-                              MediaQuery.of(context).size.width * 0.2 <= 300
-                          ? MediaQuery.of(context).size.width * 0.05
-                          : 5),
+              onTap: (index) {
+                setState(() {
+                  _isOverviewTab = index == 0 ? true : false;
+                });
+              },
+              padding: _isOverviewTab
+                  ? EdgeInsets.symmetric(
+                      horizontal: MediaQuery.of(context).size.width * 0.25 > 300
+                          ? MediaQuery.of(context).size.width * 0.25
+                          : MediaQuery.of(context).size.width * 0.1 > 100 &&
+                                  MediaQuery.of(context).size.width * 0.25 <=
+                                      300
+                              ? MediaQuery.of(context).size.width * 0.05
+                              : 5)
+                  : EdgeInsets.fromLTRB(
+                      5,
+                      0,
+                      MediaQuery.of(context).size.width * 0.33 > 300
+                          ? MediaQuery.of(context).size.width * 0.33
+                          : MediaQuery.of(context).size.width * 0.2 > 100 &&
+                                  MediaQuery.of(context).size.width * 0.33 <=
+                                      300
+                              ? MediaQuery.of(context).size.width * 0.05
+                              : 5,
+                      0),
               indicatorColor: Colors.white,
               tabs: [
                 Tab(
                     icon: Text('OVERVIEW',
                         style: TextStyle(
                             fontSize:
-                                responsive.isSmallSizedScreen() ? 8 : 13))),
+                                _responsive.isSmallSizedScreen() ? 8 : 13))),
                 Tab(
                     icon: Text('POSTS',
                         style: TextStyle(
                             fontSize:
-                                responsive.isSmallSizedScreen() ? 8 : 13))),
+                                _responsive.isSmallSizedScreen() ? 8 : 13))),
                 Tab(
                     icon: Text('COMMENTS',
                         style: TextStyle(
                             fontSize:
-                                responsive.isSmallSizedScreen() ? 8 : 13))),
+                                _responsive.isSmallSizedScreen() ? 8 : 13))),
                 Tab(
                     icon: Text('HISTORY',
                         style: TextStyle(
                             fontSize:
-                                responsive.isSmallSizedScreen() ? 8 : 13))),
+                                _responsive.isSmallSizedScreen() ? 8 : 13))),
                 Tab(
                     icon: Text('SAVED',
                         style: TextStyle(
                             fontSize:
-                                responsive.isSmallSizedScreen() ? 8 : 13))),
+                                _responsive.isSmallSizedScreen() ? 8 : 13))),
                 Tab(
                     icon: Text('HIDDEN',
                         style: TextStyle(
                             fontSize:
-                                responsive.isSmallSizedScreen() ? 8 : 13))),
+                                _responsive.isSmallSizedScreen() ? 8 : 13))),
                 Tab(
                     icon: Text('UPVOTED',
                         style: TextStyle(
                             fontSize:
-                                responsive.isSmallSizedScreen() ? 8 : 13))),
+                                _responsive.isSmallSizedScreen() ? 8 : 13))),
                 Tab(
                     icon: Text('DOWNVOTED',
                         style: TextStyle(
                             fontSize:
-                                responsive.isSmallSizedScreen() ? 8 : 13))),
+                                _responsive.isSmallSizedScreen() ? 8 : 13))),
               ],
             ),
           ),
           body: TabBarView(
             children: [
               _buildOverview(),
-              const Icon(Icons.directions_transit),
-              const Icon(Icons.directions_bike),
-              const Icon(Icons.directions_car),
-              const Icon(Icons.directions_transit),
-              const Icon(Icons.directions_bike),
-              const Icon(Icons.directions_car),
-              const Icon(Icons.directions_transit),
+              _buildPosts(),
+              _buildPosts(),
+              _buildPosts(),
+              _buildPosts(),
+              _buildPosts(),
+              _buildPosts(),
+              _buildPosts(),
             ],
           ),
         ),
