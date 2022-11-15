@@ -117,13 +117,14 @@ class _HomeWebState extends State<HomeWeb> {
                             ),
                           )),
                   Expanded(
-                      flex: responsive.isSmallSizedScreen() |
+                      flex: responsive.isSmallSizedScreen() ||
                               responsive.isMediumSizedScreen()
                           ? 0
                           : responsive.isLargeSizedScreen()
                               ? 1
                               : 2,
-                      child: const SizedBox(width: 0))
+                      child: SizedBox(
+                          width: responsive.isMediumSizedScreen() ? 15 : 0))
                 ],
               ),
             ),

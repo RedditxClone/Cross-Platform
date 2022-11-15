@@ -41,7 +41,7 @@ class _SettingTabUiState extends State<SettingTabUi> {
           shape:
               const Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
           automaticallyImplyLeading: false,
-          backgroundColor: defaultSecondaryColor,
+          backgroundColor: defaultAppbarBackgroundColor,
           title:
               AppBarWebLoggedIn(user: widget.user!, screen: 'User settings')),
       body: SingleChildScrollView(

@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:reddit/business_logic/cubit/choose_profile_image_login_cubit.dart';
+import 'package:reddit/presentation/screens/profile/profile_page_web.dart';
+import 'package:reddit/presentation/screens/profile/profile_screen.dart';
 import 'presentation/screens/setting_tab_ui.dart';
 import 'package:reddit/presentation/screens/recaptcha_screen.dart'
     if (dart.library.html) 'package:reddit/presentation/screens/recaptcha_screen_web.dart'
@@ -91,7 +93,9 @@ class AppRouter {
     final arguments = settings.arguments;
     switch (settings.name) {
       case homePageRoute:
-        user = settings.arguments as User?;
+        // user = settings.arguments as User?;
+        user = User(
+            userId: 'userId', name: 'name', email: 'email', imageUrl: null);
         return MaterialPageRoute(
           builder: (_) => kIsWeb ? HomePageWeb(user) : HomePage(user),
         );
@@ -100,6 +104,11 @@ class AppRouter {
         final user = settings.arguments as User?;
         return MaterialPageRoute(
             builder: (_) => kIsWeb ? PopularWeb(user) : const Popular());
+
+      case profilePageRoute:
+        return MaterialPageRoute(
+            builder: (_) =>
+                kIsWeb ? const ProfilePageWeb() : const ProfileScreen());
 
       // case emailSettingsWebScreenRoute:
       //   return MaterialPageRoute(

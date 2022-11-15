@@ -90,6 +90,15 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
                 : const Text('Messages', style: TextStyle(fontSize: 15))
           ])),
       DropdownMenuItem(
+          value: 'u/user_name',
+          child: Row(children: [
+            const CircleAvatar(radius: 13, child: Icon(Icons.person, size: 15)),
+            const SizedBox(width: 8),
+            MediaQuery.of(context).size.width < 930
+                ? const SizedBox(width: 0)
+                : const Text('u/user_name', style: TextStyle(fontSize: 15))
+          ])),
+      DropdownMenuItem(
           value: 'Create Post',
           child: Row(children: [
             const Icon(Icons.add, size: 20),

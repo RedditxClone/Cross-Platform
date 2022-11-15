@@ -219,25 +219,16 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
         });
   }
 
-  Widget linkButton(Widget icon, String lable) {
-    return ElevatedButton(
-        onPressed: () => addLinks(context),
-        style: ElevatedButton.styleFrom(
-          foregroundColor: Colors.black,
-          backgroundColor: Colors.white,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(40.0)),
-        ),
-        child: Row(
-          children: [
-            icon,
-            const SizedBox(width: 10),
-            Text(
-              lable,
-              style: const TextStyle(fontSize: 14, color: Colors.black),
-            )
-          ],
-        ));
+  Widget socialLinks(Widget icon, String lable) {
+    return ActionChip(
+      backgroundColor: Colors.white,
+      label: Text(
+        lable,
+      ),
+      labelStyle: const TextStyle(fontSize: 13, color: Colors.black),
+      avatar: icon,
+      onPressed: () {},
+    );
   }
 
   void addLinks(BuildContext ctx) {
@@ -251,25 +242,20 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                 title: const Text('Add Social Link')),
             body: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: GridView(
-                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 186,
-                  childAspectRatio: 3 / 1,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                ),
+              child: Wrap(
+                spacing: 8,
                 children: [
-                  linkButton(Logo(Logos.reddit, size: 15), 'Reddit'),
-                  linkButton(Logo(Logos.facebook_f, size: 15), 'Facebook'),
-                  linkButton(Logo(Logos.whatsapp, size: 15), 'Whatsapp'),
-                  linkButton(Logo(Logos.youtube, size: 15), 'Youtube'),
-                  linkButton(Logo(Logos.instagram, size: 15), 'Instagram'),
-                  linkButton(Logo(Logos.twitter, size: 15), 'Twitter'),
-                  linkButton(Logo(Logos.discord, size: 15), 'Discord'),
-                  linkButton(Logo(Logos.spotify, size: 15), 'Spotify'),
-                  linkButton(Logo(Logos.paypal, size: 15), 'Paypal'),
-                  linkButton(Logo(Logos.twitch, size: 15), 'Twitch'),
-                  linkButton(Logo(Logos.tumblr, size: 15), 'Tumblr'),
+                  socialLinks(Logo(Logos.reddit, size: 15), 'Reddit'),
+                  socialLinks(Logo(Logos.facebook_f, size: 15), 'Facebook'),
+                  socialLinks(Logo(Logos.whatsapp, size: 15), 'Whatsapp'),
+                  socialLinks(Logo(Logos.youtube, size: 15), 'Youtube'),
+                  socialLinks(Logo(Logos.instagram, size: 15), 'Instagram'),
+                  socialLinks(Logo(Logos.twitter, size: 15), 'Twitter'),
+                  socialLinks(Logo(Logos.discord, size: 15), 'Discord'),
+                  socialLinks(Logo(Logos.spotify, size: 15), 'Spotify'),
+                  socialLinks(Logo(Logos.paypal, size: 15), 'Paypal'),
+                  socialLinks(Logo(Logos.twitch, size: 15), 'Twitch'),
+                  socialLinks(Logo(Logos.tumblr, size: 15), 'Tumblr'),
                 ],
               ),
             ),
