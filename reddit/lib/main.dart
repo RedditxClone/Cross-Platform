@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
       themeMode: ThemeMode.dark,
       debugShowCheckedModeBanner: false,
       onGenerateRoute: appRouter.generateRoute,
-      // initialRoute: signupScreen,
+      // initialRoute: SIGNU_PAGE1,
       initialRoute: kIsWeb
           ? (isLoggedIn ? homePageRoute : popularPageRoute)
           : homePageRoute,

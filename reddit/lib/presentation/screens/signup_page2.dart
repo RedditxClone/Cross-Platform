@@ -147,8 +147,7 @@ class _SignupWeb2State extends State<SignupWeb2> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize:
-            Size.fromHeight(MediaQuery.of(context).size.height * 0.11),
+        preferredSize: Size.fromHeight(80),
         child: AppBar(
           title: Container(
             padding: const EdgeInsets.fromLTRB(30, 40, 0, 30),
@@ -178,264 +177,271 @@ class _SignupWeb2State extends State<SignupWeb2> {
       body: Theme(
         data: ThemeData.light(),
         child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.9,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.all(20),
-                      width: MediaQuery.of(context).size.width * 0.3,
-                      child: Column(
-                        children: [
-                          TextField(
-                            focusNode: usernameFocusNode,
-                            controller: usernameController,
-                            style: const TextStyle(fontSize: 18),
-                            keyboardType: TextInputType.text,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              contentPadding: const EdgeInsets.all(20),
-                              hintText: 'Username',
-                              labelText: 'Username',
-                              errorText: usernameEmpty
-                                  ? null
-                                  : usernameError
-                                      ? "Username can only contain letters, numbers, '-' and '_'"
-                                      : usernameLengthError
-                                          ? "Username must be between 3 and 20 characters"
-                                          : null,
-                              suffixIcon: usernameEmpty &&
-                                      !usernameFocusNode.hasFocus
-                                  ? null
-                                  : !usernameEmpty && usernameFocusNode.hasFocus
-                                      ? IconButton(
-                                          onPressed: () {
-                                            setState(() {
-                                              usernameController.text = "";
-                                              usernameEmpty = true;
-                                            });
-                                          },
-                                          icon: const Icon(
-                                            Icons.clear,
-                                            color: Colors.grey,
-                                          ),
-                                        )
-                                      : !usernameFocusNode.hasFocus &&
-                                              !usernameLengthError &&
-                                              !usernameError &&
-                                              !usernameEmpty &&
-                                              !redundantUsername
-                                          ? const Icon(
-                                              IconData(0xf635,
-                                                  fontFamily: 'MaterialIcons'),
-                                              color: Colors.green,
-                                            )
-                                          : null,
-                            ),
-                            onChanged: (value) {
-                              setState(() {
-                                usernameEmpty = value.isEmpty;
-                                usernameError =
-                                    value.contains(RegExp(r'[^a-zA-Z0-9_-]'));
-                                usernameLengthError =
-                                    value.length < 3 || value.length > 20;
-                              });
-                            },
-                            textInputAction: TextInputAction.next,
-                            onEditingComplete: () {
-                              usernameEmpty = usernameController.text.isEmpty;
-                              usernameError = usernameController.text
-                                  .contains(RegExp(r'[^a-zA-Z0-9_-]'));
-                              usernameLengthError =
-                                  usernameController.text.length < 3 ||
-                                      usernameController.text.length > 20;
-                              checkOnUsername(usernameController.text);
-                              usernameFocusNode.nextFocus();
-                            },
-                          ),
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.05,
-                          ),
-                          TextField(
-                            focusNode: passwordFocusNode,
-                            controller: passwordController,
-                            style: const TextStyle(fontSize: 18),
-                            obscureText: passwordVisible,
-                            keyboardType: TextInputType.visiblePassword,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              contentPadding: const EdgeInsets.all(20),
-                              suffixIcon: IconButton(
-                                onPressed: () => setState(() {
-                                  passwordVisible = !passwordVisible;
-                                }),
-                                icon: Icon(
-                                  passwordVisible
-                                      ? Icons.visibility
-                                      : Icons.visibility_off,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                              prefixIcon: passwordEmpty
-                                  ? null
-                                  : passwordCorrect && !passwordLengthError
-                                      ? const Icon(
-                                          IconData(0xf635,
-                                              fontFamily: 'MaterialIcons'),
-                                          color: Colors.green,
-                                        )
-                                      : const Icon(
-                                          IconData(0xf713,
-                                              fontFamily: 'MaterialIcons'),
-                                          color: Colors.red,
-                                        ),
-                              hintText: 'Password',
-                              labelText: 'Password',
-                              errorText: passwordEmpty
-                                  ? null
-                                  : !passwordCorrect
-                                      ? "Password cannot contain your username"
-                                      : passwordLengthError
-                                          ? "Password must be at least 8 characters"
-                                          : null,
-                            ),
-                            onChanged: (value) {
-                              setState(() {
-                                passwordLengthError = value.length < 8;
-                                passwordEmpty = value.isEmpty;
-                                passwordCorrect =
-                                    !value.contains(usernameController.text);
-                              });
-                            },
-                            textInputAction: TextInputAction.done,
-                            onEditingComplete: !usernameFocusNode.hasFocus &&
-                                    !usernameLengthError &&
-                                    !usernameError &&
-                                    !usernameEmpty &&
-                                    !redundantUsername
-                                ? () => signUpContinue(context)
-                                : null,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Row(
+          child: Container(
+            height: MediaQuery.of(context).size.height - 90,
+            child: Column(
+              children: [
+                Expanded(
+                  flex: 10,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.all(20),
+                        width: MediaQuery.of(context).size.width * 0.3,
+                        child: Column(
                           children: [
-                            const Text(
-                              "Here are some username suggestions",
-                              style: TextStyle(
-                                fontSize: 15,
-                                color: Colors.black,
+                            TextField(
+                              focusNode: usernameFocusNode,
+                              controller: usernameController,
+                              style: const TextStyle(fontSize: 18),
+                              keyboardType: TextInputType.text,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                contentPadding: const EdgeInsets.all(20),
+                                hintText: 'Username',
+                                labelText: 'Username',
+                                errorText: usernameEmpty
+                                    ? null
+                                    : usernameError
+                                        ? "Username can only contain letters, numbers, '-' and '_'"
+                                        : usernameLengthError
+                                            ? "Username must be between 3 and 20 characters"
+                                            : null,
+                                suffixIcon: usernameEmpty &&
+                                        !usernameFocusNode.hasFocus
+                                    ? null
+                                    : !usernameEmpty &&
+                                            usernameFocusNode.hasFocus
+                                        ? IconButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                usernameController.text = "";
+                                                usernameEmpty = true;
+                                              });
+                                            },
+                                            icon: const Icon(
+                                              Icons.clear,
+                                              color: Colors.grey,
+                                            ),
+                                          )
+                                        : !usernameFocusNode.hasFocus &&
+                                                !usernameLengthError &&
+                                                !usernameError &&
+                                                !usernameEmpty &&
+                                                !redundantUsername
+                                            ? const Icon(
+                                                IconData(0xf635,
+                                                    fontFamily:
+                                                        'MaterialIcons'),
+                                                color: Colors.green,
+                                              )
+                                            : null,
                               ),
-                              textAlign: TextAlign.left,
-                            ),
-                            IconButton(
-                              onPressed: () {
-                                getSuggestedUsernames();
+                              onChanged: (value) {
+                                setState(() {
+                                  usernameEmpty = value.isEmpty;
+                                  usernameError =
+                                      value.contains(RegExp(r'[^a-zA-Z0-9_-]'));
+                                  usernameLengthError =
+                                      value.length < 3 || value.length > 20;
+                                });
                               },
-                              icon: const Icon(
-                                Icons.refresh,
-                                color: Colors.blue,
+                              textInputAction: TextInputAction.next,
+                              onEditingComplete: () {
+                                usernameEmpty = usernameController.text.isEmpty;
+                                usernameError = usernameController.text
+                                    .contains(RegExp(r'[^a-zA-Z0-9_-]'));
+                                usernameLengthError =
+                                    usernameController.text.length < 3 ||
+                                        usernameController.text.length > 20;
+                                checkOnUsername(usernameController.text);
+                                usernameFocusNode.nextFocus();
+                              },
+                            ),
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.05,
+                            ),
+                            TextField(
+                              focusNode: passwordFocusNode,
+                              controller: passwordController,
+                              style: const TextStyle(fontSize: 18),
+                              obscureText: passwordVisible,
+                              keyboardType: TextInputType.visiblePassword,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                contentPadding: const EdgeInsets.all(20),
+                                suffixIcon: IconButton(
+                                  onPressed: () => setState(() {
+                                    passwordVisible = !passwordVisible;
+                                  }),
+                                  icon: Icon(
+                                    passwordVisible
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                prefixIcon: passwordEmpty
+                                    ? null
+                                    : passwordCorrect && !passwordLengthError
+                                        ? const Icon(
+                                            IconData(0xf635,
+                                                fontFamily: 'MaterialIcons'),
+                                            color: Colors.green,
+                                          )
+                                        : const Icon(
+                                            IconData(0xf713,
+                                                fontFamily: 'MaterialIcons'),
+                                            color: Colors.red,
+                                          ),
+                                hintText: 'Password',
+                                labelText: 'Password',
+                                errorText: passwordEmpty
+                                    ? null
+                                    : !passwordCorrect
+                                        ? "Password cannot contain your username"
+                                        : passwordLengthError
+                                            ? "Password must be at least 8 characters"
+                                            : null,
                               ),
+                              onChanged: (value) {
+                                setState(() {
+                                  passwordLengthError = value.length < 8;
+                                  passwordEmpty = value.isEmpty;
+                                  passwordCorrect =
+                                      !value.contains(usernameController.text);
+                                });
+                              },
+                              textInputAction: TextInputAction.done,
+                              onEditingComplete: !usernameFocusNode.hasFocus &&
+                                      !usernameLengthError &&
+                                      !usernameError &&
+                                      !usernameEmpty &&
+                                      !redundantUsername
+                                  ? () => signUpContinue(context)
+                                  : null,
                             ),
                           ],
                         ),
-                        ...suggestedUsernames.entries.map((e) {
-                          return TextButton(
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Text(
+                                "Here are some username suggestions",
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.black,
+                                ),
+                                textAlign: TextAlign.left,
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  getSuggestedUsernames();
+                                },
+                                icon: const Icon(
+                                  Icons.refresh,
+                                  color: Colors.blue,
+                                ),
+                              ),
+                            ],
+                          ),
+                          ...suggestedUsernames.entries.map((e) {
+                            return TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  usernameController.text = e.value;
+                                });
+                              },
+                              child: Text(
+                                e.value,
+                                style: const TextStyle(
+                                  color: Colors.blue,
+                                  fontSize: 15,
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  flex: MediaQuery.of(context).size.height < 600 ? 2 : 1,
+                  child: Column(
+                    children: [
+                      const Divider(
+                        thickness: 1,
+                        color: Colors.grey,
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          TextButton(
                             onPressed: () {
-                              setState(() {
-                                usernameController.text = e.value;
-                              });
+                              Navigator.of(context).pushReplacementNamed(
+                                SIGNU_PAGE1,
+                              ); //navigate to SIGN UP 1 page
                             },
-                            child: Text(
-                              e.value,
-                              style: const TextStyle(
-                                color: Colors.blue,
-                                fontSize: 15,
+                            child: const Text(
+                              "Back",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                          );
-                        }).toList(),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.1,
-                child: Column(
-                  children: [
-                    const Divider(
-                      thickness: 1,
-                      color: Colors.grey,
-                    ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pushReplacementNamed(
-                              SIGNU_PAGE1,
-                            ); //navigate to SIGN UP 1 page
-                          },
-                          child: const Text(
-                            "Back",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
                           ),
-                        ),
-                        ElevatedButton(
-                          onPressed: !usernameLengthError &&
-                                  !passwordLengthError &&
-                                  passwordCorrect &&
-                                  !passwordEmpty &&
-                                  !usernameError &&
-                                  !usernameEmpty &&
-                                  !redundantUsername
-                              ? () => signUpContinue(context)
-                              : null,
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all(
-                              const Color.fromARGB(255, 42, 94, 137),
-                            ),
-                            shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
+                          Container(
+                            margin: const EdgeInsets.only(right: 20),
+                            child: ElevatedButton(
+                              onPressed: !usernameLengthError &&
+                                      !passwordLengthError &&
+                                      passwordCorrect &&
+                                      !passwordEmpty &&
+                                      !usernameError &&
+                                      !usernameEmpty &&
+                                      !redundantUsername
+                                  ? () => signUpContinue(context)
+                                  : null,
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(
+                                  const Color.fromARGB(255, 42, 94, 137),
+                                ),
+                                shape: MaterialStateProperty.all(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                ),
+                                padding: MaterialStateProperty.all(
+                                  const EdgeInsets.fromLTRB(50, 18, 50, 18),
+                                ),
+                              ),
+                              child: const Text(
+                                "SIGN UP",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
-                            padding: MaterialStateProperty.all(
-                              const EdgeInsets.fromLTRB(50, 18, 50, 18),
-                            ),
                           ),
-                          child: const Text(
-                            "SIGN UP",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
