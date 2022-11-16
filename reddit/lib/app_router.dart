@@ -8,6 +8,13 @@ import 'presentation/screens/setting_tab_ui.dart';
 import 'package:reddit/presentation/screens/recaptcha_screen.dart'
     if (dart.library.html) 'package:reddit/presentation/screens/recaptcha_screen_web.dart'
     as recaptcha_screen;
+import 'package:reddit/business_logic/cubit/history_page_cubit.dart';
+
+import 'package:reddit/data/repository/history_page_repository.dart';
+
+import 'package:reddit/data/web_services/history_page_web_services.dart';
+
+import 'package:reddit/presentation/screens/history_screen.dart';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -71,6 +78,10 @@ class AppRouter {
   late EmailSettingsCubit emailSettingsCubit;
   late EmailSettingsWebServices emailSettingsWebServices;
 
+  late HistoryPageCubit historyPageCubit;
+  late HistoryPageRepository historyPageRepository;
+  late HistoryPageWebServices historyPageWebServices;
+
   static User? user;
   AppRouter() {
     // initialise repository and cubit objects
@@ -88,6 +99,10 @@ class AppRouter {
     accountSettingsRepository =
         AccountSettingsRepository(AccountSettingsWebServices());
     accountSettingsCubit = AccountSettingsCubit(accountSettingsRepository);
+
+    historyPageWebServices = HistoryPageWebServices();
+    historyPageRepository = HistoryPageRepository(historyPageWebServices);
+    historyPageCubit = HistoryPageCubit(historyPageRepository);
   }
   Route? generateRoute(RouteSettings settings) {
     final arguments = settings.arguments;
@@ -112,6 +127,15 @@ class AppRouter {
         return MaterialPageRoute(
             builder: (_) =>
                 kIsWeb ? const OtherProfilePageWeb() : const ProfileScreen());
+
+      case historyPageScreenRoute:
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider.value(
+                  value: historyPageCubit,
+                  child: HistoryPageScreen(
+                    userID: "Disastrous_Welcome96",
+                  ),
+                ));
 
       // case emailSettingsWebScreenRoute:
       //   return MaterialPageRoute(
