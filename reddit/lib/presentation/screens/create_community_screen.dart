@@ -66,11 +66,14 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                       2,
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 20, bottom: 10),
-                  child: Text("Community type",
+                    padding: const EdgeInsets.only(top: 20, bottom: 10),
+                    child: Text(
+                      "Community type",
                       style: GoogleFonts.ibmPlexSans(
-                          textStyle: const TextStyle(color: lightFontColor))),
-                ),
+                          fontSize: headerFontSize,
+                          fontWeight: FontWeight.w500,
+                          color: lightFontColor),
+                    )),
                 ListView.builder(
                     shrinkWrap: true,
                     itemCount: 3,
@@ -79,15 +82,20 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                             _typesIcons[index],
                             color: darkFontColor,
                           ),
-                          title: Text(_types[index],
-                              style: GoogleFonts.ibmPlexSans(
-                                  textStyle:
-                                      const TextStyle(color: lightFontColor))),
-                          subtitle: Text(_typesDescribtion[index],
-                              style: GoogleFonts.ibmPlexSans(
-                                textStyle:
-                                    const TextStyle(color: darkFontColor),
-                              )),
+                          title: Text(
+                            _types[index],
+                            style: GoogleFonts.ibmPlexSans(
+                                fontSize: headerFontSize,
+                                fontWeight: FontWeight.w500,
+                                color: lightFontColor),
+                          ),
+                          subtitle: Text(
+                            _typesDescribtion[index],
+                            style: GoogleFonts.ibmPlexSans(
+                                fontSize: subHeaderFontSize,
+                                fontWeight: FontWeight.w400,
+                                color: darkFontColor),
+                          ),
                           onTap: (() {
                             _selectedTypeIndex = index;
                             BlocProvider.of<CreateCommunityCubit>(context)
@@ -104,19 +112,26 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: BlocBuilder<CreateCommunityCubit, CreateCommunityState>(
+    return Container(
+      child: BlocBuilder<CreateCommunityCubit, CreateCommunityState>(
         builder: (context, state) {
+          if (state is CreateCommunityCreated) {
+            //TODO: go to subreddit page
+            Navigator.of(context).pop();
+          }
+          if (state is CreateCommunityFailedToCreate) {
+            _warningText = 4;
+          }
           if (state is CreateCommunityCreateBloc) {
             _createCommunityModel = (state).createCommunityModel;
           }
+
           if (state is CreateCommunityNameChange) {
-            if (!RegExp("^[a-zA-Z0-9_]{3,21}\$")
+            if (!_mobilePlatform && _communityNameController.text.isEmpty) {
+              _warningText = 1;
+            } else if (!RegExp("^[a-zA-Z0-9_]{3,21}\$")
                 .hasMatch(_communityNameController.text)) {
               _warningText = 2;
-            } else if (!_mobilePlatform &&
-                _communityNameController.text.isEmpty) {
-              _warningText = 1;
             } else {
               BlocProvider.of<CreateCommunityCubit>(context)
                   .checkIfNameAvailable(_createCommunityModel.communityName);
@@ -124,20 +139,17 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
             }
           }
           if (state is CreateCommunityNameUnAvailable) _warningText = 3;
-          if (state is CreateCommunityNameAvailable) {
-            BlocProvider.of<CreateCommunityCubit>(context)
-                .createCommunity(_createCommunityModel);
+          if (state is CreateCommunityPressed) {
+            if (_warningText == 0) {
+              BlocProvider.of<CreateCommunityCubit>(context)
+                  .createCommunity(_createCommunityModel);
+            }
           }
-
-          if (state is CreateCommunityCreated) {
-            print("successfully created!!!!!!");
-            Navigator.pop(context);
-          }
-
           return _mobilePlatform
               ? Scaffold(
-                  backgroundColor: darkCardsColor,
+                  backgroundColor: mobileBackgroundColor,
                   appBar: AppBar(
+                    backgroundColor: darkCardsColor,
                     leading: const Icon(
                       Icons.arrow_back,
                       color: lightFontColor,
@@ -149,10 +161,10 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                   ),
                   body: SingleChildScrollView(
                       child: Container(
-                          color: cardsColor,
+                          color: darkCardsColor,
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
-                            child: Column(
+                            child: Wrap(
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.only(
@@ -163,8 +175,9 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                                     child: Text(
                                       "Community name",
                                       style: GoogleFonts.ibmPlexSans(
-                                          textStyle: const TextStyle(
-                                              color: lightFontColor)),
+                                          fontSize: headerFontSize,
+                                          fontWeight: FontWeight.w500,
+                                          color: lightFontColor),
                                       textAlign: TextAlign.left,
                                     ),
                                   ),
@@ -175,6 +188,10 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                                   child: Column(
                                     children: [
                                       TextField(
+                                        style: GoogleFonts.ibmPlexSans(
+                                            fontSize: subHeaderFontSize,
+                                            fontWeight: FontWeight.w500,
+                                            color: lightFontColor),
                                         maxLength: _maxLetters,
                                         controller: _communityNameController,
                                         onChanged: (value) {
@@ -196,9 +213,14 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                                             ),
                                             focusColor: mobileTextFeildColor,
                                             fillColor: mobileTextFeildColor,
-                                            prefixStyle: const TextStyle(
-                                                color: darkFontColor),
-                                            hintStyle: const TextStyle(
+                                            prefixStyle:
+                                                GoogleFonts.ibmPlexSans(
+                                                    fontSize: subHeaderFontSize,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: darkFontColor),
+                                            hintStyle: GoogleFonts.ibmPlexSans(
+                                                fontSize: subHeaderFontSize,
+                                                fontWeight: FontWeight.w500,
                                                 color: darkFontColor),
                                             prefixText: "r/",
                                             suffixText:
@@ -226,28 +248,37 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                                       child: Text(
                                         "Community Type",
                                         style: GoogleFonts.ibmPlexSans(
-                                            textStyle: const TextStyle(
-                                                color: lightFontColor)),
+                                            fontSize: subHeaderFontSize,
+                                            fontWeight: FontWeight.w400,
+                                            color: lightFontColor),
                                         textAlign: TextAlign.left,
                                       )),
                                 ),
                                 ListTile(
-                                  onTap: () => buildTypeBottomSheet(context),
-                                  title: Row(
-                                    children: [
-                                      Text(_types[_selectedTypeIndex],
+                                    onTap: () => buildTypeBottomSheet(context),
+                                    title: Row(
+                                      children: [
+                                        Text(
+                                          _types[_selectedTypeIndex],
                                           style: GoogleFonts.ibmPlexSans(
-                                              textStyle: const TextStyle(
-                                                  color: lightFontColor))),
-                                      const Icon(
-                                        Icons.arrow_drop_down,
-                                        color: darkFontColor,
-                                      )
-                                    ],
-                                  ),
-                                  subtitle: Text(
-                                      _typesDescribtion[_selectedTypeIndex]),
-                                ),
+                                              fontSize: headerFontSize,
+                                              fontWeight: FontWeight.w500,
+                                              color: lightFontColor),
+                                        ),
+                                        const Icon(
+                                          Icons.arrow_drop_down,
+                                          color: darkFontColor,
+                                          size: 2 * headerFontSize,
+                                        )
+                                      ],
+                                    ),
+                                    subtitle: Text(
+                                      _typesDescribtion[_selectedTypeIndex],
+                                      style: GoogleFonts.ibmPlexSans(
+                                          fontSize: subHeaderFontSize,
+                                          fontWeight: FontWeight.w400,
+                                          color: darkFontColor),
+                                    )),
                                 SwitchListTile(
                                   inactiveThumbColor: Colors.white,
                                   activeColor: Colors.white,
@@ -262,8 +293,16 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                                   title: Text(
                                     "18+ community",
                                     style: GoogleFonts.ibmPlexSans(
-                                        textStyle: const TextStyle(
-                                            color: lightFontColor)),
+                                        fontSize: headerFontSize,
+                                        fontWeight: FontWeight.w500,
+                                        color: lightFontColor),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 8.0),
+                                  child: SizedBox(
+                                    width: MediaQuery.of(context).size.width,
+                                    child: _showErrorText(state),
                                   ),
                                 ),
                                 Padding(
@@ -285,7 +324,13 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                                               .text.isNotEmpty)
                                           ? _onPressedFunction()
                                           : null,
-                                      child: const Text("Create Community")),
+                                      child: Text(
+                                        "Create Community",
+                                        style: GoogleFonts.ibmPlexSans(
+                                          fontSize: headerFontSize,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      )),
                                 ),
                               ],
                             ),
@@ -616,6 +661,10 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                                         fontWeight: FontWeight.w500,
                                       ),
                                     )),
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width,
+                                  child: _showErrorText(state),
+                                ),
                               ],
                             ),
                           ),
@@ -682,18 +731,12 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
   }
 
   dynamic _onPressedFunction() {
-    if (_communityNameController.text.isEmpty || _warningText != 0) {
-      _warningText = 1;
+    return () {
+      if (_communityNameController.text.isEmpty) {
+        _warningText = 1;
+      }
       BlocProvider.of<CreateCommunityCubit>(context).createButtonPressed();
-      return () {};
-    } else {
-      return () {
-        BlocProvider.of<CreateCommunityCubit>(context)
-            .createCommunity(_createCommunityModel);
-
-        Navigator.of(context).pop();
-      };
-    }
+    };
   }
 
   Widget _showWarningText(CreateCommunityState state) {
@@ -707,6 +750,22 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
     } else if (_warningText == 3) {
       text =
           "Sorry, ${_createCommunityModel.communityName} is taken. Try another.";
+    } else {
+      return Container();
+    }
+    return Text(text,
+        style: GoogleFonts.ibmPlexSans(
+          fontSize: statementFontSize,
+          color: fontColor,
+          fontWeight: FontWeight.w400,
+        ));
+  }
+
+  Widget _showErrorText(state) {
+    Color fontColor = _mobilePlatform ? darkFontColor : Colors.red;
+    String text;
+    if (_warningText == 4) {
+      text = "An error occurred, please try again!!";
     } else {
       return Container();
     }
