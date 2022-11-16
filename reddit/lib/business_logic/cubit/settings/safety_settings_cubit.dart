@@ -12,6 +12,7 @@ class SafetySettingsCubit extends Cubit<SafetySettingsState> {
 
   /// Get all user settings @initial build of any settings widget
   void getUserSettings() {
+    if (isClosed) return;
     settingsRepository.getUserSettings().then((userSettings) {
       settingsRepository.getBlockedUsers().then((blockedList) {
         userSettings.blocked = blockedList;
@@ -22,16 +23,16 @@ class SafetySettingsCubit extends Cubit<SafetySettingsState> {
   }
 
   /// update any user settings and emit sate SettingsChanged
-  int updateSettings(SafetySettings settings, Map changed) {
-    int status = 500;
+  void updateSettings(SafetySettings settings, Map changed) {
+    if (isClosed) return;
     settingsRepository.updatePrefs(changed).then((val) {
       emit(SafetySettingsChanged(settings));
     });
-    return status;
   }
 
   /// Block a user by his/her username if existed in the database
   void blockUser(SafetySettings settings, String username) async {
+    if (isClosed) return;
     await settingsRepository
         .checkUsernameAvailable(username)
         .then((usernameExist) {
@@ -47,16 +48,14 @@ class SafetySettingsCubit extends Cubit<SafetySettingsState> {
   }
 
   /// unBlock a user by his/her username
-  bool unBlockUser(SafetySettings settings, String username) {
-    bool success = false;
+  void unBlockUser(SafetySettings settings, String username) {
+    if (isClosed) return;
     //block the user
     settingsRepository.unBlockUser(username).then((usernameExist) {
       if (usernameExist == 200) {
         settings.blocked.remove(username);
-        success = true;
         emit(BlockListUpdated(settings, username));
       }
     });
-    return success;
   }
 }

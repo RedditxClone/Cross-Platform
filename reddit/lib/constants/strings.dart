@@ -15,6 +15,11 @@ const popularPageRoute = '/popular';
 // -----------Log in / Sign up-----------
 //---------------------------------------
 //---------------------------------------
+//--------------User Profile-------------
+//---------------------------------------
+const profilePageRoute = '/profile';
+const otherProfilePageRoute = '/OtherProfile';
+//---------------------------------------
 // ----------Settings routes-------------
 //---------------------------------------
 const settingsTabsRoute = "/tabs";

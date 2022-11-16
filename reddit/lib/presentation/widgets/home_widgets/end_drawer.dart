@@ -52,7 +52,7 @@ class EndDrawer extends StatelessWidget {
             ],
           ),
           _buildKarmaAndRedditAge(),
-          _buildScrollViewButtons(),
+          _buildScrollViewButtons(context),
           _buildSettingsButton(context),
         ],
       ),
@@ -159,7 +159,7 @@ class EndDrawer extends StatelessWidget {
   }
 
   /// Build the scroll view buttons of the drawer
-  Widget _buildScrollViewButtons() {
+  Widget _buildScrollViewButtons(BuildContext context) {
     return Expanded(
       child: SingleChildScrollView(
         child: SizedBox(
@@ -170,7 +170,7 @@ class EndDrawer extends StatelessWidget {
               ListTile(
                 leading: const Icon(Icons.person),
                 title: const Text("My profile"),
-                onTap: () {},
+                onTap: () => Navigator.of(context).pushNamed(profilePageRoute),
               ),
               ListTile(
                 leading: const FaIcon(FontAwesomeIcons.plus),

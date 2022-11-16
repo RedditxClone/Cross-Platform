@@ -142,8 +142,11 @@ class PopupMenuLoggedIn extends StatelessWidget {
       constraints: const BoxConstraints.expand(width: 230, height: 530),
       onSelected: (value) {
         switch (value) {
+          case 1:
+            Navigator.pushNamed(context, profilePageRoute);
+            break;
           case 3:
-            Navigator.pushReplacementNamed(context, settingsTabsRoute);
+            Navigator.pushNamed(context, settingsTabsRoute);
             break;
           case 6:
             _launchUrl('https://www.reddithelp.com/hc/en-us');

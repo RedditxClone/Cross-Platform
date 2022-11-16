@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:reddit/data/model/safety_user_settings.dart';
 import 'package:reddit/data/web_services/safety_settings_web_services.dart';
 
@@ -10,7 +8,7 @@ class SafetySettingsRepository {
   /// Returns all user settings from json to Settings class object
   Future<SafetySettings> getUserSettings() async {
     final settings = await settingsWebServices.getUserSettings();
-    return SafetySettings.fromjson(jsonDecode(settings));
+    return SafetySettings.fromjson(settings);
   }
 
   /// check if the username entered exist

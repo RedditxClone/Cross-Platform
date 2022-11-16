@@ -235,14 +235,14 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
                             child: Text(e),
                           ))
                       .toList(),
-                  value: safetySettings!.disroptiveSettings,
+                  value: safetySettings!.disroptiveSettings.toUpperCase(),
                   onChanged: (val) {
                     setState(() {
                       safetySettings!.disroptiveSettings = val as String;
                       disruptiveComments = val;
                       BlocProvider.of<SafetySettingsCubit>(context)
-                          .updateSettings(
-                              safetySettings!, {'disruptiveComments': val});
+                          .updateSettings(safetySettings!,
+                              {'disruptiveComments': val.toLowerCase()});
                       displayMsg(context, Colors.blue, 'Changes Saved');
                     });
                   })

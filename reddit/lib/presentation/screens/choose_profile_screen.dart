@@ -106,8 +106,8 @@ class ChooseProfileImgAndroidState extends State<ChooseProfileImgAndroid> {
                 ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
-                      primary: const Color.fromRGBO(90, 90, 90, 100),
-                      onPrimary: Colors.grey,
+                      foregroundColor: Colors.grey,
+                      backgroundColor: const Color.fromRGBO(90, 90, 90, 100),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20.0)),
                     ),
@@ -134,6 +134,7 @@ class ChooseProfileImgAndroidState extends State<ChooseProfileImgAndroid> {
       BlocProvider.of<ChooseProfileImageLoginCubit>(context)
           .changeProfilephoto(imageTemp);
     } on PlatformException catch (e) {
+      debugPrint(e.toString());
       displayMsg(context, Colors.red, 'Error', 'Could not load image');
     }
   }

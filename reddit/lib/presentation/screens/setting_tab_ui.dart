@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reddit/business_logic/cubit/cubit/account_settings_cubit.dart';
@@ -42,7 +41,7 @@ class _SettingTabUiState extends State<SettingTabUi> {
           shape:
               const Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
           automaticallyImplyLeading: false,
-          backgroundColor: defaultSecondaryColor,
+          backgroundColor: defaultAppbarBackgroundColor,
           title:
               AppBarWebLoggedIn(user: widget.user!, screen: 'User settings')),
       body: SingleChildScrollView(

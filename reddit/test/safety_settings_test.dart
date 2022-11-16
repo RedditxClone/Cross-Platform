@@ -17,16 +17,16 @@ void main() async {
   late MockSafetySettingsWebService mockSafetySettingsWebService;
   late SafetySettingsRepository safetySettingsRepository;
   late SafetySettingsCubit safetySettingsCubit;
-  const String settingsFromWebServices = '''{
+  const settingsFromWebServices = {
     "badCommentAutoCollapse": "MEDIUM",
     "showInSearch": true,
     "personalizeAllOfReddit": false,
-    "personalizeAds_information": true,
-    "personalizeAds_yourActivity": false,
-    "personalizeRec_generalLocation": true,
-    "personalizeRec_ourPartners": true,
+    "personalizeAdsInformation": true,
+    "personalizeAdsYourActivity": false,
+    "personalizeRecGeneralLocation": true,
+    "personalizeRecOurPartners": true,
     "useTwoFactorAuthentication": false
-  }''';
+  };
   final safetySettingsFromRepository = SafetySettings(
       disroptiveSettings: 'MEDIUM',
       blocked: [],
@@ -86,7 +86,7 @@ void main() async {
   group('Model test', () {
     test('Model is generated correctly', () {
       expect(
-        SafetySettings.fromjson(jsonDecode(settingsFromWebServices)),
+        SafetySettings.fromjson(settingsFromWebServices),
         safetySettingsFromRepository,
       );
     });
