@@ -5,8 +5,10 @@ class CreateCommunityRepository {
 
   CreateCommunityRepository(this.communityWebServices);
 
-  Future<void> createCommunity(newCommunityData) async {
-    await communityWebServices.createCommunity(newCommunityData.toJson());
+  Future<bool> createCommunity(newCommunityData) async {
+    final bool ifCreated =
+        await communityWebServices.createCommunity(newCommunityData.toJson());
+    return ifCreated;
   }
 
   Future<bool> getIfNameAvailable(String subredditName) async {
