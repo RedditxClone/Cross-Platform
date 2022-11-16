@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
-import 'package:reddit/data/web_services/dio.dart';
+
+import '../../helper/dio.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -10,11 +11,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  @override
-  void initState() {
-    super.initState();
-    DioHelper.init();
-  }
+
 
   @override
   Widget build(BuildContext context) {

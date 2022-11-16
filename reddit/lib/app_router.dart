@@ -26,7 +26,6 @@ import 'package:reddit/business_logic/cubit/email_settings_cubit.dart';
 import 'package:reddit/data/repository/email_settings_repo.dart';
 import 'package:reddit/data/web_services/email_settings_web_services.dart';
 import 'package:reddit/business_logic/cubit/cubit/account_settings_cubit.dart';
-
 import 'package:reddit/data/repository/account_settings_repository.dart';
 import 'package:reddit/data/web_services/account_settings_web_services.dart';
 import 'package:reddit/presentation/screens/account_settings/account_settings_screen_web.dart';

@@ -66,7 +66,7 @@ class _SignupMobileState extends State<SignupMobile> {
   }
 
   //call back function for email focus node to be called of the focus changes
-  void _onFocusChangeEmail() async {
+  void _onFocusChangeEmail() {
     debugPrint("Focus on email: ${emailFocusNode.hasFocus.toString()}");
   }
 
@@ -512,7 +512,9 @@ class _SignupMobileState extends State<SignupMobile> {
                             ? "Username can only contain letters, numbers,'-' and '_'"
                             : usernameLengthError
                                 ? "Username must be between 3 and 20 characters"
-                                : null,
+                                : redundantUsername
+                                    ? "Username already exists"
+                                    : null,
                     suffixIcon: usernameEmpty && !usernameFocusNode.hasFocus
                         ? null
                         : !usernameEmpty && usernameFocusNode.hasFocus

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:reddit/constants/strings.dart';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:reddit/presentation/screens/signup_page.dart';
 import 'app_router.dart';
 import 'helper/dio.dart';
 import 'helper/utils/shared_pref.dart';
@@ -40,7 +41,7 @@ class MyApp extends StatelessWidget {
       themeMode: ThemeMode.dark,
       debugShowCheckedModeBanner: false,
       onGenerateRoute: appRouter.generateRoute,
-      // initialRoute: signupScreen,
+      // initialRoute: SIGNU_PAGE1,
       initialRoute: kIsWeb
           ? (isLoggedIn ? homePageRoute : popularPageRoute)
           : homePageRoute,
