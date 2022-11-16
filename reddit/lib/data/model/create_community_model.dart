@@ -5,14 +5,14 @@ class CreateCommunityModel {
   late bool isAbove18;
   CreateCommunityModel(this.communityName, this.communityType, this.isAbove18);
   CreateCommunityModel.fromJson(Map<String, dynamic> json) {
-    communityName = json['subredditID'];
-    communityType = json['subreddtType'];
-    isAbove18 = json['above_18'];
+    communityName = json['name'];
+    communityType = json['type'];
+    isAbove18 = json['over18'];
   }
   Map<String, dynamic> toJson() => {
-        'subredditID': communityName,
-        'subreddtType': communityType,
-        'above_18': isAbove18,
+        'name': communityName,
+        'type': communityType,
+        'over18': isAbove18,
       };
 
   @override
