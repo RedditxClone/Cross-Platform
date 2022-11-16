@@ -8,6 +8,13 @@ import 'presentation/screens/setting_tab_ui.dart';
 import 'package:reddit/presentation/screens/recaptcha_screen.dart'
     if (dart.library.html) 'package:reddit/presentation/screens/recaptcha_screen_web.dart'
     as recaptcha_screen;
+import 'package:reddit/business_logic/cubit/create_community_cubit.dart';
+
+import 'package:reddit/data/repository/community_repo.dart';
+
+import 'package:reddit/data/web_services/create_community_web_services.dart';
+
+import 'presentation/screens/create_community_screen.dart';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -71,6 +78,10 @@ class AppRouter {
   late EmailSettingsCubit emailSettingsCubit;
   late EmailSettingsWebServices emailSettingsWebServices;
 
+  late CreateCommunityRepository communityRepository;
+  late CreateCommunityCubit createCommunityCubit;
+  late CreateCommunityWebServices communityWebServices;
+
   static User? user;
   AppRouter() {
     // initialise repository and cubit objects
@@ -88,6 +99,10 @@ class AppRouter {
     accountSettingsRepository =
         AccountSettingsRepository(AccountSettingsWebServices());
     accountSettingsCubit = AccountSettingsCubit(accountSettingsRepository);
+
+    communityWebServices = CreateCommunityWebServices();
+    communityRepository = CreateCommunityRepository(communityWebServices);
+    createCommunityCubit = CreateCommunityCubit(communityRepository);
   }
   Route? generateRoute(RouteSettings settings) {
     final arguments = settings.arguments;
@@ -112,6 +127,13 @@ class AppRouter {
         return MaterialPageRoute(
             builder: (_) =>
                 kIsWeb ? const OtherProfilePageWeb() : const ProfileScreen());
+
+      case createCommunityScreenRoute:
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider.value(
+                  value: createCommunityCubit,
+                  child: const CreateCommunityScreen(),
+                ));
 
       // case emailSettingsWebScreenRoute:
       //   return MaterialPageRoute(
