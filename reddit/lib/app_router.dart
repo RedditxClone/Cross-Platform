@@ -94,9 +94,7 @@ class AppRouter {
     final arguments = settings.arguments;
     switch (settings.name) {
       case homePageRoute:
-        // user = settings.arguments as User?;
-        user = User(
-            userId: 'userId', name: 'name', email: 'email', imageUrl: null);
+        user = settings.arguments as User?;
         return MaterialPageRoute(
           builder: (_) => kIsWeb ? HomePageWeb(user) : HomePage(user),
         );
