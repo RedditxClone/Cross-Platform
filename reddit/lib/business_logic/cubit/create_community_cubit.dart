@@ -9,9 +9,14 @@ class CreateCommunityCubit extends Cubit<CreateCommunityState> {
   CreateCommunityCubit(this.createCommunityRepository)
       : super(CreateCommunityInitial());
 
-  void createCommunity(CreateCommunityModel createCommunityModel) {
-    createCommunityRepository.createCommunity(createCommunityModel);
-    emit(CreateCommunityCreated());
+  void createCommunity(CreateCommunityModel createCommunityModel) async {
+    final ifCreated =
+        await createCommunityRepository.createCommunity(createCommunityModel);
+    if (ifCreated) {
+      emit(CreateCommunityCreated());
+    } else {
+      emit(CreateCommunityFailedToCreate());
+    }
   }
 
   void createBloc() {
@@ -23,7 +28,6 @@ class CreateCommunityCubit extends Cubit<CreateCommunityState> {
   }
 
   checkIfNameAvailable(String subredditName) async {
-    emit(CreateCommunityNameChange());
     final ifAvailable =
         await createCommunityRepository.getIfNameAvailable(subredditName);
     if (ifAvailable) {
