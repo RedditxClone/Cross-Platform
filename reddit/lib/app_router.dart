@@ -10,7 +10,7 @@ import 'package:reddit/presentation/screens/recaptcha_screen.dart'
     as recaptcha_screen;
 import 'package:reddit/business_logic/cubit/create_community_cubit.dart';
 
-import 'package:reddit/data/repository/community_repo.dart';
+import 'package:reddit/data/repository/create_community_repository.dart';
 
 import 'package:reddit/data/web_services/create_community_web_services.dart';
 
