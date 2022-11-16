@@ -1,0 +1,435 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:icons_plus/icons_plus.dart';
+import 'package:reddit/business_logic/cubit/history_page_cubit.dart';
+import 'package:reddit/data/model/post_model.dart';
+
+class HistoryPageScreen extends StatefulWidget {
+  const HistoryPageScreen({super.key, required this.userID});
+  final String userID;
+  @override
+  State<HistoryPageScreen> createState() => _HistoryPageScreenState();
+}
+
+class _HistoryPageScreenState extends State<HistoryPageScreen> {
+  String _selectedMode = "recent";
+  IconData _selectedModeIcon = Icons.timelapse_outlined;
+
+  final bool _darkTheme = false;
+  late Color _backColor;
+  late Color _frontColor;
+  final bool _mobilePlatform =
+      defaultTargetPlatform == TargetPlatform.android ||
+          defaultTargetPlatform == TargetPlatform.iOS;
+  late String userID;
+  late List<PostModel> _postModelList;
+  _HistoryPageScreenState();
+  @override
+  void initState() {
+    _backColor = _darkTheme ? const Color.fromARGB(204, 0, 0, 0) : Colors.white;
+    _frontColor = _darkTheme ? Colors.white : Colors.black;
+
+    super.initState();
+    userID = widget.userID;
+    BlocProvider.of<HistoryPageCubit>(context).getHistoryPage(userID, "hot");
+  }
+
+  PreferredSizeWidget? _buildAppBar() {
+    return _mobilePlatform
+        ? AppBar(
+            actions: [
+              IconButton(onPressed: () {}, icon: const Icon(Icons.list))
+            ],
+            title: const Text("History"),
+            foregroundColor: _frontColor,
+            backgroundColor: _backColor,
+          )
+        : null;
+  }
+
+  Widget _buildSideBar() {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 10.0),
+          child: SizedBox(
+              child: Card(
+            color: const Color.fromARGB(255, 81, 80, 80),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        "About Community",
+                        style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500),
+                      ),
+                      IconButton(onPressed: () {}, icon: const Icon(Icons.list))
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    children: const [
+                      Icon(
+                        Icons.cake,
+                        color: Colors.white,
+                      ),
+                      SizedBox(
+                        width: 4,
+                      ),
+                      //TODO:: API REQueST
+                      Text(
+                        "Created 01/10/2022",
+                        style: TextStyle(color: Colors.grey),
+                      )
+                    ],
+                  ),
+                  SizedBox(
+                    width: double.maxFinite,
+                    child: TextButton(
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.black,
+                          backgroundColor: Colors.white,
+                          shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(
+                            Radius.circular(20),
+                          )),
+                        ),
+                        onPressed: () {},
+                        child: const Text("Create Post")),
+                  ),
+
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  const Divider(),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  //TODO:: API REQueST
+                  const Text(
+                    "5",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  const Text(
+                    "Members",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  const Divider(),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  SizedBox(
+                    width: double.maxFinite,
+                    child: TextButton(
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.black,
+                          backgroundColor: Colors.white,
+                          shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(
+                            Radius.circular(20),
+                          )),
+                        ),
+                        onPressed: () {},
+                        child: const Text("Create Post")),
+                  ),
+                  const Divider(),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  SizedBox(
+                    width: double.maxFinite,
+                    child: TextButton(
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.black,
+                          backgroundColor: Colors.white,
+                          shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(
+                            Radius.circular(20),
+                          )),
+                        ),
+                        onPressed: () {},
+                        child: const Text("New Post")),
+                  ),
+                  const SizedBox(height: 10),
+
+                  SizedBox(
+                    width: double.maxFinite,
+                    child: TextButton(
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.black,
+                          backgroundColor: Colors.white,
+                          shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(
+                            Radius.circular(20),
+                          )),
+                        ),
+                        onPressed: () {},
+                        child: const Text("Create Post")),
+                  ),
+
+                  const SizedBox(height: 10),
+                ],
+              ),
+            ),
+          )),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 10.0),
+          child: SizedBox(
+              width: double.infinity,
+              child: Card(
+                color: const Color.fromARGB(255, 81, 80, 80),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  child: Column(
+                    children: [
+                      Text(
+                        "You're a moderator of these communities",
+                        style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      // OutlinedButton(
+                      //     style: TextButton.styleFrom(
+                      //       backgroundColor: Colors.transparent,
+                      //       foregroundColor: (Colors.white),
+                      //       side: const BorderSide(
+                      //           color: Colors.white, width: 1),
+                      //       shape: const RoundedRectangleBorder(
+                      //           borderRadius: BorderRadius.all(
+                      //         Radius.circular(20),
+                      //       )),
+                      //     ),
+                      //     onPressed: () {},
+                      //     child: Row(
+                      //       mainAxisAlignment: MainAxisAlignment.center,
+                      //       children: const [
+                      //         Icon(Icons.mail_outlined),
+                      //         SizedBox(
+                      //           width: 4,
+                      //         ),
+                      //         Text("Joined"),
+                      //       ],
+                      //     )),
+                      // for (String text in _Subredditsmoderator!)
+                      //   Column(
+                      //     children: [
+                      //       Text(
+                      //         text,
+                      //         style: TextStyle(color: _frontColor),
+                      //       ),
+                      //       const SizedBox(
+                      //         height: 10,
+                      //       )
+                      //     ],
+                      //   ),
+                      const SizedBox(height: 10),
+                    ],
+                  ),
+                ),
+              )),
+        )
+      ],
+    );
+  }
+
+  Widget _buildPosts() {
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: 5,
+      itemBuilder: (context, position) {
+        return SizedBox(
+          height: 200,
+          child: Card(
+            color: const Color.fromARGB(255, 81, 80, 80),
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Text(
+                "Post number: $position",
+                style: const TextStyle(color: Colors.white, fontSize: 22.0),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildBody(HistoryPageState state) {
+    return _mobilePlatform
+        ? SingleChildScrollView(
+            child: Column(children: [
+            SizedBox(
+              height: 50,
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  foregroundColor: _frontColor,
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                ),
+                onPressed: () => _showBottomSheet(context),
+                child: Row(
+                  children: [
+                    Icon(_selectedModeIcon),
+                    const SizedBox(
+                      width: 4,
+                    ),
+                    Text(_selectedMode),
+                    const SizedBox(
+                      width: 4,
+                    ),
+                    const Icon(
+                      Icons.arrow_drop_down,
+                      color: Colors.grey,
+                    )
+                  ],
+                ),
+              ),
+            ),
+            _buildPosts()
+          ]))
+        : SingleChildScrollView(
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              padding: const EdgeInsets.all(20.0),
+              child:
+                  Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Expanded(
+                  flex: 3,
+                  child: Column(children: [
+                    _buildPosts(),
+                  ]),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Expanded(flex: 1, child: _buildSideBar())
+              ]),
+            ),
+          );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: _mobilePlatform
+          ? _darkTheme
+              ? Colors.black
+              : Colors.white
+          : Colors.black,
+      appBar: _buildAppBar(),
+      body: BlocBuilder<HistoryPageCubit, HistoryPageState>(
+          builder: (context, state) {
+        if (state is HistoryPagePostsLoaded) {
+          _postModelList = (state).subredditsInPageModels;
+        }
+        return _buildBody(state);
+      }),
+    );
+  }
+
+  _showBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+        backgroundColor: _backColor,
+        enableDrag: true,
+        context: context,
+        builder: (_) => Padding(
+            padding: const EdgeInsets.all(4),
+            child: Column(
+              children: [
+                const SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  "SORT HISTORY BY",
+                  style: TextStyle(color: _frontColor),
+                ),
+                const SizedBox(
+                  height: 4,
+                ),
+                const Divider(
+                  thickness: 2,
+                ),
+                const SizedBox(
+                  height: 4,
+                ),
+                ListTile(
+                  leading: const Icon(Icons.timelapse_outlined),
+                  title: Text(
+                    "Recent",
+                    style: TextStyle(color: _frontColor),
+                  ),
+                  onTap: (() {
+                    _selectedMode = "recent";
+                    _selectedModeIcon = Icons.timelapse_outlined;
+                    BlocProvider.of<HistoryPageCubit>(context)
+                        .getHistoryPage(userID, _selectedMode);
+                    Navigator.of(context).pop();
+                  }),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.trending_up),
+                  title: Text(
+                    "Upvoted",
+                    style: TextStyle(color: _frontColor),
+                  ),
+                  onTap: (() {
+                    _selectedMode = "upvoted";
+                    _selectedModeIcon = Icons.trending_up;
+                    BlocProvider.of<HistoryPageCubit>(context)
+                        .getHistoryPage(userID, _selectedMode);
+                    Navigator.of(context).pop();
+                  }),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.trending_down),
+                  title: Text(
+                    "Downvoted",
+                    style: TextStyle(color: _frontColor),
+                  ),
+                  onTap: (() {
+                    _selectedMode = "downvoted";
+                    _selectedModeIcon = Icons.trending_down;
+                    BlocProvider.of<HistoryPageCubit>(context)
+                        .getHistoryPage(userID, _selectedMode);
+                    Navigator.of(context).pop();
+                  }),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.hide_source),
+                  title: Text(
+                    "Hidden",
+                    style: TextStyle(color: _frontColor),
+                  ),
+                  onTap: (() {
+                    _selectedMode = "hidden";
+                    _selectedModeIcon = Icons.hide_source;
+                    BlocProvider.of<HistoryPageCubit>(context)
+                        .getHistoryPage(userID, _selectedMode);
+                    Navigator.of(context).pop();
+                  }),
+                ),
+              ],
+            )));
+  }
+}
