@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:reddit/data/model/create_community_model.dart';
-import 'package:reddit/data/repository/community_repo.dart';
+import 'package:reddit/data/repository/create_community_repository.dart';
 part 'create_community_state.dart';
 
 class CreateCommunityCubit extends Cubit<CreateCommunityState> {
