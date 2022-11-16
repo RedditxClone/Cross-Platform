@@ -2,8 +2,8 @@
 import 'package:bloc/bloc.dart';
 // ignore: depend_on_referenced_packages
 import 'package:meta/meta.dart';
-import 'package:reddit/data/model/user_preferences_feed_setting_model.dart';
-import 'package:reddit/data/repository/user_preferences_feed_setting_repository.dart';
+import 'package:reddit/data/model/feed_setting_model.dart';
+import 'package:reddit/data/repository/feed_setting_repository.dart';
 
 part 'feed_settings_state.dart';
 
@@ -11,29 +11,32 @@ part 'feed_settings_state.dart';
 ///
 /// Then Sending it to UI.
 class FeedSettingsCubit extends Cubit<FeedSettingsState> {
-  final UserPreferencesFeedSettingRepository feedSettingsRepository;
-
-  ///Data Status from Web Server.
-  ///
-  ///200
-  ///201	-->> The preferences updated successfully.
-  ///401	-->> Unautherized.
-  late int status;
+  final FeedSettingRepository feedSettingsRepository;
+  late FeedSettingModel feedSettings;
 
   FeedSettingsCubit(this.feedSettingsRepository) : super(FeedSettingsInitial());
 
-  /// This cubit (feed_settings_cubit) calls this function as it in Repositry.
-  int updateFeedSettings(bool adultContent, bool autoPlayMedia) {
-    UserPreferencesFeedSettingModel newFeedSettings =
-        UserPreferencesFeedSettingModel(
-      adultContent: adultContent,
-      autoPlayMedia: autoPlayMedia,
-    );
-    feedSettingsRepository.updateFeedSettings(newFeedSettings).then((status) {
-      emit(FeedSettingsUpdated(state: status));
-      this.status = status;
+  /// Gets feed settings data from repository.
+  /// Emits the corresponding state for UI.
+  void getFeedSettings() {
+    // To avoid state error when you leave the settings page
+    // if (isClosed) return;
+    feedSettingsRepository.getFeedSettings().then((feedSettings) {
+      // start the state existing in feed_setting_state
+      // here you sent feedSettings list to feedSettings loaded state
+      emit(FeedSettingsLoaded(feedSettings));
+      this.feedSettings = feedSettings;
     });
+  }
 
-    return status;
+  /// Send data to repository to prepare the PATCH request.
+  /// Emits the corresponding state for UI.
+  void updateFeedSettings(FeedSettingModel newFeedSettings) {
+    // To avoid state error when you leave the settings page
+    if (isClosed) return;
+
+    feedSettings = newFeedSettings;
+    feedSettingsRepository.updateFeedSettings(newFeedSettings);
+    emit(FeedSettingsLoaded(feedSettings));
   }
 }

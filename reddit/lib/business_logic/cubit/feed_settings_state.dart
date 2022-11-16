@@ -5,9 +5,9 @@ abstract class FeedSettingsState {}
 
 class FeedSettingsInitial extends FeedSettingsState {}
 
-class FeedSettingsUpdated extends FeedSettingsState {
-  final int state;
-  FeedSettingsUpdated({
-    required this.state,
-  });
+/// Feed settings retrieved successfully from server and ready to be displayed
+class FeedSettingsLoaded extends FeedSettingsState {
+  final FeedSettingModel feedSettings;
+
+  FeedSettingsLoaded(this.feedSettings);
 }

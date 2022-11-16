@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:reddit/data/repository/user_preferences_feed_setting_repository.dart';
-import 'package:reddit/data/web_services/user_preferences_feed_setting_web_services.dart';
+import 'package:reddit/data/repository/feed_setting_repository.dart';
+import 'package:reddit/data/web_services/feed_setting_web_services.dart';
 import 'business_logic/cubit/feed_settings_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'constants/strings.dart';
@@ -22,10 +22,8 @@ class AppRouter {
       case feedSettingRoute:
         return MaterialPageRoute(
           builder: (_) => BlocProvider(
-            create: (context) => FeedSettingsCubit(
-                UserPreferencesFeedSettingRepository(
-                    feedSettingsWebServices:
-                        UserPreferencesFeedSettingWebServices())),
+            create: (context) => FeedSettingsCubit(FeedSettingRepository(
+                feedSettingsWebServices: FeedSettingWebServices())),
             child: const FeedSetting(),
           ),
         );
