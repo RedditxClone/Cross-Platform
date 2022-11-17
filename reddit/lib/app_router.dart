@@ -111,7 +111,6 @@ class AppRouter {
   Route? generateRoute(RouteSettings settings) {
     final arguments = settings.arguments;
     switch (settings.name) {
-
       case feedSettingRoute:
         return MaterialPageRoute(
           builder: (_) => BlocProvider(
@@ -124,7 +123,12 @@ class AppRouter {
       case homePageRoute:
         user = settings.arguments as User?;
         return MaterialPageRoute(
-          builder: (_) => kIsWeb ? HomePageWeb(user) : HomePage(user),
+          builder: (_) => kIsWeb
+              ? BlocProvider.value(
+                  value: createCommunityCubit,
+                  child: HomePageWeb(user),
+                )
+              : HomePage(user),
         );
 
       case popularPageRoute:

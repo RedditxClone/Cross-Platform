@@ -150,10 +150,6 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                   backgroundColor: mobileBackgroundColor,
                   appBar: AppBar(
                     backgroundColor: darkCardsColor,
-                    leading: const Icon(
-                      Icons.arrow_back,
-                      color: lightFontColor,
-                    ),
                     elevation: 5,
                     title: Text("Create a community",
                         style: GoogleFonts.ibmPlexSans(

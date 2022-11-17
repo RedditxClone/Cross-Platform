@@ -10,6 +10,7 @@ class CreateCommunityCubit extends Cubit<CreateCommunityState> {
       : super(CreateCommunityInitial());
 
   void createCommunity(CreateCommunityModel createCommunityModel) async {
+    if (isClosed) return;
     final ifCreated =
         await createCommunityRepository.createCommunity(createCommunityModel);
     if (ifCreated) {
@@ -20,14 +21,17 @@ class CreateCommunityCubit extends Cubit<CreateCommunityState> {
   }
 
   void createBloc() {
+    if (isClosed) return;
     emit(CreateCommunityCreateBloc(CreateCommunityModel('', 'Public', false)));
   }
 
   void editName() {
+    if (isClosed) return;
     emit(CreateCommunityNameChange());
   }
 
   checkIfNameAvailable(String subredditName) async {
+    if (isClosed) return;
     final ifAvailable =
         await createCommunityRepository.getIfNameAvailable(subredditName);
     if (ifAvailable) {
@@ -38,14 +42,17 @@ class CreateCommunityCubit extends Cubit<CreateCommunityState> {
   }
 
   void createButtonPressed() {
+    if (isClosed) return;
     emit(CreateCommunityPressed());
   }
 
   void toggleAbove18() {
+    if (isClosed) return;
     emit(CreateCommunityAbove18Change());
   }
 
   void changeType() {
+    if (isClosed) return;
     emit(CreateCommunityTypeChange());
   }
 }

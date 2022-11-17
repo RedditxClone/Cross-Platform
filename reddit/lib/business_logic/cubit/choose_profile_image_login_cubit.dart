@@ -12,6 +12,7 @@ class ChooseProfileImageLoginCubit extends Cubit<ChooseProfileImageLoginState> {
       : super(ChooseProfileImageLoginInitial());
 
   void changeProfilephoto(File img) {
+    if (isClosed) return;
     settingsRepository.updateImage('profilephoto', img).then((image) {
       emit(ChooseProfileImageLoginChanged(image));
     });
