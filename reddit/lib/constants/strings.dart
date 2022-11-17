@@ -65,3 +65,4 @@ const forgetUsernameAndroid = '/forgetUsernameAndroud';
 const interesetesScreen = '/interesetesScreen';
 const chooseGenderScreen = '/chooseGenderScreen';
 const chooseProfileImgScreen = '/chooseProfileImgScreen';
+const createCommunityScreenRoute = '/CreateCommunityScreen';
