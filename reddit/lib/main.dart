@@ -42,11 +42,10 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       onGenerateRoute: appRouter.generateRoute,
       // initialRoute: SIGNU_PAGE1,
-            initialRoute: createCommunityScreenRoute,
 
-      // initialRoute: kIsWeb
-      //     ? (isLoggedIn ? homePageRoute : popularPageRoute)
-      //     : homePageRoute,
+      initialRoute: kIsWeb
+          ? (isLoggedIn ? homePageRoute : popularPageRoute)
+          : homePageRoute,
       // onGenerateInitialRoutes: (String initialRouteName) {
       //   return [
       //     appRouter.generateRoute(RouteSettings(
