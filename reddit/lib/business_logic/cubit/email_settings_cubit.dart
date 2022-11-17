@@ -14,6 +14,7 @@ class EmailSettingsCubit extends Cubit<EmailSettingsState> {
   EmailSettings? _emailSettings;
 
   void getEmailSettings() {
+    if (isClosed) return;
     emit(EmailSettingsLoading());
 
     emailSettingsRepository.getEmailSettings().then(
@@ -25,6 +26,7 @@ class EmailSettingsCubit extends Cubit<EmailSettingsState> {
   }
 
   void updateEmailSettings(EmailSettings updatedEmailSettings) {
+    if (isClosed) return;
     _emailSettings = updatedEmailSettings;
     emailSettingsRepository.updateEmailSettings(updatedEmailSettings);
     emit(EmailSettingsUpdated());

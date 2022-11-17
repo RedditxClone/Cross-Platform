@@ -111,7 +111,6 @@ class AppRouter {
   Route? generateRoute(RouteSettings settings) {
     final arguments = settings.arguments;
     switch (settings.name) {
-
       case feedSettingRoute:
         return MaterialPageRoute(
           builder: (_) => BlocProvider(

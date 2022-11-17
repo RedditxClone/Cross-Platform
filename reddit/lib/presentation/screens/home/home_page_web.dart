@@ -862,7 +862,6 @@ class _HomePageWebState extends State<HomePageWeb> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

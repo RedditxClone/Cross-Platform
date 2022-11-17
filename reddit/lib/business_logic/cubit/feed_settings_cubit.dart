@@ -20,7 +20,7 @@ class FeedSettingsCubit extends Cubit<FeedSettingsState> {
   /// Emits the corresponding state for UI.
   void getFeedSettings() {
     // To avoid state error when you leave the settings page
-    // if (isClosed) return;
+    if (isClosed) return;
     feedSettingsRepository.getFeedSettings().then((feedSettings) {
       // start the state existing in feed_setting_state
       // here you sent feedSettings list to feedSettings loaded state

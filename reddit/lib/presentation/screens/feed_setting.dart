@@ -48,6 +48,7 @@ class _FeedSettingState extends State<FeedSetting> {
                   ),
                   const Divider(),
                   SwitchListTile(
+                    activeColor: Colors.blue,
                     inactiveTrackColor: const Color.fromARGB(255, 34, 33, 33),
                     title: const Text(
                       "Adult content",
@@ -67,6 +68,7 @@ class _FeedSettingState extends State<FeedSetting> {
                     },
                   ),
                   SwitchListTile(
+                    activeColor: Colors.blue,
                     inactiveTrackColor: const Color.fromARGB(255, 34, 33, 33),
                     title: const Text(
                       "Autoplay media",
