@@ -1,5 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:reddit/data/repository/feed_setting_repository.dart';
+import 'package:reddit/data/web_services/feed_setting_web_services.dart';
+import 'business_logic/cubit/feed_settings_cubit.dart';
+import 'presentation/screens/feed_setting.dart';
 import 'package:reddit/business_logic/cubit/choose_profile_image_login_cubit.dart';
 import 'package:reddit/presentation/screens/profile/others_profile_page_web.dart';
 import 'package:reddit/presentation/screens/profile/profile_page_web.dart';
@@ -107,6 +111,16 @@ class AppRouter {
   Route? generateRoute(RouteSettings settings) {
     final arguments = settings.arguments;
     switch (settings.name) {
+
+      case feedSettingRoute:
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (context) => FeedSettingsCubit(FeedSettingRepository(
+                feedSettingsWebServices: FeedSettingWebServices())),
+            child: const FeedSetting(),
+          ),
+        );
+
       case homePageRoute:
         user = settings.arguments as User?;
         return MaterialPageRoute(
