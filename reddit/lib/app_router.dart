@@ -123,12 +123,7 @@ class AppRouter {
       case homePageRoute:
         user = settings.arguments as User?;
         return MaterialPageRoute(
-          builder: (_) => kIsWeb
-              ? BlocProvider.value(
-                  value: createCommunityCubit,
-                  child: HomePageWeb(user),
-                )
-              : HomePage(user),
+          builder: (_) => kIsWeb ? HomePageWeb(user) : HomePage(user),
         );
 
       case popularPageRoute:
