@@ -2,14 +2,13 @@ import 'package:dio/dio.dart';
 import 'package:reddit/constants/strings.dart';
 
 class AccountSettingsWebServices {
-  bool useMockServer = false;
+  bool useMockServer = true;
   // Mock URL For Mockoon
-  // String mockUrl = TargetPlatform.android == defaultTargetPlatform
+  // String mockUrl =` TargetPlatform.android == defaultTargetPlatform
   //     ? "http://10.0.2.2:3001/"
   //     : "http://127.0.0.1:3001/";
   // Mock URL For Postman
-  final dummyToken =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzNzI0ZjQ3NTg0NmUxM2VmZjg4MDkxOSIsImlhdCI6MTY2ODQ0Njk1MSwiZXhwIjoxNjY5MzEwOTUxfQ.GuYEH3ZpIrMQxdzhYGIJGxCDTCyyesPaidIPOYNRQOA";
+  final dummyToken = "";
   String mockUrl =
       "https://a8eda59d-d8f3-4ef2-9581-29e6473824d9.mock.pstmn.io/";
   late Dio dio;

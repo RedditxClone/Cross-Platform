@@ -569,7 +569,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                       //   _isMan = false;
                       // });
                       Navigator.pop(context);
-                      accountSettings!.gender = "woman";
+                      accountSettings!.gender = "female";
                       // Update settings request
                       BlocProvider.of<AccountSettingsCubit>(context)
                           .updateAccountSettings(accountSettings!);

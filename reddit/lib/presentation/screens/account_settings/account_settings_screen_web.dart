@@ -688,7 +688,7 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
               )
             ],
             onChanged: (value) {
-              accountSettings!.gender = (value == 1 ? "male" : "woman");
+              accountSettings!.gender = (value == 1 ? "male" : "female");
               BlocProvider.of<AccountSettingsCubit>(context)
                   .updateAccountSettings(accountSettings!);
             },

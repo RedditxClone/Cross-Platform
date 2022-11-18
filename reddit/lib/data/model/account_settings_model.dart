@@ -90,8 +90,8 @@ class AccountSettingsModel {
         "upvoteComments": emailUpvoteComment,
         "gender": gender,
         // ??
-        // "email_messages": emailMessages,
-        // "default_comment_sort": defaultCommentSort,
-        // "show_flair": showFlair,
+        "email_messages": emailMessages,
+        "default_comment_sort": defaultCommentSort,
+        "show_flair": showFlair,
       };
 }
