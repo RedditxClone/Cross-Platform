@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:reddit/constants/strings.dart';
 
-// This class is responsible of making request to the server
+/// This class is responsible of performing safety settings requests to the REST API
 class SafetySettingsWebServices {
   late Dio dio;
   bool isMockerServer = useMockServerForAllWebServices;
