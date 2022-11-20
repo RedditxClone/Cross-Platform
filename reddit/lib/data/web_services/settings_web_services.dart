@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:reddit/constants/strings.dart';
 
+/// This class is responsible of performing profile settings requests to the REST API
 class SettingsWebServices {
   late Dio dio;
   bool isMockerServer = useMockServerForAllWebServices;
