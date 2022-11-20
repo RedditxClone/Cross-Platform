@@ -18,7 +18,10 @@ class SafetySettingsWebServices {
     dio = Dio(options);
   }
 
-  /// Returns all user settings : Performs get request to the endpoint /prefs to get all user settings from the API
+  /// Returns all user safety settings if the request is performend succefuly or an null if an exception
+  /// occured while trying to perform the request.
+  ///
+  /// This function Performs get request to the endpoint `baseUrl/user/me/prefs` to get all user settings from the API.
   Future<dynamic> getUserSettings() async {
     try {
       Response response = await dio.get('user/me/prefs',
@@ -32,22 +35,12 @@ class SafetySettingsWebServices {
     }
   }
 
-  /// patch request to update cover and profile photo
-  Future<String> updateImage(String key, value) async {
-    try {
-      Response response = await dio.patch('user/me/profile',
-          data: {key: value},
-          options: Options(
-            headers: {"Authorization": "Bearer $token"},
-          ));
-      debugPrint('status code : ${response.statusCode}');
-      return response.data;
-    } catch (e) {
-      return '';
-    }
-  }
-
-  /// patch request to updates any user settings
+  /// [changed] : a [Map] that contains only the changed safety settings
+  ///
+  /// /// Returns status code 200 if success and 401 if there is an error occured (e.g. Unautherized) and 500 if an exception
+  /// occured while trying to perform the request.
+  ///
+  /// This function Performs patch request to the endpoint `baseUrl/user/me/prefs` to update some user's safety settings.
   Future<int> updatePrefs(Map changed) async {
     try {
       Response response = await dio.patch('user/me/prefs',
@@ -58,11 +51,16 @@ class SafetySettingsWebServices {
       debugPrint('status code : ${response.statusCode}');
       return response.statusCode!;
     } catch (e) {
-      return 400;
+      return 500;
     }
   }
 
-  /// get request to check if the username available. used in safety settings to block someone
+  /// [username] : the username we want to check his/her existance.
+  ///
+  /// Returns status code 200 if success  and 401 if there is an error occured (e.g. Unautherized) and null if an exception
+  /// occured while trying to perform the request.
+  ///
+  /// This function Performs post request to the endpoint `baseUrl/user/check-available-username` to check the existance of a username.
   Future<dynamic> checkUsernameAvailable(String username) async {
     try {
       Response response = await dio.post('user/check-available-username',
@@ -77,8 +75,14 @@ class SafetySettingsWebServices {
     }
   }
 
-  /// get request to get user's blocked list
+  /// [username] : the username we want to block.
+  ///
+  /// Returns status code 200 if success  and 401 if there is an error occured (e.g. Unautherized) and `[]` (empty list) if an exception
+  /// occured while trying to perform the request.
+  ///
+  /// This function Performs post request to the endpoint `baseUrl/user/`[username]`/block` to block a user.
   Future<dynamic> blockUser(String username) async {
+    // TODO : by user id not by username
     try {
       Response response = await dio.post('user/1/block',
           data: {'username': username},
@@ -92,8 +96,14 @@ class SafetySettingsWebServices {
     }
   }
 
-  /// get request to get user's blocked list
+  /// [username] : the username we want to unblock.
+  ///
+  /// Returns status code 200 if success  and 401 if there is an error occured (e.g. Unautherized) and `[]` (empty list) if an exception
+  /// occured while trying to perform the request.
+  ///
+  /// This function Performs post request to the endpoint `baseUrl/user/`[username]`/unblock` to unblock a user.
   Future<dynamic> unBlockUser(String username) async {
+    // TODO : by user id not by username
     try {
       Response response = await dio.post('user/1/unblock',
           data: {'username': username},
@@ -107,7 +117,10 @@ class SafetySettingsWebServices {
     }
   }
 
-  /// get request to get user's blocked list
+  /// Returns [List] of the blocked users and `[]` (empty list) if an exception
+  /// occured while trying to perform the request.
+  ///
+  /// This function Performs get request to the endpoint `baseUrl/user/block` to a user.
   Future<dynamic> getBlockedUsers() async {
     try {
       Response response = await dio.get('user/block',
