@@ -3,7 +3,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reddit/constants/strings.dart';
+import '../../business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
 import '../../data/model/signin.dart';
 import '../../helper/dio.dart';
 
@@ -15,7 +17,7 @@ class SignupWeb2 extends StatefulWidget {
 }
 
 class _SignupWeb2State extends State<SignupWeb2> {
-  late User user;
+  late User? user;
   _SignupWeb2State(this.user);
   var usernameController = TextEditingController();
   var passwordController = TextEditingController();
@@ -105,49 +107,82 @@ class _SignupWeb2State extends State<SignupWeb2> {
 
   //function to sign up with reddit accound it's called when the user presses the sign up button or if the user pressed done after typing the password
   void signUpContinue(BuildContext ctx) async {
-    await DioHelper.postData(url: '/api/auth/signup', data: {
-      "password": passwordController.text,
-      "name": usernameController.text,
-      "email": user.email,
-    }).then((value) {
-      if (value.statusCode == 201) {
-        user = User.fromJson(jsonDecode(value.data));
-        Navigator.of(ctx).pushReplacementNamed(
-          homePageRoute,
-          arguments: user,
-        );
-      } else {
-        debugPrint(user.toString());
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                const Icon(
-                  Icons.error,
+    user = BlocProvider.of<AuthCubit>(ctx)
+        .signup(passwordController.text, usernameController.text, user!.email!);
+    if (user != null) {
+      Navigator.of(ctx).pushReplacementNamed(
+        homePageRoute,
+        arguments: user,
+      );
+    } else {
+      //user = null
+      debugPrint("user is $user");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(
+                Icons.error,
+                color: Colors.red,
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.01,
+              ),
+              const Text(
+                'Username or password is incorrect',
+                style: TextStyle(
                   color: Colors.red,
                 ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.01,
-                ),
-                const Text(
-                  'Username or password is incorrect',
-                  style: TextStyle(
-                    color: Colors.red,
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-        );
-      }
-    });
+        ),
+      );
+    }
+
+    // await DioHelper.postData(url: '/api/auth/signup', data: {
+    //   "password": passwordController.text,
+    //   "name": usernameController.text,
+    //   "email": user.email,
+    // }).then((value) {
+    //   if (value.statusCode == 201) {
+    //     user = User.fromJson(jsonDecode(value.data));
+    //     Navigator.of(ctx).pushReplacementNamed(
+    //       homePageRoute,
+    //       arguments: user,
+    //     );
+    //   } else {
+    //     debugPrint(user.toString());
+    //     ScaffoldMessenger.of(context).showSnackBar(
+    //       SnackBar(
+    //         content: Row(
+    //           children: [
+    //             const Icon(
+    //               Icons.error,
+    //               color: Colors.red,
+    //             ),
+    //             SizedBox(
+    //               width: MediaQuery.of(context).size.width * 0.01,
+    //             ),
+    //             const Text(
+    //               'Username or password is incorrect',
+    //               style: TextStyle(
+    //                 color: Colors.red,
+    //               ),
+    //             ),
+    //           ],
+    //         ),
+    //       ),
+    //     );
+    //   }
+    // });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(80),
+        preferredSize: const Size.fromHeight(80),
         child: AppBar(
           title: Container(
             padding: const EdgeInsets.fromLTRB(30, 40, 0, 30),
@@ -177,7 +212,7 @@ class _SignupWeb2State extends State<SignupWeb2> {
       body: Theme(
         data: ThemeData.light(),
         child: SingleChildScrollView(
-          child: Container(
+          child: SizedBox(
             height: MediaQuery.of(context).size.height - 90,
             child: Column(
               children: [
@@ -259,7 +294,7 @@ class _SignupWeb2State extends State<SignupWeb2> {
                                     usernameController.text.length < 3 ||
                                         usernameController.text.length > 20;
                                 checkOnUsername(usernameController.text);
-                                usernameFocusNode.nextFocus();
+                                passwordFocusNode.requestFocus();
                               },
                             ),
                             SizedBox(

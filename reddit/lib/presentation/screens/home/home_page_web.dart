@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:reddit/business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/data/model/signin.dart';
@@ -29,6 +30,16 @@ class _HomePageWebState extends State<HomePageWeb> {
   void initState() {
     super.initState();
     isLoggedIn = user != null;
+
+    // waitFor3Seconds.then((value) {
+    //   showDialogToChooseGender();
+    // });
+
+    // Stream<int> every3seconds =
+    //     Stream<int>.periodic(const Duration(seconds: 5), (t) => t);
+    // every3seconds.listen((t) {
+    //   showDialogToChooseGender();
+    // });
   }
 
   Map<String, String> interests = {
@@ -153,222 +164,230 @@ class _HomePageWebState extends State<HomePageWeb> {
     showDialog(
       barrierDismissible: false,
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         return StatefulBuilder(
-          builder: (BuildContext ctx, StateSetter setState) => AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(40),
-            ),
-            icon: const Icon(
-              Icons.reddit,
-              size: 40,
-            ),
-            iconColor: Colors.red,
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  showDialogToChooseInterests();
-                },
-                child: const Text(
-                  "Skip",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+          builder: (BuildContext ctx, StateSetter setState) => Theme(
+            data: ThemeData.light(),
+            child: AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(40),
+              ),
+              icon: const Icon(
+                Icons.reddit,
+                size: 40,
+              ),
+              iconColor: Colors.red,
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(dialogContext).pop();
+                    showDialogToChooseInterests();
+                  },
+                  child: const Text(
+                    "Skip",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
+                ),
+              ],
+              title: const Text(
+                "About you",
+                style: TextStyle(
+                  fontSize: 27,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-            ],
-            title: const Text(
-              "About you",
-              style: TextStyle(
-                fontSize: 27,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            content: SizedBox(
-              height: MediaQuery.of(context).size.height * 0.5,
-              width: MediaQuery.of(context).size.width * 0.3,
-              child: Column(
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text(
-                      "Tell us about yourself to start building your home feed",
-                      style: TextStyle(
-                        fontSize: 17,
-                        color: Colors.black,
+              content: SizedBox(
+                height: MediaQuery.of(dialogContext).size.height * 0.5,
+                width: MediaQuery.of(dialogContext).size.width * 0.3,
+                child: Column(
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text(
+                        "Tell us about yourself to start building your home feed",
+                        style: TextStyle(
+                          fontSize: 17,
+                          color: Colors.black,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
                     ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text(
-                      "I'm a...",
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.grey,
-                        fontWeight: FontWeight.bold,
+                    const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text(
+                        "I'm a...",
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.grey,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          buttonColor1 == const Color.fromARGB(255, 82, 46, 46)
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            buttonColor1 ==
+                                    const Color.fromARGB(255, 82, 46, 46)
+                                ? null
+                                : selectGender("Man");
+                            buttonColor1 =
+                                const Color.fromARGB(255, 82, 46, 46);
+                          });
+                        },
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.grey,
+                          backgroundColor: buttonColor1,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            side: BorderSide(
+                              color: buttonColor1 ==
+                                      const Color.fromARGB(255, 82, 46, 46)
+                                  ? Colors.red
+                                  : buttonColor1,
+                            ),
+                          ),
+                        ),
+                        child: Container(
+                          padding: const EdgeInsets.all(10),
+                          width: MediaQuery.of(dialogContext).size.width,
+                          child: const Text(
+                            "Man",
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.black,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          buttonColor2 == const Color.fromARGB(255, 82, 46, 46)
                               ? null
-                              : selectGender("Man");
-                          buttonColor1 = const Color.fromARGB(255, 82, 46, 46);
-                        });
-                      },
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.grey,
-                        backgroundColor: buttonColor1,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          side: BorderSide(
-                            color: buttonColor1 ==
-                                    const Color.fromARGB(255, 82, 46, 46)
-                                ? Colors.red
-                                : buttonColor1,
+                              : selectGender("Woman");
+                          setState(() {
+                            buttonColor2 =
+                                const Color.fromARGB(255, 82, 46, 46);
+                          });
+                        },
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.grey,
+                          backgroundColor: buttonColor2,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            side: BorderSide(
+                              color: buttonColor2 ==
+                                      const Color.fromARGB(255, 82, 46, 46)
+                                  ? Colors.red
+                                  : buttonColor2,
+                            ),
                           ),
                         ),
-                      ),
-                      child: Container(
-                        padding: const EdgeInsets.all(10),
-                        width: MediaQuery.of(context).size.width,
-                        child: const Text(
-                          "Man",
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.black,
+                        child: Container(
+                          padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                          width: MediaQuery.of(dialogContext).size.width,
+                          child: const Text(
+                            "Woman",
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.black,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
-                          textAlign: TextAlign.center,
                         ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        buttonColor2 == const Color.fromARGB(255, 82, 46, 46)
-                            ? null
-                            : selectGender("Woman");
-                        setState(() {
-                          buttonColor2 = const Color.fromARGB(255, 82, 46, 46);
-                        });
-                      },
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.grey,
-                        backgroundColor: buttonColor2,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          side: BorderSide(
-                            color: buttonColor2 ==
-                                    const Color.fromARGB(255, 82, 46, 46)
-                                ? Colors.red
-                                : buttonColor2,
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          buttonColor3 == const Color.fromARGB(255, 82, 46, 46)
+                              ? null
+                              : selectGender("Non-binary");
+                          setState(() {
+                            buttonColor3 =
+                                const Color.fromARGB(255, 82, 46, 46);
+                          });
+                        },
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.grey,
+                          backgroundColor: buttonColor3,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            side: BorderSide(
+                              color: buttonColor3 ==
+                                      const Color.fromARGB(255, 82, 46, 46)
+                                  ? Colors.red
+                                  : buttonColor3,
+                            ),
                           ),
                         ),
-                      ),
-                      child: Container(
-                        padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                        width: MediaQuery.of(context).size.width,
-                        child: const Text(
-                          "Woman",
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.black,
+                        child: Container(
+                          padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                          width: MediaQuery.of(dialogContext).size.width,
+                          child: const Text(
+                            "Non-binary",
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.black,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
-                          textAlign: TextAlign.center,
                         ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        buttonColor3 == const Color.fromARGB(255, 82, 46, 46)
-                            ? null
-                            : selectGender("Non-binary");
-                        setState(() {
-                          buttonColor3 = const Color.fromARGB(255, 82, 46, 46);
-                        });
-                      },
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.grey,
-                        backgroundColor: buttonColor3,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          side: BorderSide(
-                            color: buttonColor3 ==
-                                    const Color.fromARGB(255, 82, 46, 46)
-                                ? Colors.red
-                                : buttonColor3,
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          buttonColor4 == const Color.fromARGB(255, 82, 46, 46)
+                              ? null
+                              : selectGender("I prefer not to say");
+                          setState(() {
+                            buttonColor4 =
+                                const Color.fromARGB(255, 82, 46, 46);
+                          });
+                        },
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.grey,
+                          backgroundColor: buttonColor4,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            side: BorderSide(
+                              color: buttonColor4 ==
+                                      const Color.fromARGB(255, 82, 46, 46)
+                                  ? Colors.red
+                                  : buttonColor4,
+                            ),
                           ),
                         ),
-                      ),
-                      child: Container(
-                        padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                        width: MediaQuery.of(context).size.width,
-                        child: const Text(
-                          "Non-binary",
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.black,
+                        child: Container(
+                          padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                          width: MediaQuery.of(dialogContext).size.width,
+                          child: const Text(
+                            "I prefer not to say",
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.black,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
-                          textAlign: TextAlign.center,
                         ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        buttonColor4 == const Color.fromARGB(255, 82, 46, 46)
-                            ? null
-                            : selectGender("I prefer not to say");
-                        setState(() {
-                          buttonColor4 = const Color.fromARGB(255, 82, 46, 46);
-                        });
-                      },
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.grey,
-                        backgroundColor: buttonColor4,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          side: BorderSide(
-                            color: buttonColor4 ==
-                                    const Color.fromARGB(255, 82, 46, 46)
-                                ? Colors.red
-                                : buttonColor4,
-                          ),
-                        ),
-                      ),
-                      child: Container(
-                        padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                        width: MediaQuery.of(context).size.width,
-                        child: const Text(
-                          "I prefer not to say",
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.black,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -385,177 +404,182 @@ class _HomePageWebState extends State<HomePageWeb> {
       context: context,
       builder: (BuildContext context) {
         return StatefulBuilder(
-          builder: (BuildContext ctx, StateSetter setState) => AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(40),
-            ),
-            icon: AppBar(
-              elevation: 0,
-              leading: BackButton(
-                color: Colors.black,
-                onPressed: () {
-                  Navigator.pop(context);
-                  showDialogToChooseGender();
-                },
+          builder: (BuildContext ctx, StateSetter setState) => Theme(
+            data: ThemeData.light(),
+            child: AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(40),
               ),
-              backgroundColor: Colors.white,
-              title: CircleAvatar(
-                backgroundColor: Colors.red,
-                child: Logo(
-                  Logos.reddit,
-                  color: Colors.white,
-                  size: 25,
+              icon: AppBar(
+                elevation: 0,
+                leading: BackButton(
+                  color: Colors.black,
+                  onPressed: () {
+                    Navigator.pop(context);
+                    showDialogToChooseGender();
+                  },
+                ),
+                backgroundColor: Colors.white,
+                title: CircleAvatar(
+                  backgroundColor: Colors.red,
+                  child: Logo(
+                    Logos.reddit,
+                    color: Colors.white,
+                    size: 25,
+                  ),
+                ),
+                centerTitle: true,
+              ),
+              title: const Text(
+                "Interests",
+                style: TextStyle(
+                  fontSize: 27,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-              centerTitle: true,
-            ),
-            title: const Text(
-              "Interests",
-              style: TextStyle(
-                fontSize: 27,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            content: Container(
-              height: MediaQuery.of(context).size.height * 0.7,
-              width: MediaQuery.of(context).size.width * 0.25,
-              padding: const EdgeInsets.all(10),
-              alignment: Alignment.center,
-              child: Column(
-                children: [
-                  const Text(
-                    "Pick things you'd like to see in your home feed",
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
+              content: Container(
+                height: MediaQuery.of(context).size.height * 0.7,
+                width: MediaQuery.of(context).size.width * 0.25,
+                padding: const EdgeInsets.all(10),
+                alignment: Alignment.center,
+                child: Column(
+                  children: [
+                    const Text(
+                      "Pick things you'd like to see in your home feed",
+                      style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  Column(
-                    children: [
-                      Container(
-                        height: MediaQuery.of(context).size.height * 0.5,
-                        alignment: Alignment.centerLeft,
-                        child: SingleChildScrollView(
-                          child: Wrap(
-                            alignment: WrapAlignment.start,
-                            spacing: 2,
-                            runSpacing: 2,
-                            children: [
-                              ...interests.entries.map((e) {
-                                return Card(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(40),
-                                    side: selectedInterests.containsKey(e.key)
-                                        ? const BorderSide(
-                                            color: Colors.red,
-                                            width: 1,
-                                          )
-                                        : BorderSide.none,
-                                  ),
-                                  color: selectedInterests.containsKey(e.key)
-                                      ? const Color.fromARGB(255, 82, 46, 46)
-                                      : Color(const Color.fromARGB(
-                                              255, 237, 237, 237)
-                                          .value),
-                                  child: Container(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(5, 3, 5, 3),
-                                    child: TextButton.icon(
-                                      onPressed: () {
-                                        setState(() {
-                                          if (!selectedInterests
-                                              .containsKey(e.key)) {
-                                            selectedInterests.addEntries([
-                                              e
-                                            ]); //add the selected interest to the map
-                                            intersetsCount++;
-                                          } else {
-                                            intersetsCount--;
-                                            selectedInterests.remove(e.key);
-                                          }
-                                          debugPrint("count = $intersetsCount");
-                                        });
-                                        debugPrint(
-                                            selectedInterests.toString());
-                                      },
-                                      icon: Text(
-                                        e.value,
-                                        style: const TextStyle(fontSize: 20),
-                                      ),
-                                      label: Text(
-                                        e.key,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 15,
-                                          color: Colors.black,
+                    Column(
+                      children: [
+                        Container(
+                          height: MediaQuery.of(context).size.height * 0.5,
+                          alignment: Alignment.centerLeft,
+                          child: SingleChildScrollView(
+                            child: Wrap(
+                              alignment: WrapAlignment.start,
+                              spacing: 2,
+                              runSpacing: 2,
+                              children: [
+                                ...interests.entries.map((e) {
+                                  return Card(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(40),
+                                      side: selectedInterests.containsKey(e.key)
+                                          ? const BorderSide(
+                                              color: Colors.red,
+                                              width: 1,
+                                            )
+                                          : BorderSide.none,
+                                    ),
+                                    color: selectedInterests.containsKey(e.key)
+                                        ? const Color.fromARGB(255, 82, 46, 46)
+                                        : Color(const Color.fromARGB(
+                                                255, 237, 237, 237)
+                                            .value),
+                                    child: Container(
+                                      padding:
+                                          const EdgeInsets.fromLTRB(5, 3, 5, 3),
+                                      child: TextButton.icon(
+                                        onPressed: () {
+                                          setState(() {
+                                            if (!selectedInterests
+                                                .containsKey(e.key)) {
+                                              selectedInterests.addEntries([
+                                                e
+                                              ]); //add the selected interest to the map
+                                              intersetsCount++;
+                                            } else {
+                                              intersetsCount--;
+                                              selectedInterests.remove(e.key);
+                                            }
+                                            debugPrint(
+                                                "count = $intersetsCount");
+                                          });
+                                          debugPrint(
+                                              selectedInterests.toString());
+                                        },
+                                        icon: Text(
+                                          e.value,
+                                          style: const TextStyle(fontSize: 20),
+                                        ),
+                                        label: Text(
+                                          e.key,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 15,
+                                            color: Colors.black,
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                );
-                              }).toList(),
-                            ],
+                                  );
+                                }).toList(),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      Container(
-                        width: double.infinity,
-                        height: 80,
-                        padding: const EdgeInsets.all(15),
-                        color: Theme.of(context).dialogBackgroundColor,
-                        child: ElevatedButton(
-                          onPressed: intersetsCount >= 3 ? addInterests : null,
-                          style: const ButtonStyle(
-                            shape: MaterialStatePropertyAll(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(25),
+                        Container(
+                          width: double.infinity,
+                          height: 80,
+                          padding: const EdgeInsets.all(15),
+                          color: Colors.white,
+                          child: ElevatedButton(
+                            onPressed:
+                                intersetsCount >= 3 ? addInterests : null,
+                            style: const ButtonStyle(
+                              shape: MaterialStatePropertyAll(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(25),
+                                  ),
                                 ),
                               ),
+                              padding:
+                                  MaterialStatePropertyAll(EdgeInsets.all(0.0)),
                             ),
-                            padding:
-                                MaterialStatePropertyAll(EdgeInsets.all(0.0)),
-                          ),
-                          child: Ink(
-                            decoration: BoxDecoration(
-                              gradient: intersetsCount >= 3
-                                  ? const LinearGradient(
-                                      colors: [
-                                        Color.fromARGB(255, 139, 9, 0),
-                                        Color.fromARGB(255, 255, 136, 0)
-                                      ],
-                                    )
-                                  : const LinearGradient(
-                                      colors: [
-                                        Color.fromARGB(50, 139, 9, 0),
-                                        Color.fromARGB(50, 255, 136, 0)
-                                      ],
-                                    ),
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(80.0)),
-                            ),
-                            child: Container(
-                              constraints: const BoxConstraints(
-                                  minWidth: 88.0, minHeight: 50.0),
-                              alignment: Alignment.center,
-                              child: intersetsCount < 3
-                                  ? Text(
-                                      '$intersetsCount of 3 Selected',
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(fontSize: 20),
-                                    )
-                                  : const Text(
-                                      'Continue',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(fontSize: 20),
-                                    ),
+                            child: Ink(
+                              decoration: BoxDecoration(
+                                gradient: intersetsCount >= 3
+                                    ? const LinearGradient(
+                                        colors: [
+                                          Color.fromARGB(255, 139, 9, 0),
+                                          Color.fromARGB(255, 255, 136, 0)
+                                        ],
+                                      )
+                                    : const LinearGradient(
+                                        colors: [
+                                          Color.fromARGB(50, 139, 9, 0),
+                                          Color.fromARGB(50, 255, 136, 0)
+                                        ],
+                                      ),
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(80.0)),
+                              ),
+                              child: Container(
+                                constraints: const BoxConstraints(
+                                    minWidth: 88.0, minHeight: 50.0),
+                                alignment: Alignment.center,
+                                child: intersetsCount < 3
+                                    ? Text(
+                                        '$intersetsCount of 3 Selected',
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(fontSize: 20),
+                                      )
+                                    : const Text(
+                                        'Continue',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(fontSize: 20),
+                                      ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -570,173 +594,179 @@ class _HomePageWebState extends State<HomePageWeb> {
       context: context,
       builder: (BuildContext context) {
         return StatefulBuilder(
-          builder: (BuildContext ctx, StateSetter setState) => AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(40),
-            ),
-            icon: AppBar(
-              elevation: 0,
-              leading: BackButton(
-                color: Colors.black,
-                onPressed: () {
-                  Navigator.pop(context);
-                  showDialogToChooseInterests();
-                },
+          builder: (BuildContext ctx, StateSetter setState) => Theme(
+            data: ThemeData.light(),
+            child: AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(40),
               ),
-              actions: [
-                TextButton(
-                  onPressed: (() {
+              icon: AppBar(
+                elevation: 0,
+                leading: BackButton(
+                  color: Colors.black,
+                  onPressed: () {
                     Navigator.pop(context);
-                    Navigator.of(context).pushReplacementNamed(
-                      homePageRoute,
-                      arguments: user,
-                    );
-                  }),
-                  child: const Text(
-                    "Skip",
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 20,
-                    ),
-                  ),
+                    showDialogToChooseInterests();
+                  },
                 ),
-              ],
-              backgroundColor: Colors.white,
-              title: CircleAvatar(
-                backgroundColor: Colors.red,
-                child: Logo(
-                  Logos.reddit,
-                  color: Colors.white,
-                  size: 25,
-                ),
-              ),
-              centerTitle: true,
-            ),
-            title: const Text(
-              'Choose your profile photo',
-              style: TextStyle(
-                fontSize: 27,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            content: SizedBox(
-              height: MediaQuery.of(context).size.height * 0.7,
-              width: MediaQuery.of(context).size.width * 0.25,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 40),
-                        child: RichText(
-                          textAlign: TextAlign.center,
-                          text: const TextSpan(
-                            children: [
-                              TextSpan(
-                                text:
-                                    "This how people will see you on Reddit.\n",
-                                style: TextStyle(
-                                  fontSize: 17,
-                                ),
-                              ),
-                              TextSpan(
-                                text: "(You can change it later if you'd like)",
-                                style: TextStyle(
-                                  fontSize: 17,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Container(
-                        height: MediaQuery.of(context).size.height * 0.2,
-                        alignment: Alignment.center,
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                        ),
-                        child: imgCover != null
-                            ? ClipOval(
-                                child: InkWell(
-                                  onTap: () =>
-                                      chooseProfilePhotoBottomSheet(context),
-                                  child: Image.file(
-                                    imgCover!,
-                                    fit: BoxFit.fill,
-                                  ),
-                                ),
-                              )
-                            : ElevatedButton(
-                                onPressed: () =>
-                                    chooseProfilePhotoBottomSheet(context),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(80.0),
-                                  ),
-                                ),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 20, horizontal: 5),
-                                  child: const Icon(
-                                    Icons.person,
-                                    size: 40,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    width: double.infinity,
-                    height: 80,
-                    padding: const EdgeInsets.all(15),
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // newUser.imageUrl = imgCover!.readAsString() as String?;
-                        Navigator.pop(context);
-                        Navigator.of(context).pushReplacementNamed(
-                          homePageRoute,
-                          arguments: user,
-                        );
-                      },
-                      style: const ButtonStyle(
-                        shape: MaterialStatePropertyAll(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(25),
-                            ),
-                          ),
-                        ),
-                        padding: MaterialStatePropertyAll(EdgeInsets.all(0.0)),
-                      ),
-                      child: Ink(
-                        decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Color.fromARGB(255, 139, 9, 0),
-                              Color.fromARGB(255, 255, 136, 0)
-                            ],
-                          ),
-                          borderRadius: BorderRadius.all(Radius.circular(80.0)),
-                        ),
-                        child: Container(
-                          constraints: const BoxConstraints(
-                              minWidth: 88.0, minHeight: 50.0),
-                          alignment: Alignment.center,
-                          child: const Text(
-                            'Save and Continue',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 20),
-                          ),
-                        ),
+                actions: [
+                  TextButton(
+                    onPressed: (() {
+                      Navigator.pop(context);
+                      Navigator.of(context).pushReplacementNamed(
+                        homePageRoute,
+                        arguments: user,
+                      );
+                    }),
+                    child: const Text(
+                      "Skip",
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 20,
                       ),
                     ),
                   ),
                 ],
+                backgroundColor: Colors.white,
+                title: CircleAvatar(
+                  backgroundColor: Colors.red,
+                  child: Logo(
+                    Logos.reddit,
+                    color: Colors.white,
+                    size: 25,
+                  ),
+                ),
+                centerTitle: true,
+              ),
+              title: const Text(
+                'Choose your profile photo',
+                style: TextStyle(
+                  fontSize: 27,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              content: SizedBox(
+                height: MediaQuery.of(context).size.height * 0.7,
+                width: MediaQuery.of(context).size.width * 0.25,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 40),
+                          child: RichText(
+                            textAlign: TextAlign.center,
+                            text: const TextSpan(
+                              children: [
+                                TextSpan(
+                                  text:
+                                      "This how people will see you on Reddit.\n",
+                                  style: TextStyle(
+                                    fontSize: 17,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text:
+                                      "(You can change it later if you'd like)",
+                                  style: TextStyle(
+                                    fontSize: 17,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Container(
+                          height: MediaQuery.of(context).size.height * 0.2,
+                          alignment: Alignment.center,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                          ),
+                          child: imgCover != null
+                              ? ClipOval(
+                                  child: InkWell(
+                                    onTap: () =>
+                                        chooseProfilePhotoBottomSheet(context),
+                                    child: Image.file(
+                                      imgCover!,
+                                      fit: BoxFit.fill,
+                                    ),
+                                  ),
+                                )
+                              : ElevatedButton(
+                                  onPressed: () =>
+                                      chooseProfilePhotoBottomSheet(context),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(80.0),
+                                    ),
+                                  ),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 20, horizontal: 5),
+                                    child: const Icon(
+                                      Icons.person,
+                                      size: 40,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ),
+                        ),
+                      ],
+                    ),
+                    Container(
+                      width: double.infinity,
+                      height: 80,
+                      padding: const EdgeInsets.all(15),
+                      color: Colors.white,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // newUser.imageUrl = imgCover!.readAsString() as String?;
+                          Navigator.pop(context);
+                          Navigator.of(context).pushReplacementNamed(
+                            homePageRoute,
+                            arguments: user,
+                          );
+                        },
+                        style: const ButtonStyle(
+                          shape: MaterialStatePropertyAll(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(25),
+                              ),
+                            ),
+                          ),
+                          padding:
+                              MaterialStatePropertyAll(EdgeInsets.all(0.0)),
+                        ),
+                        child: Ink(
+                          decoration: const BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                Color.fromARGB(255, 139, 9, 0),
+                                Color.fromARGB(255, 255, 136, 0)
+                              ],
+                            ),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(80.0)),
+                          ),
+                          child: Container(
+                            constraints: const BoxConstraints(
+                                minWidth: 88.0, minHeight: 50.0),
+                            alignment: Alignment.center,
+                            child: const Text(
+                              'Save and Continue',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 20),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -862,18 +892,37 @@ class _HomePageWebState extends State<HomePageWeb> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-            shape: const Border(
-                bottom: BorderSide(color: Colors.grey, width: 0.5)),
-            automaticallyImplyLeading: false,
-            backgroundColor: defaultAppbarBackgroundColor,
-            title: isLoggedIn
-                ? AppBarWebLoggedIn(user: user!, screen: 'Home')
-                : const AppBarWebNotLoggedIn(screen: 'Home')),
-        body: HomeWeb(isLoggedIn: isLoggedIn));
+      appBar: AppBar(
+          shape:
+              const Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
+          automaticallyImplyLeading: false,
+          backgroundColor: defaultAppbarBackgroundColor,
+          title: isLoggedIn
+              ? AppBarWebLoggedIn(user: user!, screen: 'Home')
+              : const AppBarWebNotLoggedIn(screen: 'Home')),
+      body: BlocBuilder<AuthCubit, AuthState>(
+        builder: (context, state) {
+          debugPrint("builder");
+          if (state is SignedIn) {
+            debugPrint("state is signed in");
+            // Future<int> waitFor3Seconds =
+            //     Future.delayed(const Duration(seconds: 5), () {
+            //   return 1;
+            // });
+            // waitFor3Seconds.whenComplete(() {
+            //   showDialogToChooseGender();
+            // });
+            Future.delayed(const Duration(seconds: 5), () {
+              showDialogToChooseGender();
+            });
+          }
+
+          return HomeWeb(isLoggedIn: isLoggedIn);
+        },
+      ),
+    );
   }
 }
