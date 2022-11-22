@@ -32,48 +32,12 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     BlocProvider.of<SettingsCubit>(context).getUserSettings();
   }
 
-  void displayMsg(
-      BuildContext context, Color color, String title, String subtitle) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Container(
-          padding: const EdgeInsets.all(5),
-          decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.all(Radius.circular(10))),
-          height: 70,
-          child: Row(
-            children: [
-              Container(
-                margin: const EdgeInsets.only(right: 10),
-                decoration: BoxDecoration(
-                    color: color,
-                    borderRadius: const BorderRadius.all(Radius.circular(10))),
-                width: 7,
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(fontSize: 20, color: color),
-                  ),
-                  Text(
-                    subtitle,
-                    style: TextStyle(fontSize: 13, color: color),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            ],
-          )),
-      behavior: SnackBarBehavior.floating,
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-    ));
-  }
-
+  /// [src] : source of the image can be(camera or gallery).
+  /// [dest] : destionation of the image can be 'cover' to change the cover photo or 'profile' to change the profile photo.
+  ///
+  /// calls the `changeCoverphoto` or `changeProfilephoto` methods inside [SettingsCubit] that Emits sate SettingsChanged on successfully updating photo.
+  ///
+  /// This function might throw an exception if the user does not allow the app to access the gallery or camera and an error message will be displayed.
   Future pickImage(ImageSource src, String dest) async {
     try {
       Navigator.pop(context);
@@ -99,7 +63,6 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
       }
     } on PlatformException catch (e) {
       debugPrint(e.toString());
-      displayMsg(context, Colors.red, 'Error', 'Could not load image');
     }
   }
 
