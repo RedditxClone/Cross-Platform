@@ -1,3 +1,5 @@
+// ignore_for_file: duplicate_import
+
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,6 +13,7 @@ import 'package:reddit/data/repository/settings_repository.dart';
 import 'package:reddit/data/web_services/settings_web_services.dart';
 import 'package:reddit/presentation/screens/profile_settings_screen.dart';
 import 'package:reddit/presentation/screens/profile_settings_web.dart';
+import 'package:reddit/presentation/screens/discover_page.dart';
 import 'package:reddit/business_logic/cubit/email_settings_cubit.dart';
 import 'package:reddit/data/repository/email_settings_repo.dart';
 import 'package:reddit/data/web_services/email_settings_web_services.dart';
@@ -23,7 +26,7 @@ class AppRouter {
   late SafetySettingsCubit safetySettingsCubit;
   late SettingsRepository settingsRepository;
   late SettingsCubit settingsCubit;
-  
+
   late EmailSettingsRepository emailSettingsReposity;
   late EmailSettingsCubit emailSettingsCubit;
   late EmailSettingsWebServices emailSettingsWebServices;
@@ -37,7 +40,6 @@ class AppRouter {
     emailSettingsWebServices = EmailSettingsWebServices();
     emailSettingsReposity = EmailSettingsRepository(emailSettingsWebServices);
     emailSettingsCubit = EmailSettingsCubit(emailSettingsReposity);
-
   }
   Route? generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -54,6 +56,8 @@ class AppRouter {
                   value: emailSettingsCubit,
                   child: const EmailSettingsWeb(),
                 ));
+      case discoverPageRoute:
+        return MaterialPageRoute(builder: (_) => const DiscoverPage());
       /*
       case example:
       case '/':

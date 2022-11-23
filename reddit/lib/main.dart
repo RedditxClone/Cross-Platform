@@ -1,3 +1,5 @@
+// ignore_for_file: unused_import
+
 import 'package:flutter/material.dart';
 import 'package:reddit/constants/strings.dart';
 import 'app_router.dart';
@@ -26,6 +28,7 @@ class MyApp extends StatelessWidget {
       themeMode: ThemeMode.dark,
       debugShowCheckedModeBanner: false,
       onGenerateRoute: appRouter.generateRoute,
+      initialRoute: discoverPageRoute,
     );
   }
 }
