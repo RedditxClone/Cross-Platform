@@ -9,6 +9,7 @@ import '../../../data/repository/left_drawer/left_drawer_repository.dart';
 import 'dart:developer';
 part 'left_drawer_state.dart';
 
+/// This class is responsible for getting - updating drawer data on mobile.
 class LeftDrawerCubit extends Cubit<LeftDrawerState> {
   final LeftDrawerRepository leftDrawerRepository;
   List<LeftDrawerModel>? moderatingCommunities;
@@ -16,6 +17,14 @@ class LeftDrawerCubit extends Cubit<LeftDrawerState> {
   List<LeftDrawerModel>? following;
   List<LeftDrawerModel> favorites = <LeftDrawerModel>[];
   LeftDrawerCubit(this.leftDrawerRepository) : super(LeftDrawerInitial());
+
+  /// This function emits:
+  /// state [LeftDrawerDataLoaded] when left drawer data (moderatingCommunities [moderatingCommunities], joined communities [yourCommunities], following users [following], favorites [favorites]) are loaded successfully.
+  ///
+  /// This function calls the functions:
+  /// [LeftDrawerRepository.getModeratingCommunities]
+  /// [LeftDrawerRepository.getYourCommunities]
+  /// [LeftDrawerRepository.getFollowingUsers]
   void getLeftDrawerData() {
     // To avoid state error when you leave the settings page
     if (isClosed) return;
@@ -50,6 +59,9 @@ class LeftDrawerCubit extends Cubit<LeftDrawerState> {
     });
   }
 
+  /// [leftDrawerModel] : the community or the user that you want to add to favorites.
+  /// This function emits:
+  /// state [LeftDrawerDataLoaded] when [leftDrawerModel] is added to favorites successfully.
   void addToFavorites(LeftDrawerModel leftDrawerModel) {
     favorites.add(leftDrawerModel);
 
@@ -75,6 +87,9 @@ class LeftDrawerCubit extends Cubit<LeftDrawerState> {
         moderatingCommunities!, yourCommunities!, following!, favorites));
   }
 
+  /// [leftDrawerModel] : the community or the user that you want to remove from favorites.
+  /// This function emits:
+  /// state [LeftDrawerDataLoaded] when [leftDrawerModel] is removed from favorites successfully.
   void removeFromFavorites(LeftDrawerModel leftDrawerModel) {
     String name = leftDrawerModel.name!;
     for (var i = 0; i < favorites.length; i++) {

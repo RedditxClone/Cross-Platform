@@ -21,7 +21,9 @@ class AccountSettingsWebServices {
     );
     dio = Dio(options);
   }
-  // Gets data from server, the repository calls this function
+
+  /// `Returns` the user's account settings if the request is performend successfully or empty string in case of exception
+  /// This function performs `GET` request to the endpoint `baseUrl/user/me/prefs` to get all the settings from the API.
   Future<dynamic> getAccountSettings() async {
     try {
       Response response = await dio.get('user/me/prefs',
@@ -43,6 +45,9 @@ class AccountSettingsWebServices {
     }
   }
 
+  /// [newAccSettings] : a [Map] that contains changed account settings
+  /// `Returns` status code `200` if request is successfull or `401` if an error occured
+  /// This function Performs `PATCH` request to the endpoint `baseUrl/user/me/prefs` to update user's account settings.
   Future<int> updateAccountSettings(Map<String, dynamic> newAccSettings) async {
     try {
       Response response = await dio.patch('user/me/prefs',
@@ -62,6 +67,9 @@ class AccountSettingsWebServices {
     }
   }
 
+  /// [changePasswordMap] : a [Map] that contains changed password
+  /// Returns status code `200` if request is successfull or `401` if Unauthorized or `403` if Wrong password
+  /// This function Performs `PATCH` request to the endpoint `baseUrl/auth/change_password`.
   Future<int> changePassword(Map<String, dynamic> changePasswordMap) async {
     try {
       Response response = await dio.patch('auth/change_password',

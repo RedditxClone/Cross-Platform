@@ -21,7 +21,9 @@ class LeftDrawerWebServices {
     );
     dio = Dio(options);
   }
-  // Gets data from server, the repository calls this function
+
+  /// `Returns` the communities that the user is currently moderating.
+  /// This function performs `GET` request to the endpoint `baseUrl/user/moderating_communities`.
   Future<dynamic> getModeratingCommunities() async {
     try {
       Response response = await dio.get('user/moderating_communities');
@@ -33,6 +35,8 @@ class LeftDrawerWebServices {
     }
   }
 
+  /// `Returns` the communities that the user is currently joined in.
+  /// This function performs `GET` request to the endpoint `baseUrl/user/joined_communities`.
   Future<dynamic> getYourCommunities() async {
     try {
       Response response = await dio.get('user/joined_communities');
@@ -44,6 +48,8 @@ class LeftDrawerWebServices {
     }
   }
 
+  /// `Returns` the users that the user is currently following
+  /// This function performs `GET` request to the endpoint `baseUrl/user/following`.
   Future<dynamic> getFollowingUsers() async {
     try {
       Response response = await dio.get('user/following');
