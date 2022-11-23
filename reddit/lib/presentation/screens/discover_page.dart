@@ -8,8 +8,32 @@ class DiscoverPage extends StatefulWidget {
 }
 
 class _DiscoverPageState extends State<DiscoverPage> {
+  Widget createPostImageCard() {
+    return const Card();
+  }
+
   Widget getAllCategoryTenRandomPostsWithImage() {
-    return Container();
+    return GridView.count(
+      crossAxisCount: 2,
+      primary: true,
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.all(2.0),
+      childAspectRatio: 1,
+      mainAxisSpacing: 5.0,
+      crossAxisSpacing: 5.0,
+      children: <Widget>[
+        createPostImageCard(),
+        createPostImageCard(),
+        createPostImageCard(),
+        createPostImageCard(),
+        createPostImageCard(),
+        createPostImageCard(),
+        createPostImageCard(),
+        createPostImageCard(),
+        createPostImageCard(),
+        createPostImageCard(),
+      ],
+    );
   }
 
   @override
