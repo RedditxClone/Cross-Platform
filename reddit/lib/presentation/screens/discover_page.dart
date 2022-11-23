@@ -86,6 +86,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
     return DefaultTabController(
       length: 10,
       child: Scaffold(
+        backgroundColor: Colors.black,
         appBar: AppBar(
           title: const Text('Reddit'),
           bottom: PreferredSize(
