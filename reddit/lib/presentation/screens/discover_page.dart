@@ -8,6 +8,10 @@ class DiscoverPage extends StatefulWidget {
 }
 
 class _DiscoverPageState extends State<DiscoverPage> {
+  String subRedditName = 'r/ILoveYouAllah';
+  String cardImageLink =
+      'https://preview.redd.it/0xo9bo1t9ct91.png?width=622&format=png&auto=webp&s=bc3dea6ce391d716c891030c919ddc004e3c6644';
+
   Widget createPostImageCard() {
     return InkWell(
       onTap: (() {
@@ -24,8 +28,22 @@ class _DiscoverPageState extends State<DiscoverPage> {
           child: Stack(
             alignment: AlignmentDirectional.topStart,
             children: <Widget>[
-              Container(), //Subreddit Name
-              Container(), //Post Image
+              Container(
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                  colorFilter: ColorFilter.mode(
+                      Colors.black.withOpacity(0.3), BlendMode.darken),
+                  image: NetworkImage(cardImageLink),
+                  fit: BoxFit.fill,
+                )),
+              ), //Post Image
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Text(
+                  subRedditName,
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ), //Subreddit Name
             ],
           ),
         ),
