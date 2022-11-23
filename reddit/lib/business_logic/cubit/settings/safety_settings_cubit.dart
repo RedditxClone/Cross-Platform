@@ -10,11 +10,16 @@ class SafetySettingsCubit extends Cubit<SafetySettingsState> {
   SafetySettings? settings;
   SafetySettingsCubit(this.settingsRepository) : super(SettingsInitial());
 
-  /// Get all user settings @initial build of any settings widget
+  /// This function emits state SafetySettingsAvailable on initState of the safetysettings screens.
+  ///
+  /// This function calls the function [SafetySettingsRepository.getUserSettings] to get all user's safety settings,
+  /// then calls [SafetySettingsRepository.getBlockedUsers] to get user's blocked list.
   void getUserSettings() {
     if (isClosed) return;
     settingsRepository.getUserSettings().then((userSettings) {
+      // get user safety settings
       settingsRepository.getBlockedUsers().then((blockedList) {
+        // get user's blocked list
         userSettings.blocked = blockedList;
         settings = userSettings;
         emit(SafetySettingsAvailable(userSettings));
@@ -22,7 +27,12 @@ class SafetySettingsCubit extends Cubit<SafetySettingsState> {
     });
   }
 
-  /// update any user settings and emit sate SettingsChanged
+  /// [settings] : The safety settings model from the safety settings screen that will be updated.
+  /// [changed] : A map of the only updated safety settings.
+  ///
+  /// Emits sate SafetySettingsChanged on changing any value on safety settings page.
+  ///
+  /// This function calls the function [SafetySettingsRepository.updatePrefs] to update the safety settings.
   void updateSettings(SafetySettings settings, Map changed) {
     if (isClosed) return;
     settingsRepository.updatePrefs(changed).then((val) {
@@ -30,30 +40,40 @@ class SafetySettingsCubit extends Cubit<SafetySettingsState> {
     });
   }
 
-  /// Block a user by his/her username if existed in the database
+  /// [settings] : The safety settings model from the safety settings screen that will be updated.
+  /// [username] : Username of the user to be blocked.
+  ///
+  /// Emits sate BlockListUpdated on blocking a user (if existed) from safety settings page.
+  ///
+  /// This function calls the function [SafetySettingsRepository.checkUsernameAvailable] to check the existance of [username],
+  /// then if exist it calls the function [SafetySettingsRepository.blockUser] to block this user.
   void blockUser(SafetySettings settings, String username) async {
     if (isClosed) return;
     await settingsRepository
         .checkUsernameAvailable(username)
         .then((usernameExist) {
-      //if this username exist
       if (usernameExist == 200) {
-        //block the user
+        // if this username exist
         settingsRepository.blockUser(username).then((val) {
-          settings.blocked.add(username);
+          settings.blocked.add(username); // append to the list
           emit(BlockListUpdated(settings, username));
         });
       }
     });
   }
 
-  /// unBlock a user by his/her username
+  /// [settings] : The safety settings model from the safety settings screen that will be updated.
+  /// [username] : Username of the user to be unblocked.
+  ///
+  /// Emits sate BlockListUpdated on unblocking the user from safety settings pages.
+  ///
+  /// This function calls the function [SafetySettingsRepository.unBlockUser] to update the safety settings.
   void unBlockUser(SafetySettings settings, String username) {
     if (isClosed) return;
-    //block the user
     settingsRepository.unBlockUser(username).then((usernameExist) {
       if (usernameExist == 200) {
-        settings.blocked.remove(username);
+        // if user name exist
+        settings.blocked.remove(username); // remove from list
         emit(BlockListUpdated(settings, username));
       }
     });
