@@ -12,7 +12,10 @@ class _DiscoverPageState extends State<DiscoverPage> {
   String cardImageLink =
       'https://preview.redd.it/0xo9bo1t9ct91.png?width=622&format=png&auto=webp&s=bc3dea6ce391d716c891030c919ddc004e3c6644';
 
-  Widget createPostImageCard() {
+  ///Make a visual small card with random posts image to user to explore Subreddit with Category that he interested in
+  ///
+  ///input (Name of Subreddit & Post image Link)
+  Widget createPostImageCard(String subRedditName, String cardImageLink) {
     return InkWell(
       onTap: (() {
         //TODO : Make Post page with id = this Card post id.
@@ -51,6 +54,9 @@ class _DiscoverPageState extends State<DiscoverPage> {
     );
   }
 
+  ///Make a visual 10 random posts Cards to user to explore Subreddit with Category {All Categories Posts}
+  ///
+  ///input ()
   Widget getAllCategoryTenRandomPostsWithImage() {
     return GridView.count(
       crossAxisCount: 2,
@@ -61,16 +67,16 @@ class _DiscoverPageState extends State<DiscoverPage> {
       mainAxisSpacing: 5.0,
       crossAxisSpacing: 5.0,
       children: <Widget>[
-        createPostImageCard(),
-        createPostImageCard(),
-        createPostImageCard(),
-        createPostImageCard(),
-        createPostImageCard(),
-        createPostImageCard(),
-        createPostImageCard(),
-        createPostImageCard(),
-        createPostImageCard(),
-        createPostImageCard(),
+        createPostImageCard(subRedditName, cardImageLink),
+        createPostImageCard(subRedditName, cardImageLink),
+        createPostImageCard(subRedditName, cardImageLink),
+        createPostImageCard(subRedditName, cardImageLink),
+        createPostImageCard(subRedditName, cardImageLink),
+        createPostImageCard(subRedditName, cardImageLink),
+        createPostImageCard(subRedditName, cardImageLink),
+        createPostImageCard(subRedditName, cardImageLink),
+        createPostImageCard(subRedditName, cardImageLink),
+        createPostImageCard(subRedditName, cardImageLink),
       ],
     );
   }
@@ -107,7 +113,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                   ),
                   Tab(
                     child: Text(
-                      'Relegion',
+                      'Relegion', //Will be added in Further Versions Updates
                       style: TextStyle(
                         //color: const Color.fromARGB(255, 255, 255, 255),
                         fontSize: 15,
@@ -116,7 +122,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                   ),
                   Tab(
                     child: Text(
-                      'Science',
+                      'Science', //Will be added in Further Versions Updates
                       style: TextStyle(
                         //color: const Color.fromARGB(255, 255, 255, 255),
                         fontSize: 15,
@@ -125,7 +131,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                   ),
                   Tab(
                     child: Text(
-                      'History',
+                      'History', //Will be added in Further Versions Updates
                       style: TextStyle(
                         //color: const Color.fromARGB(255, 255, 255, 255),
                         fontSize: 15,
@@ -134,7 +140,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                   ),
                   Tab(
                     child: Text(
-                      'Animals',
+                      'Animals', //Will be added in Further Versions Updates
                       style: TextStyle(
                         //color: const Color.fromARGB(255, 255, 255, 255),
                         fontSize: 15,
@@ -143,7 +149,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                   ),
                   Tab(
                     child: Text(
-                      'Nature',
+                      'Nature', //Will be added in Further Versions Updates
                       style: TextStyle(
                         //color: const Color.fromARGB(255, 255, 255, 255),
                         fontSize: 15,
@@ -152,7 +158,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                   ),
                   Tab(
                     child: Text(
-                      'Technology',
+                      'Technology', //Will be added in Further Versions Updates
                       style: TextStyle(
                         //color: const Color.fromARGB(255, 255, 255, 255),
                         fontSize: 15,
@@ -161,7 +167,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                   ),
                   Tab(
                     child: Text(
-                      'Memes',
+                      'Memes', //Will be added in Further Versions Updates
                       style: TextStyle(
                         //color: const Color.fromARGB(255, 255, 255, 255),
                         fontSize: 15,
@@ -170,7 +176,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                   ),
                   Tab(
                     child: Text(
-                      'Finance',
+                      'Finance', //Will be added in Further Versions Updates
                       style: TextStyle(
                         //color: const Color.fromARGB(255, 255, 255, 255),
                         fontSize: 15,
@@ -179,7 +185,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                   ),
                   Tab(
                     child: Text(
-                      'Crypto',
+                      'Crypto', //Will be added in Further Versions Updates
                       style: TextStyle(
                         //color: const Color.fromARGB(255, 255, 255, 255),
                         fontSize: 15,
