@@ -9,7 +9,28 @@ class DiscoverPage extends StatefulWidget {
 
 class _DiscoverPageState extends State<DiscoverPage> {
   Widget createPostImageCard() {
-    return const Card();
+    return InkWell(
+      onTap: (() {
+        //TODO : Make Post page with id = this Card post id.
+      }),
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        elevation: 20,
+        margin: const EdgeInsets.only(top: 10, left: 5, right: 5),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: Stack(
+            alignment: AlignmentDirectional.topStart,
+            children: <Widget>[
+              Container(), //Subreddit Name
+              Container(), //Post Image
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget getAllCategoryTenRandomPostsWithImage() {
