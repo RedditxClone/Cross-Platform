@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/data/model/signin.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
 import '../../data/web_services/authorization/login_conroller.dart';
 import '../../helper/dio.dart';
 
@@ -33,7 +35,7 @@ class _SignupMobileState extends State<SignupMobile> {
   FocusNode emailFocusNode = FocusNode();
   FocusNode passwordFocusNode = FocusNode();
 
-  late User? newUser;
+  late User? user;
 
   @override
   void initState() {
@@ -99,41 +101,73 @@ class _SignupMobileState extends State<SignupMobile> {
 
   //function to sign up with reddit accound it's called when the user presses the sign up button or if the user pressed done after typing the password
   void signUpContinue(BuildContext ctx) async {
-    await DioHelper.postData(url: '/api/auth/signup', data: {
-      "password": passwordController.text,
-      "name": usernameController.text,
-      "email": emailController.text,
-    }).then((value) {
-      if (value.statusCode == 201) {
-        newUser = User.fromJson(jsonDecode(value.data));
-        Navigator.of(ctx).pushReplacementNamed(
-          chooseGenderScreen,
-          arguments: newUser,
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                const Icon(
-                  Icons.error,
+    user = await BlocProvider.of<AuthCubit>(ctx)
+        .signup(passwordController.text, usernameController.text, user!.email!);
+    if (user != null) {
+      Navigator.of(ctx).pushReplacementNamed(
+        chooseGenderScreen,
+        arguments: user,  
+      );
+    } else {
+      //user = null
+      debugPrint("user is $user");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(
+                Icons.error,
+                color: Colors.red,
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.01,
+              ),
+              const Text(
+                'Username or password is incorrect',
+                style: TextStyle(
                   color: Colors.red,
                 ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.01,
-                ),
-                const Text(
-                  'Username or password is incorrect',
-                  style: TextStyle(
-                    color: Colors.red,
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-        );
-      }
-    });
+        ),
+      );
+      // await DioHelper.postData(url: '/api/auth/signup', data: {
+      //   "password": passwordController.text,
+      //   "name": usernameController.text,
+      //   "email": emailController.text,
+      // }).then((value) {
+      //   if (value.statusCode == 201) {
+      //     newUser = User.fromJson(jsonDecode(value.data));
+      //     Navigator.of(ctx).pushReplacementNamed(
+      //       chooseGenderScreen,
+      //       arguments: newUser,
+      //     );
+      //   } else {
+      //     ScaffoldMessenger.of(context).showSnackBar(
+      //       SnackBar(
+      //         content: Row(
+      //           children: [
+      //             const Icon(
+      //               Icons.error,
+      //               color: Colors.red,
+      //             ),
+      //             SizedBox(
+      //               width: MediaQuery.of(context).size.width * 0.01,
+      //             ),
+      //             const Text(
+      //               'Username or password is incorrect',
+      //               style: TextStyle(
+      //                 color: Colors.red,
+      //               ),
+      //             ),
+      //           ],
+      //         ),
+      //       ),
+      //     );
+      //   }
+      // });
+    }
   }
 
 //this finction return a TextSpan
@@ -171,10 +205,10 @@ class _SignupMobileState extends State<SignupMobile> {
           "serverAuthCode": googleAccount.serverAuthCode,
         }).then((value) {
           if (value.statusCode == 201) {
-            newUser = User.fromJson(jsonDecode(value.data));
+            user = User.fromJson(jsonDecode(value.data));
             Navigator.of(context).pushReplacementNamed(
               chooseGenderScreen,
-              arguments: newUser,
+              arguments: user,
             );
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -264,10 +298,10 @@ class _SignupMobileState extends State<SignupMobile> {
           "accessToken": loginResult.accessToken?.token,
         }).then((value) {
           if (value.statusCode == 201) {
-            newUser = User.fromJson(jsonDecode(value.data));
+            user = User.fromJson(jsonDecode(value.data));
             Navigator.of(context).pushReplacementNamed(
               chooseGenderScreen,
-              arguments: newUser,
+              arguments: user,
             );
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -367,7 +401,7 @@ class _SignupMobileState extends State<SignupMobile> {
           onPressed: () {
             Navigator.of(context).pushReplacementNamed(
               homePageRoute,
-              arguments: newUser,
+              arguments: user,
             );
           },
         ),
