@@ -29,7 +29,7 @@ class _ChooseGenderAndroidState extends State<ChooseGenderAndroid> {
     newUser.gender = gender;
     await DioHelper.patchData(url: "/api/user/me/prefs", data: {
       "gender": gender,
-    }).then((res) {
+    },options: null).then((res) {
       res = res as Response;
       if (res.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(

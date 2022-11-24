@@ -11,13 +11,23 @@ part 'auth_state.dart';
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit(this.signupRepo) : super(AuthInitial());
   final SignupRepo signupRepo;
-  late User? user;
-  User? signup(String password, String username, String email) {
-    signupRepo.signup(password, username, email).then((value) {
+  User? user;
+  Future<User?> signup(String password, String username, String email) async {
+    await signupRepo.signup(password, username, email).then((value) {
       user = value;
       emit(SignedIn(user));
-      debugPrint("after emitting");
+      debugPrint("after emitting ${user?.email}");
     });
     return user;
+  }
+
+  /// change the profile photo from web: send to the backend the new image
+  void changeProfilephotoWeb(User? userWithPP, Uint8List fileAsBytes) {
+    if (isClosed) return;
+    signupRepo.updateImageWeb('profilephoto', fileAsBytes).then((image) {
+      userWithPP?.imageUrl = image as String?;
+      debugPrint("image from cubit: $image");
+      emit(SignedInWithProfilePhoto(userWithPP));
+    });
   }
 }

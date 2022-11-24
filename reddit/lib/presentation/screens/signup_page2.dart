@@ -107,7 +107,7 @@ class _SignupWeb2State extends State<SignupWeb2> {
 
   //function to sign up with reddit accound it's called when the user presses the sign up button or if the user pressed done after typing the password
   void signUpContinue(BuildContext ctx) async {
-    user = BlocProvider.of<AuthCubit>(ctx)
+    user  = await BlocProvider.of<AuthCubit>(ctx)
         .signup(passwordController.text, usernameController.text, user!.email!);
     if (user != null) {
       Navigator.of(ctx).pushReplacementNamed(

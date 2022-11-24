@@ -30,16 +30,6 @@ class _HomePageWebState extends State<HomePageWeb> {
   void initState() {
     super.initState();
     isLoggedIn = user != null;
-
-    // waitFor3Seconds.then((value) {
-    //   showDialogToChooseGender();
-    // });
-
-    // Stream<int> every3seconds =
-    //     Stream<int>.periodic(const Duration(seconds: 5), (t) => t);
-    // every3seconds.listen((t) {
-    //   showDialogToChooseGender();
-    // });
   }
 
   Map<String, String> interests = {
@@ -62,13 +52,14 @@ class _HomePageWebState extends State<HomePageWeb> {
     'Fishing': '🎣',
   };
   Map<String, dynamic> selectedInterests = {};
-  File? imgCover;
+  Uint8List? imgCover;
 
   //this function is used to add the user interests to the database
   void addInterests() async {
     user?.interests = selectedInterests;
     debugPrint("after storing${user?.interests}");
-    DioHelper.patchData(url: '/api/user/me/prefs', data: selectedInterests)
+    DioHelper.patchData(
+            url: '/api/user/me/prefs', data: selectedInterests, options: null)
         .then((value) {
       if (value.statusCode == 200) {
         Navigator.of(context).pop();
@@ -95,15 +86,20 @@ class _HomePageWebState extends State<HomePageWeb> {
         );
       }
     });
+    debugPrint("interests added");
   }
 
   //This function takes the selected gender and sends it to the server
   //gender will be null if not selected
   void selectGender(String gender) async {
     user?.gender = gender;
-    await DioHelper.patchData(url: "/api/user/me/prefs", data: {
-      "gender": gender,
-    }).then((res) {
+    await DioHelper.patchData(
+            url: "/api/user/me/prefs",
+            data: {
+              "gender": gender,
+            },
+            options: null)
+        .then((res) {
       if (res.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -399,6 +395,7 @@ class _HomePageWebState extends State<HomePageWeb> {
   int intersetsCount = 0;
 //This function will show the dialog to choose interests
   void showDialogToChooseInterests() {
+    selectedInterests.clear();
     showDialog(
       barrierDismissible: false,
       context: context,
@@ -588,6 +585,22 @@ class _HomePageWebState extends State<HomePageWeb> {
     );
   }
 
+  /// ## Parameters
+  /// ### src : the image source can be ImageSource.gallery or ImageSource.camera
+  /// ### dest : the image destination can be 'cover' for cover photo or 'profile' fom profile photo
+  void pickImageWeb(ImageSource src) async {
+    try {
+      final imagePicker = await ImagePicker().pickImage(source: src);
+      if (imagePicker == null) return;
+      imgCover = await imagePicker.readAsBytes();
+      BlocProvider.of<AuthCubit>(context)
+          .changeProfilephotoWeb(user, imgCover!);
+      displayMsg(context, Colors.blue, 'Changes Saved');
+    } on PlatformException catch (e) {
+      debugPrint("Error in pickImageWeb: ${e.toString()}");
+    }
+  }
+
   void showDialogToChooseProfilePicture() {
     showDialog(
       barrierDismissible: false,
@@ -613,10 +626,6 @@ class _HomePageWebState extends State<HomePageWeb> {
                   TextButton(
                     onPressed: (() {
                       Navigator.pop(context);
-                      Navigator.of(context).pushReplacementNamed(
-                        homePageRoute,
-                        arguments: user,
-                      );
                     }),
                     child: const Text(
                       "Skip",
@@ -686,17 +695,21 @@ class _HomePageWebState extends State<HomePageWeb> {
                           child: imgCover != null
                               ? ClipOval(
                                   child: InkWell(
-                                    onTap: () =>
-                                        chooseProfilePhotoBottomSheet(context),
-                                    child: Image.file(
+                                    onTap: () => setState(() {
+                                      pickImageWeb(ImageSource.gallery);
+                                      debugPrint("after pickImageWeb");
+                                    }),
+                                    child: Image.memory(
                                       imgCover!,
                                       fit: BoxFit.fill,
                                     ),
                                   ),
                                 )
                               : ElevatedButton(
-                                  onPressed: () =>
-                                      chooseProfilePhotoBottomSheet(context),
+                                  onPressed: () => setState(() {
+                                    pickImageWeb(ImageSource.gallery);
+                                    debugPrint("after pickImageWeb");
+                                  }),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.white,
                                     shape: RoundedRectangleBorder(
@@ -723,12 +736,11 @@ class _HomePageWebState extends State<HomePageWeb> {
                       color: Colors.white,
                       child: ElevatedButton(
                         onPressed: () {
-                          // newUser.imageUrl = imgCover!.readAsString() as String?;
                           Navigator.pop(context);
-                          Navigator.of(context).pushReplacementNamed(
-                            homePageRoute,
-                            arguments: user,
-                          );
+                          // Navigator.of(context).pushReplacementNamed(
+                          //   homePageRoute,
+                          //   arguments: user,
+                          // );
                         },
                         style: const ButtonStyle(
                           shape: MaterialStatePropertyAll(
@@ -775,121 +787,43 @@ class _HomePageWebState extends State<HomePageWeb> {
     );
   }
 
-  //this function to display the image if selected and if not it will show a static icon
-  void displayMsg(
-      BuildContext context, Color color, String title, String subtitle) {
+  /// displayed in the bottom of the page on every change the user make to inform him if the change
+  /// that the changes are saved or there was an error that occured
+  void displayMsg(BuildContext context, Color color, String title) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      width: 400,
       content: Container(
-        padding: const EdgeInsets.all(5),
-        decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(10))),
-        height: 70,
-        child: Row(
-          children: [
-            Container(
-              margin: const EdgeInsets.only(right: 10),
-              decoration: BoxDecoration(
-                  color: color,
-                  borderRadius: const BorderRadius.all(Radius.circular(10))),
-              width: 7,
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(fontSize: 20, color: color),
-                ),
-                Text(
-                  subtitle,
-                  style: TextStyle(fontSize: 13, color: color),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+          height: 50,
+          padding: const EdgeInsets.all(5),
+          decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              color: Colors.black,
+              borderRadius: const BorderRadius.all(Radius.circular(10))),
+          child: Row(
+            children: [
+              Container(
+                margin: const EdgeInsets.only(right: 10),
+                decoration: BoxDecoration(
+                    color: color,
+                    borderRadius: const BorderRadius.all(Radius.circular(10))),
+                width: 9,
+              ),
+              Logo(
+                Logos.reddit,
+                color: Colors.white,
+                size: 20,
+              ),
+              const SizedBox(width: 10),
+              Text(
+                title,
+                style: const TextStyle(fontSize: 16, color: Colors.white),
+              ),
+            ],
+          )),
       behavior: SnackBarBehavior.floating,
       backgroundColor: Colors.transparent,
       elevation: 0,
     ));
-  }
-
-//this function to create the bottom sheet resposible to choose the image
-  void chooseProfilePhotoBottomSheet(BuildContext ctx) {
-    showModalBottomSheet(
-        context: ctx,
-        builder: (_) {
-          return Container(
-            height: 170,
-            padding: const EdgeInsets.all(10),
-            child: Column(
-              children: [
-                TextButton(
-                    onPressed: () => pickImage(ImageSource.camera, 'profile'),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: const [
-                        Icon(
-                          Icons.camera_alt_outlined,
-                          color: Colors.white,
-                        ),
-                        SizedBox(width: 20),
-                        Text("Camera",
-                            style: TextStyle(fontSize: 20, color: Colors.white))
-                      ],
-                    )),
-                TextButton(
-                    onPressed: () => pickImage(ImageSource.gallery, 'profile'),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: const [
-                        Icon(
-                          Icons.photo_library_outlined,
-                          color: Colors.white,
-                        ),
-                        SizedBox(width: 20),
-                        Text("Library",
-                            style: TextStyle(fontSize: 20, color: Colors.white))
-                      ],
-                    )),
-                ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.grey,
-                      backgroundColor: const Color.fromRGBO(90, 90, 90, 100),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0)),
-                    ),
-                    child: const Center(
-                      child: Text(
-                        "Close",
-                        style: TextStyle(fontSize: 15, color: Colors.grey),
-                      ),
-                    )),
-              ],
-            ),
-          );
-        });
-  }
-
-//this function to get the image from the gallery or take it by the camera
-  Future pickImage(ImageSource src, String dest) async {
-    try {
-      Navigator.pop(context);
-      final image = await ImagePicker().pickImage(source: src);
-      if (image == null) return;
-      final imageTemp = File(image.path);
-
-      BlocProvider.of<ChooseProfileImageLoginCubit>(context)
-          .changeProfilephoto(imageTemp);
-    } on PlatformException catch (e) {
-      displayMsg(context, Colors.red, 'Error', 'Could not load image');
-    }
   }
 
   @override
@@ -905,21 +839,15 @@ class _HomePageWebState extends State<HomePageWeb> {
               : const AppBarWebNotLoggedIn(screen: 'Home')),
       body: BlocBuilder<AuthCubit, AuthState>(
         builder: (context, state) {
-          debugPrint("builder");
+          debugPrint("user in the home page ${user?.email}");
           if (state is SignedIn) {
             debugPrint("state is signed in");
-            // Future<int> waitFor3Seconds =
-            //     Future.delayed(const Duration(seconds: 5), () {
-            //   return 1;
-            // });
-            // waitFor3Seconds.whenComplete(() {
-            //   showDialogToChooseGender();
-            // });
-            Future.delayed(const Duration(seconds: 5), () {
-              showDialogToChooseGender();
-            });
+            WidgetsBinding.instance
+                .addPostFrameCallback((_) => showDialogToChooseGender());
+          } else if (state is SignedInWithProfilePhoto) {
+            debugPrint("state is SignedInWithProfilePhoto");
+            user = state.user;
           }
-
           return HomeWeb(isLoggedIn: isLoggedIn);
         },
       ),

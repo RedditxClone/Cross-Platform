@@ -36,12 +36,13 @@ class _InteresetesAndroidState extends State<InteresetesAndroid> {
   };
   Map<String, dynamic> selectedInterests = {};
   _InteresetesAndroidState(this.newUser);
-  
+
   //this function is used to add the user interests to the database
   void addInterests() async {
     newUser.interests = selectedInterests;
     debugPrint("after storing${newUser.interests}");
-    DioHelper.patchData(url: '/api/user/me/prefs', data: selectedInterests)
+    DioHelper.patchData(
+            url: '/api/user/me/prefs', data: selectedInterests, options: null)
         .then((value) {
       if (value.statusCode == 200) {
         Navigator.of(context)

@@ -1,5 +1,3 @@
-import 'dart:js';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:reddit/business_logic/cubit/choose_profile_image_login_cubit.dart';
@@ -13,7 +11,6 @@ import 'presentation/screens/setting_tab_ui.dart';
 import 'package:reddit/presentation/screens/recaptcha_screen.dart'
     if (dart.library.html) 'package:reddit/presentation/screens/recaptcha_screen_web.dart'
     as recaptcha_screen;
-
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reddit/business_logic/cubit/settings/safety_settings_cubit.dart';
@@ -164,7 +161,10 @@ class AppRouter {
         );
       case signupScreen:
         return MaterialPageRoute(
-          builder: (_) => const SignupMobile(),
+          builder: (_) => BlocProvider.value(
+            value: authCubit,
+            child: const SignupMobile(),
+          ),
         );
       case forgetPasswordAndroid:
         return MaterialPageRoute(
