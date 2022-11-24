@@ -23,23 +23,21 @@ void main() async {
   late AccountSettingsRepository accountSettingsRepository;
   late AccountSettingsCubit accountSettingsCubit;
   late MockAccountSettingsCubit mockAccountSettingsCubit;
-  const String settingsFromWebServices = '''{
-    "gender": "M",
-    "enable_followers": true,
-    "over_18": true,
-    "num_comments": 0,
-    "email_upvote_post": true,
-    "email_upvote_comment": true,
+  const settingsFromWebServices = {
+    "gender": "male",
+    "allowFollow": true,
+    "adultContent": true,
+    "upvotePosts": true,
+    "upvoteComments": true,
     "email_messages": true,
     "default_comment_sort": 0,
     "show_flair": true,
-    "country_code": "EG"
-  }''';
+    "countryCode": "EG"
+  };
   final settingsFromRepository = AccountSettingsModel(
-      gender: "M",
+      gender: "male",
       enableFollowers: true,
       over18: true,
-      numComments: 0,
       emailUpvotePost: true,
       emailUpvoteComment: true,
       emailMessages: true,
@@ -77,7 +75,7 @@ void main() async {
       'Settings loaded state is emitted correctly after updating settings',
       setUp: () {
         when(() => mockAccountSettingsWebService.updateAccountSettings(
-            jsonDecode(settingsFromWebServices))).thenAnswer((_) async => 200);
+            settingsFromWebServices)).thenAnswer((_) async => 200);
       },
       build: () {
         return accountSettingsCubit;
@@ -87,7 +85,7 @@ void main() async {
       expect: () => [isA<AccountSettingsLoaded>()],
     );
     blocTest<AccountSettingsCubit, AccountSettingsState>(
-      'Password updated successfullt state is emitted correctly after if server responded with 200',
+      'Password updated successfully state is emitted correctly after if server responded with 200',
       setUp: () {
         when(() => mockAccountSettingsWebService
                 .changePassword({"oldPassword": "123", "newPassword": "456"}))
@@ -117,9 +115,9 @@ void main() async {
   });
   // Test if mapping from Json to model is correct
   group('Model test', () {
-    test('Account Aettings Model is generated correctly', () {
+    test('Account Settings Model is generated correctly', () {
       expect(
-        AccountSettingsModel.fromJson(jsonDecode(settingsFromWebServices)),
+        AccountSettingsModel.fromJson(settingsFromWebServices),
         settingsFromRepository,
       );
     });
@@ -149,7 +147,8 @@ void main() async {
         ),
       );
       // Gender is displayed correctly
-      expect(find.text(settingsFromRepository.gender == "M" ? "Man" : "Woman"),
+      expect(
+          find.text(settingsFromRepository.gender == "male" ? "Man" : "Woman"),
           findsOneWidget);
       // Country is displayed correctly
       expect(

@@ -45,6 +45,10 @@ const safetySettingsRoute = '/safetySettings';
 //---------------------------------------
 const emailSettingsWebScreenRoute = "/emailSettings";
 //---------------------------------------
+// -----Feed settings routes---------
+//---------------------------------------
+const feedSettingRoute = '/feed_settings';
+//---------------------------------------
 // -----------reCaptcha routes-----------
 //---------------------------------------
 const recaptchaRoute = "/recaptcha";
@@ -65,3 +69,4 @@ const forgetUsernameAndroid = '/forgetUsernameAndroud';
 const interesetesScreen = '/interesetesScreen';
 const chooseGenderScreen = '/chooseGenderScreen';
 const chooseProfileImgScreen = '/chooseProfileImgScreen';
+const createCommunityScreenRoute = '/CreateCommunityScreen';

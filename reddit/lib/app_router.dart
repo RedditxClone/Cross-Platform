@@ -1,5 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:reddit/data/repository/feed_setting_repository.dart';
+import 'package:reddit/data/web_services/feed_setting_web_services.dart';
+import 'business_logic/cubit/feed_settings_cubit.dart';
+import 'presentation/screens/feed_setting.dart';
 import 'package:reddit/business_logic/cubit/choose_profile_image_login_cubit.dart';
 import 'package:reddit/presentation/screens/profile/others_profile_page_web.dart';
 import 'package:reddit/presentation/screens/profile/profile_page_web.dart';
@@ -11,6 +15,15 @@ import 'presentation/screens/setting_tab_ui.dart';
 import 'package:reddit/presentation/screens/recaptcha_screen.dart'
     if (dart.library.html) 'package:reddit/presentation/screens/recaptcha_screen_web.dart'
     as recaptcha_screen;
+
+import 'package:reddit/business_logic/cubit/create_community_cubit.dart';
+
+import 'package:reddit/data/repository/create_community_repository.dart';
+
+import 'package:reddit/data/web_services/create_community_web_services.dart';
+
+import 'presentation/screens/create_community_screen.dart';
+
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reddit/business_logic/cubit/settings/safety_settings_cubit.dart';
@@ -75,6 +88,10 @@ class AppRouter {
 
   late SignupRepo signupRepo;
   late AuthCubit authCubit;
+  late CreateCommunityRepository communityRepository;
+  late CreateCommunityCubit createCommunityCubit;
+  late CreateCommunityWebServices communityWebServices;
+
   static User? user;
   AppRouter() {
     // initialise repository and cubit objects
@@ -94,10 +111,23 @@ class AppRouter {
     accountSettingsCubit = AccountSettingsCubit(accountSettingsRepository);
     signupRepo = SignupRepo(SignupWebService());
     authCubit = AuthCubit(signupRepo);
+
+    communityWebServices = CreateCommunityWebServices();
+    communityRepository = CreateCommunityRepository(communityWebServices);
+    createCommunityCubit = CreateCommunityCubit(communityRepository);
   }
   Route? generateRoute(RouteSettings settings) {
     final arguments = settings.arguments;
     switch (settings.name) {
+      case feedSettingRoute:
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (context) => FeedSettingsCubit(FeedSettingRepository(
+                feedSettingsWebServices: FeedSettingWebServices())),
+            child: const FeedSetting(),
+          ),
+        );
+
       case homePageRoute:
         user = settings.arguments as User?;
         return MaterialPageRoute(
@@ -121,6 +151,13 @@ class AppRouter {
         return MaterialPageRoute(
             builder: (_) =>
                 kIsWeb ? const OtherProfilePageWeb() : const ProfileScreen());
+
+      case createCommunityScreenRoute:
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider.value(
+                  value: createCommunityCubit,
+                  child: const CreateCommunityScreen(),
+                ));
 
       // case emailSettingsWebScreenRoute:
       //   return MaterialPageRoute(
