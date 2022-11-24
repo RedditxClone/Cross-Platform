@@ -23,14 +23,14 @@ class SignupWebService {
             contentType: MediaType('application', 'json'), filename: key)
       });
       Response response = await DioHelper.patchData(
-        url: 'user/me/$key',
+        url: '/user/me/$key',
         data: formData,
         options: null, 
       );
       /*Options(
             headers: {"Authorization": "Bearer $token"},
           ) */
-      debugPrint(response.statusCode.toString());
+      debugPrint("res of img = ${response.statusCode}");
       return response.data;
     } catch (e) {
       debugPrint("error in image web ${e.toString()}");

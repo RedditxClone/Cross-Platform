@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -588,24 +590,26 @@ class _HomePageWebState extends State<HomePageWeb> {
   /// ## Parameters
   /// ### src : the image source can be ImageSource.gallery or ImageSource.camera
   /// ### dest : the image destination can be 'cover' for cover photo or 'profile' fom profile photo
-  void pickImageWeb(ImageSource src) async {
+  Future<bool> pickImageWeb(ImageSource src) async {
     try {
       final imagePicker = await ImagePicker().pickImage(source: src);
-      if (imagePicker == null) return;
+      if (imagePicker == null) return false;
       imgCover = await imagePicker.readAsBytes();
-      BlocProvider.of<AuthCubit>(context)
-          .changeProfilephotoWeb(user, imgCover!);
-      displayMsg(context, Colors.blue, 'Changes Saved');
+      // BlocProvider.of<AuthCubit>(context)
+      //     .changeProfilephotoWeb(user, imgCover!);
+      // displayMsg(context, Colors.blue, 'Changes Saved');
+
     } on PlatformException catch (e) {
       debugPrint("Error in pickImageWeb: ${e.toString()}");
     }
+    return true;
   }
 
   void showDialogToChooseProfilePicture() {
     showDialog(
       barrierDismissible: false,
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext c) {
         return StatefulBuilder(
           builder: (BuildContext ctx, StateSetter setState) => Theme(
             data: ThemeData.light(),
@@ -655,8 +659,8 @@ class _HomePageWebState extends State<HomePageWeb> {
                 ),
               ),
               content: SizedBox(
-                height: MediaQuery.of(context).size.height * 0.7,
-                width: MediaQuery.of(context).size.width * 0.25,
+                height: MediaQuery.of(c).size.height * 0.7,
+                width: MediaQuery.of(c).size.width * 0.25,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -687,7 +691,7 @@ class _HomePageWebState extends State<HomePageWeb> {
                           ),
                         ),
                         Container(
-                          height: MediaQuery.of(context).size.height * 0.2,
+                          height: MediaQuery.of(c).size.height * 0.2,
                           alignment: Alignment.center,
                           decoration: const BoxDecoration(
                             shape: BoxShape.circle,
@@ -695,10 +699,20 @@ class _HomePageWebState extends State<HomePageWeb> {
                           child: imgCover != null
                               ? ClipOval(
                                   child: InkWell(
-                                    onTap: () => setState(() {
-                                      pickImageWeb(ImageSource.gallery);
-                                      debugPrint("after pickImageWeb");
-                                    }),
+                                    onTap: () {
+                                      pickImageWeb(ImageSource.gallery)
+                                          .then((value) {
+                                        if (value) {
+                                          setState(() {
+                                            BlocProvider.of<AuthCubit>(context)
+                                                .changeProfilephotoWeb(
+                                                    user, imgCover!);
+                                            displayMsg(context, Colors.blue,
+                                                'Changes Saved');
+                                          });
+                                        }
+                                      });
+                                    },
                                     child: Image.memory(
                                       imgCover!,
                                       fit: BoxFit.fill,
@@ -706,10 +720,20 @@ class _HomePageWebState extends State<HomePageWeb> {
                                   ),
                                 )
                               : ElevatedButton(
-                                  onPressed: () => setState(() {
-                                    pickImageWeb(ImageSource.gallery);
-                                    debugPrint("after pickImageWeb");
-                                  }),
+                                  onPressed: () {
+                                    pickImageWeb(ImageSource.gallery)
+                                        .then((value) {
+                                      if (value) {
+                                        setState(() {
+                                          BlocProvider.of<AuthCubit>(context)
+                                              .changeProfilephotoWeb(
+                                                  user, imgCover!);
+                                          displayMsg(context, Colors.blue,
+                                              'Changes Saved');
+                                        });
+                                      }
+                                    });
+                                  },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.white,
                                     shape: RoundedRectangleBorder(
@@ -736,7 +760,7 @@ class _HomePageWebState extends State<HomePageWeb> {
                       color: Colors.white,
                       child: ElevatedButton(
                         onPressed: () {
-                          Navigator.pop(context);
+                          Navigator.pop(c);
                           // Navigator.of(context).pushReplacementNamed(
                           //   homePageRoute,
                           //   arguments: user,
@@ -847,6 +871,7 @@ class _HomePageWebState extends State<HomePageWeb> {
           } else if (state is SignedInWithProfilePhoto) {
             debugPrint("state is SignedInWithProfilePhoto");
             user = state.user;
+            debugPrint("user in the home page ${user?.imageUrl}");
           }
           return HomeWeb(isLoggedIn: isLoggedIn);
         },
