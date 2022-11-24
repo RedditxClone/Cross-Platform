@@ -1,7 +1,4 @@
 // ignore_for_file: no_logic_in_create_state
-
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reddit/constants/strings.dart';

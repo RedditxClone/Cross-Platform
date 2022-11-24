@@ -9,8 +9,8 @@ import 'package:reddit/presentation/screens/profile/others_profile_page_web.dart
 import 'package:reddit/presentation/screens/profile/profile_page_web.dart';
 import 'package:reddit/presentation/screens/profile/profile_screen.dart';
 import 'business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
-import 'data/repository/singup_repo.dart';
-import 'data/web_services/authorization/signup_web_servide.dart';
+import 'data/repository/auth_repo.dart';
+import 'data/web_services/authorization/auth_web_service.dart';
 import 'presentation/screens/setting_tab_ui.dart';
 import 'package:reddit/presentation/screens/recaptcha_screen.dart'
     if (dart.library.html) 'package:reddit/presentation/screens/recaptcha_screen_web.dart'
@@ -86,7 +86,7 @@ class AppRouter {
   late EmailSettingsCubit emailSettingsCubit;
   late EmailSettingsWebServices emailSettingsWebServices;
 
-  late SignupRepo signupRepo;
+  late AuthRepo signupRepo;
   late AuthCubit authCubit;
   late CreateCommunityRepository communityRepository;
   late CreateCommunityCubit createCommunityCubit;
@@ -109,7 +109,7 @@ class AppRouter {
     accountSettingsRepository =
         AccountSettingsRepository(AccountSettingsWebServices());
     accountSettingsCubit = AccountSettingsCubit(accountSettingsRepository);
-    signupRepo = SignupRepo(SignupWebService());
+    signupRepo = AuthRepo(AuthWebService());
     authCubit = AuthCubit(signupRepo);
 
     communityWebServices = CreateCommunityWebServices();
@@ -194,7 +194,10 @@ class AppRouter {
         );
       case loginPage:
         return MaterialPageRoute(
-          builder: (_) => const LoginWeb(),
+          builder: (_) => BlocProvider.value(
+            value: authCubit,
+            child: const LoginWeb(),
+          ),
         );
       case signupScreen:
         return MaterialPageRoute(
@@ -209,7 +212,10 @@ class AppRouter {
         );
       case loginScreen:
         return MaterialPageRoute(
-          builder: (_) => const LoginMobile(),
+          builder: (_) => BlocProvider.value(
+            value: authCubit,
+            child: const LoginMobile(),
+          ),
         );
       case forgetUsernameAndroid:
         return MaterialPageRoute(

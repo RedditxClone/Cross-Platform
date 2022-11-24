@@ -40,7 +40,6 @@ class FacebookSignInApi {
     final LoginResult result = await FacebookAuth.instance.login();
     if (result.status == LoginStatus.success) {
       // you are logged
-
       return result;
     }
     // print(result.status);
