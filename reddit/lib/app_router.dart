@@ -13,12 +13,15 @@ import 'package:reddit/data/repository/settings_repository.dart';
 import 'package:reddit/data/web_services/settings_web_services.dart';
 import 'package:reddit/presentation/screens/profile_settings_screen.dart';
 import 'package:reddit/presentation/screens/profile_settings_web.dart';
-import 'package:reddit/presentation/screens/discover_page.dart';
 import 'package:reddit/business_logic/cubit/email_settings_cubit.dart';
 import 'package:reddit/data/repository/email_settings_repo.dart';
 import 'package:reddit/data/web_services/email_settings_web_services.dart';
 import 'constants/strings.dart';
 import 'presentation/screens/email_settings_web.dart';
+import 'package:reddit/data/repository/discover_page_repo.dart';
+import 'package:reddit/data/web_services/discover_page_web_services.dart';
+import 'package:reddit/business_logic/cubit/discover_page_cubit.dart';
+import 'package:reddit/presentation/screens/discover_page.dart';
 
 class AppRouter {
   // declare repository and cubit objects
@@ -57,7 +60,13 @@ class AppRouter {
                   child: const EmailSettingsWeb(),
                 ));
       case discoverPageRoute:
-        return MaterialPageRoute(builder: (_) => const DiscoverPage());
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (context) => DiscoverPageCubit(DiscoverPageRepository(
+                discoverPageWebServices: DiscoverPageWebServices())),
+            child: const DiscoverPage(),
+          ),
+        );
       /*
       case example:
       case '/':

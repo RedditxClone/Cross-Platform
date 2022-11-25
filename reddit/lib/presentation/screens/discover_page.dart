@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reddit/business_logic/cubit/discover_page_cubit.dart';
+import 'package:reddit/data/model/discover_page_model.dart';
 
 class DiscoverPage extends StatefulWidget {
   const DiscoverPage({super.key});
@@ -8,17 +11,46 @@ class DiscoverPage extends StatefulWidget {
 }
 
 class _DiscoverPageState extends State<DiscoverPage> {
-  String subRedditName = 'r/ILoveYouAllah';
-  String cardImageLink =
-      'https://preview.redd.it/0xo9bo1t9ct91.png?width=622&format=png&auto=webp&s=bc3dea6ce391d716c891030c919ddc004e3c6644';
+  late List<DiscoverPageModel> allRandomPosts;
+
+  @override
+  void initState() {
+    super.initState();
+    BlocProvider.of<DiscoverPageCubit>(context).getAllRandomPosts();
+  }
+
+  List<String> createRandomPostsId(List<DiscoverPageModel> allRandomPosts) {
+    if (allRandomPosts != []) {
+      List<String> randomPostsIdList = [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10"
+      ];
+      for (var i = 0; i < 10; i++) {
+        randomPostsIdList[i] = allRandomPosts[i].postId;
+      }
+      return randomPostsIdList;
+    } else {
+      return [];
+    }
+  }
 
   ///Make a visual small card with random posts image to user to explore Subreddit with Category that he interested in
   ///
   ///input (Name of Subreddit & Post image Link)
-  Widget createPostImageCard(String subRedditName, String cardImageLink) {
+  Widget createPostImageCard(String subredditName, String imageUrl,
+      String postId, List<String> randomPostsIdList) {
     return InkWell(
       onTap: (() {
-        //TODO : Make Post page with id = this Card post id.
+        //TODO : Make Post page with id = this Card post id{postId}.
+        //TODO : Fill Post page with other Posts using {randomPostsIdList}
       }),
       child: Card(
         shape: RoundedRectangleBorder(
@@ -36,14 +68,14 @@ class _DiscoverPageState extends State<DiscoverPage> {
                     image: DecorationImage(
                   colorFilter: ColorFilter.mode(
                       Colors.black.withOpacity(0.3), BlendMode.darken),
-                  image: NetworkImage(cardImageLink),
+                  image: NetworkImage(imageUrl),
                   fit: BoxFit.fill,
                 )),
               ), //Post Image
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Text(
-                  subRedditName,
+                  subredditName,
                   style: const TextStyle(color: Colors.white),
                 ),
               ), //Subreddit Name
@@ -57,7 +89,8 @@ class _DiscoverPageState extends State<DiscoverPage> {
   ///Make a visual 10 random posts Cards to user to explore Subreddit with Category {All Categories Posts}
   ///
   ///input ()
-  Widget getAllCategoryTenRandomPostsWithImage() {
+  Widget getAllCategoryTenRandomPostsWithImage(
+      List<DiscoverPageModel> allRandomPosts, List<String> randomPostsIdList) {
     return GridView.count(
       crossAxisCount: 2,
       primary: true,
@@ -67,16 +100,56 @@ class _DiscoverPageState extends State<DiscoverPage> {
       mainAxisSpacing: 5.0,
       crossAxisSpacing: 5.0,
       children: <Widget>[
-        createPostImageCard(subRedditName, cardImageLink),
-        createPostImageCard(subRedditName, cardImageLink),
-        createPostImageCard(subRedditName, cardImageLink),
-        createPostImageCard(subRedditName, cardImageLink),
-        createPostImageCard(subRedditName, cardImageLink),
-        createPostImageCard(subRedditName, cardImageLink),
-        createPostImageCard(subRedditName, cardImageLink),
-        createPostImageCard(subRedditName, cardImageLink),
-        createPostImageCard(subRedditName, cardImageLink),
-        createPostImageCard(subRedditName, cardImageLink),
+        createPostImageCard(
+            allRandomPosts[0].subredditName,
+            allRandomPosts[0].imageUrl,
+            allRandomPosts[0].postId,
+            randomPostsIdList),
+        createPostImageCard(
+            allRandomPosts[1].subredditName,
+            allRandomPosts[1].imageUrl,
+            allRandomPosts[1].postId,
+            randomPostsIdList),
+        createPostImageCard(
+            allRandomPosts[2].subredditName,
+            allRandomPosts[2].imageUrl,
+            allRandomPosts[2].postId,
+            randomPostsIdList),
+        createPostImageCard(
+            allRandomPosts[3].subredditName,
+            allRandomPosts[3].imageUrl,
+            allRandomPosts[3].postId,
+            randomPostsIdList),
+        createPostImageCard(
+            allRandomPosts[4].subredditName,
+            allRandomPosts[4].imageUrl,
+            allRandomPosts[4].postId,
+            randomPostsIdList),
+        createPostImageCard(
+            allRandomPosts[5].subredditName,
+            allRandomPosts[5].imageUrl,
+            allRandomPosts[5].postId,
+            randomPostsIdList),
+        createPostImageCard(
+            allRandomPosts[6].subredditName,
+            allRandomPosts[6].imageUrl,
+            allRandomPosts[6].postId,
+            randomPostsIdList),
+        createPostImageCard(
+            allRandomPosts[7].subredditName,
+            allRandomPosts[7].imageUrl,
+            allRandomPosts[7].postId,
+            randomPostsIdList),
+        createPostImageCard(
+            allRandomPosts[8].subredditName,
+            allRandomPosts[8].imageUrl,
+            allRandomPosts[8].postId,
+            randomPostsIdList),
+        createPostImageCard(
+            allRandomPosts[9].subredditName,
+            allRandomPosts[9].imageUrl,
+            allRandomPosts[9].postId,
+            randomPostsIdList),
       ],
     );
   }
@@ -198,18 +271,76 @@ class _DiscoverPageState extends State<DiscoverPage> {
             ),
           ),
         ),
-        body: TabBarView(children: [
-          getAllCategoryTenRandomPostsWithImage(),
-          getAllCategoryTenRandomPostsWithImage(),
-          getAllCategoryTenRandomPostsWithImage(),
-          getAllCategoryTenRandomPostsWithImage(),
-          getAllCategoryTenRandomPostsWithImage(),
-          getAllCategoryTenRandomPostsWithImage(),
-          getAllCategoryTenRandomPostsWithImage(),
-          getAllCategoryTenRandomPostsWithImage(),
-          getAllCategoryTenRandomPostsWithImage(),
-          getAllCategoryTenRandomPostsWithImage(),
-        ]),
+        body: BlocBuilder<DiscoverPageCubit, DiscoverPageState>(
+          builder: (context, state) {
+            if (state is RandomPostsLoaded) {
+              allRandomPosts = (state).randomPostss;
+              if (allRandomPosts != []) {
+                List<String> randomPostsIdList = [
+                  "1",
+                  "2",
+                  "3",
+                  "4",
+                  "5",
+                  "6",
+                  "7",
+                  "8",
+                  "9",
+                  "10"
+                ];
+                //createRandomPostsId(allRandomPosts);
+                return TabBarView(children: [
+                  getAllCategoryTenRandomPostsWithImage(
+                      allRandomPosts, randomPostsIdList),
+                  getAllCategoryTenRandomPostsWithImage(
+                      allRandomPosts, randomPostsIdList),
+                  getAllCategoryTenRandomPostsWithImage(
+                      allRandomPosts, randomPostsIdList),
+                  getAllCategoryTenRandomPostsWithImage(
+                      allRandomPosts, randomPostsIdList),
+                  getAllCategoryTenRandomPostsWithImage(
+                      allRandomPosts, randomPostsIdList),
+                  getAllCategoryTenRandomPostsWithImage(
+                      allRandomPosts, randomPostsIdList),
+                  getAllCategoryTenRandomPostsWithImage(
+                      allRandomPosts, randomPostsIdList),
+                  getAllCategoryTenRandomPostsWithImage(
+                      allRandomPosts, randomPostsIdList),
+                  getAllCategoryTenRandomPostsWithImage(
+                      allRandomPosts, randomPostsIdList),
+                  getAllCategoryTenRandomPostsWithImage(
+                      allRandomPosts, randomPostsIdList),
+                ]);
+              } else {
+                return TabBarView(children: [
+                  Container(),
+                  Container(),
+                  Container(),
+                  Container(),
+                  Container(),
+                  Container(),
+                  Container(),
+                  Container(),
+                  Container(),
+                  Container(),
+                ]);
+              }
+            } else {
+              return TabBarView(children: [
+                Container(),
+                Container(),
+                Container(),
+                Container(),
+                Container(),
+                Container(),
+                Container(),
+                Container(),
+                Container(),
+                Container(),
+              ]);
+            }
+          },
+        ),
       ),
     );
   }
