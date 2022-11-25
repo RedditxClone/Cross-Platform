@@ -871,7 +871,7 @@ class _HomePageWebState extends State<HomePageWeb> {
           } else if (state is SignedInWithProfilePhoto) {
             debugPrint("state is SignedInWithProfilePhoto");
             user = state.user;
-            debugPrint("user in the home page ${user?.imageUrl}");
+            debugPrint("user in the home page ${user?.profilePic}");
           }
           return HomeWeb(isLoggedIn: isLoggedIn);
         },

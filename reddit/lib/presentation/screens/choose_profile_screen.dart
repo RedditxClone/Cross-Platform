@@ -217,13 +217,13 @@ class ChooseProfileImgAndroidState extends State<ChooseProfileImgAndroid> {
                   child: BlocBuilder<ChooseProfileImageLoginCubit,
                       ChooseProfileImageLoginState>(builder: (context, state) {
                     if (state is ChooseProfileImageLoginChanged) {
-                      newUser.imageUrl = state.url;
+                      newUser.profilePic = state.url;
 
                       return ClipOval(
                         child: InkWell(
                           onTap: () => chooseProfilePhotoBottomSheet(context),
                           child: Image.network(
-                            newUser.imageUrl!,
+                            newUser.profilePic!,
                             fit: BoxFit.fill,
                           ),
                         ),
@@ -259,7 +259,7 @@ class ChooseProfileImgAndroidState extends State<ChooseProfileImgAndroid> {
               color: Theme.of(context).scaffoldBackgroundColor,
               child: ElevatedButton(
                 onPressed: () {
-                  if (newUser.imageUrl != null) {
+                  if (newUser.profilePic != null) {
                     Navigator.of(context).pushReplacementNamed(
                       homePageRoute,
                       arguments: newUser,

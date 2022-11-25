@@ -158,9 +158,9 @@ class PopupMenuLoggedIn extends StatelessWidget {
       child: Row(
         children: [
           CircleAvatar(
-              child: user.imageUrl == null
+              child: user.profilePic == null
                   ? const Icon(Icons.person)
-                  : Image.network(user.imageUrl!, fit: BoxFit.cover)),
+                  : Image.network(user.profilePic!, fit: BoxFit.cover)),
           const SizedBox(width: 10),
           MediaQuery.of(context).size.width < 950
               ? const SizedBox(width: 0)

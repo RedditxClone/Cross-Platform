@@ -14,6 +14,7 @@ class AuthRepo {
     await authWebService.signup(password, username, email).then((value) {
       if (value.statusCode == 201) {
         user = User.fromJson(value.data);
+        debugPrint("after emitting signup ${user?.name}");
       } else {
         debugPrint("user is null $user");
         user = null;
@@ -46,7 +47,8 @@ class AuthRepo {
 
   Future<bool> checkOnUsername(String username) async {
     var res = await authWebService.checkOnUsername(username);
-    if (res.statusCode == 200) {
+    if (res.statusCode == 201) {
+      debugPrint("username is available");
       return res.data['status'] as bool;
     } else {
       return false;

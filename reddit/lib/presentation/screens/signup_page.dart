@@ -262,7 +262,7 @@ class _SignupWebState extends State<SignupWeb> {
     newUser = User(
       name: null,
       email: emailController.text, //set the email takes from the text field
-      imageUrl: null,
+      profilePic: null,
       userId: null,
     );
     Navigator.of(context).pushNamed(

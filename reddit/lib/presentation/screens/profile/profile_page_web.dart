@@ -17,7 +17,7 @@ class ProfilePageWeb extends StatefulWidget {
 
 class _ProfilePageWebState extends State<ProfilePageWeb> {
   User user =
-      User(userId: 'userId', name: 'name', email: 'email', imageUrl: null);
+      User(userId: 'userId', name: 'name', email: 'email', profilePic: null);
   late Responsive _responsive;
   String _outlineButtonLabel = 'Joined';
   String sortBy = 'new';

@@ -73,32 +73,32 @@
 // }
 
 class User {
-  late String? _type;
-  late String?
-      userId; //in case of google or facebook user it will be taken from the google or facebook and in case of reddit sign in it will be the username
+  late String? type;
+  late String? userId;
   late String?
       name; //in case of google or facebook user it will be taken from the google or facebook and in case of reddit sign in it will be the username
   late String? email;
   late String?
-      imageUrl; //in case of google or facebook user it will be taken from the google or facebook and in case of reddit sign in it will be null
-  late String?
-      password; //in case of reddit sign in it will be the password else it will be null
+      profilePic; //in case of google or facebook user it will be taken from the google or facebook and in case of reddit sign in it will be null
   late String? accessToken;
   late String? serverAuthCode;
-  late String? gender;//could be null if the user didn't choose
+  late String? gender; //could be null if the user didn't choose
   late Map<String, dynamic> interests;
+  late String displayName;
   User(
       {required this.userId,
       required this.name,
       required this.email,
-      required this.imageUrl});
+      required this.profilePic});
   User.fromJson(Map<String, dynamic> json) {
-    userId = json['userId'];
-    name = json['userName'];
+    userId = json['_id'];
+    name = json['username'];
     email = json['email'];
-    imageUrl = json['image'];
-    accessToken = json['accessToken'];
-    _type = json['_type'];
-    serverAuthCode = json['serverAuthCode'];
+    profilePic = json['profilePhoto'];
+    // accessToken = json['accessToken'];
+    type = json['authType'];
+    // serverAuthCode = json['serverAuthCode'];
+    gender = json['gender'];
+    displayName = json['displayName'];
   }
 }

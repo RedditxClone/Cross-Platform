@@ -14,7 +14,7 @@ class OtherProfilePageWeb extends StatefulWidget {
 
 class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
   User user =
-      User(userId: 'userId', name: 'name', email: 'email', imageUrl: null);
+      User(userId: 'userId', name: 'name', email: 'email', profilePic: null);
   late Responsive _responsive;
   String sortBy = 'new';
   bool _isOverviewTab = true;

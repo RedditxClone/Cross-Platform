@@ -176,13 +176,13 @@ class _HomePageState extends State<HomePage> {
                   Scaffold.of(context).openEndDrawer();
                 },
                 icon: CircleAvatar(
-                    child: isLoggedin && user!.imageUrl != null
+                    child: isLoggedin && user!.profilePic != null
                         ? Image.network(
-                            user!.imageUrl!,
+                            user!.profilePic!,
                             fit: BoxFit.cover,
                           )
                         : Icon(Icons.person,
-                            color: isLoggedin && user!.imageUrl == null
+                            color: isLoggedin && user!.profilePic == null
                                 ? Colors.orange
                                 : Colors.grey,
                             size: 25)));
@@ -218,7 +218,7 @@ class _HomePageState extends State<HomePage> {
         child: EndDrawer(
             isLoggedin,
             user == null ? "" : user!.name ?? "",
-            user == null ? "" : user!.imageUrl ?? "",
+            user == null ? "" : user!.profilePic ?? "",
             2,
             35,
             true,

@@ -10,7 +10,7 @@ void main() {
         userId: '1',
         name: 'mark_yasser',
         email: 'mark@hotmai.com',
-        imageUrl: null);
+        profilePic: null);
   });
   Widget createWidgetUnderTest() {
     return MaterialApp(

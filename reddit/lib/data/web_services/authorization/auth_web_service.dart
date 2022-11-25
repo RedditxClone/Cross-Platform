@@ -6,7 +6,7 @@ import 'package:reddit/helper/dio.dart';
 
 class AuthWebService {
   Future signup(String password, String username, String email) async {
-    var res = await DioHelper.postData(url: '/api/auth/login', data: {
+    var res = await DioHelper.postData(url: '/api/auth/signup', data: {
       "email": email,
       "username": username,
       "password": password,
@@ -15,7 +15,7 @@ class AuthWebService {
   }
 
   Future login(String password, String username) async {
-    var res = await DioHelper.postData(url: '/api/auth/signup', data: {
+    var res = await DioHelper.postData(url: '/api/auth/login', data: {
       "username": username,
       "password": password,
     });
