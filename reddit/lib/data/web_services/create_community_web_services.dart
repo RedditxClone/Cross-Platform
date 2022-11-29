@@ -1,14 +1,11 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:reddit/constants/strings.dart';
 
 class CreateCommunityWebServices {
-  bool useMockServer = true;
-  String mockUrl = "https://f1c179b0-0158-4a47-ba39-7b803b8ae58a.mock.pstmn.io";
   late Dio dio;
   CreateCommunityWebServices() {
     BaseOptions options = BaseOptions(
-      baseUrl: useMockServer ? mockUrl : baseUrl,
+      baseUrl: baseUrl,
       receiveDataWhenStatusError: true,
       connectTimeout: 20 * 1000, //20 secs
       receiveTimeout: 20 * 1000,
