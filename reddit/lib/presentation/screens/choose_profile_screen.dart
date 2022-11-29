@@ -6,7 +6,7 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:reddit/business_logic/cubit/choose_profile_image_login_cubit.dart';
 import 'package:reddit/constants/strings.dart';
-import '../../data/model/signin.dart';
+import '../../data/model/auth_model.dart';
 
 class ChooseProfileImgAndroid extends StatefulWidget {
   const ChooseProfileImgAndroid({super.key, required this.newUser});

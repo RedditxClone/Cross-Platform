@@ -1,8 +1,9 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 
-import '../model/signin.dart';
+import '../model/auth_model.dart';
 import '../web_services/authorization/auth_web_service.dart';
 
 class AuthRepo {

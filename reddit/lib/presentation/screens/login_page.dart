@@ -7,7 +7,7 @@ import 'package:reddit/helper/dio.dart';
 import 'package:url_launcher/link.dart';
 
 import '../../constants/strings.dart';
-import '../../data/model/signin.dart';
+import '../../data/model/auth_model.dart';
 import '../../data/web_services/authorization/login_conroller.dart';
 
 class LoginWeb extends StatefulWidget {

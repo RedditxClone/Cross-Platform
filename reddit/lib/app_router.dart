@@ -64,7 +64,7 @@ import 'package:reddit/presentation/screens/signup_page.dart';
 import 'package:reddit/presentation/screens/signup_page2.dart';
 import 'package:reddit/presentation/screens/signup_screen.dart';
 
-import 'data/model/signin.dart';
+import 'data/model/auth_model.dart';
 
 class AppRouter {
   // platform
@@ -129,11 +129,10 @@ class AppRouter {
         );
 
       case homePageRoute:
-        user = settings.arguments as User?;
         return MaterialPageRoute(
           builder: (_) => BlocProvider(
             create: ((context) => authCubit),
-            child: kIsWeb ? HomePageWeb(user) : HomePage(user),
+            child: kIsWeb ? HomePageWeb() : HomePage(),
           ),
         );
 
@@ -171,12 +170,12 @@ class AppRouter {
       //     builder: (_) => Home(user: user),
       //   );
       case SIGNU_PAGE2:
-        final user = settings.arguments as User;
+        final userEmail = settings.arguments as String;
         return MaterialPageRoute(
           builder: (_) => BlocProvider.value(
             value: authCubit,
             child: SignupWeb2(
-              user: user,
+              userEmail: userEmail,
             ),
           ),
         );

@@ -4,7 +4,7 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/helper/dio.dart';
 
-import '../../data/model/signin.dart';
+import '../../data/model/auth_model.dart';
 
 class ChooseGenderAndroid extends StatefulWidget {
   const ChooseGenderAndroid({super.key, required this.newUser});

@@ -2,7 +2,7 @@
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
-import '../../../../../data/model/signin.dart';
+import '../../../../../data/model/auth_model.dart';
 import '../../../../../data/repository/auth_repo.dart';
 part 'auth_state.dart';
 

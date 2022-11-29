@@ -7,7 +7,7 @@ import 'package:reddit/business_logic/cubit/settings/safety_settings_cubit.dart'
 import 'package:reddit/business_logic/cubit/settings/settings_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/theme_colors.dart';
-import 'package:reddit/data/model/signin.dart';
+import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/data/repository/account_settings_repository.dart';
 import 'package:reddit/data/repository/email_settings_repo.dart';
 import 'package:reddit/data/repository/feed_setting_repository.dart';

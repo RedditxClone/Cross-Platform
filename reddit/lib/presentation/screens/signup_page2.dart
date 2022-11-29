@@ -4,19 +4,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/presentation/screens/home/home_page_web.dart';
 import '../../business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
-import '../../data/model/signin.dart';
+import '../../data/model/auth_model.dart';
 import '../../helper/dio.dart';
 
 class SignupWeb2 extends StatefulWidget {
-  const SignupWeb2({super.key, required this.user});
-  final User user;
+  const SignupWeb2({super.key, required this.userEmail});
+  final String userEmail;
   @override
-  State<SignupWeb2> createState() => _SignupWeb2State(user);
+  State<SignupWeb2> createState() => _SignupWeb2State(userEmail);
 }
 
 class _SignupWeb2State extends State<SignupWeb2> {
-  late User? user;
-  _SignupWeb2State(this.user);
+  late String userEmail;
+  _SignupWeb2State(this.userEmail);
   var usernameController = TextEditingController();
   var passwordController = TextEditingController();
   bool passwordCorrect = false;
@@ -29,8 +29,8 @@ class _SignupWeb2State extends State<SignupWeb2> {
   bool usernameError = false;
   FocusNode usernameFocusNode = FocusNode();
   FocusNode passwordFocusNode = FocusNode();
-  // Map<String, dynamic> suggestedUsernames = {};
   List<String> suggestedUsernames = [];
+
   @override
   void initState() {
     super.initState();
@@ -51,7 +51,9 @@ class _SignupWeb2State extends State<SignupWeb2> {
     passwordFocusNode.dispose();
   }
 
-  ///This function to get reccomended usernames from the server
+  ///This function to get reccomended usernames from the server  ///
+  /// This function calls the function [_SignupWeb2State.getSuggestedUsernames] to get all user's safety settings,
+  /// then calls [AuthCubit.getSuggestedUsernames] to get user's blocked list.
   void getSuggestedUsernames() async {
     // await DioHelper.getData(url: "/api/auth/suggested_usernames", query: {})
     //     .then((value) {
@@ -106,7 +108,7 @@ class _SignupWeb2State extends State<SignupWeb2> {
   //function to sign up with reddit accound it's called when the user presses the sign up button or if the user pressed done after typing the password
   void signUpContinue(BuildContext ctx) async {
     BlocProvider.of<AuthCubit>(ctx)
-        .signup(passwordController.text, usernameController.text, user!.email!);
+        .signup(passwordController.text, usernameController.text, userEmail);
     // if (user != null) {
     //   Navigator.of(ctx).pushReplacementNamed(
     //     homePageRoute,
@@ -484,25 +486,30 @@ class _SignupWeb2State extends State<SignupWeb2> {
         ),
       ),
       backgroundColor: Colors.white,
-      body: BlocBuilder<AuthCubit, AuthState>(
+      body: BlocConsumer<AuthCubit, AuthState>(
         builder: (context, state) {
           if (state is SuggestedUsername) {
             suggestedUsernames = state.usernames;
+            debugPrint("from signup$suggestedUsernames");
             return mainBody();
           }
           if (state is UserNameAvialable) {
             isAvailable = state.isAvailable;
-            debugPrint("isAvailable: $isAvailable");
+            debugPrint("from signup $isAvailable");
             return mainBody();
           }
+
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+        listener: (context, state) {
           if (state is SignedIn) {
-            user = state.user;
-            if (user != null) {
+            if (state.user != null) {
+              UserData.initUser(state.user); //this couldn't be null
               Navigator.of(context).pushReplacementNamed(
                 homePageRoute,
-                arguments: user,
               );
-              return HomePageWeb(user);
             } else {
               //user = null
               debugPrint("failed in signing up");
@@ -527,12 +534,8 @@ class _SignupWeb2State extends State<SignupWeb2> {
                   ),
                 ),
               );
-              return mainBody();
             }
           }
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
         },
       ),
     );

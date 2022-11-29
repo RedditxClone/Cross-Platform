@@ -71,7 +71,6 @@
 //     _refreshToken = json['refreshToken'];
 //   }
 // }
-
 class User {
   late String? type;
   late String? userId;
@@ -100,5 +99,15 @@ class User {
     // serverAuthCode = json['serverAuthCode'];
     gender = json['gender'];
     displayName = json['displayName'];
+  }
+}
+
+class UserData {
+  static late User? user;
+
+  ///This function is used to set the user data after the user has signed up or signed in
+  ///It should be called only once
+  static initUser(User? user) {
+    UserData.user = user;
   }
 }

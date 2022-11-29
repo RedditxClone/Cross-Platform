@@ -8,7 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:reddit/business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
-import 'package:reddit/data/model/signin.dart';
+import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/presentation/screens/home/home_web.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_Not_loggedin.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
@@ -17,21 +17,19 @@ import '../../../business_logic/cubit/choose_profile_image_login_cubit.dart';
 import '../../../helper/dio.dart';
 
 class HomePageWeb extends StatefulWidget {
-  User? user;
-  HomePageWeb(this.user, {Key? key}) : super(key: key);
+  HomePageWeb({Key? key}) : super(key: key);
 
   @override
-  State<HomePageWeb> createState() => _HomePageWebState(user: user);
+  State<HomePageWeb> createState() => _HomePageWebState();
 }
 
 class _HomePageWebState extends State<HomePageWeb> {
   late bool isLoggedIn;
-  User? user;
-  _HomePageWebState({required this.user});
+
   @override
   void initState() {
     super.initState();
-    isLoggedIn = user != null;
+    isLoggedIn = UserData.user != null;
   }
 
   Map<String, String> interests = {
@@ -58,8 +56,8 @@ class _HomePageWebState extends State<HomePageWeb> {
 
   //this function is used to add the user interests to the database
   void addInterests() async {
-    user?.interests = selectedInterests;
-    debugPrint("after storing${user?.interests}");
+    UserData.user?.interests = selectedInterests;
+    debugPrint("after storing${UserData.user?.interests}");
     DioHelper.patchData(
             url: '/api/user/me/prefs', data: selectedInterests, options: null)
         .then((value) {
@@ -94,7 +92,7 @@ class _HomePageWebState extends State<HomePageWeb> {
   //This function takes the selected gender and sends it to the server
   //gender will be null if not selected
   void selectGender(String gender) async {
-    user?.gender = gender;
+    UserData.user?.gender = gender;
     await DioHelper.patchData(
             url: "/api/user/me/prefs",
             data: {
@@ -706,7 +704,7 @@ class _HomePageWebState extends State<HomePageWeb> {
                                           setState(() {
                                             BlocProvider.of<AuthCubit>(context)
                                                 .changeProfilephotoWeb(
-                                                    user, imgCover!);
+                                                    UserData.user, imgCover!);
                                             displayMsg(context, Colors.blue,
                                                 'Changes Saved');
                                           });
@@ -727,7 +725,7 @@ class _HomePageWebState extends State<HomePageWeb> {
                                         setState(() {
                                           BlocProvider.of<AuthCubit>(context)
                                               .changeProfilephotoWeb(
-                                                  user, imgCover!);
+                                                  UserData.user, imgCover!);
                                           displayMsg(context, Colors.blue,
                                               'Changes Saved');
                                         });
@@ -859,19 +857,19 @@ class _HomePageWebState extends State<HomePageWeb> {
           automaticallyImplyLeading: false,
           backgroundColor: defaultAppbarBackgroundColor,
           title: isLoggedIn
-              ? AppBarWebLoggedIn(user: user!, screen: 'Home')
+              ? AppBarWebLoggedIn(user: UserData.user!, screen: 'Home')
               : const AppBarWebNotLoggedIn(screen: 'Home')),
       body: BlocBuilder<AuthCubit, AuthState>(
         builder: (context, state) {
-          debugPrint("user in the home page ${user?.email}");
+          debugPrint("user in the home page ${UserData.user?.email}");
           if (state is SignedIn) {
             debugPrint("state is signed in");
             WidgetsBinding.instance
                 .addPostFrameCallback((_) => showDialogToChooseGender());
           } else if (state is SignedInWithProfilePhoto) {
             debugPrint("state is SignedInWithProfilePhoto");
-            user = state.user;
-            debugPrint("user in the home page ${user?.profilePic}");
+            UserData.user = state.user;
+            debugPrint("user in the home page ${UserData.user?.profilePic}");
           }
           return HomeWeb(isLoggedIn: isLoggedIn);
         },

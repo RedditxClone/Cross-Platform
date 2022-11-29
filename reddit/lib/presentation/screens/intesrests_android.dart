@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:reddit/helper/dio.dart';
 import '../../constants/strings.dart';
-import '../../data/model/signin.dart';
+import '../../data/model/auth_model.dart';
 
 class InteresetesAndroid extends StatefulWidget {
   const InteresetesAndroid({super.key, required this.newUser});
