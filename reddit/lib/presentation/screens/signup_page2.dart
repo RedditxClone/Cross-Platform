@@ -2,10 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reddit/constants/strings.dart';
-import 'package:reddit/presentation/screens/home/home_page_web.dart';
 import '../../business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
 import '../../data/model/auth_model.dart';
-import '../../helper/dio.dart';
 
 class SignupWeb2 extends StatefulWidget {
   const SignupWeb2({super.key, required this.userEmail});

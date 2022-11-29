@@ -9,25 +9,34 @@ part 'auth_state.dart';
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit(this.signupRepo) : super(AuthInitial());
   final AuthRepo signupRepo;
-  User? user;
-  Future<User?> signup(String password, String username, String email) async {
+
+  /// This function emits state SignedIn after the user sign up.
+  /// This function calls the function [AuthRepo.signup] which makes the request to the server.
+  /// 
+  /// [username]: The username of the user.
+  /// [password]: The password of the user.
+  /// [email]: The email of the user.
+  void signup(String password, String username, String email) async {
     signupRepo.signup(password, username, email).then((value) {
-      user = value;
-      emit(SignedIn(user));
-      debugPrint("after emitting signup ${user?.name}");
+      emit(SignedIn(value));
+      debugPrint("after emitting signup ${value?.name}");
     });
-    return user;
   }
 
-  Future<User?> login(String password, String username) async {
+  /// This function emits state Login after the user login.
+  /// This function calls the function [AuthRepo.login] which makes the request to the server.
+  /// 
+  /// [username]: The username of the user.
+  /// [password]: The password of the user.
+  void login(String password, String username) async {
     signupRepo.login(password, username).then((value) {
-      user = value;
-      emit(Login(user));
-      debugPrint("after emitting login ${user?.name}");
+      emit(Login(value));
+      debugPrint("after emitting login ${value?.name}");
     });
-    return user;
   }
 
+  /// This function emits state SuggestedUsername in the initState of the signup_page2.
+  /// This function calls the function [AuthRepo.getSuggestedUsernames] which makes the request to the server.
   void getSuggestedUsernames() async {
     signupRepo.getSuggestedUsernames().then((value) {
       emit(SuggestedUsername(value));
@@ -35,14 +44,17 @@ class AuthCubit extends Cubit<AuthState> {
     });
   }
 
- void checkOnUsername(String username) async {
+  /// This function emits state UserNameAvialable after the user finished writing his username.
+  /// This function calls the function [AuthRepo.checkOnUsername] which makes the request to the server.
+  void checkOnUsername(String username) async {
     signupRepo.checkOnUsername(username).then((value) {
       emit(UserNameAvialable(value));
       debugPrint("after emitting username available $value");
     });
   }
 
-  /// change the profile photo from web: send to the backend the new image
+  /// This function emits state SignedInWithProfilePhoto after the user choose his profile picture during signup.
+  /// This function calls the function [AuthRepo.updateImageWeb] which makes the request to the server.
   void changeProfilephotoWeb(User? userWithPP, Uint8List fileAsBytes) {
     if (isClosed) return;
     signupRepo.updateImageWeb('profilephoto', fileAsBytes).then((image) {

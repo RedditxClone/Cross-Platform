@@ -101,73 +101,73 @@ class _SignupMobileState extends State<SignupMobile> {
 
   //function to sign up with reddit accound it's called when the user presses the sign up button or if the user pressed done after typing the password
   void signUpContinue(BuildContext ctx) async {
-    user = await BlocProvider.of<AuthCubit>(ctx)
+    BlocProvider.of<AuthCubit>(ctx)
         .signup(passwordController.text, usernameController.text, user!.email!);
-    if (user != null) {
-      Navigator.of(ctx).pushReplacementNamed(
-        chooseGenderScreen,
-        arguments: user,  
-      );
-    } else {
-      //user = null
-      debugPrint("user is $user");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              const Icon(
-                Icons.error,
-                color: Colors.red,
-              ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.01,
-              ),
-              const Text(
-                'Username or password is incorrect',
-                style: TextStyle(
-                  color: Colors.red,
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-      // await DioHelper.postData(url: '/api/auth/signup', data: {
-      //   "password": passwordController.text,
-      //   "name": usernameController.text,
-      //   "email": emailController.text,
-      // }).then((value) {
-      //   if (value.statusCode == 201) {
-      //     newUser = User.fromJson(jsonDecode(value.data));
-      //     Navigator.of(ctx).pushReplacementNamed(
-      //       chooseGenderScreen,
-      //       arguments: newUser,
-      //     );
-      //   } else {
-      //     ScaffoldMessenger.of(context).showSnackBar(
-      //       SnackBar(
-      //         content: Row(
-      //           children: [
-      //             const Icon(
-      //               Icons.error,
-      //               color: Colors.red,
-      //             ),
-      //             SizedBox(
-      //               width: MediaQuery.of(context).size.width * 0.01,
-      //             ),
-      //             const Text(
-      //               'Username or password is incorrect',
-      //               style: TextStyle(
-      //                 color: Colors.red,
-      //               ),
-      //             ),
-      //           ],
-      //         ),
-      //       ),
-      //     );
-      //   }
-      // });
-    }
+    // if (user != null) {
+    //   Navigator.of(ctx).pushReplacementNamed(
+    //     chooseGenderScreen,
+    //     arguments: user,
+    //   );
+    // } else {
+    //   //user = null
+    //   debugPrint("user is $user");
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     SnackBar(
+    //       content: Row(
+    //         children: [
+    //           const Icon(
+    //             Icons.error,
+    //             color: Colors.red,
+    //           ),
+    //           SizedBox(
+    //             width: MediaQuery.of(context).size.width * 0.01,
+    //           ),
+    //           const Text(
+    //             'Username or password is incorrect',
+    //             style: TextStyle(
+    //               color: Colors.red,
+    //             ),
+    //           ),
+    //         ],
+    //       ),
+    //     ),
+    //   );
+    // await DioHelper.postData(url: '/api/auth/signup', data: {
+    //   "password": passwordController.text,
+    //   "name": usernameController.text,
+    //   "email": emailController.text,
+    // }).then((value) {
+    //   if (value.statusCode == 201) {
+    //     newUser = User.fromJson(jsonDecode(value.data));
+    //     Navigator.of(ctx).pushReplacementNamed(
+    //       chooseGenderScreen,
+    //       arguments: newUser,
+    //     );
+    //   } else {
+    //     ScaffoldMessenger.of(context).showSnackBar(
+    //       SnackBar(
+    //         content: Row(
+    //           children: [
+    //             const Icon(
+    //               Icons.error,
+    //               color: Colors.red,
+    //             ),
+    //             SizedBox(
+    //               width: MediaQuery.of(context).size.width * 0.01,
+    //             ),
+    //             const Text(
+    //               'Username or password is incorrect',
+    //               style: TextStyle(
+    //                 color: Colors.red,
+    //               ),
+    //             ),
+    //           ],
+    //         ),
+    //       ),
+    //     );
+    //   }
+    // });
+    // }
   }
 
 //this finction return a TextSpan
@@ -393,6 +393,305 @@ class _SignupMobileState extends State<SignupMobile> {
     );
   }
 
+  Widget mainBody() {
+    return SingleChildScrollView(
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        alignment: Alignment.center,
+        child: Column(
+          children: [
+            const Padding(
+              padding: EdgeInsets.fromLTRB(8, 8, 8, 20),
+              child: Text(
+                "Hi new friend, welcome to Reddit",
+                style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+              child: createContinueWithButton('google'),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+              child: createContinueWithButton('facebook'),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 10, 0, 30),
+              child: Row(children: const <Widget>[
+                Expanded(
+                    child: Divider(
+                  thickness: 1,
+                  indent: 30,
+                  endIndent: 30,
+                )),
+                Text("OR", style: TextStyle(color: Colors.grey)),
+                Expanded(
+                    child: Divider(
+                  thickness: 1,
+                  indent: 30,
+                  endIndent: 30,
+                )),
+              ]),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+              child: TextField(
+                focusNode: emailFocusNode,
+                controller: emailController,
+                style: const TextStyle(fontSize: 18),
+                keyboardType: TextInputType.emailAddress,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  contentPadding: const EdgeInsets.all(20),
+                  hintText: 'Email',
+                  labelText: 'Email',
+                  suffixIcon: emailEmpty && !emailFocusNode.hasFocus
+                      ? null
+                      : !emailEmpty && emailFocusNode.hasFocus
+                          ? IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  emailController.text = "";
+                                  emailEmpty = true;
+                                });
+                              },
+                              icon: const Icon(
+                                Icons.clear,
+                                color: Colors.grey,
+                              ),
+                            )
+                          : !emailFocusNode.hasFocus &&
+                                  emailCorrect &&
+                                  !emailEmpty
+                              ? const Icon(
+                                  IconData(0xf635, fontFamily: 'MaterialIcons'),
+                                  color: Colors.green,
+                                )
+                              : null,
+                  errorText: !emailCorrect && !emailEmpty
+                      ? "Not a valid email address"
+                      : null,
+                ),
+                maxLines: 1,
+                onChanged: (value) {
+                  setState(() {
+                    emailEmpty = value.isEmpty;
+                    int index = value.indexOf('@');
+                    if (index != -1) {
+                      emailCorrect = value.contains('.', index + 2) &&
+                          value[value.length - 1] != '.' &&
+                          value[value.length - 1] != ' ';
+                    }
+                  });
+                },
+                textInputAction: TextInputAction.next,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+              child: TextField(
+                focusNode: usernameFocusNode,
+                controller: usernameController,
+                style: const TextStyle(fontSize: 18, color: Colors.white),
+                keyboardType: TextInputType.text,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  contentPadding: const EdgeInsets.all(20),
+                  hintText: 'Username',
+                  labelText: 'Username',
+                  errorText: usernameEmpty
+                      ? null
+                      : usernameError
+                          ? "Username can only contain letters, numbers,'-' and '_'"
+                          : usernameLengthError
+                              ? "Username must be between 3 and 20 characters"
+                              : redundantUsername
+                                  ? "Username already exists"
+                                  : null,
+                  suffixIcon: usernameEmpty && !usernameFocusNode.hasFocus
+                      ? null
+                      : !usernameEmpty && usernameFocusNode.hasFocus
+                          ? IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  usernameController.text = "";
+                                  usernameEmpty = true;
+                                });
+                              },
+                              icon: const Icon(
+                                Icons.clear,
+                                color: Colors.grey,
+                              ),
+                            )
+                          : !usernameFocusNode.hasFocus &&
+                                  !usernameLengthError &&
+                                  !usernameError &&
+                                  !usernameEmpty &&
+                                  !redundantUsername
+                              ? const Icon(
+                                  IconData(0xf635, fontFamily: 'MaterialIcons'),
+                                  color: Colors.green,
+                                )
+                              : null,
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    usernameEmpty = value.isEmpty;
+                    usernameError = value.contains(RegExp(r'[^a-zA-Z0-9_-]'));
+                    usernameLengthError = value.length < 3 || value.length > 20;
+                  });
+                },
+                textInputAction: TextInputAction.next,
+                onEditingComplete: () {
+                  checkOnUsername(usernameController.text);
+                  passwordFocusNode.requestFocus();
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+              child: TextField(
+                focusNode: passwordFocusNode,
+                controller: passwordController,
+                style: const TextStyle(fontSize: 18),
+                obscureText: passwordVisible,
+                keyboardType: TextInputType.visiblePassword,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  contentPadding: const EdgeInsets.all(20),
+                  suffixIcon: IconButton(
+                    onPressed: () => setState(() {
+                      passwordVisible = !passwordVisible;
+                    }),
+                    icon: Icon(
+                      passwordVisible ? Icons.visibility : Icons.visibility_off,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  prefixIcon: passwordEmpty
+                      ? null
+                      : passwordCorrect && !passwordLengthError
+                          ? const Icon(
+                              IconData(0xf635, fontFamily: 'MaterialIcons'),
+                              color: Colors.green,
+                            )
+                          : const Icon(
+                              IconData(0xf713, fontFamily: 'MaterialIcons'),
+                              color: Colors.red,
+                            ),
+                  hintText: 'Password',
+                  labelText: 'Password',
+                  errorText: passwordEmpty
+                      ? null
+                      : !passwordCorrect
+                          ? "Password cannot contain your username"
+                          : passwordLengthError
+                              ? "Password must be at least 8 characters"
+                              : null,
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    passwordLengthError = value.length < 8;
+                    passwordEmpty = value.isEmpty;
+                    passwordCorrect = !value.contains(usernameController.text);
+                  });
+                },
+                textInputAction: TextInputAction.done,
+                onEditingComplete: !usernameFocusNode.hasFocus &&
+                        !usernameLengthError &&
+                        !usernameError &&
+                        !usernameEmpty &&
+                        !redundantUsername
+                    ? () => signUpContinue(context)
+                    : null,
+              ),
+            ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+            RichText(
+              textAlign: TextAlign.center,
+              text: TextSpan(children: [
+                createTextSpan("By continuing, you agree to our ", false),
+                createTextSpan("User Agreement ", true,
+                    url: "https://www.redditinc.com/policies/user-agreement"),
+                createTextSpan("and ", false),
+                createTextSpan("Privacy Policy ", true,
+                    url: "https://www.reddit.com/policies/privacy-policy"),
+              ]),
+            ),
+            Container(
+              width: double.infinity,
+              height: 80,
+              padding: const EdgeInsets.all(15),
+              color: Theme.of(context).scaffoldBackgroundColor,
+              child: ElevatedButton(
+                onPressed: !passwordEmpty &&
+                        !passwordLengthError &&
+                        !usernameEmpty &&
+                        !usernameError &&
+                        !usernameLengthError &&
+                        emailCorrect &&
+                        !emailEmpty &&
+                        !redundantUsername
+                    ? () => signUpContinue(context)
+                    : null,
+                style: const ButtonStyle(
+                  shape: MaterialStatePropertyAll(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(25),
+                      ),
+                    ),
+                  ),
+                  padding: MaterialStatePropertyAll(EdgeInsets.all(0.0)),
+                ),
+                child: Ink(
+                  decoration: BoxDecoration(
+                    gradient: !passwordEmpty &&
+                            !passwordLengthError &&
+                            !usernameEmpty &&
+                            !usernameError &&
+                            !usernameLengthError &&
+                            emailCorrect &&
+                            !emailEmpty &&
+                            !redundantUsername
+                        ? const LinearGradient(
+                            colors: [
+                              Color.fromARGB(255, 139, 9, 0),
+                              Color.fromARGB(255, 255, 136, 0)
+                            ],
+                          )
+                        : null,
+                    borderRadius: const BorderRadius.all(Radius.circular(80.0)),
+                  ),
+                  child: Container(
+                    constraints:
+                        const BoxConstraints(minWidth: 88.0, minHeight: 50.0),
+                    alignment: Alignment.center,
+                    child: const Text(
+                      'Continue',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -426,309 +725,7 @@ class _SignupMobileState extends State<SignupMobile> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.all(10),
-          alignment: Alignment.center,
-          child: Column(
-            children: [
-              const Padding(
-                padding: EdgeInsets.fromLTRB(8, 8, 8, 20),
-                child: Text(
-                  "Hi new friend, welcome to Reddit",
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-                child: createContinueWithButton('google'),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-                child: createContinueWithButton('facebook'),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 10, 0, 30),
-                child: Row(children: const <Widget>[
-                  Expanded(
-                      child: Divider(
-                    thickness: 1,
-                    indent: 30,
-                    endIndent: 30,
-                  )),
-                  Text("OR", style: TextStyle(color: Colors.grey)),
-                  Expanded(
-                      child: Divider(
-                    thickness: 1,
-                    indent: 30,
-                    endIndent: 30,
-                  )),
-                ]),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-                child: TextField(
-                  focusNode: emailFocusNode,
-                  controller: emailController,
-                  style: const TextStyle(fontSize: 18),
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    contentPadding: const EdgeInsets.all(20),
-                    hintText: 'Email',
-                    labelText: 'Email',
-                    suffixIcon: emailEmpty && !emailFocusNode.hasFocus
-                        ? null
-                        : !emailEmpty && emailFocusNode.hasFocus
-                            ? IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    emailController.text = "";
-                                    emailEmpty = true;
-                                  });
-                                },
-                                icon: const Icon(
-                                  Icons.clear,
-                                  color: Colors.grey,
-                                ),
-                              )
-                            : !emailFocusNode.hasFocus &&
-                                    emailCorrect &&
-                                    !emailEmpty
-                                ? const Icon(
-                                    IconData(0xf635,
-                                        fontFamily: 'MaterialIcons'),
-                                    color: Colors.green,
-                                  )
-                                : null,
-                    errorText: !emailCorrect && !emailEmpty
-                        ? "Not a valid email address"
-                        : null,
-                  ),
-                  maxLines: 1,
-                  onChanged: (value) {
-                    setState(() {
-                      emailEmpty = value.isEmpty;
-                      int index = value.indexOf('@');
-                      if (index != -1) {
-                        emailCorrect = value.contains('.', index + 2) &&
-                            value[value.length - 1] != '.' &&
-                            value[value.length - 1] != ' ';
-                      }
-                    });
-                  },
-                  textInputAction: TextInputAction.next,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-                child: TextField(
-                  focusNode: usernameFocusNode,
-                  controller: usernameController,
-                  style: const TextStyle(fontSize: 18, color: Colors.white),
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    contentPadding: const EdgeInsets.all(20),
-                    hintText: 'Username',
-                    labelText: 'Username',
-                    errorText: usernameEmpty
-                        ? null
-                        : usernameError
-                            ? "Username can only contain letters, numbers,'-' and '_'"
-                            : usernameLengthError
-                                ? "Username must be between 3 and 20 characters"
-                                : redundantUsername
-                                    ? "Username already exists"
-                                    : null,
-                    suffixIcon: usernameEmpty && !usernameFocusNode.hasFocus
-                        ? null
-                        : !usernameEmpty && usernameFocusNode.hasFocus
-                            ? IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    usernameController.text = "";
-                                    usernameEmpty = true;
-                                  });
-                                },
-                                icon: const Icon(
-                                  Icons.clear,
-                                  color: Colors.grey,
-                                ),
-                              )
-                            : !usernameFocusNode.hasFocus &&
-                                    !usernameLengthError &&
-                                    !usernameError &&
-                                    !usernameEmpty &&
-                                    !redundantUsername
-                                ? const Icon(
-                                    IconData(0xf635,
-                                        fontFamily: 'MaterialIcons'),
-                                    color: Colors.green,
-                                  )
-                                : null,
-                  ),
-                  onChanged: (value) {
-                    setState(() {
-                      usernameEmpty = value.isEmpty;
-                      usernameError = value.contains(RegExp(r'[^a-zA-Z0-9_-]'));
-                      usernameLengthError =
-                          value.length < 3 || value.length > 20;
-                    });
-                  },
-                  textInputAction: TextInputAction.next,
-                  onEditingComplete: () {
-                    checkOnUsername(usernameController.text);
-                    passwordFocusNode.requestFocus();
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-                child: TextField(
-                  focusNode: passwordFocusNode,
-                  controller: passwordController,
-                  style: const TextStyle(fontSize: 18),
-                  obscureText: passwordVisible,
-                  keyboardType: TextInputType.visiblePassword,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    contentPadding: const EdgeInsets.all(20),
-                    suffixIcon: IconButton(
-                      onPressed: () => setState(() {
-                        passwordVisible = !passwordVisible;
-                      }),
-                      icon: Icon(
-                        passwordVisible
-                            ? Icons.visibility
-                            : Icons.visibility_off,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    prefixIcon: passwordEmpty
-                        ? null
-                        : passwordCorrect && !passwordLengthError
-                            ? const Icon(
-                                IconData(0xf635, fontFamily: 'MaterialIcons'),
-                                color: Colors.green,
-                              )
-                            : const Icon(
-                                IconData(0xf713, fontFamily: 'MaterialIcons'),
-                                color: Colors.red,
-                              ),
-                    hintText: 'Password',
-                    labelText: 'Password',
-                    errorText: passwordEmpty
-                        ? null
-                        : !passwordCorrect
-                            ? "Password cannot contain your username"
-                            : passwordLengthError
-                                ? "Password must be at least 8 characters"
-                                : null,
-                  ),
-                  onChanged: (value) {
-                    setState(() {
-                      passwordLengthError = value.length < 8;
-                      passwordEmpty = value.isEmpty;
-                      passwordCorrect =
-                          !value.contains(usernameController.text);
-                    });
-                  },
-                  textInputAction: TextInputAction.done,
-                  onEditingComplete: !usernameFocusNode.hasFocus &&
-                          !usernameLengthError &&
-                          !usernameError &&
-                          !usernameEmpty &&
-                          !redundantUsername
-                      ? () => signUpContinue(context)
-                      : null,
-                ),
-              ),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-              RichText(
-                textAlign: TextAlign.center,
-                text: TextSpan(children: [
-                  createTextSpan("By continuing, you agree to our ", false),
-                  createTextSpan("User Agreement ", true,
-                      url: "https://www.redditinc.com/policies/user-agreement"),
-                  createTextSpan("and ", false),
-                  createTextSpan("Privacy Policy ", true,
-                      url: "https://www.reddit.com/policies/privacy-policy"),
-                ]),
-              ),
-              Container(
-                width: double.infinity,
-                height: 80,
-                padding: const EdgeInsets.all(15),
-                color: Theme.of(context).scaffoldBackgroundColor,
-                child: ElevatedButton(
-                  onPressed: !passwordEmpty &&
-                          !passwordLengthError &&
-                          !usernameEmpty &&
-                          !usernameError &&
-                          !usernameLengthError &&
-                          emailCorrect &&
-                          !emailEmpty &&
-                          !redundantUsername
-                      ? () => signUpContinue(context)
-                      : null,
-                  style: const ButtonStyle(
-                    shape: MaterialStatePropertyAll(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(25),
-                        ),
-                      ),
-                    ),
-                    padding: MaterialStatePropertyAll(EdgeInsets.all(0.0)),
-                  ),
-                  child: Ink(
-                    decoration: BoxDecoration(
-                      gradient: !passwordEmpty &&
-                              !passwordLengthError &&
-                              !usernameEmpty &&
-                              !usernameError &&
-                              !usernameLengthError &&
-                              emailCorrect &&
-                              !emailEmpty &&
-                              !redundantUsername
-                          ? const LinearGradient(
-                              colors: [
-                                Color.fromARGB(255, 139, 9, 0),
-                                Color.fromARGB(255, 255, 136, 0)
-                              ],
-                            )
-                          : null,
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(80.0)),
-                    ),
-                    child: Container(
-                      constraints:
-                          const BoxConstraints(minWidth: 88.0, minHeight: 50.0),
-                      alignment: Alignment.center,
-                      child: const Text(
-                        'Continue',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 20),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+      body: mainBody(),
     );
   }
 }
