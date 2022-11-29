@@ -19,22 +19,17 @@ class CreateCommunityWebServices {
   /// Sends create community request to the server, the repository calls this function
   Future<bool> createCommunity(Map<String, dynamic> communityData) async {
     try {
-      print(communityData);
-      Response response = await dio.post(
-        '/api/subreddit',
-        data: communityData,
-      );
+      Response response = await dio.post('/api/subreddit', data: communityData);
       if (response.statusCode == 201) {
         return true;
-      } else {}
-    } on DioError catch (e) {
-      debugPrint(e.response?.statusCode.toString());
+      } else {
+        return false;
+      }
+    } on DioError {
+      return false;
     }
-    return false;
   }
-/**
- * 
- */
+
   Future<bool> getIfNameAvailable(String subredditName) async {
     try {
       Response response = await dio.get(
@@ -42,10 +37,11 @@ class CreateCommunityWebServices {
       );
       if (response.statusCode == 200) {
         return true;
-      } else {}
-    } catch (e) {
-      // debugPrint(e.toString());
+      } else {
+        return false;
+      }
+    } on DioError {
+      return false;
     }
-    return false;
   }
 }
