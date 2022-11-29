@@ -20,9 +20,9 @@ class SubredditPageRepository {
         jsonDecode(postsInPage).map((i) => PostModel.fromJson(i)));
   }
 
-  Future<SubredditModel> getSubredditInfo(String subredditID) async {
+  Future<SubredditModel> getSubredditInfo(String subredditName) async {
     return SubredditModel.fromJson(
-        jsonDecode(await subredditWebServices.getSubredditInfo(subredditID)));
+        jsonDecode(await subredditWebServices.getSubredditInfo(subredditName)));
   }
 
   Future<String> getSubredditIcon(String subreddit) async {
@@ -31,16 +31,17 @@ class SubredditPageRepository {
     return subredditIcon;
   }
 
-  Future<bool> updateSubredditIcon(String subredditID, Uint8List updatedIcon) async {
+  Future<bool> updateSubredditIcon(
+      String subredditName, Uint8List updatedIcon) async {
     final bool updated = await subredditWebServices.updateSubredditIcon(
-        subredditID, updatedIcon);
+        subredditName, updatedIcon);
     return updated;
   }
 
-  getSubredditDescription(String subredditID) async {
+  getSubredditDescription(String subredditName) async {
     final String subredditDescription;
     final Map<String, dynamic> json = (jsonDecode(
-        await subredditWebServices.getSubredditDescription(subredditID)));
+        await subredditWebServices.getSubredditDescription(subredditName)));
 
     subredditDescription = json['description'].toString();
     print(subredditDescription);

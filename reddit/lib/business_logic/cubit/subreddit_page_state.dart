@@ -14,6 +14,9 @@ class SubredditPageLoaded extends SubredditPageState {
 
 class PostsInPageLoading extends SubredditPageState {}
 
+class JoinedSubreddit extends SubredditPageState {}
+
+class LeftSubreddit extends SubredditPageState {}
 class SubredditDescriptionLoaded extends SubredditPageState {
   final String subredditDescription;
   SubredditDescriptionLoaded(this.subredditDescription);

@@ -7,8 +7,7 @@ import 'package:reddit/constants/strings.dart';
 
 class SubredditWebServices {
   bool useMockServer = true;
-  String mockUrl =
-      "https://f1c179b0-0158-4a47-ba39-7b803b8ae58a.mock.pstmn.io/";
+  String mockUrl = "https://f1c179b0-0158-4a47-ba39-7b803b8ae58a.mock.pstmn.io";
   late Dio dio;
   SubredditWebServices() {
     BaseOptions options = BaseOptions(
@@ -22,16 +21,16 @@ class SubredditWebServices {
   // Gets data from server, the repository calls this function
   Future<dynamic> getPostsInPage(String subreddit, String mode) async {
     try {
-      Response response = await dio.get("subreddit/$subreddit/$mode");
+      Response response = await dio.get("/api/subreddit/$subreddit/$mode");
       return response.data;
     } catch (e) {
       return "[]";
     }
   }
 
-  Future<dynamic> getSubredditInfo(String subredditID) async {
+  Future<dynamic> getSubredditInfo(String subredditName) async {
     try {
-      Response response = await dio.get("subreddit/$subredditID/about");
+      Response response = await dio.get("/api/subreddit/$subredditName/about");
       return response.data;
     } catch (e) {
       return "{}";
@@ -40,7 +39,7 @@ class SubredditWebServices {
 
   Future<dynamic> getSubredditIcon(String subreddit) async {
     try {
-      Response response = await dio.get("subreddit/$subreddit/icon");
+      Response response = await dio.get("/api/subreddit/$subreddit/icon");
       return response.data;
     } catch (e) {
       return "";
@@ -48,31 +47,31 @@ class SubredditWebServices {
   }
 
   Future<bool> updateSubredditIcon(
-      String subredditID, Uint8List updatedIcon) async {
+      String subredditName, Uint8List updatedIcon) async {
     final fields = {
       'file': MultipartFile.fromBytes(updatedIcon,
           contentType: MediaType('application', 'json'), filename: "icon.jpg")
     };
     final formData = FormData.fromMap(fields);
-    print(formData.fields);
+    debugPrint(formData.fields.toString());
     try {
       Response response =
-          await dio.post('subreddit/$subredditID/icon', data: formData);
+          await dio.post('/api/subreddit/$subredditName/icon', data: formData);
       if (response.statusCode == 201) {
         return true;
       } else {
-        print(response.statusCode);
+        debugPrint(response.statusCode.toString());
         return false;
       }
     } catch (e) {
-      print(e);
+      debugPrint(e.toString());
       return false;
     }
   }
 
   getSubredditDescription(subreddit) async {
     try {
-      Response response = await dio.get("subreddit/$subreddit/description");
+      Response response = await dio.get("/api/subreddit/$subreddit/description");
       return response.data;
     } catch (e) {
       return "";

@@ -30,36 +30,45 @@ class SubredditPageCubit extends Cubit<SubredditPageState> {
     });
   }
 
-  void getSubredditInfo(String subredditID) {
+  void leavePressed() {
+    emit(LeftSubreddit());
+  }
+  void joinPressed() {
+    emit(JoinedSubreddit());
+  }
+
+  void getSubredditInfo(String subredditName) {
     emit(SubredditPageLoading());
 
-    subredditPageRepository.getSubredditInfo(subredditID).then((value) {
+    subredditPageRepository.getSubredditInfo(subredditName).then((value) {
       _subredditModel = value;
       emit(SubredditPageLoaded(_subredditModel!));
     });
   }
 
-  void getSubredditIcon(String subredditID) {
-    subredditPageRepository.getSubredditIcon(subredditID).then((value) {
+  void getSubredditIcon(String subredditName) {
+    subredditPageRepository.getSubredditIcon(subredditName).then((value) {
       _subredditIcon = value;
       emit(SubredditIconLoaded(_subredditIcon!));
     });
   }
 
-  void getSubredditDescription(String subredditID) {
-    subredditPageRepository.getSubredditDescription(subredditID).then((value) {
+  void getSubredditDescription(String subredditName) {
+    subredditPageRepository
+        .getSubredditDescription(subredditName)
+        .then((value) {
       _subredditIcon = value;
       emit(SubredditDescriptionLoaded(_subredditDescription!));
     });
   }
 
-  void updateSubredditIcon(String subredditID, Uint8List? pickedImage) {
+  void updateSubredditIcon(String subredditName, Uint8List? pickedImage) {
     emit(SubredditIconUpdating());
     if (pickedImage == null) {
       emit(SubredditIconUpdateFailed());
     } else {
-      subredditPageRepository.updateSubredditIcon(subredditID, pickedImage);
-      subredditPageRepository.getSubredditIcon(subredditID);
+      subredditPageRepository.updateSubredditIcon(subredditName, pickedImage);
+      subredditPageRepository.getSubredditIcon(subredditName);
     }
   }
 

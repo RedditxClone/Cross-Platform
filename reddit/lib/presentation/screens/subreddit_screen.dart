@@ -6,7 +6,6 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:reddit/business_logic/cubit/subreddit_page_cubit.dart';
 import 'package:reddit/data/model/subreddit_model.dart';
-
 import '../../constants/colors.dart';
 
 class SubredditPageScreen extends StatefulWidget {
@@ -17,6 +16,7 @@ class SubredditPageScreen extends StatefulWidget {
 }
 
 class _SubredditPageScreenState extends State<SubredditPageScreen> {
+  var joinLeaveButtonText = "";
   final ImagePicker _picker = ImagePicker();
   late SubredditModel _subredditModel;
   String _selectedMode = "hot";
@@ -111,12 +111,12 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Column(children: [
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   Row(
-                    children: [
-                      const Text(
+                    children: const [
+                      Text(
                         "Moderators",
                         style: TextStyle(
                             color: lightFontColor,
@@ -128,11 +128,11 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                   const SizedBox(
                     height: 10,
                   ),
-                  Divider(
+                  const Divider(
                     thickness: 1,
                     color: textFeildColor,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   state is SubredditModeratorsLoading
@@ -471,8 +471,7 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                                                   shape:
                                                       const RoundedRectangleBorder(
                                                           borderRadius:
-                                                              BorderRadius
-                                                                  .all(
+                                                              BorderRadius.all(
                                                     Radius.circular(20),
                                                   )),
                                                 ),
@@ -696,6 +695,13 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                                             padding:
                                                 const EdgeInsets.only(top: 8.0),
                                             child: OutlinedButton(
+                                              onHover: (value) {
+                                                joinLeaveButtonText =
+                                                    _subredditModel.joined
+                                                        ? "Leave"
+                                                        : "Join";
+                                                setState(() {});
+                                              },
                                               style: TextButton.styleFrom(
                                                 foregroundColor:
                                                     _subredditModel.joined
@@ -717,12 +723,16 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                                               ),
                                               onPressed: () {
                                                 _subredditModel.joined
-                                                    ? "leave"
-                                                    : "join";
+                                                    ? BlocProvider.of<
+                                                                SubredditPageCubit>(
+                                                            context)
+                                                        .leavePressed()
+                                                    : BlocProvider.of<
+                                                                SubredditPageCubit>(
+                                                            context)
+                                                        .joinPressed();
                                               },
-                                              child: Text(_subredditModel.joined
-                                                  ? "Joined"
-                                                  : "Join"),
+                                              child: Text(joinLeaveButtonText),
                                             ),
                                           ),
                                           const SizedBox(
@@ -861,6 +871,7 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
         if (state is SubredditPageLoaded) {
           _subredditModel = (state).subredditModel;
           _controller.text = _subredditModel.description;
+          joinLeaveButtonText = _subredditModel.joined ? "Joined" : "Join";
         } else if (state is SubredditPageLoading) {
           return const Center(
             child: CircularProgressIndicator(
@@ -868,7 +879,14 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
             ),
           );
         }
-
+        if (state is LeftSubreddit) {
+          _subredditModel.joined = false;
+          joinLeaveButtonText = "Join";
+        }
+        if (state is JoinedSubreddit) {
+          joinLeaveButtonText = "Joined";
+          _subredditModel.joined = true;
+        }
         if (state is SubredditDescriptionLoaded) {
           _subredditModel.description = (state).subredditDescription;
         }
