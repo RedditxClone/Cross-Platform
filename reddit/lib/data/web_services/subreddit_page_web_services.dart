@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http_parser/http_parser.dart';
@@ -37,7 +35,7 @@ class SubredditWebServices {
 
   Future<dynamic> getSubredditIcon(String subreddit) async {
     try {
-      Response response = await dio.get("/api/subreddit/$subreddit/icon");
+      Response response = await dio.get("/api/subreddit/r/$subreddit/icon");
       return response.data;
     } catch (e) {
       return "";
@@ -53,8 +51,8 @@ class SubredditWebServices {
     final formData = FormData.fromMap(fields);
     debugPrint(formData.fields.toString());
     try {
-      Response response =
-          await dio.post('/api/subreddit/$subredditName/icon', data: formData);
+      Response response = await dio.post('/api/subreddit/r/$subredditName/icon',
+          data: formData);
       if (response.statusCode == 201) {
         return true;
       } else {
@@ -70,7 +68,7 @@ class SubredditWebServices {
   getSubredditDescription(subreddit) async {
     try {
       Response response =
-          await dio.get("/api/subreddit/$subreddit/description");
+          await dio.get("/api/subreddit/r/$subreddit/description");
       return response.data;
     } catch (e) {
       return "";
@@ -79,7 +77,8 @@ class SubredditWebServices {
 
   Future<dynamic> getSubredditModerators(String subreddit) async {
     try {
-      Response response = await dio.get("subreddit/$subreddit/moderators");
+      Response response =
+          await dio.get("/api/subreddit/r/$subreddit/moderators");
       return response.data;
     } catch (e) {
       return "";
