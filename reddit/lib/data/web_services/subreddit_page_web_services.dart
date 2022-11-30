@@ -6,12 +6,10 @@ import 'package:http_parser/http_parser.dart';
 import 'package:reddit/constants/strings.dart';
 
 class SubredditWebServices {
-  bool useMockServer = true;
-  String mockUrl = "https://f1c179b0-0158-4a47-ba39-7b803b8ae58a.mock.pstmn.io";
   late Dio dio;
   SubredditWebServices() {
     BaseOptions options = BaseOptions(
-      baseUrl: useMockServer ? mockUrl : baseUrl,
+      baseUrl: baseUrl,
       receiveDataWhenStatusError: true,
       connectTimeout: 20 * 1000, //20 secs
       receiveTimeout: 20 * 1000,
@@ -30,7 +28,7 @@ class SubredditWebServices {
 
   Future<dynamic> getSubredditInfo(String subredditName) async {
     try {
-      Response response = await dio.get("/api/subreddit/$subredditName/about");
+      Response response = await dio.get("/api/subreddit/r/$subredditName");
       return response.data;
     } catch (e) {
       return "{}";
@@ -71,7 +69,8 @@ class SubredditWebServices {
 
   getSubredditDescription(subreddit) async {
     try {
-      Response response = await dio.get("/api/subreddit/$subreddit/description");
+      Response response =
+          await dio.get("/api/subreddit/$subreddit/description");
       return response.data;
     } catch (e) {
       return "";
