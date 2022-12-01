@@ -8,6 +8,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:reddit/business_logic/cubit/end_drawer/end_drawer_cubit.dart';
 import 'package:reddit/constants/strings.dart';
 
+import '../../../business_logic/cubit/create_community_cubit.dart';
+import '../../../data/repository/create_community_repository.dart';
+import '../../../data/web_services/create_community_web_services.dart';
+import '../../screens/create_community_screen.dart';
+
 /// Class that build the UI of the homepage end drawer
 class EndDrawer extends StatelessWidget {
   late int _karma;
@@ -173,11 +178,15 @@ class EndDrawer extends StatelessWidget {
                 onTap: () => Navigator.of(context).pushNamed(profilePageRoute),
               ),
               ListTile(
-                leading: const FaIcon(FontAwesomeIcons.plus),
-                title: const Text("Create a community"),
-                onTap: () =>
-                    Navigator.of(context).pushNamed(createCommunityScreenRoute),
-              ),
+                  leading: const FaIcon(FontAwesomeIcons.plus),
+                  title: const Text("Create a community"),
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                      builder: (_) => BlocProvider(
+                            create: (context) => CreateCommunityCubit(
+                                CreateCommunityRepository(
+                                    CreateCommunityWebServices())),
+                            child: const CreateCommunityScreen(),
+                          )))),
               ListTile(
                 leading: const FaIcon(FontAwesomeIcons.bookmark),
                 title: const Text("Saved"),

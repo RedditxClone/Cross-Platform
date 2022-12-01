@@ -2,10 +2,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:reddit/business_logic/cubit/subreddit_page_cubit.dart';
 import 'package:reddit/constants/colors.dart';
 import 'package:reddit/constants/font_sizes.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/data/model/create_community_model.dart';
+import 'package:reddit/data/repository/subreddit_page_repository.dart';
+import 'package:reddit/data/web_services/subreddit_page_web_services.dart';
+import 'package:reddit/presentation/screens/subreddit_screen.dart';
 import '../../business_logic/cubit/create_community_cubit.dart';
 
 class CreateCommunityScreen extends StatefulWidget {
@@ -116,10 +120,16 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
     return BlocBuilder<CreateCommunityCubit, CreateCommunityState>(
       builder: (context, state) {
         if (state is CreateCommunityCreated) {
-          if (!_mobilePlatform) {
-            BlocProvider.of<CreateCommunityCubit>(context).close();
-          }
-          Navigator.popAndPushNamed(context, subredditPageScreenRoute);
+          BlocProvider.of<CreateCommunityCubit>(context).close();
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => BlocProvider(
+                      create: (context) => SubredditPageCubit(
+                          SubredditPageRepository(SubredditWebServices())),
+                      child: SubredditPageScreen(
+                        subredditId: _createCommunityModel.communityName,
+                      ))));
         }
         if (state is CreateCommunityFailedToCreate) {
           _warningText = 4;
