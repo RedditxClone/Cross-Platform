@@ -2,11 +2,13 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:reddit/business_logic/cubit/subreddit_page_cubit.dart';
 import 'package:reddit/data/model/subreddit_model.dart';
 import '../../constants/colors.dart';
+import '../../constants/font_sizes.dart';
 
 class SubredditPageScreen extends StatefulWidget {
   const SubredditPageScreen({super.key, required this.subredditId});
@@ -914,7 +916,7 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
         enableDrag: true,
         context: context,
         builder: (_) => Padding(
-            padding: const EdgeInsets.all(4),
+            padding: const EdgeInsets.all(10),
             child: Wrap(
               children: [
                 const Text(
@@ -922,17 +924,31 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                   style: TextStyle(color: lightFontColor),
                 ),
                 const SizedBox(
-                  height: 4,
+                  height: 10,
                 ),
                 const Divider(),
                 const SizedBox(
-                  height: 4,
+                  height: 10,
                 ),
                 ListTile(
-                  leading: const Icon(Icons.fireplace_rounded),
-                  title: const Text(
+                  trailing: (_selectedMode == "hot")
+                      ? const Icon(
+                          Icons.check_sharp,
+                          color: Colors.blue,
+                        )
+                      : null,
+                  leading: Icon(Icons.fireplace_rounded,
+                      color: (_selectedMode == "hot")
+                          ? lightFontColor
+                          : darkFontColor),
+                  title: Text(
                     "Hot",
-                    style: TextStyle(color: lightFontColor),
+                    style: GoogleFonts.ibmPlexSans(
+                        fontSize: subHeaderFontSize,
+                        fontWeight: FontWeight.w500,
+                        color: _selectedMode == "hot"
+                            ? lightFontColor
+                            : darkFontColor),
                   ),
                   onTap: (() {
                     _selectedMode = "hot";
@@ -943,10 +959,24 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                   }),
                 ),
                 ListTile(
-                  leading: const Icon(Icons.new_releases_outlined),
-                  title: const Text(
+                  trailing: (_selectedMode == "new")
+                      ? const Icon(
+                          Icons.check_sharp,
+                          color: Colors.blue,
+                        )
+                      : null,
+                  leading: Icon(Icons.new_releases_outlined,
+                      color: (_selectedMode == "new")
+                          ? lightFontColor
+                          : darkFontColor),
+                  title: Text(
                     "New",
-                    style: TextStyle(color: lightFontColor),
+                    style: GoogleFonts.ibmPlexSans(
+                        fontSize: subHeaderFontSize,
+                        fontWeight: FontWeight.w500,
+                        color: _selectedMode == "new"
+                            ? lightFontColor
+                            : darkFontColor),
                   ),
                   onTap: (() {
                     _selectedMode = "new";
@@ -957,10 +987,24 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                   }),
                 ),
                 ListTile(
-                  leading: const Icon(Icons.fireplace_rounded),
-                  title: const Text(
+                  trailing: (_selectedMode == "top")
+                      ? const Icon(
+                          Icons.check_sharp,
+                          color: Colors.blue,
+                        )
+                      : null,
+                  leading: Icon(Icons.fireplace_rounded,
+                      color: (_selectedMode == "top")
+                          ? lightFontColor
+                          : darkFontColor),
+                  title: Text(
                     "Top",
-                    style: TextStyle(color: lightFontColor),
+                    style: GoogleFonts.ibmPlexSans(
+                        fontSize: subHeaderFontSize,
+                        fontWeight: FontWeight.w500,
+                        color: _selectedMode == "top"
+                            ? lightFontColor
+                            : darkFontColor),
                   ),
                   onTap: (() {
                     _selectedMode = "top";
