@@ -69,5 +69,9 @@ const forgetUsernameAndroid = '/forgetUsernameAndroud';
 const interesetesScreen = '/interesetesScreen';
 const chooseGenderScreen = '/chooseGenderScreen';
 const chooseProfileImgScreen = '/chooseProfileImgScreen';
+//---------------------------------------
+// ------subreddit page route---------
+//---------------------------------------
+const subredditPageScreenRoute = "/subredditPageScreen";
 const historyPageScreenRoute = '/HistoryPageScreen';
 const createCommunityScreenRoute = '/CreateCommunityScreen';

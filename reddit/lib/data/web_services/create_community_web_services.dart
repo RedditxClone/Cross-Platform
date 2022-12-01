@@ -38,11 +38,10 @@ class CreateCommunityWebServices {
 
   Future<bool> getIfNameAvailable(String subredditName) async {
     try {
-      Response response =
-          await dio.get('subreddit/r/$subredditName/available',
-              options: Options(
-                headers: {"Authorization": "Bearer $token"},
-              ));
+      Response response = await dio.get('subreddit/r/$subredditName/available',
+          options: Options(
+            headers: {"Authorization": "Bearer $token"},
+          ));
 
       if (response.statusCode == 200) {
         debugPrint("available");

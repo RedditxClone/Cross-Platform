@@ -20,7 +20,8 @@ class PostModel {
     text = json['text'];
     nsfw = json['nsfw'];
     spoiler = json['spoiler'];
-    flairs = json['flairs'].cast<String>();
+    flairs = (json['flairs']).cast<String>();
+
   }
 
   Map<String, dynamic> toJson() {
@@ -33,4 +34,14 @@ class PostModel {
     data['flairs'] = flairs;
     return data;
   }
+
+  void copy(PostModel other) {
+    subredditId = other.subredditId;
+    title = other.title;
+    text = other.text;
+    nsfw = other.nsfw;
+    spoiler = other.spoiler;
+    flairs = other.flairs;
+  }
 }
+
