@@ -106,40 +106,32 @@ class _HistoryPageScreenState extends State<HistoryPageScreen> {
               child: Expanded(
                 flex: 3,
                 child: Column(children: [
-                                                                Container(
-                                                height: 50,
-                                                decoration: BoxDecoration(
-                                                    color: cardsColor,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            3)),
-                                                child: Row(children: [
-                                                  const SizedBox(
-                                                    width: 8,
-                                                  ),
-                                                  _createButtons(
-                                                      'Hot',
-                                                      Icons.fireplace_rounded,
-                                                      'hot'),
-                                                  const SizedBox(
-                                                    width: 4,
-                                                  ),
-                                                  _createButtons(
-                                                      'New',
-                                                      Icons
-                                                          .new_releases_outlined,
-                                                      'new'),
-                                                  const SizedBox(
-                                                    width: 4,
-                                                  ),
-                                                  _createButtons(
-                                                      'Top',
-                                                      Icons
-                                                          .file_upload_outlined,
-                                                      'top'),
-                                                ]),
-                                              ),
-
+                  Container(
+                    height: 50,
+                    decoration: BoxDecoration(
+                        color: cardsColor,
+                        borderRadius: BorderRadius.circular(3)),
+                    child: Row(children: [
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      _createButtons(
+                          'Recent', Icons.timelapse_outlined, 'recent'),
+                      const SizedBox(
+                        width: 4,
+                      ),
+                      _createButtons('Upvoted', Icons.trending_up, 'upvoted'),
+                      const SizedBox(
+                        width: 4,
+                      ),
+                      _createButtons(
+                          'Downvoted', Icons.trending_down, 'downvoted'),
+                      const SizedBox(
+                        width: 4,
+                      ),
+                      _createButtons('Hidden', Icons.hide_source, 'hidden'),
+                    ]),
+                  ),
                   _buildPosts(),
                 ]),
               ),
@@ -249,5 +241,27 @@ class _HistoryPageScreenState extends State<HistoryPageScreen> {
                 ),
               ],
             )));
+  }
+
+  _createButtons(String title, IconData icon, String mode) {
+    return TextButton.icon(
+      label: Text(title),
+      style: IconButton.styleFrom(
+        foregroundColor: _selectedMode == mode ? lightFontColor : darkFontColor,
+        backgroundColor:
+            _selectedMode == mode ? textFeildColor : Colors.transparent,
+        elevation: 0,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+          Radius.circular(20),
+        )),
+      ),
+      onPressed: () {
+        _selectedMode = mode;
+        _selectedModeIcon = icon;
+        BlocProvider.of<HistoryPageCubit>(context).getHistoryPage(userID, mode);
+      },
+      icon: Icon(icon),
+    );
   }
 }
