@@ -26,11 +26,6 @@ class _EmailSettingsWebState extends State<EmailSettingsWeb> {
       (newValue) => _emailSettings.inboxMessages = newValue,
       "inbox_messages"
     ],
-    "Chat requests": [
-      _emailSettings.chatRequests,
-      (newValue) => _emailSettings.chatRequests = newValue,
-      "chat_requests"
-    ],
   };
   late Map<String, List<dynamic>> section2 = {
     "New user welcome": [
@@ -67,30 +62,6 @@ class _EmailSettingsWebState extends State<EmailSettingsWeb> {
       _emailSettings.newFollowers,
       (newValue) => _emailSettings.newFollowers = newValue,
       "new_followers"
-    ],
-  };
-  late Map<String, List<dynamic>> section3 = {
-    "Daily Digest": [
-      _emailSettings.dailyDigest,
-      (newValue) => _emailSettings.dailyDigest = newValue,
-      "daily_digest"
-    ],
-    "Weekly Recap": [
-      _emailSettings.weeklyRecap,
-      (newValue) => _emailSettings.weeklyRecap = newValue,
-      "weekly_recap"
-    ],
-    "Community Discovery": [
-      _emailSettings.communityDiscovery,
-      (newValue) => _emailSettings.communityDiscovery = newValue,
-      "community_discovery"
-    ],
-  };
-  late Map<String, List<dynamic>> section4 = {
-    "Unsubscribe from all emails": [
-      _emailSettings.unsubscribeEmails,
-      (newValue) => _emailSettings.unsubscribeEmails = newValue,
-      "unsubscribe_emails"
     ],
   };
 
@@ -207,19 +178,6 @@ class _EmailSettingsWebState extends State<EmailSettingsWeb> {
                   children: _createSection("ACTIVITY", section2),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 45),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: _createSection("NEWSLETTERS", section3),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 45, bottom: 30),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: _createSection("", section4)),
-              )
             ]),
           ),
         );
