@@ -418,7 +418,7 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                         background:
                             Stack(fit: StackFit.expand, children: <Widget>[
                       Image.asset(
-                        'assets/images/OIP.png',
+                        'assets/images/cover.jpg',
                         width: double.maxFinite,
                         fit: BoxFit.cover,
                       ),
@@ -519,7 +519,7 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                           CircleAvatar(
                             radius: 30,
                             backgroundImage: AssetImage(
-                              'assets/images/subredditCover.jpg',
+                              'assets/images/ironman.jpg',
                             ),
                           ),
                         ])
