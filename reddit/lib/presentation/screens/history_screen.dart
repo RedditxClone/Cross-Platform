@@ -49,226 +49,15 @@ class _HistoryPageScreenState extends State<HistoryPageScreen> {
         : null;
   }
 
-  Widget _buildSideBar() {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 10.0),
-          child: SizedBox(
-              child: Card(
-            color: const Color.fromARGB(255, 81, 80, 80),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        "About Community",
-                        style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500),
-                      ),
-                      IconButton(onPressed: () {}, icon: const Icon(Icons.list))
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    children: const [
-                      Icon(
-                        Icons.cake,
-                        color: Colors.white,
-                      ),
-                      SizedBox(
-                        width: 4,
-                      ),
-                      //TODO:: API REQueST
-                      Text(
-                        "Created 01/10/2022",
-                        style: TextStyle(color: Colors.grey),
-                      )
-                    ],
-                  ),
-                  SizedBox(
-                    width: double.maxFinite,
-                    child: TextButton(
-                        style: TextButton.styleFrom(
-                          foregroundColor: Colors.black,
-                          backgroundColor: Colors.white,
-                          shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.all(
-                            Radius.circular(20),
-                          )),
-                        ),
-                        onPressed: () {},
-                        child: const Text("Create Post")),
-                  ),
-
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  const Divider(),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  //TODO:: API REQueST
-                  const Text(
-                    "5",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  const Text(
-                    "Members",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  const Divider(),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  SizedBox(
-                    width: double.maxFinite,
-                    child: TextButton(
-                        style: TextButton.styleFrom(
-                          foregroundColor: Colors.black,
-                          backgroundColor: Colors.white,
-                          shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.all(
-                            Radius.circular(20),
-                          )),
-                        ),
-                        onPressed: () {},
-                        child: const Text("Create Post")),
-                  ),
-                  const Divider(),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  SizedBox(
-                    width: double.maxFinite,
-                    child: TextButton(
-                        style: TextButton.styleFrom(
-                          foregroundColor: Colors.black,
-                          backgroundColor: Colors.white,
-                          shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.all(
-                            Radius.circular(20),
-                          )),
-                        ),
-                        onPressed: () {},
-                        child: const Text("New Post")),
-                  ),
-                  const SizedBox(height: 10),
-
-                  SizedBox(
-                    width: double.maxFinite,
-                    child: TextButton(
-                        style: TextButton.styleFrom(
-                          foregroundColor: Colors.black,
-                          backgroundColor: Colors.white,
-                          shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.all(
-                            Radius.circular(20),
-                          )),
-                        ),
-                        onPressed: () {},
-                        child: const Text("Create Post")),
-                  ),
-
-                  const SizedBox(height: 10),
-                ],
-              ),
-            ),
-          )),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 10.0),
-          child: SizedBox(
-              width: double.infinity,
-              child: Card(
-                color: const Color.fromARGB(255, 81, 80, 80),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                  child: Column(
-                    children: [
-                      Text(
-                        "You're a moderator of these communities",
-                        style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      // OutlinedButton(
-                      //     style: TextButton.styleFrom(
-                      //       backgroundColor: Colors.transparent,
-                      //       foregroundColor: (Colors.white),
-                      //       side: const BorderSide(
-                      //           color: Colors.white, width: 1),
-                      //       shape: const RoundedRectangleBorder(
-                      //           borderRadius: BorderRadius.all(
-                      //         Radius.circular(20),
-                      //       )),
-                      //     ),
-                      //     onPressed: () {},
-                      //     child: Row(
-                      //       mainAxisAlignment: MainAxisAlignment.center,
-                      //       children: const [
-                      //         Icon(Icons.mail_outlined),
-                      //         SizedBox(
-                      //           width: 4,
-                      //         ),
-                      //         Text("Joined"),
-                      //       ],
-                      //     )),
-                      // for (String text in _Subredditsmoderator!)
-                      //   Column(
-                      //     children: [
-                      //       Text(
-                      //         text,
-                      //         style: TextStyle(color: _frontColor),
-                      //       ),
-                      //       const SizedBox(
-                      //         height: 10,
-                      //       )
-                      //     ],
-                      //   ),
-                      const SizedBox(height: 10),
-                    ],
-                  ),
-                ),
-              )),
-        )
-      ],
-    );
-  }
-
   Widget _buildPosts() {
     return ListView.builder(
       shrinkWrap: true,
       itemCount: 5,
       itemBuilder: (context, position) {
-        return SizedBox(
+        return const SizedBox(
           height: 200,
           child: Card(
-            color: const Color.fromARGB(255, 81, 80, 80),
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Text(
-                "Post number: $position",
-                style: const TextStyle(color: Colors.white, fontSize: 22.0),
-              ),
-            ),
+            color: Color.fromARGB(255, 81, 80, 80),
           ),
         );
       },
@@ -312,19 +101,12 @@ class _HistoryPageScreenState extends State<HistoryPageScreen> {
             child: Container(
               width: MediaQuery.of(context).size.width,
               padding: const EdgeInsets.all(20.0),
-              child:
-                  Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Expanded(
-                  flex: 3,
-                  child: Column(children: [
-                    _buildPosts(),
-                  ]),
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                Expanded(flex: 1, child: _buildSideBar())
-              ]),
+              child: Expanded(
+                flex: 3,
+                child: Column(children: [
+                  _buildPosts(),
+                ]),
+              ),
             ),
           );
   }

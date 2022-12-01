@@ -171,7 +171,7 @@ class AppRouter {
             builder: (_) => BlocProvider.value(
                   value: historyPageCubit,
                   child: HistoryPageScreen(
-                    userID: "Disastrous_Welcome96",
+                    userID: "6388a61b5e0b583f4a79e41a",
                   ),
                 ));
       case createCommunityScreenRoute:
