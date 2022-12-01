@@ -10,7 +10,7 @@ class EmailSettingsRepository {
 
   Future<EmailSettings> getEmailSettings() async {
     final emailSettingsData = await emailSettingsWebServices.getEmailSettings();
-    return EmailSettings.fromJson(jsonDecode(emailSettingsData));
+    return EmailSettings.fromJson(emailSettingsData);
   }
 
   Future<void> updateEmailSettings(EmailSettings updatedEmailSettings) async {
@@ -18,4 +18,3 @@ class EmailSettingsRepository {
     await emailSettingsWebServices.updateEmailSettings(settingsMap);
   }
 }
-
