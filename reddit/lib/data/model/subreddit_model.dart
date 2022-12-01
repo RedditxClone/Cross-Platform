@@ -28,7 +28,7 @@ class SubredditModel {
   }
 
   SubredditModel.fromJson(Map<String, dynamic> json) {
-    flairs = (json['flairs']) as List<String>;
+    flairs = (json['flairs']).cast<String>();
     isMod = json['isMod'];
     joined = json['joined'];
     icon = json['icon'];
@@ -36,7 +36,7 @@ class SubredditModel {
     subredditId = json['subredditId'];
     creationDate = DateTime.parse(json['creationDate']);
     description = json['description'];
-    moderators = json['moderators'] as List<String>;
+    moderators = json['moderators'].cast<String>();
     membersCount = json['membersCount'];
   }
   Map<String, dynamic> toJson() {

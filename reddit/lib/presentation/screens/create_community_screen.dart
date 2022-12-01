@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reddit/constants/colors.dart';
 import 'package:reddit/constants/font_sizes.dart';
+import 'package:reddit/constants/strings.dart';
 import 'package:reddit/data/model/create_community_model.dart';
 import '../../business_logic/cubit/create_community_cubit.dart';
 
@@ -118,8 +119,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
           if (!_mobilePlatform) {
             BlocProvider.of<CreateCommunityCubit>(context).close();
           }
-          Navigator.pop(context);
-          //TODO: go to subreddit page
+          Navigator.popAndPushNamed(context, subredditPageScreenRoute);
         }
         if (state is CreateCommunityFailedToCreate) {
           _warningText = 4;
