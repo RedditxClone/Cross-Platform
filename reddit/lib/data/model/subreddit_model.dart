@@ -1,4 +1,3 @@
-
 import 'package:reddit/data/model/post_model.dart';
 
 class SubredditModel {
@@ -29,7 +28,7 @@ class SubredditModel {
   }
 
   SubredditModel.fromJson(Map<String, dynamic> json) {
-    flairs = (json['flairs']).cast<String>();
+    flairs = (json['flairs']) as List<String>;
     isMod = json['isMod'];
     joined = json['joined'];
     icon = json['icon'];
@@ -37,7 +36,7 @@ class SubredditModel {
     subredditId = json['subredditId'];
     creationDate = DateTime.parse(json['creationDate']);
     description = json['description'];
-    moderators = json['moderators'].cast<String>();
+    moderators = json['moderators'] as List<String>;
     membersCount = json['membersCount'];
   }
   Map<String, dynamic> toJson() {

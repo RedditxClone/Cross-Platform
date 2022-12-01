@@ -22,7 +22,7 @@ class SubredditPageRepository {
 
   Future<SubredditModel> getSubredditInfo(String subredditName) async {
     return SubredditModel.fromJson(
-        jsonDecode(await subredditWebServices.getSubredditInfo(subredditName)));
+        await subredditWebServices.getSubredditInfo(subredditName));
   }
 
   Future<String> getSubredditIcon(String subreddit) async {
