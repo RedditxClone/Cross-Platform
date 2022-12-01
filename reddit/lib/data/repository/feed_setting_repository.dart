@@ -24,7 +24,7 @@ class FeedSettingRepository {
     final feedSettings = await feedSettingsWebServices.getFeedSettings();
     print("feed settings from repo:");
     print("$feedSettings");
-    return FeedSettingModel.fromJson(jsonDecode(feedSettings));
+    return FeedSettingModel.fromJson(feedSettings);
   }
 
   /// Map new Feed settings to Json and send it to web services class to make the PATCH request.
