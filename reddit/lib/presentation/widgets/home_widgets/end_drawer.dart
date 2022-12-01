@@ -195,7 +195,8 @@ class EndDrawer extends StatelessWidget {
               ListTile(
                 leading: const FaIcon(FontAwesomeIcons.clock),
                 title: const Text("History"),
-                onTap: () {},
+                onTap: () =>
+                    Navigator.of(context).pushNamed(historyPageScreenRoute),
               ),
               ListTile(
                 leading: const Icon(Icons.paste_outlined),

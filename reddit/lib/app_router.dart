@@ -19,6 +19,14 @@ import 'package:reddit/data/repository/subreddit_page_repository.dart';
 import 'package:reddit/data/web_services/subreddit_page_web_services.dart';
 import 'package:reddit/presentation/screens/subreddit_screen.dart';
 import 'package:reddit/business_logic/cubit/subreddit_page_cubit.dart';
+import 'package:reddit/business_logic/cubit/history_page_cubit.dart';
+
+import 'package:reddit/data/repository/history_page_repository.dart';
+
+import 'package:reddit/data/web_services/history_page_web_services.dart';
+
+import 'package:reddit/presentation/screens/history_screen.dart';
+
 import 'package:reddit/business_logic/cubit/create_community_cubit.dart';
 import 'package:reddit/data/repository/create_community_repository.dart';
 import 'package:reddit/data/web_services/create_community_web_services.dart';
@@ -88,6 +96,9 @@ class AppRouter {
   late SubredditPageCubit subredditPageCubit;
   late SubredditPageRepository subredditPageRepository;
   late SubredditWebServices subredditWebServices;
+  late HistoryPageCubit historyPageCubit;
+  late HistoryPageRepository historyPageRepository;
+  late HistoryPageWebServices historyPageWebServices;
   late SignupRepo signupRepo;
   late AuthCubit authCubit;
   late CreateCommunityRepository communityRepository;
@@ -115,6 +126,9 @@ class AppRouter {
     subredditWebServices = SubredditWebServices();
     subredditPageRepository = SubredditPageRepository(subredditWebServices);
     subredditPageCubit = SubredditPageCubit(subredditPageRepository);
+    historyPageWebServices = HistoryPageWebServices();
+    historyPageRepository = HistoryPageRepository(historyPageWebServices);
+    historyPageCubit = HistoryPageCubit(historyPageRepository);
     signupRepo = SignupRepo(SignupWebService());
     authCubit = AuthCubit(signupRepo);
 
@@ -163,6 +177,14 @@ class AppRouter {
                 value: subredditPageCubit,
                 child: const SubredditPageScreen(subredditId: "redditx_")));
 
+      case historyPageScreenRoute:
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider.value(
+                  value: historyPageCubit,
+                  child: HistoryPageScreen(
+                    userID: "6388a61b5e0b583f4a79e41a",
+                  ),
+                ));
       case createCommunityScreenRoute:
         return MaterialPageRoute(
             builder: (_) => BlocProvider.value(

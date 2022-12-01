@@ -73,4 +73,5 @@ const chooseProfileImgScreen = '/chooseProfileImgScreen';
 // ------subreddit page route---------
 //---------------------------------------
 const subredditPageScreenRoute = "/subredditPageScreen";
+const historyPageScreenRoute = '/HistoryPageScreen';
 const createCommunityScreenRoute = '/CreateCommunityScreen';
