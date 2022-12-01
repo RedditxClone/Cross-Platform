@@ -6,7 +6,7 @@ class DioHelper {
   static init() {
     dio = Dio(
       BaseOptions(
-        baseUrl: 'https://5b55fa34-8217-4320-ba92-424f557a660e.mock.pstmn.io/',
+        baseUrl: 'https://5b55fa34-8217-4320-ba92-424f557a660e.mock.pstmn.io',
         receiveDataWhenStatusError: true,
         sendTimeout: 5000,
         receiveTimeout: 5000,
@@ -45,9 +45,10 @@ class DioHelper {
 
   static Future patchData({
     required String url,
-    required Map<String, dynamic> data,
+    required dynamic data,
+    required Options? options,
   }) async {
-    var response = await dio.patch(url, data: data);
+    var response = await dio.patch(url, data: data, options: options);
     return response;
   }
 

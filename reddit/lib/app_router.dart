@@ -8,10 +8,14 @@ import 'package:reddit/business_logic/cubit/choose_profile_image_login_cubit.dar
 import 'package:reddit/presentation/screens/profile/others_profile_page_web.dart';
 import 'package:reddit/presentation/screens/profile/profile_page_web.dart';
 import 'package:reddit/presentation/screens/profile/profile_screen.dart';
+import 'business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
+import 'data/repository/singup_repo.dart';
+import 'data/web_services/authorization/signup_web_servide.dart';
 import 'presentation/screens/setting_tab_ui.dart';
 import 'package:reddit/presentation/screens/recaptcha_screen.dart'
     if (dart.library.html) 'package:reddit/presentation/screens/recaptcha_screen_web.dart'
     as recaptcha_screen;
+
 import 'package:reddit/business_logic/cubit/create_community_cubit.dart';
 
 import 'package:reddit/data/repository/create_community_repository.dart';
@@ -82,6 +86,8 @@ class AppRouter {
   late EmailSettingsCubit emailSettingsCubit;
   late EmailSettingsWebServices emailSettingsWebServices;
 
+  late SignupRepo signupRepo;
+  late AuthCubit authCubit;
   late CreateCommunityRepository communityRepository;
   late CreateCommunityCubit createCommunityCubit;
   late CreateCommunityWebServices communityWebServices;
@@ -103,6 +109,8 @@ class AppRouter {
     accountSettingsRepository =
         AccountSettingsRepository(AccountSettingsWebServices());
     accountSettingsCubit = AccountSettingsCubit(accountSettingsRepository);
+    signupRepo = SignupRepo(SignupWebService());
+    authCubit = AuthCubit(signupRepo);
 
     communityWebServices = CreateCommunityWebServices();
     communityRepository = CreateCommunityRepository(communityWebServices);
@@ -123,7 +131,10 @@ class AppRouter {
       case homePageRoute:
         user = settings.arguments as User?;
         return MaterialPageRoute(
-          builder: (_) => kIsWeb ? HomePageWeb(user) : HomePage(user),
+          builder: (_) => BlocProvider(
+            create: ((context) => authCubit),
+            child: kIsWeb ? HomePageWeb(user) : HomePage(user),
+          ),
         );
 
       case popularPageRoute:
@@ -159,11 +170,15 @@ class AppRouter {
       //   return MaterialPageRoute(
       //     builder: (_) => Home(user: user),
       //   );
-
       case SIGNU_PAGE2:
         final user = settings.arguments as User;
         return MaterialPageRoute(
-          builder: (_) => SignupWeb2(user: user),
+          builder: (_) => BlocProvider.value(
+            value: authCubit,
+            child: SignupWeb2(
+              user: user,
+            ),
+          ),
         );
       case forgetUsernameWeb:
         return MaterialPageRoute(
@@ -183,7 +198,10 @@ class AppRouter {
         );
       case signupScreen:
         return MaterialPageRoute(
-          builder: (_) => const SignupMobile(),
+          builder: (_) => BlocProvider.value(
+            value: authCubit,
+            child: const SignupMobile(),
+          ),
         );
       case forgetPasswordAndroid:
         return MaterialPageRoute(
