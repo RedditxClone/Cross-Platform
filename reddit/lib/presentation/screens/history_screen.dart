@@ -6,6 +6,8 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:reddit/business_logic/cubit/history_page_cubit.dart';
 import 'package:reddit/data/model/post_model.dart';
 
+import '../../constants/colors.dart';
+
 class HistoryPageScreen extends StatefulWidget {
   const HistoryPageScreen({super.key, required this.userID});
   final String userID;
@@ -104,6 +106,40 @@ class _HistoryPageScreenState extends State<HistoryPageScreen> {
               child: Expanded(
                 flex: 3,
                 child: Column(children: [
+                                                                Container(
+                                                height: 50,
+                                                decoration: BoxDecoration(
+                                                    color: cardsColor,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            3)),
+                                                child: Row(children: [
+                                                  const SizedBox(
+                                                    width: 8,
+                                                  ),
+                                                  _createButtons(
+                                                      'Hot',
+                                                      Icons.fireplace_rounded,
+                                                      'hot'),
+                                                  const SizedBox(
+                                                    width: 4,
+                                                  ),
+                                                  _createButtons(
+                                                      'New',
+                                                      Icons
+                                                          .new_releases_outlined,
+                                                      'new'),
+                                                  const SizedBox(
+                                                    width: 4,
+                                                  ),
+                                                  _createButtons(
+                                                      'Top',
+                                                      Icons
+                                                          .file_upload_outlined,
+                                                      'top'),
+                                                ]),
+                                              ),
+
                   _buildPosts(),
                 ]),
               ),
