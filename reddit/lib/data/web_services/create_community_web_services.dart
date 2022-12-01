@@ -1,14 +1,14 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:reddit/constants/strings.dart';
 
 class CreateCommunityWebServices {
-  bool useMockServer = true;
-  String mockUrl = "https://f1c179b0-0158-4a47-ba39-7b803b8ae58a.mock.pstmn.io";
   late Dio dio;
+  String token =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzODhhNjFiNWUwYjU4M2Y0YTc5ZTQxYSIsImlhdCI6MTY2OTg5OTgwMywiZXhwIjoxNjcwNzYzODAzfQ.19uD_QlcThGaS_lZ0iE92q0771WwJSB2jgWfJPTWkn8";
   CreateCommunityWebServices() {
     BaseOptions options = BaseOptions(
-      baseUrl: useMockServer ? mockUrl : baseUrl,
+      baseUrl: baseUrl,
       receiveDataWhenStatusError: true,
       connectTimeout: 20 * 1000, //20 secs
       receiveTimeout: 20 * 1000,
@@ -19,33 +19,40 @@ class CreateCommunityWebServices {
   /// Sends create community request to the server, the repository calls this function
   Future<bool> createCommunity(Map<String, dynamic> communityData) async {
     try {
-      print(communityData);
-      Response response = await dio.post(
-        '/api/subreddit',
-        data: communityData,
-      );
+      Response response = await dio.post('subreddit',
+          data: communityData,
+          options: Options(
+            headers: {"Authorization": "Bearer $token"},
+          ));
       if (response.statusCode == 201) {
         return true;
-      } else {}
+      } else {
+        return false;
+      }
     } on DioError catch (e) {
       debugPrint(e.response?.statusCode.toString());
+      debugPrint(e.response?.statusMessage.toString());
+      return false;
     }
-    return false;
   }
-/**
- * 
- */
+
   Future<bool> getIfNameAvailable(String subredditName) async {
     try {
-      Response response = await dio.get(
-        '/api/subreddit/r/$subredditName/available',
-      );
+      Response response =
+          await dio.get('subreddit/r/$subredditName/available',
+              options: Options(
+                headers: {"Authorization": "Bearer $token"},
+              ));
+
       if (response.statusCode == 200) {
+        debugPrint("available");
         return true;
-      } else {}
-    } catch (e) {
-      // debugPrint(e.toString());
+      } else {
+        return false;
+      }
+    } on DioError catch (e) {
+      debugPrint(e.response?.statusCode.toString());
+      return false;
     }
-    return false;
   }
 }

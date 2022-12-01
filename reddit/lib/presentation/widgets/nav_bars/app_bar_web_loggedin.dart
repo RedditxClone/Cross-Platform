@@ -1,9 +1,13 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:reddit/business_logic/cubit/create_community_cubit.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/data/model/signin.dart';
+import 'package:reddit/data/repository/create_community_repository.dart';
+import 'package:reddit/data/web_services/create_community_web_services.dart';
 import 'package:reddit/presentation/screens/create_community_screen.dart';
 import 'package:reddit/presentation/widgets/nav_bars/popup_menu_logged_in.dart';
 
@@ -22,7 +26,11 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
     showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (_) => const CreateCommunityScreen());
+        builder: (_) => BlocProvider(
+              create: (context) => CreateCommunityCubit(
+                  CreateCommunityRepository(CreateCommunityWebServices())),
+              child: const CreateCommunityScreen(),
+            ));
   }
 
   void routeToPage(val) {
