@@ -21,6 +21,11 @@ class HistoryPageCubit extends Cubit<HistoryPageState> {
     });
   }
 
+  void changeUI() {
+    emit(ButtonPressed());
+    emit(ChangeUI());
+  }
+
   void buttonPressed() {
     emit(ButtonPressed());
   }

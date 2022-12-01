@@ -2,11 +2,13 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:reddit/business_logic/cubit/history_page_cubit.dart';
 import 'package:reddit/data/model/post_model.dart';
 
 import '../../constants/colors.dart';
+import '../../constants/font_sizes.dart';
 
 class HistoryPageScreen extends StatefulWidget {
   const HistoryPageScreen({super.key, required this.userID});
@@ -16,12 +18,11 @@ class HistoryPageScreen extends StatefulWidget {
 }
 
 class _HistoryPageScreenState extends State<HistoryPageScreen> {
+  bool _emptyList = false;
   String _selectedMode = "recent";
+  bool _classicView = false;
   IconData _selectedModeIcon = Icons.timelapse_outlined;
 
-  final bool _darkTheme = false;
-  late Color _backColor;
-  late Color _frontColor;
   final bool _mobilePlatform =
       defaultTargetPlatform == TargetPlatform.android ||
           defaultTargetPlatform == TargetPlatform.iOS;
@@ -30,36 +31,85 @@ class _HistoryPageScreenState extends State<HistoryPageScreen> {
   _HistoryPageScreenState();
   @override
   void initState() {
-    _backColor = _darkTheme ? const Color.fromARGB(204, 0, 0, 0) : Colors.white;
-    _frontColor = _darkTheme ? Colors.white : Colors.black;
-
     super.initState();
     userID = widget.userID;
-    BlocProvider.of<HistoryPageCubit>(context).getHistoryPage(userID, "hot");
+    BlocProvider.of<HistoryPageCubit>(context)
+        .getHistoryPage(userID, "upvoted");
   }
 
   PreferredSizeWidget? _buildAppBar() {
     return _mobilePlatform
         ? AppBar(
             actions: [
-              IconButton(onPressed: () {}, icon: const Icon(Icons.list))
+              PopupMenuButton(
+                  itemBuilder: (context) => <PopupMenuEntry>[
+                        PopupMenuItem(
+                          height: 20,
+                          onTap: () {
+                            _emptyList = true;
+                            BlocProvider.of<HistoryPageCubit>(context)
+                                .changeUI();
+                          },
+                          child: Container(
+                            child: Row(children: const [
+                              Icon(
+                                Icons.cancel_outlined,
+                                color: lightFontColor,
+                              ),
+                              Text(
+                                "Clear history",
+                                style: TextStyle(color: lightFontColor),
+                              )
+                            ]),
+                          ),
+                        )
+                      ],
+                  icon: const Icon(Icons.list))
             ],
             title: const Text("History"),
-            foregroundColor: _frontColor,
-            backgroundColor: _backColor,
+            foregroundColor: lightFontColor,
+            backgroundColor: mobileCardsColor,
           )
         : null;
   }
 
   Widget _buildPosts() {
+    if (_emptyList) return Container();
+    if (_classicView) {
+      return ListView.builder(
+        shrinkWrap: true,
+        itemCount: 1,
+        itemBuilder: (context, position) {
+          return Container(
+            color: _mobilePlatform ? mobileCardsColor : cardsColor,
+            child: Column(
+              children: [
+                for (int i = 0; i < 5; i++)
+                  Column(
+                    children: [
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height / 12,
+                      ),
+                      if (i != 4)
+                        const Divider(
+                          thickness: 2,
+                        )
+                    ],
+                  ),
+              ],
+            ),
+          );
+        },
+      );
+    }
     return ListView.builder(
       shrinkWrap: true,
       itemCount: 5,
       itemBuilder: (context, position) {
-        return const SizedBox(
-          height: 200,
+        return SizedBox(
+          height: 100,
           child: Card(
-            color: Color.fromARGB(255, 81, 80, 80),
+            color: _mobilePlatform ? mobileCardsColor : cardsColor,
           ),
         );
       },
@@ -72,29 +122,45 @@ class _HistoryPageScreenState extends State<HistoryPageScreen> {
             child: Column(children: [
             SizedBox(
               height: 50,
-              child: TextButton(
-                style: TextButton.styleFrom(
-                  foregroundColor: _frontColor,
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                ),
-                onPressed: () => _showBottomSheet(context),
-                child: Row(
-                  children: [
-                    Icon(_selectedModeIcon),
-                    const SizedBox(
-                      width: 4,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      foregroundColor: darkFontColor,
+                      backgroundColor: Colors.transparent,
+                      elevation: 0,
                     ),
-                    Text(_selectedMode),
-                    const SizedBox(
-                      width: 4,
+                    onPressed: () => _showBottomSheet(context, true),
+                    child: Row(
+                      children: [
+                        Icon(_selectedModeIcon),
+                        const SizedBox(
+                          width: 4,
+                        ),
+                        Text(_selectedMode),
+                        const SizedBox(
+                          width: 4,
+                        ),
+                        const Icon(
+                          Icons.arrow_drop_down,
+                          color: darkFontColor,
+                        )
+                      ],
                     ),
-                    const Icon(
-                      Icons.arrow_drop_down,
-                      color: Colors.grey,
-                    )
-                  ],
-                ),
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      _classicView
+                          ? Icons.view_list
+                          : Icons.crop_square_outlined,
+                      color: darkFontColor,
+                    ),
+                    onPressed: () {
+                      _showBottomSheet(context, false);
+                    },
+                  )
+                ],
               ),
             ),
             _buildPosts()
@@ -142,11 +208,8 @@ class _HistoryPageScreenState extends State<HistoryPageScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _mobilePlatform
-          ? _darkTheme
-              ? Colors.black
-              : Colors.white
-          : Colors.black,
+      backgroundColor:
+          _mobilePlatform ? mobileBackgroundColor : backgroundColor,
       appBar: _buildAppBar(),
       body: BlocBuilder<HistoryPageCubit, HistoryPageState>(
           builder: (context, state) {
@@ -158,87 +221,167 @@ class _HistoryPageScreenState extends State<HistoryPageScreen> {
     );
   }
 
-  _showBottomSheet(BuildContext context) {
+  _showBottomSheet(BuildContext context, bool ifPosts) {
     showModalBottomSheet(
-        backgroundColor: _backColor,
+        backgroundColor: mobileTextFeildColor,
         enableDrag: true,
         context: context,
         builder: (_) => Padding(
-            padding: const EdgeInsets.all(4),
-            child: Column(
+            padding: const EdgeInsets.all(10),
+            child: Wrap(
               children: [
                 const SizedBox(
                   height: 10,
                 ),
                 Text(
-                  "SORT HISTORY BY",
-                  style: TextStyle(color: _frontColor),
+                  ifPosts ? "SORT HISTORY BY" : "POST VIEW",
+                  style: GoogleFonts.ibmPlexSans(
+                      fontSize: subHeaderFontSize,
+                      fontWeight: FontWeight.w500,
+                      color: darkFontColor),
                 ),
                 const SizedBox(
-                  height: 4,
+                  height: 10,
                 ),
                 const Divider(
                   thickness: 2,
                 ),
                 const SizedBox(
-                  height: 4,
+                  height: 10,
                 ),
                 ListTile(
-                  leading: const Icon(Icons.timelapse_outlined),
-                  title: Text(
-                    "Recent",
-                    style: TextStyle(color: _frontColor),
-                  ),
-                  onTap: (() {
-                    _selectedMode = "recent";
-                    _selectedModeIcon = Icons.timelapse_outlined;
-                    BlocProvider.of<HistoryPageCubit>(context)
-                        .getHistoryPage(userID, _selectedMode);
-                    Navigator.of(context).pop();
-                  }),
-                ),
+                    trailing: (_selectedMode == "recent") && ifPosts
+                        ? const Icon(
+                            Icons.check_sharp,
+                            color: Colors.blue,
+                          )
+                        : null,
+                    leading: Icon(
+                        ifPosts
+                            ? Icons.timelapse_outlined
+                            : Icons.crop_square_outlined,
+                        color: ifPosts && _selectedMode == "recent" ||
+                                !ifPosts && !_classicView
+                            ? lightFontColor
+                            : darkFontColor),
+                    title: Text(
+                      ifPosts ? "Recent" : "Card",
+                      style: GoogleFonts.ibmPlexSans(
+                          fontSize: subHeaderFontSize,
+                          fontWeight: FontWeight.w500,
+                          color: ifPosts && _selectedMode == "recent" ||
+                                  !ifPosts && !_classicView
+                              ? lightFontColor
+                              : darkFontColor),
+                    ),
+                    onTap: ifPosts
+                        ? () {
+                            _selectedMode = "recent";
+                            _selectedModeIcon = Icons.timelapse_outlined;
+                            BlocProvider.of<HistoryPageCubit>(context)
+                                .getHistoryPage(userID, _selectedMode);
+                            Navigator.of(context).pop();
+                          }
+                        : () {
+                            _classicView = false;
+                            BlocProvider.of<HistoryPageCubit>(context)
+                                .changeUI();
+                            Navigator.of(context).pop();
+                          }),
                 ListTile(
-                  leading: const Icon(Icons.trending_up),
-                  title: Text(
-                    "Upvoted",
-                    style: TextStyle(color: _frontColor),
+                    trailing: (_selectedMode == "upvoted") && ifPosts
+                        ? const Icon(
+                            Icons.check_sharp,
+                            color: Colors.blue,
+                          )
+                        : null,
+                    leading: Icon(ifPosts ? Icons.trending_up : Icons.view_list,
+                        color: ifPosts && _selectedMode == "upvoted" ||
+                                !ifPosts && _classicView
+                            ? lightFontColor
+                            : darkFontColor),
+                    title: Text(
+                      ifPosts ? "Upvoted" : "Classic",
+                      style: GoogleFonts.ibmPlexSans(
+                          fontSize: subHeaderFontSize,
+                          fontWeight: FontWeight.w500,
+                          color: ifPosts && _selectedMode == "upvoted" ||
+                                  !ifPosts && _classicView
+                              ? lightFontColor
+                              : darkFontColor),
+                    ),
+                    onTap: ifPosts
+                        ? () {
+                            _selectedMode = "upvoted";
+                            _selectedModeIcon = Icons.trending_up;
+                            BlocProvider.of<HistoryPageCubit>(context)
+                                .getHistoryPage(userID, _selectedMode);
+                            Navigator.of(context).pop();
+                          }
+                        : () {
+                            _classicView = true;
+                            BlocProvider.of<HistoryPageCubit>(context)
+                                .changeUI();
+                            Navigator.of(context).pop();
+                          }),
+                if (ifPosts)
+                  ListTile(
+                    trailing: (_selectedMode == "downvoted")
+                        ? const Icon(
+                            Icons.check_sharp,
+                            color: Colors.blue,
+                          )
+                        : null,
+                    leading: Icon(Icons.trending_down,
+                        color: (_selectedMode == "downvoted")
+                            ? lightFontColor
+                            : darkFontColor),
+                    title: Text(
+                      "Downvoted",
+                      style: GoogleFonts.ibmPlexSans(
+                          fontSize: subHeaderFontSize,
+                          fontWeight: FontWeight.w500,
+                          color: _selectedMode == "downvoted"
+                              ? lightFontColor
+                              : darkFontColor),
+                    ),
+                    onTap: (() {
+                      _selectedMode = "downvoted";
+                      _selectedModeIcon = Icons.trending_down;
+                      BlocProvider.of<HistoryPageCubit>(context)
+                          .getHistoryPage(userID, _selectedMode);
+                      Navigator.of(context).pop();
+                    }),
                   ),
-                  onTap: (() {
-                    _selectedMode = "upvoted";
-                    _selectedModeIcon = Icons.trending_up;
-                    BlocProvider.of<HistoryPageCubit>(context)
-                        .getHistoryPage(userID, _selectedMode);
-                    Navigator.of(context).pop();
-                  }),
-                ),
-                ListTile(
-                  leading: const Icon(Icons.trending_down),
-                  title: Text(
-                    "Downvoted",
-                    style: TextStyle(color: _frontColor),
+                if (ifPosts)
+                  ListTile(
+                    trailing: (_selectedMode == "hidden")
+                        ? const Icon(
+                            Icons.check_sharp,
+                            color: Colors.blue,
+                          )
+                        : null,
+                    leading: Icon(Icons.hide_source,
+                        color: (_selectedMode == "hidden")
+                            ? lightFontColor
+                            : darkFontColor),
+                    title: Text(
+                      "Hidden",
+                      style: GoogleFonts.ibmPlexSans(
+                          fontSize: subHeaderFontSize,
+                          fontWeight: FontWeight.w500,
+                          color: _selectedMode == "hidden"
+                              ? lightFontColor
+                              : darkFontColor),
+                    ),
+                    onTap: (() {
+                      _selectedMode = "hidden";
+                      _selectedModeIcon = Icons.hide_source;
+                      BlocProvider.of<HistoryPageCubit>(context)
+                          .getHistoryPage(userID, _selectedMode);
+                      Navigator.of(context).pop();
+                    }),
                   ),
-                  onTap: (() {
-                    _selectedMode = "downvoted";
-                    _selectedModeIcon = Icons.trending_down;
-                    BlocProvider.of<HistoryPageCubit>(context)
-                        .getHistoryPage(userID, _selectedMode);
-                    Navigator.of(context).pop();
-                  }),
-                ),
-                ListTile(
-                  leading: const Icon(Icons.hide_source),
-                  title: Text(
-                    "Hidden",
-                    style: TextStyle(color: _frontColor),
-                  ),
-                  onTap: (() {
-                    _selectedMode = "hidden";
-                    _selectedModeIcon = Icons.hide_source;
-                    BlocProvider.of<HistoryPageCubit>(context)
-                        .getHistoryPage(userID, _selectedMode);
-                    Navigator.of(context).pop();
-                  }),
-                ),
               ],
             )));
   }
