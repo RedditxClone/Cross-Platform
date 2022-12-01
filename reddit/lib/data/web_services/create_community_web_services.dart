@@ -19,7 +19,7 @@ class CreateCommunityWebServices {
   /// Sends create community request to the server, the repository calls this function
   Future<bool> createCommunity(Map<String, dynamic> communityData) async {
     try {
-      Response response = await dio.post('/api/subreddit',
+      Response response = await dio.post('subreddit',
           data: communityData,
           options: Options(
             headers: {"Authorization": "Bearer $token"},
@@ -39,7 +39,7 @@ class CreateCommunityWebServices {
   Future<bool> getIfNameAvailable(String subredditName) async {
     try {
       Response response =
-          await dio.get('/api/subreddit/r/$subredditName/available',
+          await dio.get('subreddit/r/$subredditName/available',
               options: Options(
                 headers: {"Authorization": "Bearer $token"},
               ));
