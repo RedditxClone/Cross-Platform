@@ -117,8 +117,8 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CreateCommunityCubit, CreateCommunityState>(
-      builder: (context, state) {
+    return BlocConsumer<CreateCommunityCubit, CreateCommunityState>(
+      listener: (context, state) {
         if (state is CreateCommunityCreated) {
           BlocProvider.of<CreateCommunityCubit>(context).close();
           Navigator.pushReplacement(
@@ -131,6 +131,8 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                         subredditId: _createCommunityModel.communityName,
                       ))));
         }
+      },
+      builder: (context, state) {
         if (state is CreateCommunityFailedToCreate) {
           _warningText = 4;
         }

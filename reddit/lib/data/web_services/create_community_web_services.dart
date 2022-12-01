@@ -8,7 +8,7 @@ class CreateCommunityWebServices {
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzODhhNjFiNWUwYjU4M2Y0YTc5ZTQxYSIsImlhdCI6MTY2OTg5OTgwMywiZXhwIjoxNjcwNzYzODAzfQ.19uD_QlcThGaS_lZ0iE92q0771WwJSB2jgWfJPTWkn8";
   CreateCommunityWebServices() {
     BaseOptions options = BaseOptions(
-      baseUrl: baseUrl,
+      baseUrl: "https://swproject.demosfortest.com/api/",
       receiveDataWhenStatusError: true,
       connectTimeout: 20 * 1000, //20 secs
       receiveTimeout: 20 * 1000,
@@ -38,11 +38,10 @@ class CreateCommunityWebServices {
 
   Future<bool> getIfNameAvailable(String subredditName) async {
     try {
-      Response response =
-          await dio.get('subreddit/r/$subredditName/available',
-              options: Options(
-                headers: {"Authorization": "Bearer $token"},
-              ));
+      Response response = await dio.get('subreddit/r/$subredditName/available',
+          options: Options(
+            headers: {"Authorization": "Bearer $token"},
+          ));
 
       if (response.statusCode == 200) {
         debugPrint("available");

@@ -910,12 +910,12 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
 
   _showBottomSheet(BuildContext context) {
     showModalBottomSheet(
-        backgroundColor: backgroundColor,
+        backgroundColor: mobileTextFeildColor,
         enableDrag: true,
         context: context,
         builder: (_) => Padding(
             padding: const EdgeInsets.all(4),
-            child: Column(
+            child: Wrap(
               children: [
                 const Text(
                   "SORT POSTS BY",
