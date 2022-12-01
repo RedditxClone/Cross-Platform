@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:reddit/data/web_services/create_community_web_services.dart';
 
 class CreateCommunityRepository {
@@ -6,8 +7,10 @@ class CreateCommunityRepository {
   CreateCommunityRepository(this.communityWebServices);
 
   Future<bool> createCommunity(newCommunityData) async {
-    final bool ifCreated =
-        await communityWebServices.createCommunity(newCommunityData.toJson());
+    debugPrint("in repo");
+    Map<String, dynamic> data = newCommunityData.toJson();
+    debugPrint("before call web services");
+    final bool ifCreated = await communityWebServices.createCommunity(data);
     return ifCreated;
   }
 
