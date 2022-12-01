@@ -17,7 +17,7 @@ class DiscoverPageWebServices {
     dio = Dio(options);
   }
 
-  Future<dynamic> getAllRandomPosts() async {
+  Future<List<dynamic>> getAllRandomPosts() async {
     try {
       Response response = await dio.get('discover/randomposts');
       print(response.data);
