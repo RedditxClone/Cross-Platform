@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 const Color backgroundColor = Color(0xff030303);
-const Color mobileBackgroundColor = Color(0xff0a0a0a);
+const Color mobileBackgroundColor = Color(0xff121212);
 const Color cardsColor = Color(0xff1a1a1b);
-const Color mobileCardsColor = Color(0xff121212);
+const Color mobileCardsColor = Color(0xff0a0a0a);
 const Color darkCardsColor = Color(0xff161617);
 const Color lightFontColor = Color(0xffd7dadc);
 const Color darkFontColor = Color(0xff818383);

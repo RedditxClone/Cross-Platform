@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reddit/business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/presentation/widgets/home_widgets/left_list_not_logged_in.dart';
@@ -144,7 +146,7 @@ class _HomeWebState extends State<HomeWeb> {
       ),
     );
   }
-
+  
   @override
   Widget build(BuildContext context) {
     responsive = Responsive(context);

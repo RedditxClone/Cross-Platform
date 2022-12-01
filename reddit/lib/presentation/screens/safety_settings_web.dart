@@ -37,13 +37,6 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
   void blockUser(String username) {
     BlocProvider.of<SafetySettingsCubit>(context)
         .blockUser(safetySettings!, username);
-
-    // if () {
-    //   displayMsg(context, Colors.blue, '${blockedUsers.text} is now blocked');
-    // } else {
-    //   displayMsg(
-    //       context, Colors.red, 'An error has occured. please try again later');
-    // }
     blockedUsers.text = '';
   }
 
@@ -107,8 +100,9 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
     );
   }
 
-  /// displayed in the bottom of the page on every change the user make to inform him if the change
-  /// that the changes are saved or there was an error that occured
+  /// [context] : build context.
+  /// [color] : color of the error msg to be displayer e.g. ('red' : error , 'blue' : success ).
+  /// [title] : message to be displayed to the user.
   void displayMsg(BuildContext context, Color color, String title) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       width: 400,

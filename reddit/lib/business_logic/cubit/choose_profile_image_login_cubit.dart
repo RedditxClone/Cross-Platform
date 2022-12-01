@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
@@ -12,6 +13,7 @@ class ChooseProfileImageLoginCubit extends Cubit<ChooseProfileImageLoginState> {
       : super(ChooseProfileImageLoginInitial());
 
   void changeProfilephoto(File img) {
+    if (isClosed) return;
     settingsRepository.updateImage('profilephoto', img).then((image) {
       emit(ChooseProfileImageLoginChanged(image));
     });

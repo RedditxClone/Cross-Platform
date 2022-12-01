@@ -59,7 +59,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
       builder: (context, state) {
         if (state is AccountSettingsLoaded) {
           accountSettings = state.accSettings;
-          _isMan = accountSettings!.gender == "M" ? true : false;
+          _isMan = accountSettings!.gender == "male" ? true : false;
           // Get country name from country code returned from server
           for (var map in countryNamesMap) {
             if (map["code"] == accountSettings!.countryCode) {
@@ -550,7 +550,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                         : const Icon(Icons.circle_outlined),
                     onTap: () {
                       Navigator.pop(context);
-                      accountSettings!.gender = "M";
+                      accountSettings!.gender = "male";
                       // Update settings request
                       BlocProvider.of<AccountSettingsCubit>(context)
                           .updateAccountSettings(accountSettings!);
@@ -569,7 +569,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                       //   _isMan = false;
                       // });
                       Navigator.pop(context);
-                      accountSettings!.gender = "W";
+                      accountSettings!.gender = "female";
                       // Update settings request
                       BlocProvider.of<AccountSettingsCubit>(context)
                           .updateAccountSettings(accountSettings!);

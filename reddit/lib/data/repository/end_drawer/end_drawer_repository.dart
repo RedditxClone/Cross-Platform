@@ -6,12 +6,18 @@ class EndDrawerRepository {
   final SettingsWebServices settingsWebServices;
   EndDrawerRepository(this.settingsWebServices);
 
+  /// [key] : [String] that defines the type of photo we want to change 'coverPhoto' or 'profilePhoto'
+  /// [val] : The new photo as a [File].
+  /// Returns the path of the updated image or null if and error occured
+  /// This function calls the function [SettingsWebServices.updateImage] that updates any photo on mobile.
   Future<dynamic> updateImage(String key, File val) async {
     final newVal = await settingsWebServices.updateImage(val, key);
     print(newVal);
     return jsonDecode(newVal)[key];
   }
 
+  /// [changed] : a [Map] that contains only the changed profile settings.
+  /// Returns status code `200` if success and `401` if an error occured.
   Future<dynamic> updatePrefs(Map changed) async {
     final newVal = await settingsWebServices.updatePrefs(changed);
     return newVal;

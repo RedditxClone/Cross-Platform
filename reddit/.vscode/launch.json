@@ -12,7 +12,7 @@
                 "--web-port",
                 "5000",
                 "--dart-define",
-                "BASE_URL=testurlfromcmd",
+                "BASE_URL=https://swproject.demosfortest.com/api/",
             ]
         },
         {

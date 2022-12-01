@@ -5,12 +5,14 @@ import 'package:reddit/data/repository/end_drawer/end_drawer_repository.dart';
 
 part 'end_drawer_state.dart';
 
+/// This class is responsible for getting - updating end drawer data on mobile.
 class EndDrawerCubit extends Cubit<EndDrawerState> {
   final EndDrawerRepository endDrawerRepository;
   EndDrawerCubit(this.endDrawerRepository) : super(EndDrawerInitial());
 
-  /// change the profile photo from mobile: send to the backend the new image
-  /// change the profile photo from mobile: send to the backend the new image
+  /// [img] : The new profile photo as a File
+  /// Emits sate [EndDrawerProfilePictureChanged] on successfully updating profile photo (on mobile)
+  /// This function calls the function [EndDrawerRepository.updateImage] that prepares the PATCH request
   void changeProfilephoto(File img) {
     endDrawerRepository.updateImage('profilephoto', img).then((image) {
       emit(EndDrawerProfilePictureChanged(image));

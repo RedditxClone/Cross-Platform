@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:bloc/bloc.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:reddit/data/model/user_settings.dart';
 import 'package:reddit/data/repository/settings_repository.dart';
 
@@ -13,16 +13,22 @@ class SettingsCubit extends Cubit<SettingsState> {
   ProfileSettings? settings;
   SettingsCubit(this.settingsRepository) : super(SettingsInitial());
 
-  /// Get all user settings @initial build of any settings widget
+  /// This function emits state SettingsAvailable on initState of the profile settings screens.
+  ///
+  /// This function calls the function [SettingsRepository.getUserSettings] to get all user's profile settings.
   void getUserSettings() {
     if (isClosed) return;
     settingsRepository.getUserSettings().then((userSettings) {
+      // get user profile settings
       emit(SettingsAvailable(userSettings));
       settings = userSettings;
     });
   }
 
-  /// change the cover photo from mobile: send to the backend the new image
+  /// [settings] : The profile settings model from the profile settings screen that will be updated.
+  /// [img] : The new cover photo as a File.
+  ///
+  /// Emits sate SettingsChanged on successfully updating cover photo (on mobile).
   void changeCoverphoto(ProfileSettings settings, File img) {
     if (isClosed) return;
     settingsRepository.updateImage('coverphoto', img).then((image) {
@@ -32,7 +38,12 @@ class SettingsCubit extends Cubit<SettingsState> {
     });
   }
 
-  /// change the cover photo from web: send to the backend the new image
+  /// [settings] : The profile settings model from the profile settings screen that will be updated.
+  /// [fileAsBytes] : The new cover photo as a Uint8List.
+  ///
+  /// Emits sate SettingsChanged on successfully updating cover photo (on web).
+  ///
+  /// This function calls the function [SettingsRepository.updateImageWeb] that updates any photo on web.
   void changeCoverphotoWeb(ProfileSettings settings, Uint8List fileAsBytes) {
     if (isClosed) return;
     settingsRepository.updateImageWeb('coverphoto', fileAsBytes).then((image) {
@@ -42,7 +53,12 @@ class SettingsCubit extends Cubit<SettingsState> {
     });
   }
 
-  /// change the profile photo from mobile: send to the backend the new image
+  /// [settings] : The profile settings model from the profile settings screen that will be updated.
+  /// [img] : The new profile photo as a File.
+  ///
+  /// Emits sate SettingsChanged on successfully updating profile photo (on mobile).
+  ///
+  /// This function calls the function [SettingsRepository.updateImage] that updates any photo on mobile.
   void changeProfilephoto(ProfileSettings settings, File img) {
     if (isClosed) return;
     settingsRepository.updateImage('profilephoto', img).then((image) {
@@ -52,7 +68,12 @@ class SettingsCubit extends Cubit<SettingsState> {
     });
   }
 
-  /// change the profile photo from web: send to the backend the new image
+  /// [settings] : The profile settings model from the profile settings screen that will be updated.
+  /// [fileAsBytes] : The new profile photo as a Uint8List.
+  ///
+  /// Emits sate SettingsChanged on successfully updating profile photo (on web).
+  ///
+  /// This function calls the function [SettingsRepository.updateImageWeb] that updates any photo on web.
   void changeProfilephotoWeb(ProfileSettings settings, Uint8List fileAsBytes) {
     if (isClosed) return;
     settingsRepository
@@ -64,7 +85,12 @@ class SettingsCubit extends Cubit<SettingsState> {
     });
   }
 
-  /// change user profile settings
+  /// [settings] : The profile settings model from the profile settings screen that will be updated.
+  /// [changed] : A map of the only updated profile settings.
+  ///
+  /// Emits sate SettingsChanged on changing any value on profile settings pages.
+  ///
+  /// This function calls the function [SettingsRepository.updatePrefs] to update profile settings.
   void updateSettings(ProfileSettings settings, Map changed) {
     if (isClosed) return;
     settingsRepository.updatePrefs(changed).then((val) {

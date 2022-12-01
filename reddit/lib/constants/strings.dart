@@ -45,6 +45,10 @@ const safetySettingsRoute = '/safetySettings';
 //---------------------------------------
 const emailSettingsWebScreenRoute = "/emailSettings";
 //---------------------------------------
+// -----Feed settings routes---------
+//---------------------------------------
+const feedSettingRoute = '/feed_settings';
+//---------------------------------------
 // -----------reCaptcha routes-----------
 //---------------------------------------
 const recaptchaRoute = "/recaptcha";
@@ -69,3 +73,4 @@ const chooseProfileImgScreen = '/chooseProfileImgScreen';
 // ------subreddit page route---------
 //---------------------------------------
 const subredditPageScreenRoute = "/subredditPageScreen";
+const createCommunityScreenRoute = '/CreateCommunityScreen';
