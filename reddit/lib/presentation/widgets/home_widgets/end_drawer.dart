@@ -175,7 +175,8 @@ class EndDrawer extends StatelessWidget {
               ListTile(
                 leading: const FaIcon(FontAwesomeIcons.plus),
                 title: const Text("Create a community"),
-                onTap: () {},
+                onTap: () =>
+                    Navigator.of(context).pushNamed(createCommunityScreenRoute),
               ),
               ListTile(
                 leading: const FaIcon(FontAwesomeIcons.bookmark),

@@ -73,7 +73,7 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
       builder: (context, state) {
         if (state is AccountSettingsLoaded) {
           accountSettings = state.accSettings;
-          _isMale = accountSettings!.gender == "M" ? 1 : 0;
+          _isMale = accountSettings!.gender == "male" ? 1 : 0;
           return buildAccountSettingsUI();
         } else if (state is PasswordUpdatedSuccessfully) {
           // displayMsg(context, Colors.white, Colors.green,
@@ -688,7 +688,7 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
               )
             ],
             onChanged: (value) {
-              accountSettings!.gender = (value == 1 ? "M" : "W");
+              accountSettings!.gender = (value == 1 ? "male" : "female");
               BlocProvider.of<AccountSettingsCubit>(context)
                   .updateAccountSettings(accountSettings!);
             },
