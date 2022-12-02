@@ -8,7 +8,7 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../constants/strings.dart';
-import '../../data/model/signin.dart';
+import '../../data/model/auth_model.dart';
 import '../../data/web_services/authorization/login_conroller.dart';
 import '../../helper/dio.dart';
 
@@ -259,15 +259,10 @@ class _SignupWebState extends State<SignupWeb> {
   }
 
   void continieSignUp() {
-    newUser = User(
-      name: null,
-      email: emailController.text, //set the email takes from the text field
-      imageUrl: null,
-      userId: null,
-    );
+
     Navigator.of(context).pushNamed(
       SIGNU_PAGE2,
-      arguments: newUser,
+      arguments: emailController.text,//send the email takes from the text field
     );
   }
 

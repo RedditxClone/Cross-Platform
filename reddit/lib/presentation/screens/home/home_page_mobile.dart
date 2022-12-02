@@ -7,7 +7,7 @@ import 'package:reddit/data/repository/left_drawer/left_drawer_repository.dart';
 import 'package:reddit/data/web_services/left_drawer/left_drawer_web_services.dart';
 import 'package:reddit/data/web_services/settings_web_services.dart';
 import 'package:reddit/constants/strings.dart';
-import 'package:reddit/data/model/signin.dart';
+import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/presentation/screens/home/home.dart';
 import 'package:reddit/presentation/screens/home/home_not_loggedin_mobile.dart';
 import 'package:reddit/presentation/screens/popular/popular.dart';
@@ -21,16 +21,14 @@ import 'package:reddit/presentation/widgets/posts/add_post.dart';
 import '../../../business_logic/cubit/left_drawer/left_drawer_cubit.dart';
 
 class HomePage extends StatefulWidget {
-  User? user;
-  HomePage(this.user, {Key? key}) : super(key: key);
+  HomePage( {Key? key}) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState(user: user);
+  State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  User? user;
-  _HomePageState({required this.user});
+  _HomePageState();
   int _selectedPageIndex = 0;
   String _screen = 'Home';
   IconData dropDownArrow = Icons.keyboard_arrow_down;
@@ -39,7 +37,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    isLoggedin = user != null;
+    isLoggedin = UserData.user != null;
   }
 
   Widget buildHomeAppBar() {
@@ -176,13 +174,13 @@ class _HomePageState extends State<HomePage> {
                   Scaffold.of(context).openEndDrawer();
                 },
                 icon: CircleAvatar(
-                    child: isLoggedin && user!.imageUrl != null
+                    child: isLoggedin && UserData.user!.profilePic != null
                         ? Image.network(
-                            user!.imageUrl!,
+                            UserData.user!.profilePic!,
                             fit: BoxFit.cover,
                           )
                         : Icon(Icons.person,
-                            color: isLoggedin && user!.imageUrl == null
+                            color: isLoggedin && UserData.user!.profilePic == null
                                 ? Colors.orange
                                 : Colors.grey,
                             size: 25)));
@@ -217,12 +215,12 @@ class _HomePageState extends State<HomePage> {
             EndDrawerCubit(EndDrawerRepository(SettingsWebServices())),
         child: EndDrawer(
             isLoggedin,
-            user == null ? "" : user!.name ?? "",
-            user == null ? "" : user!.imageUrl ?? "",
+            UserData.user == null ? "" : UserData.user!.name ?? "",
+            UserData.user == null ? "" : UserData.user!.profilePic ?? "",
             2,
             35,
             true,
-            user == null ? "" : user!.email ?? ""),
+            UserData.user == null ? "" : UserData.user!.email ?? ""),
       ),
     );
   }

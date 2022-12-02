@@ -3,7 +3,7 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
-import 'package:reddit/data/model/signin.dart';
+import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 import 'package:reddit/presentation/widgets/posts/posts.dart';
 import 'package:reddit/presentation/widgets/posts/posts_web.dart';
@@ -17,7 +17,7 @@ class ProfilePageWeb extends StatefulWidget {
 
 class _ProfilePageWebState extends State<ProfilePageWeb> {
   User user =
-      User(userId: 'userId', name: 'name', email: 'email', imageUrl: null);
+      User(userId: 'userId', name: 'name', email: 'email', profilePic: null);
   late Responsive _responsive;
   String _outlineButtonLabel = 'Joined';
   String sortBy = 'new';

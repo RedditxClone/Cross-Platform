@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/theme_colors.dart';
-import 'package:reddit/data/model/signin.dart';
+import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 import 'package:reddit/presentation/widgets/posts/posts_web.dart';
 
@@ -14,7 +14,7 @@ class OtherProfilePageWeb extends StatefulWidget {
 
 class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
   User user =
-      User(userId: 'userId', name: 'name', email: 'email', imageUrl: null);
+      User(userId: 'userId', name: 'name', email: 'email', profilePic: null);
   late Responsive _responsive;
   String sortBy = 'new';
   bool _isOverviewTab = true;
