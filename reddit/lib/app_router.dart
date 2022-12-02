@@ -120,7 +120,7 @@ class AppRouter {
         AccountSettingsRepository(AccountSettingsWebServices());
     accountSettingsCubit = AccountSettingsCubit(accountSettingsRepository);
     authRepo = AuthRepo(AuthWebService());
-    authCubit = AuthCubit(authRepo,settingsRepository);
+    authCubit = AuthCubit(authRepo, settingsRepository);
 
     subredditWebServices = SubredditWebServices();
     subredditPageRepository = SubredditPageRepository(subredditWebServices);
@@ -252,21 +252,18 @@ class AppRouter {
         );
       case interesetesScreen:
         return MaterialPageRoute(
-          builder: (_) => const InteresetesAndroid(
-          ),
+          builder: (_) => const InteresetesAndroid(),
         );
       case chooseProfileImgScreen:
         return MaterialPageRoute(
           builder: (_) => BlocProvider.value(
             value: authCubit,
-            child: ChooseProfileImgAndroid(
-            ),
+            child: ChooseProfileImgAndroid(),
           ),
         );
       case chooseGenderScreen:
         return MaterialPageRoute(
-          builder: (_) => const ChooseGenderAndroid(
-          ),
+          builder: (_) => const ChooseGenderAndroid(),
         );
       /*
       case example:
@@ -303,7 +300,7 @@ class AppRouter {
         return MaterialPageRoute(
             builder: (_) => UpdateEmailAddressScreen(arguments));
       case settingsTabsRoute:
-        return MaterialPageRoute(builder: (_) => SettingTabUi(user: user));
+        return MaterialPageRoute(builder: (_) => SettingTabUi());
 
       case changePasswordRoute:
         return MaterialPageRoute(builder: (context) {

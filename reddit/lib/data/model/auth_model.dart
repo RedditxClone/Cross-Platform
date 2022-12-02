@@ -6,7 +6,7 @@ class User {
   late String? email;
   late String?
       profilePic; //in case of google or facebook user it will be taken from the google or facebook and in case of reddit sign in it will be null
-  late String? accessToken;
+  String? accessToken;
   late String? serverAuthCode;
   late String? gender; //could be null if the user didn't choose
   late Map<String, dynamic> interests;

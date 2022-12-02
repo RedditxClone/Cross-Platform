@@ -26,8 +26,8 @@ import 'package:reddit/presentation/screens/safety_settings_web.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 
 class SettingTabUi extends StatefulWidget {
-  User? user;
-  SettingTabUi({super.key, required this.user});
+  // User? user;
+  SettingTabUi({super.key});
 
   @override
   State<SettingTabUi> createState() => _SettingTabUiState();
@@ -47,7 +47,7 @@ class _SettingTabUiState extends State<SettingTabUi> {
           automaticallyImplyLeading: false,
           backgroundColor: defaultAppbarBackgroundColor,
           title:
-              AppBarWebLoggedIn(user: widget.user!, screen: 'User settings')),
+              AppBarWebLoggedIn(user: UserData.user!, screen: 'User settings')),
       body: SingleChildScrollView(
         child: Row(
           children: [

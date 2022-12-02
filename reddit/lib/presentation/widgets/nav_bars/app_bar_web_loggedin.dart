@@ -6,7 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:reddit/business_logic/cubit/create_community_cubit.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/data/model/auth_model.dart';
-import 'package:reddit/data/model/signin.dart';
+// import 'package:reddit/data/model/signin.dart';
 import 'package:reddit/data/repository/create_community_repository.dart';
 import 'package:reddit/data/web_services/create_community_web_services.dart';
 import 'package:reddit/presentation/screens/create_community_screen.dart';
