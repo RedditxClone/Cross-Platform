@@ -73,7 +73,7 @@ class _LoginWebState extends State<LoginWeb> {
     try {
       var googleAccount = await GoogleSingInApi.loginWeb();
       if (googleAccount != null) {
-        DioHelper.postData(url: '/api/auth/signup', data: {
+        DioHelper.postData(url: 'auth/signup', data: {
           "userId": googleAccount.id,
           "email": googleAccount.email,
           "name": googleAccount.displayName,
@@ -166,7 +166,7 @@ class _LoginWebState extends State<LoginWeb> {
       if (loginResult != null) {
         var fbUser = await FacebookSignInApi
             .getUserData(); //post request to add user data
-        DioHelper.postData(url: '/api/auth/signup', data: {
+        DioHelper.postData(url: 'auth/signup', data: {
           "name": fbUser['name'] as String,
           "email": fbUser['email'] as String,
           "imageUrl": fbUser['picture']['data']['url'] as String,

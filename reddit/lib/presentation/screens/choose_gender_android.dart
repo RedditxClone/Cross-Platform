@@ -22,7 +22,7 @@ class _ChooseGenderAndroidState extends State<ChooseGenderAndroid> {
   void selectGender(String gender) async {
     UserData.user?.gender = gender;
     DioHelper.patchData(
-        url: '/api/user/me/prefs',
+        url: 'user/me/prefs',
         data: {
           "gender": gender,
         },

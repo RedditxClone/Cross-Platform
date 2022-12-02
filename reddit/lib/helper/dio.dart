@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:reddit/constants/strings.dart';
 
 class DioHelper {
   static late Dio dio;
@@ -6,7 +7,7 @@ class DioHelper {
   static init() {
     dio = Dio(
       BaseOptions(
-        baseUrl: 'https://swproject.demosfortest.com',
+        baseUrl: baseUrl,
         receiveDataWhenStatusError: true,
         sendTimeout: 5000,
         receiveTimeout: 5000,

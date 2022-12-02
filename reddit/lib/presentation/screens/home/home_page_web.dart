@@ -57,7 +57,7 @@ class _HomePageWebState extends State<HomePageWeb> {
     UserData.user?.interests = selectedInterests;
     debugPrint("after storing${UserData.user?.interests}");
     DioHelper.patchData(
-        url: '/api/user/me/prefs',
+        url: 'user/me/prefs',
         data: selectedInterests,
         options: Options(
           headers: {
@@ -98,7 +98,7 @@ class _HomePageWebState extends State<HomePageWeb> {
   void selectGender(String gender) async {
     UserData.user?.gender = gender;
     DioHelper.patchData(
-        url: '/api/user/me/prefs',
+        url: 'user/me/prefs',
         data: {
           "gender": gender,
         },

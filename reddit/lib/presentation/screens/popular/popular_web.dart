@@ -8,22 +8,20 @@ import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 import 'package:reddit/presentation/widgets/posts/posts_web.dart';
 
 class PopularWeb extends StatefulWidget {
-  User? user;
-  PopularWeb(this.user, {Key? key}) : super(key: key);
+  PopularWeb({Key? key}) : super(key: key);
 
   @override
-  State<PopularWeb> createState() => _PopularWebState(user: user);
+  State<PopularWeb> createState() => _PopularWebState();
 }
 
 class _PopularWebState extends State<PopularWeb> {
   late Responsive responsive;
   late bool isLoggedIn;
-  User? user;
-  _PopularWebState({required this.user});
+  _PopularWebState();
   @override
   void initState() {
     super.initState();
-    isLoggedIn = user != null;
+    isLoggedIn = UserData.user != null;
   }
 
   @override
@@ -36,7 +34,7 @@ class _PopularWebState extends State<PopularWeb> {
             automaticallyImplyLeading: false,
             backgroundColor: defaultAppbarBackgroundColor,
             title: isLoggedIn
-                ? AppBarWebLoggedIn(user: user!, screen: 'Popular')
+                ? AppBarWebLoggedIn(user: UserData.user!, screen: 'Popular')
                 : const AppBarWebNotLoggedIn(screen: 'Popular')),
         body: Container(
           color: defaultWebBackgroundColor,
