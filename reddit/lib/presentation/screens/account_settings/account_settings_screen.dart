@@ -233,6 +233,8 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
   Widget _basicSettingsButton(title, subtitle, prefixIcon, onPressedFunc) {
     return TextButton(
       onPressed: onPressedFunc,
+      style:
+          ButtonStyle(foregroundColor: MaterialStateProperty.all(Colors.white)),
       child: Row(
         children: [
           Expanded(
@@ -278,6 +280,8 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
   Widget _countryButton(title, subtitle, prefixIcon, onPressedFunc) {
     return TextButton(
       onPressed: onPressedFunc,
+      style:
+          ButtonStyle(foregroundColor: MaterialStateProperty.all(Colors.white)),
       child: Row(
         children: [
           Expanded(
@@ -456,6 +460,8 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
   Widget _genderSettingsButton(prefixIcon, context) {
     return TextButton(
       onPressed: () => _genderBottomSheet(context),
+      style:
+          ButtonStyle(foregroundColor: MaterialStateProperty.all(Colors.white)),
       child: Row(
         children: [
           Expanded(

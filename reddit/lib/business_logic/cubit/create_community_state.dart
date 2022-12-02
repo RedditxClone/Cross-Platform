@@ -23,3 +23,4 @@ class CreateCommunityPressed extends CreateCommunityState {}
 
 class CreateCommunityCreated extends CreateCommunityState {}
 class CreateCommunityFailedToCreate extends CreateCommunityState {}
+

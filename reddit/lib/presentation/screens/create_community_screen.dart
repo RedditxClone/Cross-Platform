@@ -2,9 +2,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:reddit/business_logic/cubit/subreddit_page_cubit.dart';
 import 'package:reddit/constants/colors.dart';
 import 'package:reddit/constants/font_sizes.dart';
+import 'package:reddit/constants/strings.dart';
 import 'package:reddit/data/model/create_community_model.dart';
+import 'package:reddit/data/repository/subreddit_page_repository.dart';
+import 'package:reddit/data/web_services/subreddit_page_web_services.dart';
+import 'package:reddit/presentation/screens/subreddit_screen.dart';
 import '../../business_logic/cubit/create_community_cubit.dart';
 
 class CreateCommunityScreen extends StatefulWidget {
@@ -112,617 +117,631 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: BlocBuilder<CreateCommunityCubit, CreateCommunityState>(
-        builder: (context, state) {
-          if (state is CreateCommunityCreated) {
-            //TODO: go to subreddit page
-            Navigator.of(context).pop();
-          }
-          if (state is CreateCommunityFailedToCreate) {
-            _warningText = 4;
-          }
-          if (state is CreateCommunityCreateBloc) {
-            _createCommunityModel = (state).createCommunityModel;
-          }
+    return BlocConsumer<CreateCommunityCubit, CreateCommunityState>(
+      listener: (context, state) {
+        if (state is CreateCommunityCreated) {
+          BlocProvider.of<CreateCommunityCubit>(context).close();
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => BlocProvider(
+                      create: (context) => SubredditPageCubit(
+                          SubredditPageRepository(SubredditWebServices())),
+                      child: SubredditPageScreen(
+                        subredditId: _createCommunityModel.communityName,
+                      ))));
+        }
+      },
+      builder: (context, state) {
+        if (state is CreateCommunityFailedToCreate) {
+          _warningText = 4;
+        }
+        if (state is CreateCommunityCreateBloc) {
+          _createCommunityModel = (state).createCommunityModel;
+        }
 
-          if (state is CreateCommunityNameChange) {
-            if (!_mobilePlatform && _communityNameController.text.isEmpty) {
-              _warningText = 1;
-            } else if (!RegExp("^[a-zA-Z0-9_]{3,21}\$")
-                .hasMatch(_communityNameController.text)) {
-              _warningText = 2;
-            } else {
-              BlocProvider.of<CreateCommunityCubit>(context)
-                  .checkIfNameAvailable(_createCommunityModel.communityName);
-              _warningText = 0;
-            }
+        if (state is CreateCommunityNameChange) {
+          if (!_mobilePlatform && _communityNameController.text.isEmpty) {
+            _warningText = 1;
+          } else if (!RegExp("^[a-zA-Z0-9_]{3,21}\$")
+              .hasMatch(_communityNameController.text)) {
+            _warningText = 2;
+          } else {
+            BlocProvider.of<CreateCommunityCubit>(context)
+                .checkIfNameAvailable(_createCommunityModel.communityName);
+            _warningText = 0;
           }
-          if (state is CreateCommunityNameUnAvailable) _warningText = 3;
-          if (state is CreateCommunityPressed) {
-            if (_warningText == 0) {
-              BlocProvider.of<CreateCommunityCubit>(context)
-                  .createCommunity(_createCommunityModel);
-            }
+        }
+        if (state is CreateCommunityNameUnAvailable) _warningText = 3;
+        if (state is CreateCommunityPressed) {
+          if (_warningText == 0) {
+            BlocProvider.of<CreateCommunityCubit>(context)
+                .createCommunity(_createCommunityModel);
           }
-          return _mobilePlatform
-              ? Scaffold(
-                  backgroundColor: mobileBackgroundColor,
-                  appBar: AppBar(
-                    backgroundColor: darkCardsColor,
-                    elevation: 5,
-                    title: Text("Create a community",
-                        style: GoogleFonts.ibmPlexSans(
-                            textStyle: const TextStyle(color: lightFontColor))),
-                  ),
-                  body: SingleChildScrollView(
-                      child: Container(
-                          color: darkCardsColor,
-                          child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Wrap(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    top: 20,
+        }
+        return _mobilePlatform
+            ? Scaffold(
+                backgroundColor: mobileBackgroundColor,
+                appBar: AppBar(
+                  backgroundColor: darkCardsColor,
+                  elevation: 5,
+                  title: Text("Create a community",
+                      style: GoogleFonts.ibmPlexSans(
+                          textStyle: const TextStyle(color: lightFontColor))),
+                ),
+                body: SingleChildScrollView(
+                    child: Container(
+                        color: darkCardsColor,
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Wrap(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 20,
+                                ),
+                                child: SizedBox(
+                                  width: MediaQuery.of(context).size.width,
+                                  child: Text(
+                                    "Community name",
+                                    style: GoogleFonts.ibmPlexSans(
+                                        fontSize: headerFontSize,
+                                        fontWeight: FontWeight.w500,
+                                        color: lightFontColor),
+                                    textAlign: TextAlign.left,
                                   ),
-                                  child: SizedBox(
-                                    width: MediaQuery.of(context).size.width,
-                                    child: Text(
-                                      "Community name",
+                                ),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                child: Column(
+                                  children: [
+                                    TextField(
                                       style: GoogleFonts.ibmPlexSans(
-                                          fontSize: headerFontSize,
+                                          fontSize: subHeaderFontSize,
                                           fontWeight: FontWeight.w500,
                                           color: lightFontColor),
-                                      textAlign: TextAlign.left,
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 8.0),
-                                  child: Column(
-                                    children: [
-                                      TextField(
-                                        style: GoogleFonts.ibmPlexSans(
-                                            fontSize: subHeaderFontSize,
-                                            fontWeight: FontWeight.w500,
-                                            color: lightFontColor),
-                                        maxLength: _maxLetters,
-                                        controller: _communityNameController,
-                                        onChanged: (value) {
-                                          _createCommunityModel.communityName =
-                                              value;
-                                          _remainingLetters =
-                                              _maxLetters - value.length;
-                                          BlocProvider.of<CreateCommunityCubit>(
-                                                  context)
-                                              .editName();
-                                        },
-                                        decoration: InputDecoration(
-                                            focusedBorder: OutlineInputBorder(
-                                              borderSide: const BorderSide(
-                                                  color: mobileTextFeildColor,
-                                                  width: 0),
-                                              borderRadius:
-                                                  BorderRadius.circular(5.0),
-                                            ),
-                                            focusColor: mobileTextFeildColor,
-                                            fillColor: mobileTextFeildColor,
-                                            prefixStyle:
-                                                GoogleFonts.ibmPlexSans(
-                                                    fontSize: subHeaderFontSize,
-                                                    fontWeight: FontWeight.w500,
-                                                    color: darkFontColor),
-                                            hintStyle: GoogleFonts.ibmPlexSans(
-                                                fontSize: subHeaderFontSize,
-                                                fontWeight: FontWeight.w500,
-                                                color: darkFontColor),
-                                            prefixText: "r/",
-                                            suffixText:
-                                                _remainingLetters.toString(),
-                                            hintText: "Community_name",
-                                            border: const OutlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: Colors.grey),
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(10)))),
-                                      ),
-                                      SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        child: _showWarningText(state),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(0, 20, 0, 10),
-                                  child: SizedBox(
-                                      width: MediaQuery.of(context).size.width,
-                                      child: Text(
-                                        "Community Type",
-                                        style: GoogleFonts.ibmPlexSans(
-                                            fontSize: subHeaderFontSize,
-                                            fontWeight: FontWeight.w400,
-                                            color: lightFontColor),
-                                        textAlign: TextAlign.left,
-                                      )),
-                                ),
-                                ListTile(
-                                    onTap: () => buildTypeBottomSheet(context),
-                                    title: Row(
-                                      children: [
-                                        Text(
-                                          _types[_selectedTypeIndex],
-                                          style: GoogleFonts.ibmPlexSans(
-                                              fontSize: headerFontSize,
+                                      maxLength: _maxLetters,
+                                      controller: _communityNameController,
+                                      onChanged: (value) {
+                                        _createCommunityModel.communityName =
+                                            value;
+                                        _remainingLetters =
+                                            _maxLetters - value.length;
+                                        BlocProvider.of<CreateCommunityCubit>(
+                                                context)
+                                            .editName();
+                                      },
+                                      decoration: InputDecoration(
+                                          focusedBorder: OutlineInputBorder(
+                                            borderSide: const BorderSide(
+                                                color: mobileTextFeildColor,
+                                                width: 0),
+                                            borderRadius:
+                                                BorderRadius.circular(5.0),
+                                          ),
+                                          focusColor: mobileTextFeildColor,
+                                          fillColor: mobileTextFeildColor,
+                                          prefixStyle: GoogleFonts.ibmPlexSans(
+                                              fontSize: subHeaderFontSize,
                                               fontWeight: FontWeight.w500,
-                                              color: lightFontColor),
-                                        ),
-                                        const Icon(
-                                          Icons.arrow_drop_down,
-                                          color: darkFontColor,
-                                          size: 2 * headerFontSize,
-                                        )
-                                      ],
+                                              color: darkFontColor),
+                                          hintStyle: GoogleFonts.ibmPlexSans(
+                                              fontSize: subHeaderFontSize,
+                                              fontWeight: FontWeight.w500,
+                                              color: darkFontColor),
+                                          prefixText: "r/",
+                                          suffixText:
+                                              _remainingLetters.toString(),
+                                          hintText: "Community_name",
+                                          border: const OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Colors.grey),
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(10)))),
                                     ),
-                                    subtitle: Text(
-                                      _typesDescribtion[_selectedTypeIndex],
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width,
+                                      child: _showWarningText(state),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(0, 20, 0, 10),
+                                child: SizedBox(
+                                    width: MediaQuery.of(context).size.width,
+                                    child: Text(
+                                      "Community Type",
                                       style: GoogleFonts.ibmPlexSans(
                                           fontSize: subHeaderFontSize,
                                           fontWeight: FontWeight.w400,
-                                          color: darkFontColor),
+                                          color: lightFontColor),
+                                      textAlign: TextAlign.left,
                                     )),
-                                SwitchListTile(
-                                  inactiveThumbColor: Colors.white,
-                                  activeColor: Colors.white,
-                                  activeTrackColor: activeSwitchTrackColor,
-                                  value: _createCommunityModel.isAbove18,
+                              ),
+                              ListTile(
+                                  onTap: () => buildTypeBottomSheet(context),
+                                  title: Row(
+                                    children: [
+                                      Text(
+                                        _types[_selectedTypeIndex],
+                                        style: GoogleFonts.ibmPlexSans(
+                                            fontSize: headerFontSize,
+                                            fontWeight: FontWeight.w500,
+                                            color: lightFontColor),
+                                      ),
+                                      const Icon(
+                                        Icons.arrow_drop_down,
+                                        color: darkFontColor,
+                                        size: 2 * headerFontSize,
+                                      )
+                                    ],
+                                  ),
+                                  subtitle: Text(
+                                    _typesDescribtion[_selectedTypeIndex],
+                                    style: GoogleFonts.ibmPlexSans(
+                                        fontSize: subHeaderFontSize,
+                                        fontWeight: FontWeight.w400,
+                                        color: darkFontColor),
+                                  )),
+                              SwitchListTile(
+                                inactiveThumbColor: Colors.white,
+                                activeColor: Colors.white,
+                                activeTrackColor: activeSwitchTrackColor,
+                                value: _createCommunityModel.isAbove18,
+                                onChanged: (value) {
+                                  _createCommunityModel.isAbove18 = value;
+                                  BlocProvider.of<CreateCommunityCubit>(context)
+                                      .toggleAbove18();
+                                },
+                                title: Text(
+                                  "18+ community",
+                                  style: GoogleFonts.ibmPlexSans(
+                                      fontSize: headerFontSize,
+                                      fontWeight: FontWeight.w500,
+                                      color: lightFontColor),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 8.0),
+                                child: SizedBox(
+                                  width: MediaQuery.of(context).size.width,
+                                  child: _showErrorText(state),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 20),
+                                child: TextButton(
+                                    key: const Key("create_community"),
+                                    style: TextButton.styleFrom(
+                                      fixedSize: Size(
+                                          MediaQuery.of(context).size.width,
+                                          35),
+                                      foregroundColor: lightFontColor,
+                                      backgroundColor: mobileTextFeildColor,
+                                      shape: const RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.all(
+                                        Radius.circular(20),
+                                      )),
+                                    ),
+                                    onPressed: (_communityNameController
+                                            .text.isNotEmpty)
+                                        ? _onPressedFunction()
+                                        : null,
+                                    child: Text(
+                                      "Create Community",
+                                      style: GoogleFonts.ibmPlexSans(
+                                        fontSize: headerFontSize,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    )),
+                              ),
+                            ],
+                          ),
+                        ))))
+            : Dialog(
+                backgroundColor: darkCardsColor,
+                shape: const RoundedRectangleBorder(
+                    side: BorderSide(color: Color(0xff343536), width: 0),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(4),
+                    )),
+                child: SingleChildScrollView(
+                  child: Container(
+                    color: Colors.transparent,
+                    width: MediaQuery.of(context).size.width > 603
+                        ? 530
+                        : MediaQuery.of(context).size.width - 73,
+                    // height: 552,
+                    child: Wrap(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(8.0, 4, 5, 0),
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width,
+                            child: AppBar(
+                              backgroundColor: Colors.transparent,
+                              elevation: 0,
+                              automaticallyImplyLeading: false,
+                              title: Text(
+                                "Create a community",
+                                style: GoogleFonts.ibmPlexSans(
+                                  fontSize: headerFontSize,
+                                  color: lightFontColor,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              actions: [
+                                IconButton(
+                                    onPressed: () {
+                                      BlocProvider.of<CreateCommunityCubit>(
+                                              context)
+                                          .close();
+                                      Navigator.of(context).pop();
+                                    },
+                                    icon: const Icon(
+                                      Icons.close,
+                                      color: lightFontColor,
+                                    ))
+                              ],
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          child: Column(
+                            children: [
+                              const Divider(
+                                height: 0,
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(8.0, 10, 5, 0),
+                                child: SizedBox(
+                                  width: MediaQuery.of(context).size.width,
+                                  child: Text(
+                                    "Name",
+                                    style: GoogleFonts.ibmPlexSans(
+                                      fontSize: headerFontSize,
+                                      color: lightFontColor,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(8.0, 0, 5, 20),
+                                child: Row(children: [
+                                  Flexible(
+                                    child: Text(
+                                      "Community names including capitalization cannot be changed.",
+                                      style: GoogleFonts.ibmPlexSans(
+                                        fontSize: statementFontSize,
+                                        color: darkFontColor,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                  ),
+                                  const Padding(
+                                    padding: EdgeInsets.fromLTRB(8.0, 0, 0, 0),
+                                    child: Icon(
+                                      Icons.info_outline,
+                                      color: darkFontColor,
+                                      size: statementFontSize,
+                                    ),
+                                  )
+                                ]),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 4),
+                                child: TextField(
+                                  maxLength: _maxLetters,
+                                  controller: _communityNameController,
                                   onChanged: (value) {
-                                    _createCommunityModel.isAbove18 = value;
+                                    _createCommunityModel.communityName = value;
+                                    _remainingLetters =
+                                        _maxLetters - value.length;
+                                    BlocProvider.of<CreateCommunityCubit>(
+                                            context)
+                                        .editName();
+                                  },
+                                  decoration: const InputDecoration(
+                                      fillColor: Colors.transparent,
+                                      focusedBorder: OutlineInputBorder(
+                                          borderSide:
+                                              BorderSide(color: lightFontColor),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(10))),
+                                      prefixText: "r/",
+                                      border: OutlineInputBorder(
+                                          borderSide:
+                                              BorderSide(color: darkFontColor),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(10)))),
+                                ),
+                              ),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width,
+                                child: Text(
+                                  "$_remainingLetters Characters remaining",
+                                  style: GoogleFonts.ibmPlexSans(
+                                    color: _remainingLetters == 0
+                                        ? Colors.red
+                                        : darkFontColor,
+                                    fontSize: statementFontSize,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width,
+                                child: _showWarningText(state),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(8.0, 10, 5, 10),
+                                child: SizedBox(
+                                  width: MediaQuery.of(context).size.width,
+                                  child: Text(
+                                    "Community Type",
+                                    style: GoogleFonts.ibmPlexSans(
+                                      fontSize: headerFontSize,
+                                      color: lightFontColor,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ),
+                              ),
+                              RadioListTile(
+                                  dense: true,
+                                  contentPadding: EdgeInsets.zero,
+                                  activeColor: Colors.blue,
+                                  value: "Public",
+                                  groupValue:
+                                      _createCommunityModel.communityType,
+                                  title: Row(
+                                    children: [
+                                      Icon(
+                                        _typesIcons[0],
+                                        color: darkFontColor,
+                                        size: subHeaderFontSize,
+                                      ),
+                                      Flexible(
+                                        child: Text.rich(TextSpan(
+                                            style: GoogleFonts.ibmPlexSans(
+                                              fontSize: subHeaderFontSize,
+                                              color: lightFontColor,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                            text: " ${_types[0]}",
+                                            children: <InlineSpan>[
+                                              TextSpan(
+                                                text:
+                                                    " ${_typesDescribtion[0]}",
+                                                style: GoogleFonts.ibmPlexSans(
+                                                  fontSize: statementFontSize,
+                                                  color: darkFontColor,
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                              )
+                                            ])),
+                                      )
+                                    ],
+                                  ),
+                                  onChanged: (value) {
+                                    _createCommunityModel.communityType =
+                                        value.toString();
+                                    BlocProvider.of<CreateCommunityCubit>(
+                                            context)
+                                        .changeType();
+                                  }),
+                              RadioListTile(
+                                  dense: true,
+                                  contentPadding: EdgeInsets.zero,
+                                  activeColor: Colors.blue,
+                                  value: "Restricted",
+                                  groupValue:
+                                      _createCommunityModel.communityType,
+                                  title: Row(
+                                    children: [
+                                      Icon(_typesIcons[2],
+                                          color: darkFontColor,
+                                          size: subHeaderFontSize),
+                                      Flexible(
+                                        child: Text.rich(TextSpan(
+                                            style: GoogleFonts.ibmPlexSans(
+                                              fontSize: subHeaderFontSize,
+                                              color: lightFontColor,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                            text: " ${_types[2]}",
+                                            children: <InlineSpan>[
+                                              TextSpan(
+                                                text:
+                                                    " ${_typesDescribtion[2]}",
+                                                style: GoogleFonts.ibmPlexSans(
+                                                  fontSize: statementFontSize,
+                                                  color: darkFontColor,
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                              )
+                                            ])),
+                                      )
+                                    ],
+                                  ),
+                                  onChanged: (value) {
+                                    _createCommunityModel.communityType =
+                                        value.toString();
+                                    BlocProvider.of<CreateCommunityCubit>(
+                                            context)
+                                        .changeType();
+                                  }),
+                              RadioListTile(
+                                  dense: true,
+                                  contentPadding: EdgeInsets.zero,
+                                  activeColor: Colors.blue,
+                                  value: "Private",
+                                  groupValue:
+                                      _createCommunityModel.communityType,
+                                  title: Row(
+                                    children: [
+                                      Icon(_typesIcons[1],
+                                          color: darkFontColor,
+                                          size: subHeaderFontSize),
+                                      Flexible(
+                                        child: Text.rich(TextSpan(
+                                            style: GoogleFonts.ibmPlexSans(
+                                              fontSize: subHeaderFontSize,
+                                              color: lightFontColor,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                            text: " ${_types[1]}",
+                                            children: <InlineSpan>[
+                                              TextSpan(
+                                                text:
+                                                    " ${_typesDescribtion[1]}",
+                                                style: GoogleFonts.ibmPlexSans(
+                                                  fontSize: statementFontSize,
+                                                  color: darkFontColor,
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                              )
+                                            ])),
+                                      )
+                                    ],
+                                  ),
+                                  onChanged: (value) {
+                                    _createCommunityModel.communityType =
+                                        value.toString();
+                                    BlocProvider.of<CreateCommunityCubit>(
+                                            context)
+                                        .changeType();
+                                  }),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(8.0, 10, 5, 0),
+                                child: SizedBox(
+                                  width: MediaQuery.of(context).size.width,
+                                  child: Text(
+                                    "Adult content",
+                                    style: GoogleFonts.ibmPlexSans(
+                                      fontSize: headerFontSize,
+                                      color: lightFontColor,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ),
+                              ),
+                              ListTile(
+                                  contentPadding: EdgeInsets.zero,
+                                  horizontalTitleGap: 0,
+                                  leading: _createCommunityModel.isAbove18
+                                      ? const Icon(
+                                          Icons.check_box,
+                                          color: Colors.blue,
+                                        )
+                                      : const Icon(
+                                          Icons.check_box_outline_blank,
+                                          color: darkFontColor,
+                                        ),
+                                  onTap: () {
+                                    _createCommunityModel.isAbove18 =
+                                        !_createCommunityModel.isAbove18;
                                     BlocProvider.of<CreateCommunityCubit>(
                                             context)
                                         .toggleAbove18();
                                   },
                                   title: Text(
-                                    "18+ community",
+                                    "18+ year old community",
                                     style: GoogleFonts.ibmPlexSans(
-                                        fontSize: headerFontSize,
-                                        fontWeight: FontWeight.w500,
-                                        color: lightFontColor),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(bottom: 8.0),
-                                  child: SizedBox(
-                                    width: MediaQuery.of(context).size.width,
-                                    child: _showErrorText(state),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(bottom: 20),
-                                  child: TextButton(
-                                      key: const Key("create_community"),
-                                      style: TextButton.styleFrom(
-                                        fixedSize: Size(
-                                            MediaQuery.of(context).size.width,
-                                            35),
-                                        foregroundColor: lightFontColor,
-                                        backgroundColor: mobileTextFeildColor,
-                                        shape: const RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.all(
-                                          Radius.circular(20),
-                                        )),
-                                      ),
-                                      onPressed: (_communityNameController
-                                              .text.isNotEmpty)
-                                          ? _onPressedFunction()
-                                          : null,
-                                      child: Text(
-                                        "Create Community",
-                                        style: GoogleFonts.ibmPlexSans(
-                                          fontSize: headerFontSize,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      )),
-                                ),
-                              ],
-                            ),
-                          ))))
-              : Dialog(
-                  backgroundColor: darkCardsColor,
-                  shape: const RoundedRectangleBorder(
-                      side: BorderSide(color: Color(0xff343536), width: 0),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(4),
-                      )),
-                  child: SingleChildScrollView(
-                    child: Container(
-                      color: Colors.transparent,
-                      width: MediaQuery.of(context).size.width > 603
-                          ? 530
-                          : MediaQuery.of(context).size.width - 73,
-                      // height: 552,
-                      child: Wrap(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(8.0, 4, 5, 0),
-                            child: SizedBox(
-                              width: MediaQuery.of(context).size.width,
-                              child: AppBar(
-                                backgroundColor: Colors.transparent,
-                                elevation: 0,
-                                automaticallyImplyLeading: false,
-                                title: Text(
-                                  "Create a community",
-                                  style: GoogleFonts.ibmPlexSans(
-                                    fontSize: headerFontSize,
-                                    color: lightFontColor,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                actions: [
-                                  IconButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      icon: const Icon(
-                                        Icons.close,
-                                        color: lightFontColor,
-                                      ))
-                                ],
+                                      fontSize: subHeaderFontSize,
+                                      color: lightFontColor,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  )),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width,
+                                child: _showErrorText(state),
                               ),
-                            ),
+                            ],
                           ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 15),
-                            child: Column(
+                        ),
+                        Container(
+                          color: const Color(0xff343536),
+                          height: 60,
+                          child: Container(
+                            margin: const EdgeInsets.only(right: 8),
+                            child: Row(
                               children: [
-                                const Divider(
-                                  height: 0,
-                                ),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(8.0, 10, 5, 0),
-                                  child: SizedBox(
-                                    width: MediaQuery.of(context).size.width,
-                                    child: Text(
-                                      "Name",
-                                      style: GoogleFonts.ibmPlexSans(
-                                        fontSize: headerFontSize,
-                                        color: lightFontColor,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                      textAlign: TextAlign.left,
-                                    ),
+                                const Expanded(flex: 3, child: SizedBox()),
+                                OutlinedButton(
+                                  style: TextButton.styleFrom(
+                                    backgroundColor: Colors.transparent,
+                                    foregroundColor: (lightFontColor),
+                                    side: const BorderSide(
+                                        color: lightFontColor, width: 3),
+                                    shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(
+                                      Radius.circular(20),
+                                    )),
                                   ),
-                                ),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(8.0, 0, 5, 20),
-                                  child: Row(children: [
-                                    Flexible(
-                                      child: Text(
-                                        "Community names including capitalization cannot be changed.",
-                                        style: GoogleFonts.ibmPlexSans(
-                                          fontSize: statementFontSize,
-                                          color: darkFontColor,
-                                          fontWeight: FontWeight.w400,
-                                        ),
-                                      ),
-                                    ),
-                                    const Padding(
-                                      padding:
-                                          EdgeInsets.fromLTRB(8.0, 0, 0, 0),
-                                      child: Icon(
-                                        Icons.info_outline,
-                                        color: darkFontColor,
-                                        size: statementFontSize,
-                                      ),
-                                    )
-                                  ]),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 4),
-                                  child: TextField(
-                                    maxLength: _maxLetters,
-                                    controller: _communityNameController,
-                                    onChanged: (value) {
-                                      _createCommunityModel.communityName =
-                                          value;
-                                      _remainingLetters =
-                                          _maxLetters - value.length;
-                                      BlocProvider.of<CreateCommunityCubit>(
-                                              context)
-                                          .editName();
-                                    },
-                                    decoration: const InputDecoration(
-                                        fillColor: Colors.transparent,
-                                        focusedBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color: lightFontColor),
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(10))),
-                                        prefixText: "r/",
-                                        border: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color: darkFontColor),
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(10)))),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: MediaQuery.of(context).size.width,
-                                  child: Text(
-                                    "$_remainingLetters Characters remaining",
-                                    style: GoogleFonts.ibmPlexSans(
-                                      color: _remainingLetters == 0
-                                          ? Colors.red
-                                          : darkFontColor,
-                                      fontSize: statementFontSize,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: MediaQuery.of(context).size.width,
-                                  child: _showWarningText(state),
-                                ),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(8.0, 10, 5, 10),
-                                  child: SizedBox(
-                                    width: MediaQuery.of(context).size.width,
-                                    child: Text(
-                                      "Community Type",
-                                      style: GoogleFonts.ibmPlexSans(
-                                        fontSize: headerFontSize,
-                                        color: lightFontColor,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                      textAlign: TextAlign.left,
-                                    ),
-                                  ),
-                                ),
-                                RadioListTile(
-                                    dense: true,
-                                    contentPadding: EdgeInsets.zero,
-                                    activeColor: Colors.blue,
-                                    value: "Public",
-                                    groupValue:
-                                        _createCommunityModel.communityType,
-                                    title: Row(
-                                      children: [
-                                        Icon(
-                                          _typesIcons[0],
-                                          color: darkFontColor,
-                                          size: subHeaderFontSize,
-                                        ),
-                                        Flexible(
-                                          child: Text.rich(TextSpan(
-                                              style: GoogleFonts.ibmPlexSans(
-                                                fontSize: subHeaderFontSize,
-                                                color: lightFontColor,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                              text: " ${_types[0]}",
-                                              children: <InlineSpan>[
-                                                TextSpan(
-                                                  text:
-                                                      " ${_typesDescribtion[0]}",
-                                                  style:
-                                                      GoogleFonts.ibmPlexSans(
-                                                    fontSize: statementFontSize,
-                                                    color: darkFontColor,
-                                                    fontWeight: FontWeight.w400,
-                                                  ),
-                                                )
-                                              ])),
-                                        )
-                                      ],
-                                    ),
-                                    onChanged: (value) {
-                                      _createCommunityModel.communityType =
-                                          value.toString();
-                                      BlocProvider.of<CreateCommunityCubit>(
-                                              context)
-                                          .changeType();
-                                    }),
-                                RadioListTile(
-                                    dense: true,
-                                    contentPadding: EdgeInsets.zero,
-                                    activeColor: Colors.blue,
-                                    value: "Restricted",
-                                    groupValue:
-                                        _createCommunityModel.communityType,
-                                    title: Row(
-                                      children: [
-                                        Icon(_typesIcons[2],
-                                            color: darkFontColor,
-                                            size: subHeaderFontSize),
-                                        Flexible(
-                                          child: Text.rich(TextSpan(
-                                              style: GoogleFonts.ibmPlexSans(
-                                                fontSize: subHeaderFontSize,
-                                                color: lightFontColor,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                              text: " ${_types[2]}",
-                                              children: <InlineSpan>[
-                                                TextSpan(
-                                                  text:
-                                                      " ${_typesDescribtion[2]}",
-                                                  style:
-                                                      GoogleFonts.ibmPlexSans(
-                                                    fontSize: statementFontSize,
-                                                    color: darkFontColor,
-                                                    fontWeight: FontWeight.w400,
-                                                  ),
-                                                )
-                                              ])),
-                                        )
-                                      ],
-                                    ),
-                                    onChanged: (value) {
-                                      _createCommunityModel.communityType =
-                                          value.toString();
-                                      BlocProvider.of<CreateCommunityCubit>(
-                                              context)
-                                          .changeType();
-                                    }),
-                                RadioListTile(
-                                    dense: true,
-                                    contentPadding: EdgeInsets.zero,
-                                    activeColor: Colors.blue,
-                                    value: "Private",
-                                    groupValue:
-                                        _createCommunityModel.communityType,
-                                    title: Row(
-                                      children: [
-                                        Icon(_typesIcons[1],
-                                            color: darkFontColor,
-                                            size: subHeaderFontSize),
-                                        Flexible(
-                                          child: Text.rich(TextSpan(
-                                              style: GoogleFonts.ibmPlexSans(
-                                                fontSize: subHeaderFontSize,
-                                                color: lightFontColor,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                              text: " ${_types[1]}",
-                                              children: <InlineSpan>[
-                                                TextSpan(
-                                                  text:
-                                                      " ${_typesDescribtion[1]}",
-                                                  style:
-                                                      GoogleFonts.ibmPlexSans(
-                                                    fontSize: statementFontSize,
-                                                    color: darkFontColor,
-                                                    fontWeight: FontWeight.w400,
-                                                  ),
-                                                )
-                                              ])),
-                                        )
-                                      ],
-                                    ),
-                                    onChanged: (value) {
-                                      _createCommunityModel.communityType =
-                                          value.toString();
-                                      BlocProvider.of<CreateCommunityCubit>(
-                                              context)
-                                          .changeType();
-                                    }),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(8.0, 10, 5, 0),
-                                  child: SizedBox(
-                                    width: MediaQuery.of(context).size.width,
-                                    child: Text(
-                                      "Adult content",
-                                      style: GoogleFonts.ibmPlexSans(
-                                        fontSize: headerFontSize,
-                                        color: lightFontColor,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                      textAlign: TextAlign.left,
-                                    ),
-                                  ),
-                                ),
-                                ListTile(
-                                    contentPadding: EdgeInsets.zero,
-                                    horizontalTitleGap: 0,
-                                    leading: _createCommunityModel.isAbove18
-                                        ? const Icon(
-                                            Icons.check_box,
-                                            color: Colors.blue,
-                                          )
-                                        : const Icon(
-                                            Icons.check_box_outline_blank,
-                                            color: darkFontColor,
-                                          ),
-                                    onTap: () {
-                                      _createCommunityModel.isAbove18 =
-                                          !_createCommunityModel.isAbove18;
-                                      BlocProvider.of<CreateCommunityCubit>(
-                                              context)
-                                          .toggleAbove18();
-                                    },
-                                    title: Text(
-                                      "18+ year old community",
+                                  onPressed: () {
+                                    BlocProvider.of<CreateCommunityCubit>(
+                                            context)
+                                        .close();
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text("Cancel",
                                       style: GoogleFonts.ibmPlexSans(
                                         fontSize: subHeaderFontSize,
                                         color: lightFontColor,
                                         fontWeight: FontWeight.w500,
-                                      ),
-                                    )),
-                                SizedBox(
-                                  width: MediaQuery.of(context).size.width,
-                                  child: _showErrorText(state),
+                                      )),
                                 ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            color: const Color(0xff343536),
-                            height: 60,
-                            child: Container(
-                              margin: const EdgeInsets.only(right: 8),
-                              child: Row(
-                                children: [
-                                  const Expanded(flex: 3, child: SizedBox()),
-                                  OutlinedButton(
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                TextButton(
+                                    key: const Key("create_community"),
                                     style: TextButton.styleFrom(
-                                      backgroundColor: Colors.transparent,
-                                      foregroundColor: (lightFontColor),
-                                      side: const BorderSide(
-                                          color: lightFontColor, width: 3),
+                                      foregroundColor: backgroundColor,
+                                      backgroundColor: lightFontColor,
                                       shape: const RoundedRectangleBorder(
                                           borderRadius: BorderRadius.all(
                                         Radius.circular(20),
                                       )),
                                     ),
                                     onPressed: () {
-                                      Navigator.of(context).pop();
+                                      if (_communityNameController
+                                          .text.isEmpty) {
+                                        _warningText = 1;
+                                      }
+                                      BlocProvider.of<CreateCommunityCubit>(
+                                              context)
+                                          .createButtonPressed();
                                     },
-                                    child: Text("Cancel",
+                                    child: Text("Create Community",
                                         style: GoogleFonts.ibmPlexSans(
                                           fontSize: subHeaderFontSize,
-                                          color: lightFontColor,
+                                          color: backgroundColor,
                                           fontWeight: FontWeight.w500,
-                                        )),
-                                  ),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  TextButton(
-                                      key: const Key("create_community"),
-                                      style: TextButton.styleFrom(
-                                        foregroundColor: backgroundColor,
-                                        backgroundColor: lightFontColor,
-                                        shape: const RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.all(
-                                          Radius.circular(20),
-                                        )),
-                                      ),
-                                      onPressed: () => _onPressedFunction(),
-                                      child: Text("Create Community",
-                                          style: GoogleFonts.ibmPlexSans(
-                                            fontSize: subHeaderFontSize,
-                                            color: backgroundColor,
-                                            fontWeight: FontWeight.w500,
-                                          ))),
-                                ],
-                              ),
+                                        ))),
+                              ],
                             ),
-                          )
-                        ],
-                      ),
+                          ),
+                        )
+                      ],
                     ),
-                  ));
-        },
-      ),
+                  ),
+                ));
+      },
     );
   }
 
