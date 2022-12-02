@@ -125,7 +125,7 @@ class _LoginMobileState extends State<LoginMobile> {
     try {
       var googleAccount = await GoogleSingInApi.loginMob();
       if (googleAccount != null) {
-        DioHelper.postData(url: '/api/auth/signup', data: {
+        DioHelper.postData(url: 'auth/signup', data: {
           "userId": googleAccount.id,
           "email": googleAccount.email,
           "name": googleAccount.displayName,
@@ -216,7 +216,7 @@ class _LoginMobileState extends State<LoginMobile> {
       if (loginResult != null) {
         var fbUser = await FacebookSignInApi
             .getUserData(); //post request to add user data
-        DioHelper.postData(url: '/api/auth/signup', data: {
+        DioHelper.postData(url: 'auth/signup', data: {
           "name": fbUser['name'] as String,
           "email": fbUser['email'] as String,
           "imageUrl": fbUser['picture']['data']['url'] as String,
@@ -391,7 +391,7 @@ class _LoginMobileState extends State<LoginMobile> {
                       usernameEmpty = value.isEmpty;
                     }),
                     textInputAction: TextInputAction.next,
-                    onEditingComplete: (){
+                    onEditingComplete: () {
                       passwordFocusNode.requestFocus();
                     },
                   ),

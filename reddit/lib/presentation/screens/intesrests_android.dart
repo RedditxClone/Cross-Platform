@@ -39,7 +39,7 @@ class _InteresetesAndroidState extends State<InteresetesAndroid> {
   void addInterests() async {
     UserData.user?.interests = selectedInterests;
     DioHelper.patchData(
-        url: '/api/user/me/prefs',
+        url: 'user/me/prefs',
         data: selectedInterests,
         options: Options(
           headers: {
@@ -48,8 +48,7 @@ class _InteresetesAndroidState extends State<InteresetesAndroid> {
           },
         )).then((value) {
       if (value.statusCode == 200) {
-        Navigator.of(context)
-            .pushReplacementNamed(chooseProfileImgScreen);
+        Navigator.of(context).pushReplacementNamed(chooseProfileImgScreen);
       } else {
         SnackBar(
           content: Row(

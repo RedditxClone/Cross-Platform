@@ -105,8 +105,8 @@ class _SignupMobileState extends State<SignupMobile> {
 
   //function to sign up with reddit accound it's called when the user presses the sign up button or if the user pressed done after typing the password
   void signUpContinue(BuildContext ctx) async {
-    BlocProvider.of<AuthCubit>(ctx)
-        .signup(passwordController.text, usernameController.text, emailController.text);
+    BlocProvider.of<AuthCubit>(ctx).signup(
+        passwordController.text, usernameController.text, emailController.text);
     // if (user != null) {
     //   Navigator.of(ctx).pushReplacementNamed(
     //     chooseGenderScreen,
@@ -200,7 +200,7 @@ class _SignupMobileState extends State<SignupMobile> {
     try {
       var googleAccount = await GoogleSingInApi.loginMob();
       if (googleAccount != null) {
-        DioHelper.postData(url: '/api/auth/signup', data: {
+        DioHelper.postData(url: 'auth/signup', data: {
           "userId": googleAccount.id,
           "email": googleAccount.email,
           "name": googleAccount.displayName,
@@ -292,7 +292,7 @@ class _SignupMobileState extends State<SignupMobile> {
       if (loginResult != null) {
         var fbUser = await FacebookSignInApi
             .getUserData(); //post request to add user data
-        DioHelper.postData(url: '/api/auth/signup', data: {
+        DioHelper.postData(url: 'auth/signup', data: {
           "name": fbUser['name'] as String,
           "email": fbUser['email'] as String,
           "imageUrl": fbUser['picture']['data']['url'] as String,

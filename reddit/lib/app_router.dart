@@ -103,7 +103,6 @@ class AppRouter {
   late CreateCommunityCubit createCommunityCubit;
   late CreateCommunityWebServices communityWebServices;
 
-  static User? user;
   AppRouter() {
     // initialise repository and cubit objects
     safetySettingsRepository =
@@ -154,9 +153,8 @@ class AppRouter {
         );
 
       case popularPageRoute:
-        final user = settings.arguments as User?;
         return MaterialPageRoute(
-            builder: (_) => kIsWeb ? PopularWeb(user) : const Popular());
+            builder: (_) => kIsWeb ? PopularWeb() : const Popular());
 
       case profilePageRoute:
         return MaterialPageRoute(

@@ -14,7 +14,7 @@ class AuthWebService {
   /// Returns the response from the server.
   Future signup(String password, String username, String email) async {
     try {
-      var res = await DioHelper.postData(url: '/api/auth/signup', data: {
+      var res = await DioHelper.postData(url: 'auth/signup', data: {
         "email": email,
         "username": username,
         "password": password,
@@ -34,7 +34,7 @@ class AuthWebService {
   /// Returns the response from the server.
   Future login(String password, String username) async {
     try {
-      var res = await DioHelper.postData(url: '/api/auth/login', data: {
+      var res = await DioHelper.postData(url: 'auth/login', data: {
         "username": username,
         "password": password,
       });
@@ -51,7 +51,7 @@ class AuthWebService {
   /// This function calls the function [DioHelper.postData] which makes the request to the server.
   /// Returns the response from the server.
   Future forgetPassword(String username) async {
-    var res = await DioHelper.postData(url: '/api/auth/forget-password', data: {
+    var res = await DioHelper.postData(url: 'auth/forget-password', data: {
       "username": username,
     });
     return res;
@@ -59,11 +59,10 @@ class AuthWebService {
 
   Future changeForgottenPassword(
       String password, String username, String token) async {
-    var res = await DioHelper.postData(
-        url: '/api/auth/change-forgotten-password',
-        data: {
-          "password": password,
-        });
+    var res =
+        await DioHelper.postData(url: 'auth/change-forgotten-password', data: {
+      "password": password,
+    });
     return res;
   }
 
@@ -73,7 +72,7 @@ class AuthWebService {
   /// This function calls the function [DioHelper.postData] which makes the request to the server.
   /// Returns the response from the server.
   Future forgetUsername(String email) async {
-    var res = await DioHelper.postData(url: '/api/auth/forget-username', data: {
+    var res = await DioHelper.postData(url: 'auth/forget-username', data: {
       "email": email,
     });
     return res;
@@ -84,8 +83,7 @@ class AuthWebService {
   ///
   /// Returns the response from the server.
   Future getSuggestedUsernames() async {
-    var res =
-        await DioHelper.getData(url: "/api/user/random-usernames", query: {});
+    var res = await DioHelper.getData(url: "user/random-usernames", query: {});
     return res;
   }
 
@@ -95,11 +93,10 @@ class AuthWebService {
   /// This function calls the function [DioHelper.postData] which makes the request to the server.
   /// Returns the response from the server.
   Future checkOnUsername(String username) async {
-    var res = await DioHelper.postData(
-        url: '/api/user/check-available-username',
-        data: {
-          'username': username,
-        });
+    var res =
+        await DioHelper.postData(url: 'user/check-available-username', data: {
+      'username': username,
+    });
     return res;
   }
 
@@ -118,7 +115,7 @@ class AuthWebService {
             contentType: MediaType('application', 'json'), filename: key)
       });
       Response response = await DioHelper.patchData(
-        url: '/user/me/$key',
+        url: 'user/me/$key',
         data: formData,
         options: Options(
           headers: {"Authorization": "Bearer $token"},
@@ -141,7 +138,7 @@ class AuthWebService {
   Future addInterests(
       Map<String, dynamic> selectedInterests, String token) async {
     var res = await DioHelper.patchData(
-        url: '/api/user/me/prefs',
+        url: 'user/me/prefs',
         data: selectedInterests,
         options: Options(
           headers: {
@@ -158,7 +155,7 @@ class AuthWebService {
   /// Returns the response data from the server.
   Future genderInSignup(String gender, String token) async {
     var res = await DioHelper.patchData(
-        url: '/api/user/me/prefs',
+        url: 'user/me/prefs',
         data: {
           "gender": gender,
         },
