@@ -4,7 +4,6 @@ import 'package:reddit/data/repository/feed_setting_repository.dart';
 import 'package:reddit/data/web_services/feed_setting_web_services.dart';
 import 'business_logic/cubit/feed_settings_cubit.dart';
 import 'presentation/screens/feed_setting.dart';
-import 'package:reddit/business_logic/cubit/choose_profile_image_login_cubit.dart';
 import 'package:reddit/presentation/screens/profile/others_profile_page_web.dart';
 import 'package:reddit/presentation/screens/profile/profile_page_web.dart';
 import 'package:reddit/presentation/screens/profile/profile_screen.dart';
@@ -80,13 +79,12 @@ class AppRouter {
   late SafetySettingsCubit safetySettingsCubit;
   late SettingsRepository settingsRepository;
   late SettingsCubit settingsCubit;
-  late ChooseProfileImageLoginCubit chooseProfileImageLoginCubit;
 
   late EmailSettingsRepository emailSettingsReposity;
   late EmailSettingsCubit emailSettingsCubit;
   late EmailSettingsWebServices emailSettingsWebServices;
 
-  late AuthRepo signupRepo;
+  late AuthRepo authRepo;
   late AuthCubit authCubit;
   late CreateCommunityRepository communityRepository;
   late CreateCommunityCubit createCommunityCubit;
@@ -100,8 +98,7 @@ class AppRouter {
     safetySettingsCubit = SafetySettingsCubit(safetySettingsRepository);
     settingsRepository = SettingsRepository(SettingsWebServices());
     settingsCubit = SettingsCubit(settingsRepository);
-    chooseProfileImageLoginCubit =
-        ChooseProfileImageLoginCubit(settingsRepository);
+
     emailSettingsWebServices = EmailSettingsWebServices();
     emailSettingsReposity = EmailSettingsRepository(emailSettingsWebServices);
     emailSettingsCubit = EmailSettingsCubit(emailSettingsReposity);
@@ -109,8 +106,8 @@ class AppRouter {
     accountSettingsRepository =
         AccountSettingsRepository(AccountSettingsWebServices());
     accountSettingsCubit = AccountSettingsCubit(accountSettingsRepository);
-    signupRepo = AuthRepo(AuthWebService());
-    authCubit = AuthCubit(signupRepo);
+    authRepo = AuthRepo(AuthWebService());
+    authCubit = AuthCubit(authRepo,settingsRepository);
 
     communityWebServices = CreateCommunityWebServices();
     communityRepository = CreateCommunityRepository(communityWebServices);
@@ -221,27 +218,21 @@ class AppRouter {
           builder: (_) => const ForgetUsernameAndroid(),
         );
       case interesetesScreen:
-        final user = settings.arguments as User;
         return MaterialPageRoute(
-          builder: (_) => InteresetesAndroid(
-            newUser: user,
+          builder: (_) => const InteresetesAndroid(
           ),
         );
       case chooseProfileImgScreen:
-        final user = settings.arguments as User;
         return MaterialPageRoute(
-          builder: (_) => BlocProvider(
-            create: (context) => chooseProfileImageLoginCubit,
+          builder: (_) => BlocProvider.value(
+            value: authCubit,
             child: ChooseProfileImgAndroid(
-              newUser: user,
             ),
           ),
         );
       case chooseGenderScreen:
-        final user = settings.arguments as User;
         return MaterialPageRoute(
-          builder: (_) => ChooseGenderAndroid(
-            newUser: user,
+          builder: (_) => const ChooseGenderAndroid(
           ),
         );
       /*

@@ -1,26 +1,25 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:reddit/business_logic/cubit/choose_profile_image_login_cubit.dart';
+import 'package:reddit/business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
 import 'package:reddit/constants/strings.dart';
 import '../../data/model/auth_model.dart';
 
 class ChooseProfileImgAndroid extends StatefulWidget {
-  const ChooseProfileImgAndroid({super.key, required this.newUser});
-  final User newUser;
+  const ChooseProfileImgAndroid({super.key});
   @override
   State<ChooseProfileImgAndroid> createState() =>
-      ChooseProfileImgAndroidState(newUser);
+      ChooseProfileImgAndroidState();
 }
 
 class ChooseProfileImgAndroidState extends State<ChooseProfileImgAndroid> {
-  final User newUser;
   File? imgCover;
 
-  ChooseProfileImgAndroidState(this.newUser);
   //this function to display the image if selected and if not it will show a static icon
   void displayMsg(
       BuildContext context, Color color, String title, String subtitle) {
@@ -130,9 +129,7 @@ class ChooseProfileImgAndroidState extends State<ChooseProfileImgAndroid> {
       final image = await ImagePicker().pickImage(source: src);
       if (image == null) return;
       final imageTemp = File(image.path);
-
-      BlocProvider.of<ChooseProfileImageLoginCubit>(context)
-          .changeProfilephoto(imageTemp);
+      BlocProvider.of<AuthCubit>(context).changeProfilephotoMob(imageTemp);
     } on PlatformException catch (e) {
       debugPrint(e.toString());
       displayMsg(context, Colors.red, 'Error', 'Could not load image');
@@ -155,8 +152,7 @@ class ChooseProfileImgAndroidState extends State<ChooseProfileImgAndroid> {
         actions: [
           TextButton(
             onPressed: (() {
-              Navigator.of(context)
-                  .pushReplacementNamed(homePageRoute, arguments: newUser);
+              Navigator.of(context).pushReplacementNamed(homePageRoute);
             }),
             child: const Text(
               "Skip",
@@ -214,16 +210,16 @@ class ChooseProfileImgAndroidState extends State<ChooseProfileImgAndroid> {
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                   ),
-                  child: BlocBuilder<ChooseProfileImageLoginCubit,
-                      ChooseProfileImageLoginState>(builder: (context, state) {
+                  child: BlocBuilder<AuthCubit, AuthState>(
+                      builder: (context, state) {
                     if (state is ChooseProfileImageLoginChanged) {
-                      newUser.profilePic = state.url;
+                      UserData.user?.profilePic = state.url;
 
                       return ClipOval(
                         child: InkWell(
                           onTap: () => chooseProfilePhotoBottomSheet(context),
                           child: Image.network(
-                            newUser.profilePic!,
+                            UserData.user!.profilePic!,
                             fit: BoxFit.fill,
                           ),
                         ),
@@ -259,10 +255,9 @@ class ChooseProfileImgAndroidState extends State<ChooseProfileImgAndroid> {
               color: Theme.of(context).scaffoldBackgroundColor,
               child: ElevatedButton(
                 onPressed: () {
-                  if (newUser.profilePic != null) {
+                  if (UserData.user?.profilePic != null) {
                     Navigator.of(context).pushReplacementNamed(
                       homePageRoute,
-                      arguments: newUser,
                     );
                   }
                 },

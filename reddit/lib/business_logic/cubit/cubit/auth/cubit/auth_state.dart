@@ -32,3 +32,18 @@ class UserNameAvialable extends AuthState {
   final bool isAvailable;
   UserNameAvialable(this.isAvailable);
 }
+
+class ChooseProfileImageLoginChanged extends AuthState {
+  final String url;
+  ChooseProfileImageLoginChanged(this.url);
+}
+
+class AddUserInterests extends AuthState {
+  final Map<String, dynamic> interests;
+  AddUserInterests(this.interests);
+}
+
+class UpdateGenderDuringSignup extends AuthState {
+  final String gender;
+  UpdateGenderDuringSignup(this.gender);
+}

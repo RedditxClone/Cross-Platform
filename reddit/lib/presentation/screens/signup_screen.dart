@@ -30,12 +30,10 @@ class _SignupMobileState extends State<SignupMobile> {
   bool emailEmpty = true;
   bool usernameEmpty = true;
   bool passwordEmpty = true;
-  bool redundantUsername = false;
+  bool isAvailable = true;
   FocusNode usernameFocusNode = FocusNode();
   FocusNode emailFocusNode = FocusNode();
   FocusNode passwordFocusNode = FocusNode();
-
-  late User? user;
 
   @override
   void initState() {
@@ -63,6 +61,11 @@ class _SignupMobileState extends State<SignupMobile> {
   void _onFocusChangeUsername() {
     debugPrint("Focus on username: ${usernameFocusNode.hasFocus.toString()}");
     if (!usernameFocusNode.hasFocus) {
+      usernameEmpty = usernameController.text.isEmpty;
+      usernameError =
+          usernameController.text.contains(RegExp(r'[^a-zA-Z0-9_-]'));
+      usernameLengthError = usernameController.text.length < 3 ||
+          usernameController.text.length > 20;
       checkOnUsername(usernameController.text);
     }
   }
@@ -85,24 +88,25 @@ class _SignupMobileState extends State<SignupMobile> {
   //function takes the username and checks if it is valid or not
   //this fucntion is called if the user pressed next after typing the username or if the focus is lost from the username field
   void checkOnUsername(String usrName) async {
-    await DioHelper.postData(url: '/api/user/check-available-username', data: {
-      'username': usrName,
-    }).then((value) {
-      setState(() {
-        if (value.statusCode == 200) {
-          redundantUsername = false;
-          debugPrint("Username is available");
-        } else {
-          redundantUsername = true;
-        }
-      });
-    });
+    // await DioHelper.postData(url: '/api/user/check-available-username', data: {
+    //   'username': usrName,
+    // }).then((value) {
+    //   setState(() {
+    //     if (value.statusCode == 200) {
+    //       isAvailable = false;
+    //       debugPrint("Username is available");
+    //     } else {
+    //       isAvailable = true;
+    //     }
+    //   });
+    // });
+    BlocProvider.of<AuthCubit>(context).checkOnUsername(usrName);
   }
 
   //function to sign up with reddit accound it's called when the user presses the sign up button or if the user pressed done after typing the password
   void signUpContinue(BuildContext ctx) async {
     BlocProvider.of<AuthCubit>(ctx)
-        .signup(passwordController.text, usernameController.text, user!.email!);
+        .signup(passwordController.text, usernameController.text, emailController.text);
     // if (user != null) {
     //   Navigator.of(ctx).pushReplacementNamed(
     //     chooseGenderScreen,
@@ -205,10 +209,9 @@ class _SignupMobileState extends State<SignupMobile> {
           "serverAuthCode": googleAccount.serverAuthCode,
         }).then((value) {
           if (value.statusCode == 201) {
-            user = User.fromJson(jsonDecode(value.data));
+            UserData.user = User.fromJson(jsonDecode(value.data));
             Navigator.of(context).pushReplacementNamed(
               chooseGenderScreen,
-              arguments: user,
             );
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -298,10 +301,9 @@ class _SignupMobileState extends State<SignupMobile> {
           "accessToken": loginResult.accessToken?.token,
         }).then((value) {
           if (value.statusCode == 201) {
-            user = User.fromJson(jsonDecode(value.data));
+            UserData.user = User.fromJson(jsonDecode(value.data));
             Navigator.of(context).pushReplacementNamed(
               chooseGenderScreen,
-              arguments: user,
             );
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -491,6 +493,9 @@ class _SignupMobileState extends State<SignupMobile> {
                   });
                 },
                 textInputAction: TextInputAction.next,
+                onEditingComplete: () {
+                  usernameFocusNode.requestFocus();
+                },
               ),
             ),
             Padding(
@@ -513,7 +518,7 @@ class _SignupMobileState extends State<SignupMobile> {
                           ? "Username can only contain letters, numbers,'-' and '_'"
                           : usernameLengthError
                               ? "Username must be between 3 and 20 characters"
-                              : redundantUsername
+                              : !isAvailable
                                   ? "Username already exists"
                                   : null,
                   suffixIcon: usernameEmpty && !usernameFocusNode.hasFocus
@@ -535,7 +540,7 @@ class _SignupMobileState extends State<SignupMobile> {
                                   !usernameLengthError &&
                                   !usernameError &&
                                   !usernameEmpty &&
-                                  !redundantUsername
+                                  isAvailable
                               ? const Icon(
                                   IconData(0xf635, fontFamily: 'MaterialIcons'),
                                   color: Colors.green,
@@ -611,7 +616,7 @@ class _SignupMobileState extends State<SignupMobile> {
                         !usernameLengthError &&
                         !usernameError &&
                         !usernameEmpty &&
-                        !redundantUsername
+                        isAvailable
                     ? () => signUpContinue(context)
                     : null,
               ),
@@ -641,7 +646,7 @@ class _SignupMobileState extends State<SignupMobile> {
                         !usernameLengthError &&
                         emailCorrect &&
                         !emailEmpty &&
-                        !redundantUsername
+                        isAvailable
                     ? () => signUpContinue(context)
                     : null,
                 style: const ButtonStyle(
@@ -663,7 +668,7 @@ class _SignupMobileState extends State<SignupMobile> {
                             !usernameLengthError &&
                             emailCorrect &&
                             !emailEmpty &&
-                            !redundantUsername
+                            isAvailable
                         ? const LinearGradient(
                             colors: [
                               Color.fromARGB(255, 139, 9, 0),
@@ -700,7 +705,6 @@ class _SignupMobileState extends State<SignupMobile> {
           onPressed: () {
             Navigator.of(context).pushReplacementNamed(
               homePageRoute,
-              arguments: user,
             );
           },
         ),
@@ -725,7 +729,49 @@ class _SignupMobileState extends State<SignupMobile> {
           ),
         ],
       ),
-      body: mainBody(),
+      body: BlocConsumer<AuthCubit, AuthState>(
+        builder: (context, state) {
+          if (state is UserNameAvialable) {
+            isAvailable = state.isAvailable;
+            debugPrint("from signup $isAvailable");
+          }
+          return mainBody();
+        },
+        listener: (context, state) {
+          if (state is SignedIn) {
+            if (state.user != null) {
+              UserData.initUser(state.user); //this couldn't be null
+              Navigator.of(context).pushReplacementNamed(
+                chooseGenderScreen,
+              );
+            } else {
+              //user = null
+              debugPrint("failed in signing up");
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Row(
+                    children: [
+                      const Icon(
+                        Icons.error,
+                        color: Colors.red,
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.01,
+                      ),
+                      const Text(
+                        'Username or password is incorrect',
+                        style: TextStyle(
+                          color: Colors.red,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
+          }
+        },
+      ),
     );
   }
 }

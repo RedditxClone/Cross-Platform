@@ -1,23 +1,21 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:reddit/business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
-import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/presentation/screens/home/home_web.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_Not_loggedin.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
-import 'dart:io';
-import '../../../business_logic/cubit/choose_profile_image_login_cubit.dart';
 import '../../../helper/dio.dart';
 
 class HomePageWeb extends StatefulWidget {
-  HomePageWeb({Key? key}) : super(key: key);
+  const HomePageWeb({Key? key}) : super(key: key);
 
   @override
   State<HomePageWeb> createState() => _HomePageWebState();
@@ -59,8 +57,14 @@ class _HomePageWebState extends State<HomePageWeb> {
     UserData.user?.interests = selectedInterests;
     debugPrint("after storing${UserData.user?.interests}");
     DioHelper.patchData(
-            url: '/api/user/me/prefs', data: selectedInterests, options: null)
-        .then((value) {
+        url: '/api/user/me/prefs',
+        data: selectedInterests,
+        options: Options(
+          headers: {
+            "Authorization":
+                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzN2ZlNjM4NWUwYjU4M2Y0YTc5ZTM0ZiIsImlhdCI6MTY2OTkwNjQyMiwiZXhwIjoxNjcwNzcwNDIyfQ.Jukdcxvc1j8i78uNshWkPPpBBwh9mMFRoQT6hGgLrY4"
+          },
+        )).then((value) {
       if (value.statusCode == 200) {
         Navigator.of(context).pop();
         showDialogToChooseProfilePicture();
@@ -93,14 +97,19 @@ class _HomePageWebState extends State<HomePageWeb> {
   //gender will be null if not selected
   void selectGender(String gender) async {
     UserData.user?.gender = gender;
-    await DioHelper.patchData(
-            url: "/api/user/me/prefs",
-            data: {
-              "gender": gender,
-            },
-            options: null)
-        .then((res) {
+    DioHelper.patchData(
+        url: '/api/user/me/prefs',
+        data: {
+          "gender": gender,
+        },
+        options: Options(
+          headers: {
+            "Authorization":
+                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzN2ZlNjM4NWUwYjU4M2Y0YTc5ZTM0ZiIsImlhdCI6MTY2OTkwNjQyMiwiZXhwIjoxNjcwNzcwNDIyfQ.Jukdcxvc1j8i78uNshWkPPpBBwh9mMFRoQT6hGgLrY4"
+          },
+        )).then((res) {
       if (res.statusCode == 200) {
+        debugPrint("success gender");
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Row(
@@ -155,8 +164,9 @@ class _HomePageWebState extends State<HomePageWeb> {
   void showDialogToChooseGender() {
     var buttonColor1 = const Color.fromARGB(255, 237, 237, 237);
     var buttonColor2 = const Color.fromARGB(255, 237, 237, 237);
-    var buttonColor3 = const Color.fromARGB(255, 237, 237, 237);
-    var buttonColor4 = const Color.fromARGB(255, 237, 237, 237);
+    // var buttonColor3 = const Color.fromARGB(255, 237, 237, 237);
+    // var buttonColor4 = const Color.fromARGB(255, 237, 237, 237);
+    bool choosed = false;
     showDialog(
       barrierDismissible: false,
       context: context,
@@ -225,17 +235,23 @@ class _HomePageWebState extends State<HomePageWeb> {
                         textAlign: TextAlign.center,
                       ),
                     ),
+                    SizedBox(
+                      height: MediaQuery.of(dialogContext).size.height * 0.05,
+                    ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ElevatedButton(
                         onPressed: () {
                           setState(() {
-                            buttonColor1 ==
-                                    const Color.fromARGB(255, 82, 46, 46)
-                                ? null
-                                : selectGender("Man");
-                            buttonColor1 =
-                                const Color.fromARGB(255, 82, 46, 46);
+                            if (!choosed) {
+                              buttonColor1 ==
+                                      const Color.fromARGB(255, 82, 46, 46)
+                                  ? null
+                                  : selectGender("male");
+                              buttonColor1 =
+                                  const Color.fromARGB(255, 82, 46, 46);
+                              choosed = true;
+                            }
                           });
                         },
                         style: ElevatedButton.styleFrom(
@@ -269,12 +285,16 @@ class _HomePageWebState extends State<HomePageWeb> {
                       padding: const EdgeInsets.all(8.0),
                       child: ElevatedButton(
                         onPressed: () {
-                          buttonColor2 == const Color.fromARGB(255, 82, 46, 46)
-                              ? null
-                              : selectGender("Woman");
                           setState(() {
-                            buttonColor2 =
-                                const Color.fromARGB(255, 82, 46, 46);
+                            if (!choosed) {
+                              buttonColor2 ==
+                                      const Color.fromARGB(255, 82, 46, 46)
+                                  ? null
+                                  : selectGender("woman");
+                              buttonColor2 =
+                                  const Color.fromARGB(255, 82, 46, 46);
+                              choosed = true;
+                            }
                           });
                         },
                         style: ElevatedButton.styleFrom(
@@ -304,84 +324,92 @@ class _HomePageWebState extends State<HomePageWeb> {
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          buttonColor3 == const Color.fromARGB(255, 82, 46, 46)
-                              ? null
-                              : selectGender("Non-binary");
-                          setState(() {
-                            buttonColor3 =
-                                const Color.fromARGB(255, 82, 46, 46);
-                          });
-                        },
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.grey,
-                          backgroundColor: buttonColor3,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            side: BorderSide(
-                              color: buttonColor3 ==
-                                      const Color.fromARGB(255, 82, 46, 46)
-                                  ? Colors.red
-                                  : buttonColor3,
-                            ),
-                          ),
-                        ),
-                        child: Container(
-                          padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                          width: MediaQuery.of(dialogContext).size.width,
-                          child: const Text(
-                            "Non-binary",
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.black,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          buttonColor4 == const Color.fromARGB(255, 82, 46, 46)
-                              ? null
-                              : selectGender("I prefer not to say");
-                          setState(() {
-                            buttonColor4 =
-                                const Color.fromARGB(255, 82, 46, 46);
-                          });
-                        },
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.grey,
-                          backgroundColor: buttonColor4,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            side: BorderSide(
-                              color: buttonColor4 ==
-                                      const Color.fromARGB(255, 82, 46, 46)
-                                  ? Colors.red
-                                  : buttonColor4,
-                            ),
-                          ),
-                        ),
-                        child: Container(
-                          padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                          width: MediaQuery.of(dialogContext).size.width,
-                          child: const Text(
-                            "I prefer not to say",
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.black,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                    ),
+                    // Padding(
+                    //   padding: const EdgeInsets.all(8.0),
+                    //   child: ElevatedButton(
+                    //     onPressed: () {
+                    //       setState(() {
+                    //         if (!choosed) {
+                    //           buttonColor3 ==
+                    //                   const Color.fromARGB(255, 82, 46, 46)
+                    //               ? null
+                    //               : selectGender("Non-binary");
+                    //           buttonColor3 =
+                    //               const Color.fromARGB(255, 82, 46, 46);
+                    //           choosed = true;
+                    //         }
+                    //       });
+                    //     },
+                    //     style: ElevatedButton.styleFrom(
+                    //       foregroundColor: Colors.grey,
+                    //       backgroundColor: buttonColor3,
+                    //       shape: RoundedRectangleBorder(
+                    //         borderRadius: BorderRadius.circular(30),
+                    //         side: BorderSide(
+                    //           color: buttonColor3 ==
+                    //                   const Color.fromARGB(255, 82, 46, 46)
+                    //               ? Colors.red
+                    //               : buttonColor3,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //     child: Container(
+                    //       padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                    //       width: MediaQuery.of(dialogContext).size.width,
+                    //       child: const Text(
+                    //         "Non-binary",
+                    //         style: TextStyle(
+                    //           fontSize: 20,
+                    //           color: Colors.black,
+                    //         ),
+                    //         textAlign: TextAlign.center,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
+                    // Padding(
+                    //   padding: const EdgeInsets.all(8.0),
+                    //   child: ElevatedButton(
+                    //     onPressed: () {
+                    //       setState(() {
+                    //         if (!choosed) {
+                    //           buttonColor4 ==
+                    //                   const Color.fromARGB(255, 82, 46, 46)
+                    //               ? null
+                    //               : selectGender("I prefer not to say");
+                    //           buttonColor4 =
+                    //               const Color.fromARGB(255, 82, 46, 46);
+                    //           choosed = true;
+                    //         }
+                    //       });
+                    //     },
+                    //     style: ElevatedButton.styleFrom(
+                    //       foregroundColor: Colors.grey,
+                    //       backgroundColor: buttonColor4,
+                    //       shape: RoundedRectangleBorder(
+                    //         borderRadius: BorderRadius.circular(30),
+                    //         side: BorderSide(
+                    //           color: buttonColor4 ==
+                    //                   const Color.fromARGB(255, 82, 46, 46)
+                    //               ? Colors.red
+                    //               : buttonColor4,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //     child: Container(
+                    //       padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                    //       width: MediaQuery.of(dialogContext).size.width,
+                    //       child: const Text(
+                    //         "I prefer not to say",
+                    //         style: TextStyle(
+                    //           fontSize: 20,
+                    //           color: Colors.black,
+                    //         ),
+                    //         textAlign: TextAlign.center,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
@@ -594,9 +622,8 @@ class _HomePageWebState extends State<HomePageWeb> {
       if (imagePicker == null) return false;
       imgCover = await imagePicker.readAsBytes();
       // BlocProvider.of<AuthCubit>(context)
-      //     .changeProfilephotoWeb(user, imgCover!);
+      //     .changeProfilephotoWeb(UserData.user, imgCover!);
       // displayMsg(context, Colors.blue, 'Changes Saved');
-
     } on PlatformException catch (e) {
       debugPrint("Error in pickImageWeb: ${e.toString()}");
     }
@@ -866,12 +893,18 @@ class _HomePageWebState extends State<HomePageWeb> {
             debugPrint("state is signed in");
             WidgetsBinding.instance
                 .addPostFrameCallback((_) => showDialogToChooseGender());
+            return HomeWeb(isLoggedIn: isLoggedIn);
           } else if (state is SignedInWithProfilePhoto) {
             debugPrint("state is SignedInWithProfilePhoto");
-            UserData.user = state.user;
+            UserData.user!.profilePic = state.user?.profilePic;
             debugPrint("user in the home page ${UserData.user?.profilePic}");
+            return HomeWeb(isLoggedIn: isLoggedIn);
+          } else if (state is Login) {
+            return HomeWeb(isLoggedIn: isLoggedIn);
           }
-          return HomeWeb(isLoggedIn: isLoggedIn);
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
         },
       ),
     );
