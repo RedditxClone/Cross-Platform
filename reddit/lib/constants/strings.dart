@@ -76,3 +76,4 @@ const chooseProfileImgScreen = '/chooseProfileImgScreen';
 const subredditPageScreenRoute = "/subredditPageScreen";
 const historyPageScreenRoute = '/HistoryPageScreen';
 const createCommunityScreenRoute = '/CreateCommunityScreen';
+const modtools = '/modtools';

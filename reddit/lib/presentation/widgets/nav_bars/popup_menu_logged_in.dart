@@ -1,5 +1,3 @@
-import 'dart:js';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reddit/business_logic/cubit/create_community_cubit.dart';
@@ -12,7 +10,7 @@ import 'package:reddit/presentation/screens/create_community_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PopupMenuLoggedIn extends StatelessWidget {
-  PopupMenuLoggedIn({Key? key}) : super(key: key);
+  const PopupMenuLoggedIn({Key? key}) : super(key: key);
   Future<void> _launchUrl(String link) async {
     Uri url = Uri.parse(link);
     if (!await launchUrl(url)) {
