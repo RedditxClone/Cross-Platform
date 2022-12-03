@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:reddit/business_logic/cubit/left_drawer/left_drawer_cubit.dart';
+import 'package:reddit/constants/strings.dart';
 import 'package:reddit/data/model/left_drawer/left_drawer_model.dart';
 
 import '../../../data/repository/left_drawer/left_drawer_repository.dart';
@@ -173,6 +174,8 @@ class _LeftDrawerState extends State<LeftDrawer> {
                           title: const Text("Create a community"),
                           onTap: () {
                             // TODO: got to create community page
+                            Navigator.pushNamed(
+                                context, createCommunityScreenRoute);
                           },
                         ),
                         ..._yourCommunities!.map(

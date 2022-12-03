@@ -1,9 +1,15 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:reddit/business_logic/cubit/create_community_cubit.dart';
 import 'package:reddit/constants/strings.dart';
-import 'package:reddit/data/model/signin.dart';
+import 'package:reddit/data/model/auth_model.dart';
+// import 'package:reddit/data/model/signin.dart';
+import 'package:reddit/data/repository/create_community_repository.dart';
+import 'package:reddit/data/web_services/create_community_web_services.dart';
+import 'package:reddit/presentation/screens/create_community_screen.dart';
 import 'package:reddit/presentation/widgets/nav_bars/popup_menu_logged_in.dart';
 
 class AppBarWebLoggedIn extends StatefulWidget {
@@ -17,6 +23,17 @@ class AppBarWebLoggedIn extends StatefulWidget {
 }
 
 class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
+  void createCommunityDialog() {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => BlocProvider(
+              create: (context) => CreateCommunityCubit(
+                  CreateCommunityRepository(CreateCommunityWebServices())),
+              child: const CreateCommunityScreen(),
+            ));
+  }
+
   void routeToPage(val) {
     switch (val) {
       case 'Home':
@@ -24,6 +41,9 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
         break;
       case 'Popular':
         Navigator.pushNamed(context, popularPageRoute, arguments: widget.user);
+        break;
+      case 'Create Community':
+        createCommunityDialog();
         break;
       case 'User settings':
         Navigator.pushNamed(context, settingsTabsRoute);
@@ -36,7 +56,7 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
     return [
       const DropdownMenuItem(
           enabled: false,
-          child: Text('Feeds',
+          child: Text('FEEDS',
               style: TextStyle(fontSize: 12, color: Colors.grey))),
       DropdownMenuItem(
           value: 'Home',
@@ -66,9 +86,24 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
                 ? const SizedBox(width: 0)
                 : const Text('All', style: TextStyle(fontSize: 15))
           ])),
+      //
       const DropdownMenuItem(
           enabled: false,
-          child: Text('Other',
+          child: Text('YOUR COMMUNITIES',
+              style: TextStyle(fontSize: 12, color: Colors.grey))),
+      DropdownMenuItem(
+          value: 'Create Community',
+          child: Row(children: [
+            const Icon(Icons.add, size: 20),
+            const SizedBox(width: 8),
+            MediaQuery.of(context).size.width < 930
+                ? const SizedBox(width: 0)
+                : const Text('Create Community', style: TextStyle(fontSize: 15))
+          ])),
+      //
+      const DropdownMenuItem(
+          enabled: false,
+          child: Text('OTHER',
               style: TextStyle(fontSize: 12, color: Colors.grey))),
       DropdownMenuItem(
           key: const Key('user-settings-test'),
@@ -88,6 +123,15 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
             MediaQuery.of(context).size.width < 930
                 ? const SizedBox(width: 0)
                 : const Text('Messages', style: TextStyle(fontSize: 15))
+          ])),
+      DropdownMenuItem(
+          value: 'u/user_name',
+          child: Row(children: [
+            const CircleAvatar(radius: 13, child: Icon(Icons.person, size: 15)),
+            const SizedBox(width: 8),
+            MediaQuery.of(context).size.width < 930
+                ? const SizedBox(width: 0)
+                : const Text('u/user_name', style: TextStyle(fontSize: 15))
           ])),
       DropdownMenuItem(
           value: 'Create Post',

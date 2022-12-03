@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:reddit/data/model/signin.dart';
+import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/presentation/screens/home/home_page_mobile.dart';
 
 late User user;
@@ -10,11 +10,11 @@ void main() {
         userId: '1',
         name: 'mark_yasser',
         email: 'mark@hotmai.com',
-        imageUrl: null);
+        profilePic: null);
   });
   Widget createWidgetUnderTest() {
     return MaterialApp(
-      home: HomePage(user),
+      home: HomePage(),
     );
   }
 

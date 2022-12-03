@@ -1,29 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/theme_colors.dart';
-import 'package:reddit/data/model/signin.dart';
+import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/presentation/widgets/home_widgets/left_list_not_logged_in.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_Not_loggedin.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 import 'package:reddit/presentation/widgets/posts/posts_web.dart';
 
 class PopularWeb extends StatefulWidget {
-  User? user;
-  PopularWeb(this.user, {Key? key}) : super(key: key);
+  PopularWeb({Key? key}) : super(key: key);
 
   @override
-  State<PopularWeb> createState() => _PopularWebState(user: user);
+  State<PopularWeb> createState() => _PopularWebState();
 }
 
 class _PopularWebState extends State<PopularWeb> {
   late Responsive responsive;
   late bool isLoggedIn;
-  User? user;
-  _PopularWebState({required this.user});
+  _PopularWebState();
   @override
   void initState() {
     super.initState();
-    isLoggedIn = user != null;
+    isLoggedIn = UserData.user != null;
   }
 
   @override
@@ -36,7 +34,7 @@ class _PopularWebState extends State<PopularWeb> {
             automaticallyImplyLeading: false,
             backgroundColor: defaultAppbarBackgroundColor,
             title: isLoggedIn
-                ? AppBarWebLoggedIn(user: user!, screen: 'Popular')
+                ? AppBarWebLoggedIn(user: UserData.user!, screen: 'Popular')
                 : const AppBarWebNotLoggedIn(screen: 'Popular')),
         body: Container(
           color: defaultWebBackgroundColor,
@@ -193,10 +191,10 @@ class _PopularWebState extends State<PopularWeb> {
                                             margin: const EdgeInsets.only(
                                                 bottom: 15),
                                           ),
-                                          PostsWeb(),
-                                          PostsWeb(),
-                                          PostsWeb(),
-                                          PostsWeb(),
+                                          const PostsWeb(),
+                                          const PostsWeb(),
+                                          const PostsWeb(),
+                                          const PostsWeb(),
                                         ],
                                       ),
                                     ),

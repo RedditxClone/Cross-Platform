@@ -10,8 +10,8 @@ class LeftDrawerRepository {
 
   LeftDrawerRepository(this.leftDrawerWebServices);
 
-  /// Gets settings from web services class and maps it to the model.
-  /// The cubit (account_settings_cubit) calls this function
+  /// Returns [List] of [LeftDrawerModel] object that contains the communities you are currently moderating
+  /// after getting it from [LeftDrawerWebServices] and mapping it to the model list.
   Future<List<LeftDrawerModel>> getModeratingCommunities() async {
     final moderatingCommunities =
         await leftDrawerWebServices.getModeratingCommunities();
@@ -21,6 +21,8 @@ class LeftDrawerRepository {
         .map((i) => LeftDrawerModel.fromJson(i)));
   }
 
+  /// Returns [List] of [LeftDrawerModel] object that contains the communities you are currently joined in
+  /// after getting it from [LeftDrawerWebServices] and mapping it to the model list.
   Future<List<LeftDrawerModel>> getYourCommunities() async {
     final yourCommunities = await leftDrawerWebServices.getYourCommunities();
     print("Your Communities from repo:");
@@ -29,6 +31,8 @@ class LeftDrawerRepository {
         jsonDecode(yourCommunities).map((i) => LeftDrawerModel.fromJson(i)));
   }
 
+  /// Returns [List] of [LeftDrawerModel] object that contains the users you are currently following
+  /// after getting it from [LeftDrawerWebServices] and mapping it to the model list.
   Future<List<LeftDrawerModel>> getFollowingUsers() async {
     final following = await leftDrawerWebServices.getFollowingUsers();
     print("Following from repo:");

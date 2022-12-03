@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
-import 'package:reddit/data/model/signin.dart';
+import 'package:reddit/data/model/auth_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PopupMenuLoggedIn extends StatelessWidget {
@@ -142,8 +142,11 @@ class PopupMenuLoggedIn extends StatelessWidget {
       constraints: const BoxConstraints.expand(width: 230, height: 530),
       onSelected: (value) {
         switch (value) {
+          case 1:
+            Navigator.pushNamed(context, profilePageRoute);
+            break;
           case 3:
-            Navigator.pushReplacementNamed(context, settingsTabsRoute);
+            Navigator.pushNamed(context, settingsTabsRoute);
             break;
           case 6:
             _launchUrl('https://www.reddithelp.com/hc/en-us');
@@ -155,9 +158,9 @@ class PopupMenuLoggedIn extends StatelessWidget {
       child: Row(
         children: [
           CircleAvatar(
-              child: user.imageUrl == null
+              child: user.profilePic == null
                   ? const Icon(Icons.person)
-                  : Image.network(user.imageUrl!, fit: BoxFit.cover)),
+                  : Image.network(user.profilePic!, fit: BoxFit.cover)),
           const SizedBox(width: 10),
           MediaQuery.of(context).size.width < 950
               ? const SizedBox(width: 0)

@@ -1,7 +1,3 @@
-import 'dart:convert';
-import 'dart:io';
-import 'dart:typed_data';
-
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,9 +6,7 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:reddit/business_logic/cubit/settings/settings_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
-import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/data/model/user_settings.dart';
-import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 
 class ProfileSettingsWeb extends StatefulWidget {
   const ProfileSettingsWeb({Key? key}) : super(key: key);
@@ -43,6 +37,9 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
     BlocProvider.of<SettingsCubit>(context).getUserSettings();
   }
 
+  /// [context] : build context.
+  /// [color] : color of the error msg to be displayer e.g. ('red' : error , 'blue' : success ).
+  /// [title] : message to be displayed to the user.
   void displayMsg(BuildContext context, Color color, String title) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       width: 400,
@@ -80,9 +77,12 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
     ));
   }
 
-  /// ## Parameters
-  /// ### src : the image source can be ImageSource.gallery or ImageSource.camera
-  /// ### dest : the image destination can be 'cover' for cover photo or 'profile' fom profile photo
+  /// [src] : source of the image can be (camera or gallery).
+  /// [dest] : destionation of the image can be 'cover' to change the cover photo or 'profile' to change the profile photo.
+  ///
+  /// calls the `changeProfilephotoWeb` or `changeProfilephotoWeb` methods inside [SettingsCubit] that Emits sate SettingsChanged on successfully updating photo.
+  ///
+  /// This function might throw an exception if the user does not allow the app to access the gallery or camera.
   Future pickImageWeb(ImageSource src, String dest) async {
     try {
       final imagePicker = await ImagePicker().pickImage(source: src);
@@ -98,7 +98,11 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
         }
         displayMsg(context, Colors.blue, 'Changes Saved');
       });
-    } on PlatformException catch (e) {}
+    } on PlatformException catch (e) {
+      debugPrint(e.toString());
+
+      displayMsg(context, Colors.red, 'Could not load image');
+    }
   }
 
   Widget addImageButton(double topCorner, double leftCorner) {
@@ -203,8 +207,8 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
             child: ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
-                  primary: const Color.fromRGBO(90, 90, 90, 100),
-                  onPrimary: Colors.white,
+                  foregroundColor: Colors.white,
+                  backgroundColor: const Color.fromRGBO(90, 90, 90, 100),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20.0)),
                 ),
@@ -252,7 +256,7 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
                             onPressed: () =>
                                 pickImageWeb(ImageSource.gallery, 'profile'),
                             style: ElevatedButton.styleFrom(
-                              primary: Colors.white,
+                              backgroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(80.0)),
                             ),

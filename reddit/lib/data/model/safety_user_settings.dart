@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-/// Safety Settings data model
+/// This class represents the data model of safety settings
 class SafetySettings {
   late String disroptiveSettings;
   List<dynamic> blocked = [];
@@ -11,6 +11,7 @@ class SafetySettings {
   late bool personalizeRecGeneralLocation;
   late bool personalizeRecOurPartners;
   late bool useTwoFactorAuthentication;
+
   SafetySettings(
       {required this.disroptiveSettings,
       required this.blocked,
@@ -22,17 +23,23 @@ class SafetySettings {
       required this.personalizeRecOurPartners,
       required this.useTwoFactorAuthentication});
 
-  ///  Transform the data from json to Settings Class object
+  /// [json] : [Map] of the user safety settings that was returned by the API.
+  ///
+  /// Returns [SafetySettings] object that contains the data of [json].
   SafetySettings.fromjson(Map<String, dynamic> json) {
     disroptiveSettings = json['badCommentAutoCollapse'];
     showUnInSearch = json['showInSearch'];
     personalizeAllOfReddit = json['personalizeAllOfReddit'];
-    personalizeAdsInformation = json['personalizeAds_information'];
-    personalizeAdsYourActivity = json['personalizeAds_yourActivity'];
-    personalizeRecGeneralLocation = json['personalizeRec_generalLocation'];
-    personalizeRecOurPartners = json['personalizeRec_ourPartners'];
+    personalizeAdsInformation = json['personalizeAdsInformation'];
+    personalizeAdsYourActivity = json['personalizeAdsYourActivity'];
+    personalizeRecGeneralLocation = json['personalizeRecGeneralLocation'];
+    personalizeRecOurPartners = json['personalizeRecOurPartners'];
     useTwoFactorAuthentication = json['useTwoFactorAuthentication'];
   }
+
+  /// [other] : is a [SafetySettings] object that we want to compare with
+  ///
+  /// Returns a [bool] that represent the equivilance of two [SafetySettings] objects
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||

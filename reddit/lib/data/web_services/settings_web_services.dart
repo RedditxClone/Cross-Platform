@@ -2,12 +2,15 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:reddit/constants/strings.dart';
 
+/// This class is responsible of performing profile settings requests to the REST API
 class SettingsWebServices {
   late Dio dio;
   bool isMockerServer = useMockServerForAllWebServices;
+  String token = '';
   SettingsWebServices() {
     BaseOptions options = BaseOptions(
       baseUrl: isMockerServer ? mockUrl : baseUrl,
@@ -19,24 +22,43 @@ class SettingsWebServices {
     dio = Dio(options);
   }
 
-  /// Returns all user settings : Performs get request to the endpoint /prefs to get all user settings from the API
+  /// Returns all user profile settings if the request is performend succefuly or an null if an exception
+  /// occured while trying to perform the request.
+  ///
+  /// This function Performs get request to the endpoint `baseUrl/user/me/prefs` to get all user settings from the API.
   Future<dynamic> getUserSettings() async {
     try {
-      Response response = await dio.get('prefs');
+      Response response = await dio.get('user/me/prefs',
+          options: Options(
+            headers: {"Authorization": "Bearer $token"},
+          ));
+      debugPrint(response.statusCode.toString());
       return response.data;
     } catch (e) {
       return null;
     }
   }
 
-  /// updates a image
-  Future<String> updateImage(File file, String key) async {
+  /// [key] : [String] that defines the type of photo we want to change 'coverPhoto' or 'profilePhoto'
+  /// [file] : The new photo as a [File].
+  ///
+  /// Returns the path of the updated image if the request is performend succefuly or an null if an exception
+  /// occured while trying to perform the request.
+  ///
+  /// This function Performs patch request to the endpoint `baseUrl/user/me/`[key] to update an image and get the
+  /// from the new path the API.
+  Future<dynamic> updateImage(File file, String key) async {
     try {
       String fileName = file.path.split('/').last;
       FormData formData = FormData.fromMap({
         "file": await MultipartFile.fromFile(file.path, filename: fileName)
       });
-      Response response = await dio.patch(key, data: formData);
+      Response response = await dio.patch('user/me/$key',
+          data: formData,
+          options: Options(
+            headers: {"Authorization": "Bearer $token"},
+          ));
+      debugPrint(response.statusCode.toString());
       return response.data;
     } catch (e) {
       // print(e.toString());
@@ -44,29 +66,51 @@ class SettingsWebServices {
     }
   }
 
-  /// updates a image
-  Future<String> updateImageWeb(Uint8List fileAsBytes, String key) async {
+  /// [key] : [String] that defines the type of photo we want to change 'coverPhoto' or 'profilePhoto'
+  /// [fileAsBytes] : The new photo as a [Uint8List] type.
+  ///
+  /// Returns the path of the updated image if the request is performend succefuly or an null if an exception
+  /// occured while trying to perform the request.
+  ///
+  /// This function Performs patch request to the endpoint `baseUrl/user/me/`[key] to update an image and get the
+  /// from the new path the API.
+  Future<dynamic> updateImageWeb(Uint8List fileAsBytes, String key) async {
     try {
       FormData formData = FormData.fromMap({
         "file": MultipartFile.fromBytes(fileAsBytes,
             contentType: MediaType('application', 'json'), filename: key)
       });
-      Response response = await dio.patch(key, data: formData);
-
+      Response response = await dio.patch('user/me/$key',
+          data: formData,
+          options: Options(
+            headers: {"Authorization": "Bearer $token"},
+          ));
+      debugPrint(response.statusCode.toString());
       return response.data;
     } catch (e) {
-      print(e.toString());
+      debugPrint(e.toString());
       return '';
     }
   }
 
-  /// updates a user setting
-  Future<String> updatePrefs(Map changed) async {
+  /// [changed] : a [Map] that contains only the changed profile settings
+  ///
+  /// /// Returns status code 200 if request is success and or 401 if an error occured or null if an exception
+  /// occured while trying to perform the request.
+  ///
+  /// This function Performs patch request to the endpoint `baseUrl/user/me/prefs` to update some user's profile settings.
+  Future<dynamic> updatePrefs(Map changed) async {
     try {
-      Response response = await dio.patch('prefs', data: changed);
+      Response response = await dio.patch(
+          '/// Returns status code 200 if success and 401 if an error occured',
+          data: changed,
+          options: Options(
+            headers: {"Authorization": "Bearer $token"},
+          ));
+      debugPrint(response.statusCode.toString());
       return response.data;
     } catch (e) {
-      return '';
+      return null;
     }
   }
 }

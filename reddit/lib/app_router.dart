@@ -1,11 +1,35 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:reddit/business_logic/cubit/choose_profile_image_login_cubit.dart';
+import 'package:reddit/data/repository/feed_setting_repository.dart';
+import 'package:reddit/data/web_services/feed_setting_web_services.dart';
+import 'business_logic/cubit/feed_settings_cubit.dart';
+import 'presentation/screens/feed_setting.dart';
+import 'package:reddit/presentation/screens/profile/others_profile_page_web.dart';
+import 'package:reddit/presentation/screens/profile/profile_page_web.dart';
+import 'package:reddit/presentation/screens/profile/profile_screen.dart';
+import 'business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
+import 'data/repository/auth_repo.dart';
+import 'data/web_services/authorization/auth_web_service.dart';
 import 'presentation/screens/setting_tab_ui.dart';
 import 'package:reddit/presentation/screens/recaptcha_screen.dart'
     if (dart.library.html) 'package:reddit/presentation/screens/recaptcha_screen_web.dart'
     as recaptcha_screen;
+import 'package:reddit/data/repository/subreddit_page_repository.dart';
+import 'package:reddit/data/web_services/subreddit_page_web_services.dart';
+import 'package:reddit/presentation/screens/subreddit_screen.dart';
+import 'package:reddit/business_logic/cubit/subreddit_page_cubit.dart';
+import 'package:reddit/business_logic/cubit/history_page_cubit.dart';
 
+import 'package:reddit/data/repository/history_page_repository.dart';
+
+import 'package:reddit/data/web_services/history_page_web_services.dart';
+
+import 'package:reddit/presentation/screens/history_screen.dart';
+
+import 'package:reddit/business_logic/cubit/create_community_cubit.dart';
+import 'package:reddit/data/repository/create_community_repository.dart';
+import 'package:reddit/data/web_services/create_community_web_services.dart';
+import 'presentation/screens/create_community_screen.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reddit/business_logic/cubit/settings/safety_settings_cubit.dart';
@@ -23,7 +47,6 @@ import 'package:reddit/business_logic/cubit/email_settings_cubit.dart';
 import 'package:reddit/data/repository/email_settings_repo.dart';
 import 'package:reddit/data/web_services/email_settings_web_services.dart';
 import 'package:reddit/business_logic/cubit/cubit/account_settings_cubit.dart';
-
 import 'package:reddit/data/repository/account_settings_repository.dart';
 import 'package:reddit/data/web_services/account_settings_web_services.dart';
 import 'package:reddit/presentation/screens/account_settings/account_settings_screen_web.dart';
@@ -47,7 +70,7 @@ import 'package:reddit/presentation/screens/signup_page.dart';
 import 'package:reddit/presentation/screens/signup_page2.dart';
 import 'package:reddit/presentation/screens/signup_screen.dart';
 
-import 'data/model/signin.dart';
+import 'data/model/auth_model.dart';
 
 class AppRouter {
   // platform
@@ -63,13 +86,23 @@ class AppRouter {
   late SafetySettingsCubit safetySettingsCubit;
   late SettingsRepository settingsRepository;
   late SettingsCubit settingsCubit;
-  late ChooseProfileImageLoginCubit chooseProfileImageLoginCubit;
 
   late EmailSettingsRepository emailSettingsReposity;
   late EmailSettingsCubit emailSettingsCubit;
   late EmailSettingsWebServices emailSettingsWebServices;
 
-  static User? user;
+  late AuthRepo authRepo;
+  late SubredditPageCubit subredditPageCubit;
+  late SubredditPageRepository subredditPageRepository;
+  late SubredditWebServices subredditWebServices;
+  late HistoryPageCubit historyPageCubit;
+  late HistoryPageRepository historyPageRepository;
+  late HistoryPageWebServices historyPageWebServices;
+  late AuthCubit authCubit;
+  late CreateCommunityRepository communityRepository;
+  late CreateCommunityCubit createCommunityCubit;
+  late CreateCommunityWebServices communityWebServices;
+
   AppRouter() {
     // initialise repository and cubit objects
     safetySettingsRepository =
@@ -77,8 +110,7 @@ class AppRouter {
     safetySettingsCubit = SafetySettingsCubit(safetySettingsRepository);
     settingsRepository = SettingsRepository(SettingsWebServices());
     settingsCubit = SettingsCubit(settingsRepository);
-    chooseProfileImageLoginCubit =
-        ChooseProfileImageLoginCubit(settingsRepository);
+
     emailSettingsWebServices = EmailSettingsWebServices();
     emailSettingsReposity = EmailSettingsRepository(emailSettingsWebServices);
     emailSettingsCubit = EmailSettingsCubit(emailSettingsReposity);
@@ -86,20 +118,73 @@ class AppRouter {
     accountSettingsRepository =
         AccountSettingsRepository(AccountSettingsWebServices());
     accountSettingsCubit = AccountSettingsCubit(accountSettingsRepository);
+    authRepo = AuthRepo(AuthWebService());
+    authCubit = AuthCubit(authRepo, settingsRepository);
+
+    subredditWebServices = SubredditWebServices();
+    subredditPageRepository = SubredditPageRepository(subredditWebServices);
+    subredditPageCubit = SubredditPageCubit(subredditPageRepository);
+    historyPageWebServices = HistoryPageWebServices();
+    historyPageRepository = HistoryPageRepository(historyPageWebServices);
+    historyPageCubit = HistoryPageCubit(historyPageRepository);
+
+    communityWebServices = CreateCommunityWebServices();
+    communityRepository = CreateCommunityRepository(communityWebServices);
+    createCommunityCubit = CreateCommunityCubit(communityRepository);
   }
   Route? generateRoute(RouteSettings settings) {
     final arguments = settings.arguments;
     switch (settings.name) {
-      case homePageRoute:
-        user = settings.arguments as User?;
+      case feedSettingRoute:
         return MaterialPageRoute(
-          builder: (_) => kIsWeb ? HomePageWeb(user) : HomePage(user),
+          builder: (_) => BlocProvider(
+            create: (context) => FeedSettingsCubit(FeedSettingRepository(
+                feedSettingsWebServices: FeedSettingWebServices())),
+            child: const FeedSetting(),
+          ),
+        );
+
+      case homePageRoute:
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: ((context) => authCubit),
+            child: kIsWeb ? HomePageWeb() : HomePage(),
+          ),
         );
 
       case popularPageRoute:
-        final user = settings.arguments as User?;
         return MaterialPageRoute(
-            builder: (_) => kIsWeb ? PopularWeb(user) : const Popular());
+            builder: (_) => kIsWeb ? PopularWeb() : const Popular());
+
+      case profilePageRoute:
+        return MaterialPageRoute(
+            builder: (_) =>
+                kIsWeb ? const ProfilePageWeb() : const ProfileScreen());
+
+      case otherProfilePageRoute:
+        return MaterialPageRoute(
+            builder: (_) =>
+                kIsWeb ? const OtherProfilePageWeb() : const ProfileScreen());
+      case subredditPageScreenRoute:
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider.value(
+                value: subredditPageCubit,
+                child: const SubredditPageScreen(subredditId: "redditx_")));
+
+      case historyPageScreenRoute:
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider.value(
+                  value: historyPageCubit,
+                  child: HistoryPageScreen(
+                    userID: "6388a61b5e0b583f4a79e41a",
+                  ),
+                ));
+      case createCommunityScreenRoute:
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider.value(
+                  value: createCommunityCubit,
+                  child: const CreateCommunityScreen(),
+                ));
 
       // case emailSettingsWebScreenRoute:
       //   return MaterialPageRoute(
@@ -112,11 +197,15 @@ class AppRouter {
       //   return MaterialPageRoute(
       //     builder: (_) => Home(user: user),
       //   );
-
       case SIGNU_PAGE2:
-        final user = settings.arguments as User;
+        final userEmail = settings.arguments as String;
         return MaterialPageRoute(
-          builder: (_) => SignupWeb2(user: user),
+          builder: (_) => BlocProvider.value(
+            value: authCubit,
+            child: SignupWeb2(
+              userEmail: userEmail,
+            ),
+          ),
         );
       case forgetUsernameWeb:
         return MaterialPageRoute(
@@ -132,11 +221,17 @@ class AppRouter {
         );
       case loginPage:
         return MaterialPageRoute(
-          builder: (_) => const LoginWeb(),
+          builder: (_) => BlocProvider.value(
+            value: authCubit,
+            child: const LoginWeb(),
+          ),
         );
       case signupScreen:
         return MaterialPageRoute(
-          builder: (_) => const SignupMobile(),
+          builder: (_) => BlocProvider.value(
+            value: authCubit,
+            child: const SignupMobile(),
+          ),
         );
       case forgetPasswordAndroid:
         return MaterialPageRoute(
@@ -144,35 +239,29 @@ class AppRouter {
         );
       case loginScreen:
         return MaterialPageRoute(
-          builder: (_) => const LoginMobile(),
+          builder: (_) => BlocProvider.value(
+            value: authCubit,
+            child: const LoginMobile(),
+          ),
         );
       case forgetUsernameAndroid:
         return MaterialPageRoute(
           builder: (_) => const ForgetUsernameAndroid(),
         );
       case interesetesScreen:
-        final user = settings.arguments as User;
         return MaterialPageRoute(
-          builder: (_) => InteresetesAndroid(
-            newUser: user,
-          ),
+          builder: (_) => const InteresetesAndroid(),
         );
       case chooseProfileImgScreen:
-        final user = settings.arguments as User;
         return MaterialPageRoute(
-          builder: (_) => BlocProvider(
-            create: (context) => chooseProfileImageLoginCubit,
-            child: ChooseProfileImgAndroid(
-              newUser: user,
-            ),
+          builder: (_) => BlocProvider.value(
+            value: authCubit,
+            child: ChooseProfileImgAndroid(),
           ),
         );
       case chooseGenderScreen:
-        final user = settings.arguments as User;
         return MaterialPageRoute(
-          builder: (_) => ChooseGenderAndroid(
-            newUser: user,
-          ),
+          builder: (_) => const ChooseGenderAndroid(),
         );
       /*
       case example:
@@ -209,7 +298,7 @@ class AppRouter {
         return MaterialPageRoute(
             builder: (_) => UpdateEmailAddressScreen(arguments));
       case settingsTabsRoute:
-        return MaterialPageRoute(builder: (_) => SettingTabUi(user: user));
+        return MaterialPageRoute(builder: (_) => SettingTabUi());
 
       case changePasswordRoute:
         return MaterialPageRoute(builder: (context) {

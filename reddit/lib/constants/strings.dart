@@ -15,6 +15,11 @@ const popularPageRoute = '/popular';
 // -----------Log in / Sign up-----------
 //---------------------------------------
 //---------------------------------------
+//--------------User Profile-------------
+//---------------------------------------
+const profilePageRoute = '/profile';
+const otherProfilePageRoute = '/OtherProfile';
+//---------------------------------------
 // ----------Settings routes-------------
 //---------------------------------------
 const settingsTabsRoute = "/tabs";
@@ -40,6 +45,10 @@ const safetySettingsRoute = '/safetySettings';
 //---------------------------------------
 const emailSettingsWebScreenRoute = "/emailSettings";
 //---------------------------------------
+// -----Feed settings routes---------
+//---------------------------------------
+const feedSettingRoute = '/feed_settings';
+//---------------------------------------
 // -----------reCaptcha routes-----------
 //---------------------------------------
 const recaptchaRoute = "/recaptcha";
@@ -60,3 +69,9 @@ const forgetUsernameAndroid = '/forgetUsernameAndroud';
 const interesetesScreen = '/interesetesScreen';
 const chooseGenderScreen = '/chooseGenderScreen';
 const chooseProfileImgScreen = '/chooseProfileImgScreen';
+//---------------------------------------
+// ------subreddit page route---------
+//---------------------------------------
+const subredditPageScreenRoute = "/subredditPageScreen";
+const historyPageScreenRoute = '/HistoryPageScreen';
+const createCommunityScreenRoute = '/CreateCommunityScreen';

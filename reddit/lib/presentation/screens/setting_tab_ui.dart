@@ -1,30 +1,33 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reddit/business_logic/cubit/cubit/account_settings_cubit.dart';
 import 'package:reddit/business_logic/cubit/email_settings_cubit.dart';
+import 'package:reddit/business_logic/cubit/feed_settings_cubit.dart';
 import 'package:reddit/business_logic/cubit/settings/safety_settings_cubit.dart';
 import 'package:reddit/business_logic/cubit/settings/settings_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/theme_colors.dart';
-import 'package:reddit/data/model/signin.dart';
+import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/data/repository/account_settings_repository.dart';
 import 'package:reddit/data/repository/email_settings_repo.dart';
+import 'package:reddit/data/repository/feed_setting_repository.dart';
 import 'package:reddit/data/repository/safety_settings_repository.dart';
 import 'package:reddit/data/repository/settings_repository.dart';
 import 'package:reddit/data/web_services/account_settings_web_services.dart';
 import 'package:reddit/data/web_services/email_settings_web_services.dart';
+import 'package:reddit/data/web_services/feed_setting_web_services.dart';
 import 'package:reddit/data/web_services/safety_settings_web_services.dart';
 import 'package:reddit/data/web_services/settings_web_services.dart';
 import 'package:reddit/presentation/screens/account_settings/account_settings_screen_web.dart';
 import 'package:reddit/presentation/screens/email_settings_web.dart';
+import 'package:reddit/presentation/screens/feed_setting.dart';
 import 'package:reddit/presentation/screens/profile_settings_web.dart';
 import 'package:reddit/presentation/screens/safety_settings_web.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 
 class SettingTabUi extends StatefulWidget {
-  User? user;
-  SettingTabUi({super.key, required this.user});
+  // User? user;
+  SettingTabUi({super.key});
 
   @override
   State<SettingTabUi> createState() => _SettingTabUiState();
@@ -42,9 +45,9 @@ class _SettingTabUiState extends State<SettingTabUi> {
           shape:
               const Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
           automaticallyImplyLeading: false,
-          backgroundColor: defaultSecondaryColor,
+          backgroundColor: defaultAppbarBackgroundColor,
           title:
-              AppBarWebLoggedIn(user: widget.user!, screen: 'User settings')),
+              AppBarWebLoggedIn(user: UserData.user!, screen: 'User settings')),
       body: SingleChildScrollView(
         child: Row(
           children: [
@@ -54,7 +57,7 @@ class _SettingTabUiState extends State<SettingTabUi> {
             Expanded(
               flex: 6,
               child: DefaultTabController(
-                length: 4,
+                length: 5,
                 animationDuration: Duration.zero,
                 child: Container(
                   height: 1400,
@@ -96,9 +99,9 @@ class _SettingTabUiState extends State<SettingTabUi> {
                           Tab(
                             child: Text("Safety and privacy"),
                           ),
-                          // Tab(
-                          //   child: Text("Feed Settings"),
-                          // ),
+                          Tab(
+                            child: Text("Feed Settings"),
+                          ),
                           Tab(
                             child: Text("Email"),
                           ),
@@ -129,12 +132,19 @@ class _SettingTabUiState extends State<SettingTabUi> {
                                             SafetySettingsWebServices())),
                                 child: const SafetySettingsWeb(),
                               ),
+                              BlocProvider(
+                                create: (context) => FeedSettingsCubit(
+                                    FeedSettingRepository(
+                                        feedSettingsWebServices:
+                                            FeedSettingWebServices())),
+                                child: const FeedSetting(),
+                              ),
                               BlocProvider.value(
                                 value: EmailSettingsCubit(
                                     EmailSettingsRepository(
                                         EmailSettingsWebServices())),
                                 child: const EmailSettingsWeb(),
-                              )
+                              ),
                             ],
                           ),
                         ),

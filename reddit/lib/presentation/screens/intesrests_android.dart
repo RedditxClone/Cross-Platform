@@ -1,19 +1,18 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:reddit/helper/dio.dart';
 import '../../constants/strings.dart';
-import '../../data/model/signin.dart';
+import '../../data/model/auth_model.dart';
 
 class InteresetesAndroid extends StatefulWidget {
-  const InteresetesAndroid({super.key, required this.newUser});
-  final User newUser;
+  const InteresetesAndroid({super.key});
   @override
-  State<InteresetesAndroid> createState() => _InteresetesAndroidState(newUser);
+  State<InteresetesAndroid> createState() => _InteresetesAndroidState();
 }
 
 class _InteresetesAndroidState extends State<InteresetesAndroid> {
   int intersetsCount = 0;
-  final User newUser;
 
   Map<String, String> interests = {
     "Funny": '🤣',
@@ -35,17 +34,21 @@ class _InteresetesAndroidState extends State<InteresetesAndroid> {
     'Fishing': '🎣',
   };
   Map<String, dynamic> selectedInterests = {};
-  _InteresetesAndroidState(this.newUser);
-  
+
   //this function is used to add the user interests to the database
   void addInterests() async {
-    newUser.interests = selectedInterests;
-    debugPrint("after storing${newUser.interests}");
-    DioHelper.patchData(url: '/api/user/me/prefs', data: selectedInterests)
-        .then((value) {
+    UserData.user?.interests = selectedInterests;
+    DioHelper.patchData(
+        url: 'user/me/prefs',
+        data: selectedInterests,
+        options: Options(
+          headers: {
+            "Authorization":
+                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzN2ZlNjM4NWUwYjU4M2Y0YTc5ZTM0ZiIsImlhdCI6MTY2OTkwNjQyMiwiZXhwIjoxNjcwNzcwNDIyfQ.Jukdcxvc1j8i78uNshWkPPpBBwh9mMFRoQT6hGgLrY4"
+          },
+        )).then((value) {
       if (value.statusCode == 200) {
-        Navigator.of(context)
-            .pushReplacementNamed(chooseProfileImgScreen, arguments: newUser);
+        Navigator.of(context).pushReplacementNamed(chooseProfileImgScreen);
       } else {
         SnackBar(
           content: Row(
@@ -78,7 +81,6 @@ class _InteresetesAndroidState extends State<InteresetesAndroid> {
           onPressed: () {
             Navigator.of(context).pushReplacementNamed(
               chooseGenderScreen,
-              arguments: newUser,
             );
           },
         ),
