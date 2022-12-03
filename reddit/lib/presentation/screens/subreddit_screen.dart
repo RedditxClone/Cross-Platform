@@ -109,8 +109,8 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
             automaticallyImplyLeading: false,
             backgroundColor: defaultAppbarBackgroundColor,
             title: UserData.user != null
-                ? AppBarWebLoggedIn(user: UserData.user!, screen: 'Home')
-                : const AppBarWebNotLoggedIn(screen: 'Home'));
+                ? AppBarWebLoggedIn(user: UserData.user!, screen: 'r/subreddit')
+                : const AppBarWebNotLoggedIn(screen: 'r/subreddit'));
   }
 
   Widget _buildAbout(SubredditPageState state) {
