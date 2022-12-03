@@ -240,9 +240,7 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
         ]),
         MediaQuery.of(context).size.width < 520
             ? const SizedBox(width: 0)
-            : PopupMenuLoggedIn(
-                user: widget.user,
-              ),
+            : PopupMenuLoggedIn(),
       ],
     );
   }

@@ -6,7 +6,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:reddit/business_logic/cubit/subreddit_page_cubit.dart';
+import 'package:reddit/constants/theme_colors.dart';
+import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/data/model/subreddit_model.dart';
+import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_Not_loggedin.dart';
+import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 import '../../constants/colors.dart';
 import '../../constants/font_sizes.dart';
 
@@ -100,9 +104,13 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
     return _mobilePlatform
         ? null
         : AppBar(
+            shape: const Border(
+                bottom: BorderSide(color: Colors.grey, width: 0.5)),
             automaticallyImplyLeading: false,
-            backgroundColor: cardsColor,
-          );
+            backgroundColor: defaultAppbarBackgroundColor,
+            title: UserData.user != null
+                ? AppBarWebLoggedIn(user: UserData.user!, screen: 'Home')
+                : const AppBarWebNotLoggedIn(screen: 'Home'));
   }
 
   Widget _buildAbout(SubredditPageState state) {

@@ -9,7 +9,8 @@ void main() {
     user = User(
         userId: '1',
         name: 'mark_yasser',
-        email: 'mark@hotmai.com',
+        email: 'mark@hotmail.com',
+        coverPic: null,
         profilePic: null);
   });
   Widget createWidgetUnderTest() {

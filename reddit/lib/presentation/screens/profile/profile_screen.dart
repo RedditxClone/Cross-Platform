@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/constants/strings.dart';
+import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/presentation/widgets/posts/posts.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -77,11 +78,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
               const SizedBox(height: 20),
-              const Text('Markos',
+              Text(UserData.user!.displayName,
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30)),
               const SizedBox(height: 10),
-              const Text('u/mark_yasser . 1 karma . 41d . 3 Oct 2022',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+              Text('u/${UserData.user!.name} . 1 karma . 41d . 3 Oct 2022',
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 13)),
               const SizedBox(height: 20),
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 15),

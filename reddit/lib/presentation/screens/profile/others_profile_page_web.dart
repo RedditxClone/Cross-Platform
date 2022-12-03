@@ -13,8 +13,6 @@ class OtherProfilePageWeb extends StatefulWidget {
 }
 
 class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
-  User user =
-      User(userId: 'userId', name: 'name', email: 'email', profilePic: null);
   late Responsive _responsive;
   String sortBy = 'new';
   bool _isOverviewTab = true;
@@ -473,7 +471,8 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
               const Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
           automaticallyImplyLeading: false,
           backgroundColor: defaultAppbarBackgroundColor,
-          title: AppBarWebLoggedIn(user: user, screen: 'u/user_name')),
+          title:
+              AppBarWebLoggedIn(user: UserData.user!, screen: 'u/user_name')),
       body: DefaultTabController(
         length: 3,
         child: Scaffold(
