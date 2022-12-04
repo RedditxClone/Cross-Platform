@@ -29,7 +29,7 @@ class _ModListWebState extends State<ModListWeb> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              LeftModList(),
+              LeftModList(screen: 'Approved'),
             ],
           )),
     );

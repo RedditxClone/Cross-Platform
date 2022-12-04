@@ -1,236 +1,108 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:icons_plus/icons_plus.dart';
-import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
 
-class LeftModList extends StatelessWidget {
-  const LeftModList({super.key});
+class LeftModList extends StatefulWidget {
+  String screen = '';
+  LeftModList({required this.screen, super.key});
+
+  @override
+  State<LeftModList> createState() => _LeftModListState();
+}
+
+class _LeftModListState extends State<LeftModList> {
+  Widget leftListTitle(String title, IconData icon) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 0, 0, 8),
+      child: InkWell(
+          child: Row(
+        children: [
+          Icon(
+            icon,
+            color: Colors.grey,
+            size: 20,
+          ),
+          const SizedBox(width: 5),
+          Text(title, style: const TextStyle(fontSize: 11, color: Colors.grey)),
+        ],
+      )),
+    );
+  }
+
+  Widget leftListElement(String title) {
+    return Row(
+      children: [
+        Container(
+          color: widget.screen == title ? Colors.grey : Colors.transparent,
+          width: 5,
+          height: 35,
+        ),
+        Container(
+          color: widget.screen == title
+              ? Colors.grey.withOpacity(0.3)
+              : Colors.transparent,
+          width: 260,
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          child: InkWell(
+              onTap: () => navigate(title),
+              child: Row(children: [
+                const SizedBox(width: 20),
+                Text(title, style: const TextStyle(fontSize: 14))
+              ])),
+        ),
+      ],
+    );
+  }
+
+  navigate(String newTabName) {
+    setState(() {
+      widget.screen = newTabName;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(15),
+      padding: const EdgeInsets.fromLTRB(5, 15, 0, 15),
       width: 280,
       color: defaultSecondaryColor,
-      child: Column(
-        children: [
-          Expanded(
-            flex: 1,
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  //---------------------------Queues-----------------------------------
-                  InkWell(
-                      child: Row(
-                    children: const [
-                      Icon(Icons.library_books_outlined, color: Colors.grey),
-                      SizedBox(width: 8),
-                      Text('QUEUES',
-                          style: TextStyle(fontSize: 15, color: Colors.grey)),
-                    ],
-                  )),
-                  const SizedBox(height: 17),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: InkWell(
-                        onTap: () {
-                          Navigator.pushNamed(context, homePageRoute,
-                              arguments: null);
-                        },
-                        child: Row(children: const [
-                          SizedBox(width: 8),
-                          Text('Mod queue', style: TextStyle(fontSize: 16))
-                        ])),
-                  ),
-                  const SizedBox(height: 15),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: InkWell(
-                        onTap: () {},
-                        child: Row(children: const [
-                          SizedBox(width: 8),
-                          Text('Spam', style: TextStyle(fontSize: 16))
-                        ])),
-                  ),
-                  const SizedBox(height: 15),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: InkWell(
-                        onTap: () {},
-                        child: Row(children: const [
-                          SizedBox(width: 8),
-                          Text('Edited', style: TextStyle(fontSize: 16))
-                        ])),
-                  ),
-                  const SizedBox(height: 15),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: InkWell(
-                        onTap: () {},
-                        child: Row(children: const [
-                          SizedBox(width: 8),
-                          Text('Unmoderated', style: TextStyle(fontSize: 16))
-                        ])),
-                  ),
-                  const SizedBox(height: 40),
-                  //---------------------------USER MANAGEMENT-----------------------------------
-
-                  InkWell(
-                      child: Row(
-                    children: const [
-                      Icon(Icons.person_outline, color: Colors.grey),
-                      SizedBox(width: 8),
-                      Text('USER MANAGEMENT',
-                          style: TextStyle(fontSize: 15, color: Colors.grey)),
-                    ],
-                  )),
-                  const SizedBox(height: 17),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: InkWell(
-                        onTap: () {},
-                        child: Row(children: const [
-                          SizedBox(width: 8),
-                          Text('Muted', style: TextStyle(fontSize: 16))
-                        ])),
-                  ),
-                  const SizedBox(height: 17),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: InkWell(
-                        onTap: () {},
-                        child: Row(children: const [
-                          SizedBox(width: 8),
-                          Text('Approved', style: TextStyle(fontSize: 16))
-                        ])),
-                  ),
-                  const SizedBox(height: 17),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: InkWell(
-                        onTap: () {},
-                        child: Row(children: const [
-                          SizedBox(width: 8),
-                          Text('Moderators', style: TextStyle(fontSize: 16))
-                        ])),
-                  ),
-                  const SizedBox(height: 40),
-                  //---------------------------RULES AND REGULATIONS-----------------------------------
-                  InkWell(
-                      child: Row(
-                    children: const [
-                      Icon(Icons.list_alt, color: Colors.grey),
-                      SizedBox(width: 8),
-                      Text('RULES AND REGULATIONS',
-                          style: TextStyle(fontSize: 15, color: Colors.grey)),
-                    ],
-                  )),
-                  const SizedBox(height: 17),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: InkWell(
-                        onTap: () {},
-                        child: Row(children: const [
-                          SizedBox(width: 8),
-                          Text('Rules', style: TextStyle(fontSize: 16))
-                        ])),
-                  ),
-                  const SizedBox(height: 15),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: InkWell(
-                        onTap: () {},
-                        child: Row(children: const [
-                          SizedBox(width: 8),
-                          Text('Removal reasons',
-                              style: TextStyle(fontSize: 16))
-                        ])),
-                  ),
-                  const SizedBox(height: 15),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: InkWell(
-                        onTap: () {},
-                        child: Row(children: const [
-                          SizedBox(width: 8),
-                          Text('Content controls',
-                              style: TextStyle(fontSize: 16))
-                        ])),
-                  ),
-                  const SizedBox(height: 15),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: InkWell(
-                        onTap: () {},
-                        child: Row(children: const [
-                          SizedBox(width: 8),
-                          Text('Auto mod', style: TextStyle(fontSize: 16))
-                        ])),
-                  ),
-                  const SizedBox(height: 40),
-                  //---------------------------OTHER-----------------------------------
-                  InkWell(
-                      child: Row(
-                    children: const [
-                      Icon(Icons.settings_outlined, color: Colors.grey),
-                      SizedBox(width: 8),
-                      Text('OTHER',
-                          style: TextStyle(fontSize: 15, color: Colors.grey)),
-                    ],
-                  )),
-                  const SizedBox(height: 17),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: InkWell(
-                        onTap: () {},
-                        child: Row(children: const [
-                          SizedBox(width: 8),
-                          Text('Community settings',
-                              style: TextStyle(fontSize: 16)),
-                          SizedBox(width: 40),
-                          Icon(Icons.keyboard_arrow_right, color: Colors.grey),
-                        ])),
-                  ),
-
-                  const SizedBox(height: 40),
-                  //---------------------------COMMUNITY ACTIVITY-----------------------------------
-                  InkWell(
-                      child: Row(
-                    children: const [
-                      Icon(Icons.stacked_bar_chart, color: Colors.grey),
-                      SizedBox(width: 8),
-                      Text('COMMUNITY ACTIVITY',
-                          style: TextStyle(fontSize: 15, color: Colors.grey)),
-                    ],
-                  )),
-                  const SizedBox(height: 17),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: InkWell(
-                        onTap: () {},
-                        child: Row(children: const [
-                          SizedBox(width: 8),
-                          Text('Traffic stats', style: TextStyle(fontSize: 16))
-                        ])),
-                  ),
-                  const SizedBox(height: 15),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: InkWell(
-                        onTap: () {},
-                        child: Row(children: const [
-                          SizedBox(width: 8),
-                          Text('Mod log', style: TextStyle(fontSize: 16))
-                        ])),
-                  ),
-                  const SizedBox(height: 15),
-                ],
-              ),
-            ),
-          )
-        ],
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            //---------------------------Queues-----------------------------------
+            leftListTitle('QUEUES', Icons.queue_outlined),
+            leftListElement('Mod queue'),
+            leftListElement('Spam'),
+            leftListElement('Edited'),
+            leftListElement('Unmoderated'),
+            const SizedBox(height: 40),
+            //---------------------------USER MANAGEMENT-----------------------------------
+            leftListTitle('USER MANAGEMENT', Icons.person_outline),
+            leftListElement('Muted'),
+            leftListElement('Approved'),
+            leftListElement('Moderators'),
+            const SizedBox(height: 40),
+            //---------------------------RULES AND REGULATIONS-----------------------------------
+            leftListTitle('RULES AND REGULATIONS', Icons.list_alt),
+            leftListElement('Rules'),
+            leftListElement('Removal reasons'),
+            leftListElement('Content controls'),
+            leftListElement('Auto mod'),
+            const SizedBox(height: 40),
+            //---------------------------OTHER-----------------------------------
+            leftListTitle('OTHER', Icons.settings_outlined),
+            leftListElement('Community settings'),
+            const SizedBox(height: 40),
+            //---------------------------COMMUNITY ACTIVITY-----------------------------------
+            leftListTitle(
+                'COMMUNITY ACTIVITY', Icons.stacked_bar_chart_outlined),
+            leftListElement('Traffic stats'),
+            leftListElement('Mod log'),
+            const SizedBox(height: 15),
+          ],
+        ),
       ),
     );
   }
