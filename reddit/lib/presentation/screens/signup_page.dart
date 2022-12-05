@@ -1,12 +1,12 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:convert';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:url_launcher/link.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../../constants/strings.dart';
 import '../../data/model/auth_model.dart';
 import '../../data/web_services/authorization/login_conroller.dart';
@@ -38,7 +38,7 @@ class _SignupWebState extends State<SignupWeb> {
   @override
   void initState() {
     super.initState();
-    FacebookSignInApi.init();
+    // FacebookSignInApi.init();
   }
 
 //this finction return a TextSpan
@@ -66,8 +66,13 @@ class _SignupWebState extends State<SignupWeb> {
   Future signInWithGoogle() async {
     try {
       var googleAccount = await GoogleSingInApi.loginWeb();
+      GoogleSignInAuthentication? x;
+      googleAccount?.authentication.then((value) {
+        x = value;
+      });
+      debugPrint("token ${x?.idToken}");
       if (googleAccount != null) {
-        DioHelper.postData(url: '/api/auth/signup', data: {
+        DioHelper.postData(url: 'auth/signup', data: {
           "userId": googleAccount.id,
           "email": googleAccount.email,
           "name": googleAccount.displayName,
@@ -129,6 +134,7 @@ class _SignupWebState extends State<SignupWeb> {
         );
       }
     } catch (e) {
+      debugPrint("error in google sign in $e");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Row(
@@ -154,82 +160,82 @@ class _SignupWebState extends State<SignupWeb> {
   }
 
 //this an async fucntion to log in with facebook account and store the result in database
-  Future signInWithFacebook() async {
-    try {
-      var loginResult = await FacebookSignInApi.login();
-      if (loginResult != null) {
-        var fbUser = await FacebookSignInApi
-            .getUserData(); //post request to add user data
-        DioHelper.postData(url: '/api/auth/signup', data: {
-          "name": fbUser['name'] as String,
-          "email": fbUser['email'] as String,
-          "imageUrl": fbUser['picture']['data']['url'] as String,
-          "userId": loginResult.accessToken?.userId,
-          "_type": "facebook",
-          "accessToken": loginResult.accessToken?.token,
-        }).then((value) {
-          if (value.statusCode == 201) {
-            newUser = User.fromJson(jsonDecode(value.data));
-            Navigator.of(context).pushReplacementNamed(
-              chooseGenderScreen,
-              arguments: newUser,
-            );
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Row(
-                  children: [
-                    const Icon(
-                      Icons.error,
-                      color: Colors.red,
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.01,
-                    ),
-                    const Text(
-                      "Error in Signing in with Facebook",
-                      style: TextStyle(
-                        color: Colors.red,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }
-        });
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              const Icon(
-                Icons.error,
-                color: Colors.red,
-              ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.01,
-              ),
-              const Text(
-                "Error in Signing in with Facebook",
-                style: TextStyle(
-                  color: Colors.red,
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-  }
+  // Future signInWithFacebook() async {
+  //   try {
+  //     var loginResult = await FacebookSignInApi.login();
+  //     if (loginResult != null) {
+  //       var fbUser = await FacebookSignInApi
+  //           .getUserData(); //post request to add user data
+  //       DioHelper.postData(url: '/api/auth/signup', data: {
+  //         "name": fbUser['name'] as String,
+  //         "email": fbUser['email'] as String,
+  //         "imageUrl": fbUser['picture']['data']['url'] as String,
+  //         "userId": loginResult.accessToken?.userId,
+  //         "_type": "facebook",
+  //         "accessToken": loginResult.accessToken?.token,
+  //       }).then((value) {
+  //         if (value.statusCode == 201) {
+  //           newUser = User.fromJson(jsonDecode(value.data));
+  //           Navigator.of(context).pushReplacementNamed(
+  //             chooseGenderScreen,
+  //             arguments: newUser,
+  //           );
+  //         } else {
+  //           ScaffoldMessenger.of(context).showSnackBar(
+  //             SnackBar(
+  //               content: Row(
+  //                 children: [
+  //                   const Icon(
+  //                     Icons.error,
+  //                     color: Colors.red,
+  //                   ),
+  //                   SizedBox(
+  //                     width: MediaQuery.of(context).size.width * 0.01,
+  //                   ),
+  //                   const Text(
+  //                     "Error in Signing in with Facebook",
+  //                     style: TextStyle(
+  //                       color: Colors.red,
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           );
+  //         }
+  //       });
+  //     }
+  //   } catch (e) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Row(
+  //           children: [
+  //             const Icon(
+  //               Icons.error,
+  //               color: Colors.red,
+  //             ),
+  //             SizedBox(
+  //               width: MediaQuery.of(context).size.width * 0.01,
+  //             ),
+  //             const Text(
+  //               "Error in Signing in with Facebook",
+  //               style: TextStyle(
+  //                 color: Colors.red,
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     );
+  //   }
+  // }
 
 //This function creates buttonns for login with google and facebook
 //it takes a string that determines the function of the button depends on the passed value
 //is it for google or facebook
   Widget createContinueWithButton(String lable) {
     return OutlinedButton.icon(
-      onPressed: lable == 'google' ? signInWithGoogle : signInWithFacebook,
+      onPressed: lable == 'google' ? signInWithGoogle : null,
       icon: Logo(
         lable == 'google' ? Logos.google : Logos.facebook_logo,
         size: 20,
@@ -259,10 +265,10 @@ class _SignupWebState extends State<SignupWeb> {
   }
 
   void continieSignUp() {
-
     Navigator.of(context).pushNamed(
       SIGNU_PAGE2,
-      arguments: emailController.text,//send the email takes from the text field
+      arguments:
+          emailController.text, //send the email takes from the text field
     );
   }
 

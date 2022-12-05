@@ -36,7 +36,6 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_bloc: ^8.1.1
-  flutter_facebook_auth: ^5.0.6
   font_awesome_flutter: ^10.2.1
   google_sign_in: ^5.4.2
   http_parser: ^4.0.2

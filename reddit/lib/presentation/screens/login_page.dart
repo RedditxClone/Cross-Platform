@@ -44,7 +44,7 @@ class _LoginWebState extends State<LoginWeb> {
   @override
   void initState() {
     super.initState();
-    FacebookSignInApi.init();
+    // FacebookSignInApi.init();
     usernameFocusNode.addListener(_onFocusChangeUsername);
     passwordFocusNode.addListener(_onFocusChangePassword);
     usernameFocusNode.requestFocus();
@@ -162,49 +162,49 @@ class _LoginWebState extends State<LoginWeb> {
 //this an async fucntion to log in with facebook account and store the result in database
   Future signInWithFacebook() async {
     try {
-      var loginResult = await FacebookSignInApi.login();
-      if (loginResult != null) {
-        var fbUser = await FacebookSignInApi
-            .getUserData(); //post request to add user data
-        DioHelper.postData(url: 'auth/signup', data: {
-          "name": fbUser['name'] as String,
-          "email": fbUser['email'] as String,
-          "imageUrl": fbUser['picture']['data']['url'] as String,
-          "userId": loginResult.accessToken?.userId,
-          "_type": "facebook",
-          "accessToken": loginResult.accessToken?.token,
-        }).then((value) {
-          if (value.statusCode == 201) {
-            newUser = User.fromJson(jsonDecode(value.data));
-            Navigator.of(context).pushReplacementNamed(
-              homePageRoute,
-              arguments: newUser,
-            );
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Row(
-                  children: [
-                    const Icon(
-                      Icons.error,
-                      color: Colors.red,
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.01,
-                    ),
-                    const Text(
-                      "Error in Signing in with Facebook",
-                      style: TextStyle(
-                        color: Colors.red,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }
-        });
-      }
+      // var loginResult = await FacebookSignInApi.login();
+      // if (loginResult != null) {
+      //   var fbUser = await FacebookSignInApi
+      //       .getUserData(); //post request to add user data
+      //   DioHelper.postData(url: 'auth/signup', data: {
+      //     "name": fbUser['name'] as String,
+      //     "email": fbUser['email'] as String,
+      //     "imageUrl": fbUser['picture']['data']['url'] as String,
+      //     "userId": loginResult.accessToken?.userId,
+      //     "_type": "facebook",
+      //     "accessToken": loginResult.accessToken?.token,
+      //   }).then((value) {
+      //     if (value.statusCode == 201) {
+      //       newUser = User.fromJson(jsonDecode(value.data));
+      //       Navigator.of(context).pushReplacementNamed(
+      //         homePageRoute,
+      //         arguments: newUser,
+      //       );
+      //     } else {
+      //       ScaffoldMessenger.of(context).showSnackBar(
+      //         SnackBar(
+      //           content: Row(
+      //             children: [
+      //               const Icon(
+      //                 Icons.error,
+      //                 color: Colors.red,
+      //               ),
+      //               SizedBox(
+      //                 width: MediaQuery.of(context).size.width * 0.01,
+      //               ),
+      //               const Text(
+      //                 "Error in Signing in with Facebook",
+      //                 style: TextStyle(
+      //                   color: Colors.red,
+      //                 ),
+      //               ),
+      //             ],
+      //           ),
+      //         ),
+      //       );
+      //     }
+      //   });
+      // }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
