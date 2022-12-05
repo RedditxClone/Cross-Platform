@@ -1,6 +1,7 @@
 import 'dart:html';
 
 import 'package:flutter/material.dart';
+import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
 
 class LeftModList extends StatefulWidget {
@@ -30,7 +31,7 @@ class _LeftModListState extends State<LeftModList> {
     );
   }
 
-  Widget leftListElement(String title) {
+  Widget leftListElement(String title, String routeName) {
     return Row(
       children: [
         Container(
@@ -45,7 +46,7 @@ class _LeftModListState extends State<LeftModList> {
           width: 260,
           padding: const EdgeInsets.symmetric(vertical: 10),
           child: InkWell(
-              onTap: () => navigate(title),
+              onTap: () => Navigator.pushReplacementNamed(context, routeName),
               child: Row(children: [
                 const SizedBox(width: 20),
                 Text(title, style: const TextStyle(fontSize: 14))
@@ -55,17 +56,12 @@ class _LeftModListState extends State<LeftModList> {
     );
   }
 
-  navigate(String newTabName) {
-    setState(() {
-      widget.screen = newTabName;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(5, 15, 0, 15),
       width: 280,
+      height: MediaQuery.of(context).size.height - 40,
       color: defaultSecondaryColor,
       child: SingleChildScrollView(
         child: Column(
@@ -73,33 +69,28 @@ class _LeftModListState extends State<LeftModList> {
           children: [
             //---------------------------Queues-----------------------------------
             leftListTitle('QUEUES', Icons.queue_outlined),
-            leftListElement('Mod queue'),
-            leftListElement('Spam'),
-            leftListElement('Edited'),
-            leftListElement('Unmoderated'),
+            leftListElement('Mod queue', modqueueRoute),
+            leftListElement('Spam', spamRoute),
+            leftListElement('Edited', editedRoute),
+            leftListElement('Unmoderated', unmoderatedRoute),
             const SizedBox(height: 40),
             //---------------------------USER MANAGEMENT-----------------------------------
             leftListTitle('USER MANAGEMENT', Icons.person_outline),
-            leftListElement('Muted'),
-            leftListElement('Approved'),
-            leftListElement('Moderators'),
+            leftListElement('Approved', approvedRoute),
+            leftListElement('Moderators', moderatorsRoute),
             const SizedBox(height: 40),
             //---------------------------RULES AND REGULATIONS-----------------------------------
             leftListTitle('RULES AND REGULATIONS', Icons.list_alt),
-            leftListElement('Rules'),
-            leftListElement('Removal reasons'),
-            leftListElement('Content controls'),
-            leftListElement('Auto mod'),
+            leftListElement('Rules', rulesRoute),
             const SizedBox(height: 40),
             //---------------------------OTHER-----------------------------------
             leftListTitle('OTHER', Icons.settings_outlined),
-            leftListElement('Community settings'),
+            leftListElement('Community settings', communitySettingsRoute),
             const SizedBox(height: 40),
             //---------------------------COMMUNITY ACTIVITY-----------------------------------
             leftListTitle(
                 'COMMUNITY ACTIVITY', Icons.stacked_bar_chart_outlined),
-            leftListElement('Traffic stats'),
-            leftListElement('Mod log'),
+            leftListElement('Traffic stats', tafficRoute),
             const SizedBox(height: 15),
           ],
         ),

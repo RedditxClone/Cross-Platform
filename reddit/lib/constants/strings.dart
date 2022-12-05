@@ -76,4 +76,15 @@ const chooseProfileImgScreen = '/chooseProfileImgScreen';
 const subredditPageScreenRoute = "/subredditPageScreen";
 const historyPageScreenRoute = '/HistoryPageScreen';
 const createCommunityScreenRoute = '/CreateCommunityScreen';
-const modtools = '/modtools';
+//---------------------------------------
+//-----------Mod tools Route-------------
+//---------------------------------------
+const modqueueRoute = '/modqueue';
+const spamRoute = '/spam';
+const editedRoute = '/edited';
+const approvedRoute = '/approved';
+const communitySettingsRoute = '/communitysettings';
+const tafficRoute = '/taffic';
+const rulesRoute = '/rules';
+const unmoderatedRoute = '/unmod';
+const moderatorsRoute = '/mod';

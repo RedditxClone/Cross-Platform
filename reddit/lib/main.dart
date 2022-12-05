@@ -40,11 +40,11 @@ class MyApp extends StatelessWidget {
       themeMode: ThemeMode.dark,
       debugShowCheckedModeBanner: false,
       onGenerateRoute: appRouter.generateRoute,
-      initialRoute: modtools,
+      // initialRoute: modqueueRoute,
 
-      // initialRoute: kIsWeb
-      //     ? (isLoggedIn ? homePageRoute : popularPageRoute)
-      //     : homePageRoute,
+      initialRoute: kIsWeb
+          ? (isLoggedIn ? homePageRoute : popularPageRoute)
+          : homePageRoute,
       // onGenerateInitialRoutes: (String initialRouteName) {
       //   return [
       //     appRouter.generateRoute(RouteSettings(

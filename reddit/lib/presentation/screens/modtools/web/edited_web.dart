@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/data/model/auth_model.dart';
-import 'package:reddit/presentation/screens/subreddit/left_modlist_web.dart';
+import 'package:reddit/presentation/screens/modtools/web/left_modlist_web.dart';
+import 'package:reddit/presentation/widgets/modtools/web/queue.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_Not_loggedin.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 
-class ModListWeb extends StatefulWidget {
-  const ModListWeb({super.key});
+class EditedWeb extends StatefulWidget {
+  const EditedWeb({super.key});
 
   @override
-  State<ModListWeb> createState() => _ModListWebState();
+  State<EditedWeb> createState() => _EditedWebState();
 }
 
-class _ModListWebState extends State<ModListWeb> {
+class _EditedWebState extends State<EditedWeb> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,7 +30,8 @@ class _ModListWebState extends State<ModListWeb> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              LeftModList(screen: 'Approved'),
+              LeftModList(screen: 'Edited'),
+              QueuesWidget(screen: 'Edited')
             ],
           )),
     );

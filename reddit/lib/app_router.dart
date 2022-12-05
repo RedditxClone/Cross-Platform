@@ -2,7 +2,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:reddit/data/repository/feed_setting_repository.dart';
 import 'package:reddit/data/web_services/feed_setting_web_services.dart';
-import 'package:reddit/presentation/screens/subreddit/mod_list_web.dart';
+import 'package:reddit/presentation/screens/modtools/web/approved_web.dart';
+import 'package:reddit/presentation/screens/modtools/web/edited_Web.dart';
+import 'package:reddit/presentation/screens/modtools/web/modqueue_web.dart';
+import 'package:reddit/presentation/screens/modtools/web/spam_web.dart';
 import 'business_logic/cubit/feed_settings_cubit.dart';
 import 'presentation/screens/feed_setting.dart';
 import 'package:reddit/presentation/screens/profile/others_profile_page_web.dart';
@@ -169,11 +172,26 @@ class AppRouter {
             builder: (_) => BlocProvider.value(
                 value: subredditPageCubit,
                 child: const SubredditPageScreen(subredditId: "redditx_")));
-      case modtools:
+      case modqueueRoute:
         return MaterialPageRoute(
             builder: (_) => BlocProvider.value(
                 value: subredditPageCubit,
-                child: kIsWeb ? const ModListWeb() : null));
+                child: kIsWeb ? const ModQueueWeb() : null));
+      case spamRoute:
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider.value(
+                value: subredditPageCubit,
+                child: kIsWeb ? const SpamWeb() : null));
+      case approvedRoute:
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider.value(
+                value: subredditPageCubit,
+                child: kIsWeb ? const ApprovedWeb() : null));
+      case editedRoute:
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider.value(
+                value: subredditPageCubit,
+                child: kIsWeb ? const EditedWeb() : null));
 
       case historyPageScreenRoute:
         return MaterialPageRoute(
