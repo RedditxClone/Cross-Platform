@@ -19,7 +19,7 @@ class _ModQueueWebState extends State<ModQueueWeb> {
     return Scaffold(
       appBar: AppBar(
           shape:
-              const Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
+              const Border(bottom: BorderSide(color: Colors.grey, width: 0.3)),
           automaticallyImplyLeading: false,
           backgroundColor: defaultAppbarBackgroundColor,
           title: UserData.user != null

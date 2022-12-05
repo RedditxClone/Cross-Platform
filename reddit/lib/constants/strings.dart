@@ -79,6 +79,7 @@ const createCommunityScreenRoute = '/CreateCommunityScreen';
 //---------------------------------------
 //-----------Mod tools Route-------------
 //---------------------------------------
+const modlistRoute = '/modlist';
 const modqueueRoute = '/modqueue';
 const spamRoute = '/spam';
 const editedRoute = '/edited';
