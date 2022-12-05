@@ -39,11 +39,21 @@ class ChooseProfileImageLoginChanged extends AuthState {
 }
 
 class AddUserInterests extends AuthState {
-  final Map<String, dynamic> interests;
-  AddUserInterests(this.interests);
+  final bool interestsUpdated;
+  AddUserInterests(this.interestsUpdated);
 }
 
 class UpdateGenderDuringSignup extends AuthState {
-  final String gender;
-  UpdateGenderDuringSignup(this.gender);
+  final bool genderUpdated;
+  UpdateGenderDuringSignup(this.genderUpdated);
+}
+
+class ForgetPassword extends AuthState {
+  final bool isSent;
+  ForgetPassword(this.isSent);
+}
+
+class ForgetUsername extends AuthState {
+  final bool isSent;
+  ForgetUsername(this.isSent);
 }

@@ -69,9 +69,6 @@ import 'package:reddit/presentation/screens/login_screen.dart';
 import 'package:reddit/presentation/screens/signup_page.dart';
 import 'package:reddit/presentation/screens/signup_page2.dart';
 import 'package:reddit/presentation/screens/signup_screen.dart';
-
-import 'data/model/auth_model.dart';
-
 class AppRouter {
   // platform
   bool get isMobile =>
@@ -148,7 +145,7 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => BlocProvider(
             create: ((context) => authCubit),
-            child: kIsWeb ? HomePageWeb() : HomePage(),
+            child: kIsWeb ? const HomePageWeb() : HomePage(),
           ),
         );
 
@@ -250,18 +247,24 @@ class AppRouter {
         );
       case interesetesScreen:
         return MaterialPageRoute(
-          builder: (_) => const InteresetesAndroid(),
+          builder: (_) => BlocProvider.value(
+            value: authCubit,
+            child: const InterestsAndroid(),
+          ),
         );
       case chooseProfileImgScreen:
         return MaterialPageRoute(
           builder: (_) => BlocProvider.value(
             value: authCubit,
-            child: ChooseProfileImgAndroid(),
+            child: const ChooseProfileImgAndroid(),
           ),
         );
       case chooseGenderScreen:
         return MaterialPageRoute(
-          builder: (_) => const ChooseGenderAndroid(),
+          builder: (_) => BlocProvider.value(
+            value: authCubit,
+            child: const ChooseGenderAndroid(),
+          ),
         );
       /*
       case example:

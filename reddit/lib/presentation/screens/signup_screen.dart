@@ -89,18 +89,6 @@ class _SignupMobileState extends State<SignupMobile> {
   //function takes the username and checks if it is valid or not
   //this fucntion is called if the user pressed next after typing the username or if the focus is lost from the username field
   void checkOnUsername(String usrName) async {
-    // await DioHelper.postData(url: '/api/user/check-available-username', data: {
-    //   'username': usrName,
-    // }).then((value) {
-    //   setState(() {
-    //     if (value.statusCode == 200) {
-    //       isAvailable = false;
-    //       debugPrint("Username is available");
-    //     } else {
-    //       isAvailable = true;
-    //     }
-    //   });
-    // });
     BlocProvider.of<AuthCubit>(context).checkOnUsername(usrName);
   }
 
@@ -108,71 +96,6 @@ class _SignupMobileState extends State<SignupMobile> {
   void signUpContinue(BuildContext ctx) async {
     BlocProvider.of<AuthCubit>(ctx).signup(
         passwordController.text, usernameController.text, emailController.text);
-    // if (user != null) {
-    //   Navigator.of(ctx).pushReplacementNamed(
-    //     chooseGenderScreen,
-    //     arguments: user,
-    //   );
-    // } else {
-    //   //user = null
-    //   debugPrint("user is $user");
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(
-    //       content: Row(
-    //         children: [
-    //           const Icon(
-    //             Icons.error,
-    //             color: Colors.red,
-    //           ),
-    //           SizedBox(
-    //             width: MediaQuery.of(context).size.width * 0.01,
-    //           ),
-    //           const Text(
-    //             'Username or password is incorrect',
-    //             style: TextStyle(
-    //               color: Colors.red,
-    //             ),
-    //           ),
-    //         ],
-    //       ),
-    //     ),
-    //   );
-    // await DioHelper.postData(url: '/api/auth/signup', data: {
-    //   "password": passwordController.text,
-    //   "name": usernameController.text,
-    //   "email": emailController.text,
-    // }).then((value) {
-    //   if (value.statusCode == 201) {
-    //     newUser = User.fromJson(jsonDecode(value.data));
-    //     Navigator.of(ctx).pushReplacementNamed(
-    //       chooseGenderScreen,
-    //       arguments: newUser,
-    //     );
-    //   } else {
-    //     ScaffoldMessenger.of(context).showSnackBar(
-    //       SnackBar(
-    //         content: Row(
-    //           children: [
-    //             const Icon(
-    //               Icons.error,
-    //               color: Colors.red,
-    //             ),
-    //             SizedBox(
-    //               width: MediaQuery.of(context).size.width * 0.01,
-    //             ),
-    //             const Text(
-    //               'Username or password is incorrect',
-    //               style: TextStyle(
-    //                 color: Colors.red,
-    //               ),
-    //             ),
-    //           ],
-    //         ),
-    //       ),
-    //     );
-    //   }
-    // });
-    // }
   }
 
 //this finction return a TextSpan
@@ -746,7 +669,7 @@ class _SignupMobileState extends State<SignupMobile> {
         listener: (context, state) {
           if (state is SignedIn) {
             if (state.user != null) {
-              UserData.initUser(state.user); //this couldn't be null
+              UserData.initUser(state.user!.toJson()); //this couldn't be null
               Navigator.of(context).pushReplacementNamed(
                 chooseGenderScreen,
               );

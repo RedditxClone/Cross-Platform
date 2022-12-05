@@ -16,8 +16,8 @@ class ProfilePageWeb extends StatefulWidget {
 }
 
 class _ProfilePageWebState extends State<ProfilePageWeb> {
-  User user =
-      User(userId: 'userId', name: 'name', email: 'email', profilePic: null);
+  // User user = User(
+  //     userId: 'userId', username: 'name', email: 'email', profilePic: null);
   late Responsive _responsive;
   String _outlineButtonLabel = 'Joined';
   String sortBy = 'new';
@@ -675,7 +675,7 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
               const Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
           automaticallyImplyLeading: false,
           backgroundColor: defaultAppbarBackgroundColor,
-          title: AppBarWebLoggedIn(user: user, screen: 'u/user_name')),
+          title: AppBarWebLoggedIn(user: UserData.user!, screen: 'u/user_name')),
       body: DefaultTabController(
         length: 8,
         child: Scaffold(

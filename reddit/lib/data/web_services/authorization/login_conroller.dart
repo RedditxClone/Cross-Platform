@@ -4,34 +4,59 @@ import '../../../constants/strings.dart';
 
 class GoogleSingInApi {
   static const clientIdWeb =
-      '258926482200-nqgr054pn2id7ji7psq605f5eetbaj2j.apps.googleusercontent.com';
+      '731962970730-93vd9ao2c9ckhmguioje6ar6jmjk3cic.apps.googleusercontent.com';
   static const clientIdAndroid =
-      '493735178109-3ot7lr4vm8ibspfpup1m03m11a9irt57.apps.googleusercontent.com';
+      '731962970730-dgmcu6qo0663lna2okgjqsqkr2ck85b5.apps.googleusercontent.com';
   static final GoogleSignIn _googleSignInMob = GoogleSignIn(
     clientId: clientIdAndroid,
-    scopes: [
-      'email',
-      'https://www.googleapis.com/auth/contacts.readonly',
-    ],
   );
-  static final GoogleSignIn _googleSignInWeb = GoogleSignIn(
+  static final GoogleSignIn googleSignInWeb = GoogleSignIn(
     clientId: clientIdWeb,
-    scopes: [
-      'email',
-      'https://www.googleapis.com/auth/contacts.readonly',
-    ],
   );
 
-  static Future<GoogleSignInAccount?> loginMob() => _googleSignInMob.signIn();
+  static Future<GoogleSignInAccount?> loginMob() {
+    return _googleSignInMob.signIn();
+  }
+
+  static Future<GoogleSignInAccount?> loginMobSilently() {
+    return _googleSignInMob.signInSilently();
+  }
+
+  static Future<GoogleSignInAccount?> loginWebSilently() {
+    return googleSignInWeb.signInSilently();
+  }
+
   static Future<GoogleSignInAccount?> logoutMob() => _googleSignInMob
       .signOut(); //this signout is for mobile but it saves your account`
   static Future<GoogleSignInAccount?> signoutMob() => _googleSignInMob
       .disconnect(); //this signout is for mobile and it deletes your account
 
-  static Future<GoogleSignInAccount?> loginWeb() => _googleSignInWeb.signIn();
-  static Future<GoogleSignInAccount?> logoutWeb() => _googleSignInWeb.signOut();
+  static Future<GoogleSignInAccount?> loginWeb() async {
+    return await googleSignInWeb.signIn();
+  }
+
+  static Future<GoogleSignInAccount?> logoutWeb() => googleSignInWeb.signOut();
   static Future<GoogleSignInAccount?> signoutWeb() =>
-      _googleSignInWeb.disconnect();
+      googleSignInWeb.disconnect();
+
+  static Future<bool> checkIfSignedIn() async {
+    if (kIsWeb) {
+      return googleSignInWeb.isSignedIn();
+    }
+    return _googleSignInMob.isSignedIn();
+  }
+
+  static Future<String?> getGoogleToken() async {
+    String? token;
+    if (kIsWeb) {
+      token = await googleSignInWeb.currentUser?.authentication
+          .then((value) => value.idToken);
+    } else {
+      token = await _googleSignInMob.currentUser?.authentication
+          .then((value) => value.idToken);
+    }
+    return token;
+  }
 }
 
 // class FacebookSignInApi {

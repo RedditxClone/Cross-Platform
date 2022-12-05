@@ -23,7 +23,7 @@ class AuthRepo {
       if (value.statusCode == 201) {
         user = User.fromJson(value.data);
       } else {
-        debugPrint("user is null $user");
+        debugPrint("status code is ${value.statusCode}");
         user = null;
       }
     });
@@ -47,18 +47,32 @@ class AuthRepo {
     return user;
   }
 
+  /// [username] : The username of the user.
+  ///
   /// This function makes the request to the server to let the user change password if he forget it.
   /// This function calls the function [AuthWebService.forgetPassword] which makes the request to the server.
-  Future forgetPassword(String username) async {
+  /// Returns [bool] which is true if the email sent successfully and false if it's not.
+  Future<bool> forgetPassword(String username) async {
     var res = await authWebService.forgetPassword(username);
-    return res;
+    if (res.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
-  Future changeForgottenPassword(
-      String password, String username, String token) async {
-    var res =
-        await authWebService.changeForgottenPassword(password, username, token);
-    return res;
+  /// [email] : The email of the user.
+  ///
+  /// This function makes the request to the server if the user requested to get his username.
+  /// This function calls the function [AuthWebService.forgetUsername] which makes the request to the server.
+  /// Returns [bool] which is true if the email sent successfully and false if it's not.
+  Future<bool> forgetUsername(String email) async {
+    var res = await authWebService.forgetUsername(email);
+    if (res.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   /// This function makes the request to the server to check on the username if it is available or not.
@@ -102,5 +116,36 @@ class AuthRepo {
     final newVal = await authWebService.updateImageWeb(fileAsBytes, key, token);
     debugPrint("from repo ${newVal[key]}");
     return newVal[key];
+  }
+
+  /// [token] : [String] which is The token of the user.
+  /// [gender] : [String] the gender selected by the user
+  ///
+  /// This function makes the request to udate the user gender during signup.
+  /// Returns [bool] which is true if the gender updated successfully and false if it's not.
+  Future<bool> genderInSignup(String gender, String token) async {
+    var res = await authWebService.genderInSignup(gender, token);
+    if (res.statusCode == 200) {
+      UserData.user?.gender = gender;
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /// [selectedInterests] : [Map] which is the list of the interests selected by the user.
+  /// [token] : [String] which is The token of the user.
+  ///
+  /// This function makes the request to update the user interests during signup.
+  /// Returns [bool] which is true if the interests updated successfully and false if it's not.
+  Future<bool> addInterests(
+      Map<String, dynamic> selectedInterests, String token) async {
+    var res = await authWebService.addInterests(selectedInterests, token);
+    if (res.statusCode == 200) {
+      UserData.user?.interests = selectedInterests;
+      return true;
+    } else {
+      return false;
+    }
   }
 }

@@ -215,7 +215,7 @@ class _HomePageState extends State<HomePage> {
             EndDrawerCubit(EndDrawerRepository(SettingsWebServices())),
         child: EndDrawer(
             isLoggedin,
-            UserData.user == null ? "" : UserData.user!.name ?? "",
+            UserData.user == null ? "" : UserData.user!.username ?? "",
             UserData.user == null ? "" : UserData.user!.profilePic ?? "",
             2,
             35,

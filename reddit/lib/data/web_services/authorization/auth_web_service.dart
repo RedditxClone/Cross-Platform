@@ -57,14 +57,14 @@ class AuthWebService {
     return res;
   }
 
-  Future changeForgottenPassword(
-      String password, String username, String token) async {
-    var res =
-        await DioHelper.postData(url: 'auth/change-forgotten-password', data: {
-      "password": password,
-    });
-    return res;
-  }
+  // Future changeForgottenPassword(
+  //     String password, String username, String token) async {
+  //   var res =
+  //       await DioHelper.postData(url: 'auth/change-forgotten-password', data: {
+  //     "password": password,
+  //   });
+  //   return res;
+  // }
 
   /// [email] : The email of the user.
   ///
@@ -108,7 +108,7 @@ class AuthWebService {
   /// This function calls the function [DioHelper.patchData] which makes the request to the server.
   /// Returns the response data from the server.
   Future<dynamic> updateImageWeb(
-      Uint8List fileAsBytes, String key, String token) async {
+Uint8List fileAsBytes, String key, String token) async {
     try {
       FormData formData = FormData.fromMap({
         "file": MultipartFile.fromBytes(fileAsBytes,

@@ -167,7 +167,7 @@ class PopupMenuLoggedIn extends StatelessWidget {
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(user.name!, style: const TextStyle(fontSize: 15)),
+                    Text(user.username!, style: const TextStyle(fontSize: 15)),
                     const Text('karma', style: TextStyle(fontSize: 10)),
                   ],
                 )
