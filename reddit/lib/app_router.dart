@@ -11,6 +11,7 @@ import 'package:reddit/presentation/screens/modtools/web/approved_web.dart';
 import 'package:reddit/presentation/screens/modtools/web/edited_Web.dart';
 import 'package:reddit/presentation/screens/modtools/web/modqueue_web.dart';
 import 'package:reddit/presentation/screens/modtools/web/spam_web.dart';
+import 'package:reddit/presentation/screens/modtools/web/traffic_stats.dart';
 import 'package:reddit/presentation/screens/modtools/web/unmoderated.dart';
 import 'business_logic/cubit/feed_settings_cubit.dart';
 import 'presentation/screens/feed_setting.dart';
@@ -219,6 +220,12 @@ class AppRouter {
             builder: (_) => BlocProvider.value(
                 value: subredditPageCubit,
                 child: kIsWeb ? const EditedWeb() : null));
+
+      case tafficRoute:
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider.value(
+                value: subredditPageCubit,
+                child: kIsWeb ? const TrafficStatsWeb() : null));
       //---------------------------------------------------------------------------
       case historyPageScreenRoute:
         return MaterialPageRoute(
