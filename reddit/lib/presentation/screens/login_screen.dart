@@ -118,14 +118,15 @@ class _LoginMobileState extends State<LoginMobile> {
     );
   }
 
- 
   //this an async fucntion to log in with google account and store the result in database
   void signInWithGoogle() async {
     try {
       var googleAccount = await GoogleSingInApi.loginMob();
       if (googleAccount != null) {
         var googleToken = await GoogleSingInApi.getGoogleToken();
+        debugPrint("google account ${googleAccount.email}");
         if (googleToken != null) {
+          debugPrint("token is $googleToken");
           BlocProvider.of<AuthCubit>(context).loginWithGoogle(googleToken);
         } else {
           debugPrint("token is null");

@@ -6,16 +6,20 @@ class GoogleSingInApi {
       '731962970730-93vd9ao2c9ckhmguioje6ar6jmjk3cic.apps.googleusercontent.com';
   static const clientIdAndroid =
       '731962970730-eogvrnvtmkq777vvd7s5gumlguqql9o2.apps.googleusercontent.com';
-  static final GoogleSignIn _googleSignInMob = GoogleSignIn();
+  static final GoogleSignIn _googleSignInMob = GoogleSignIn(
+    clientId: clientIdAndroid,
+  );
   static final GoogleSignIn googleSignInWeb = GoogleSignIn(
     clientId: clientIdWeb,
   );
 
   static Future<GoogleSignInAccount?> loginMob() {
+    _googleSignInMob.signOut();
     return _googleSignInMob.signIn();
   }
 
   static Future<GoogleSignInAccount?> loginMobSilently() {
+    _googleSignInMob.signOut();
     return _googleSignInMob.signInSilently();
   }
 
@@ -49,8 +53,8 @@ class GoogleSingInApi {
       token = await googleSignInWeb.currentUser?.authentication
           .then((value) => value.idToken);
     } else {
-      token = await _googleSignInMob.currentUser?.authentication
-          .then((value) => value.idToken);
+      var x = await _googleSignInMob.currentUser?.authentication;
+      token = x?.accessToken;
     }
     return token;
   }
