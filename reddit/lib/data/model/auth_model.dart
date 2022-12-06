@@ -29,7 +29,8 @@ class User {
     type = json['authType'];
     // serverAuthCode = json['serverAuthCode'];
     gender = json['gender'];
-    displayName = json['displayName'];
+    displayName =
+        json['displayName'] == '' ? json['username'] : json['displayName'];
   }
 }
 

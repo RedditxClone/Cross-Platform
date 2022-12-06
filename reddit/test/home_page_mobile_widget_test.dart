@@ -9,6 +9,7 @@ void main() {
     user = User(
         userId: '1',
         name: 'mark_yasser',
+        displayName: 'mark',
         email: 'mark@hotmail.com',
         coverPic: null,
         profilePic: null);
