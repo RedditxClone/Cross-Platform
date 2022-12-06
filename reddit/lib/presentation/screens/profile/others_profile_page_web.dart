@@ -6,15 +6,14 @@ import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 import 'package:reddit/presentation/widgets/posts/posts_web.dart';
 
 class OtherProfilePageWeb extends StatefulWidget {
-  const OtherProfilePageWeb({super.key});
+  late User otherUser;
+  OtherProfilePageWeb({required this.otherUser, super.key});
 
   @override
   State<OtherProfilePageWeb> createState() => _OtherProfilePageWebState();
 }
 
 class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
-  // User user = User(
-  //     userId: 'userId', username: 'name', email: 'email', profilePic: null);
   late Responsive _responsive;
   String sortBy = 'new';
   bool _isOverviewTab = true;
@@ -139,19 +138,20 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
                 ],
               ),
               //---------------Other profile picture------------------
-              const CircleAvatar(
+              CircleAvatar(
                   radius: 60,
-                  child: Icon(
-                    // TODO : display profile picture here
-                    Icons.person,
-                    size: 50,
-                  )),
+                  child: widget.otherUser.profilePic == null ||
+                          widget.otherUser.profilePic == ''
+                      ? const Icon(Icons.person, size: 50)
+                      : Image.network(widget.otherUser.profilePic!,
+                          fit: BoxFit.cover)),
             ],
           ),
-          const Text('User',
-              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
-          const Text('u/user_name . 26m',
-              style: TextStyle(fontSize: 12, color: Colors.grey)),
+          Text(widget.otherUser.displayName,
+              style:
+                  const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+          Text('u/${widget.otherUser.name} . 26m',
+              style: const TextStyle(fontSize: 12, color: Colors.grey)),
           const SizedBox(height: 20),
           //--------------------karma and cake day-------------
           Padding(

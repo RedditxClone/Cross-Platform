@@ -6,7 +6,8 @@ import 'package:reddit/constants/strings.dart';
 class SafetySettingsWebServices {
   late Dio dio;
   bool isMockerServer = useMockServerForAllWebServices;
-  String token = '';
+  String token =
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzNzI0ZjQ3NTg0NmUxM2VmZjg4MDkxOSIsImlhdCI6MTY3MDA5MzEyNiwiZXhwIjoxNjcwOTU3MTI2fQ.deTnytMu5joScXuSj4aKCAikc6KgEnGZy8BWwWQgbIU';
   SafetySettingsWebServices() {
     BaseOptions options = BaseOptions(
       baseUrl: isMockerServer ? mockUrl : baseUrl,

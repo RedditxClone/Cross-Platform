@@ -5,7 +5,6 @@ import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
-import 'package:reddit/presentation/widgets/posts/posts.dart';
 import 'package:reddit/presentation/widgets/posts/posts_web.dart';
 
 class ProfilePageWeb extends StatefulWidget {
@@ -16,15 +15,13 @@ class ProfilePageWeb extends StatefulWidget {
 }
 
 class _ProfilePageWebState extends State<ProfilePageWeb> {
-  // User user = User(
-  //     userId: 'userId', username: 'name', email: 'email', profilePic: null);
   late Responsive _responsive;
   String _outlineButtonLabel = 'Joined';
   String sortBy = 'new';
   bool _isOverviewTab = true;
   Widget socialLinks(Widget icon, String lable) {
     return ActionChip(
-      backgroundColor: Color.fromARGB(255, 76, 76, 76),
+      backgroundColor: const Color.fromARGB(255, 76, 76, 76),
       label: Text(
         lable,
       ),
@@ -205,13 +202,17 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                     radius: 60,
-                    child: Icon(
-                      // TODO : display profile picture here
-                      Icons.person,
-                      size: 50,
-                    )),
+                    child: UserData.user!.profilePic == null ||
+                            UserData.user!.profilePic == ''
+                        ? const Icon(
+                            // TODO : display profile picture here
+                            Icons.person,
+                            size: 50,
+                          )
+                        : Image.network(UserData.user!.profilePic!,
+                            fit: BoxFit.cover)),
                 const SizedBox(width: 60),
                 Column(
                   children: [
@@ -240,10 +241,10 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
             ),
           ],
         ),
-        const Text('Markos',
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
-        const Text('u/mark_yasser . 1m',
-            style: TextStyle(fontSize: 12, color: Colors.grey)),
+        Text(UserData.user!.displayName,
+            style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+        Text('u/${UserData.user!.name} . 1m',
+            style: const TextStyle(fontSize: 12, color: Colors.grey)),
         //------------change profile picture button----------
         Container(
           width: double.infinity,
@@ -676,6 +677,7 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
           automaticallyImplyLeading: false,
           backgroundColor: defaultAppbarBackgroundColor,
           title: AppBarWebLoggedIn(user: UserData.user!, screen: 'u/user_name')),
+
       body: DefaultTabController(
         length: 8,
         child: Scaffold(
@@ -694,7 +696,7 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
               padding: _isOverviewTab
                   ? EdgeInsets.symmetric(
                       horizontal: MediaQuery.of(context).size.width * 0.25 > 300
-                          ? MediaQuery.of(context).size.width * 0.25
+                          ? MediaQuery.of(context).size.width * 0.22
                           : MediaQuery.of(context).size.width * 0.1 > 100 &&
                                   MediaQuery.of(context).size.width * 0.25 <=
                                       300

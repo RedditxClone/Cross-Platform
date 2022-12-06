@@ -9,8 +9,10 @@ void main() {
     user = User(
         userId: '1',
         username: 'mark_yasser',
-        email: 'mark@hotmai.com',
-        profilePic: '');
+        displayName: 'mark',
+        email: 'mark@hotmail.com',
+        coverPic: null,
+        profilePic: null);
   });
   Widget createWidgetUnderTest() {
     return MaterialApp(

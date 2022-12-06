@@ -21,7 +21,7 @@ import 'package:reddit/presentation/widgets/posts/add_post.dart';
 import '../../../business_logic/cubit/left_drawer/left_drawer_cubit.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage( {Key? key}) : super(key: key);
+  HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -174,13 +174,15 @@ class _HomePageState extends State<HomePage> {
                   Scaffold.of(context).openEndDrawer();
                 },
                 icon: CircleAvatar(
-                    child: isLoggedin && UserData.user!.profilePic != null
+                    child: isLoggedin &&
+                            !(UserData.user!.profilePic == null ||
+                                UserData.user!.profilePic == '')
                         ? Image.network(
                             UserData.user!.profilePic!,
                             fit: BoxFit.cover,
                           )
                         : Icon(Icons.person,
-                            color: isLoggedin && UserData.user!.profilePic == null
+                            color: isLoggedin && (UserData.user != null)
                                 ? Colors.orange
                                 : Colors.grey,
                             size: 25)));
