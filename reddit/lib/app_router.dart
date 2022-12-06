@@ -214,7 +214,10 @@ class AppRouter {
         );
       case SIGNU_PAGE1:
         return MaterialPageRoute(
-          builder: (_) => const SignupWeb(),
+          builder: (_) => BlocProvider.value(
+            value: authCubit,
+            child: const SignupWeb(),
+          ),
         );
       case loginPage:
         return MaterialPageRoute(

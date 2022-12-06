@@ -69,49 +69,39 @@ class _LoginWebState extends State<LoginWeb> {
   }
 
   //this an async fucntion to log in with google account and store the result in database
-  Future signInWithGoogle() async {
+  void signInWithGoogle() async {
     try {
       var googleAccount = await GoogleSingInApi.loginWeb();
       if (googleAccount != null) {
-        DioHelper.postData(url: 'auth/signup', data: {
-          "userId": googleAccount.id,
-          "email": googleAccount.email,
-          "name": googleAccount.displayName,
-          "imageUrl": googleAccount.photoUrl,
-          "_type": "google",
-          "serverAuthCode": googleAccount.serverAuthCode,
-        }).then((value) {
-          if (value.statusCode == 201) {
-            newUser = User.fromJson(jsonDecode(value.data));
-            Navigator.of(context).pushReplacementNamed(
-              homePageRoute,
-              arguments: newUser,
-            );
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Row(
-                  children: [
-                    const Icon(
-                      Icons.error,
+        var googleToken = await GoogleSingInApi.getGoogleToken();
+        if (googleToken != null) {
+          BlocProvider.of<AuthCubit>(context).loginWithGoogle(googleToken);
+        } else {
+          debugPrint("token is null");
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: [
+                  const Icon(
+                    Icons.error,
+                    color: Colors.red,
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.01,
+                  ),
+                  const Text(
+                    "Error in Signing in with Google",
+                    style: TextStyle(
                       color: Colors.red,
                     ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.01,
-                    ),
-                    const Text(
-                      "Error in Signing in with Google",
-                      style: TextStyle(
-                        color: Colors.red,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            );
-          }
-        });
+            ),
+          );
+        }
       } else {
+        debugPrint("google account is null");
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Row(
@@ -135,6 +125,7 @@ class _LoginWebState extends State<LoginWeb> {
         );
       }
     } catch (e) {
+      debugPrint("error in google sign in $e");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Row(
@@ -716,7 +707,7 @@ class _LoginWebState extends State<LoginWeb> {
                         width: MediaQuery.of(context).size.width * 0.01,
                       ),
                       const Text(
-                        'Username or password is incorrect',
+                        'Please check your data and try again',
                         style: TextStyle(
                           color: Colors.red,
                         ),

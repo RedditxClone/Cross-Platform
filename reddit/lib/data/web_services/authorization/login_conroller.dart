@@ -1,15 +1,12 @@
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import '../../../constants/strings.dart';
 
 class GoogleSingInApi {
   static const clientIdWeb =
       '731962970730-93vd9ao2c9ckhmguioje6ar6jmjk3cic.apps.googleusercontent.com';
   static const clientIdAndroid =
-      '731962970730-dgmcu6qo0663lna2okgjqsqkr2ck85b5.apps.googleusercontent.com';
-  static final GoogleSignIn _googleSignInMob = GoogleSignIn(
-    clientId: clientIdAndroid,
-  );
+      '731962970730-eogvrnvtmkq777vvd7s5gumlguqql9o2.apps.googleusercontent.com';
+  static final GoogleSignIn _googleSignInMob = GoogleSignIn();
   static final GoogleSignIn googleSignInWeb = GoogleSignIn(
     clientId: clientIdWeb,
   );

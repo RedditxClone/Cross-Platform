@@ -19,7 +19,7 @@ class AuthCubit extends Cubit<AuthState> {
   /// This function calls the function [AuthRepo.signup] which makes the request to the server.
   void signup(String password, String username, String email) async {
     authRepo.signup(password, username, email).then((value) {
-      settingsRepository.settingsWebServices.token = value!.accessToken;
+      settingsRepository.settingsWebServices.token = value!.token;
       emit(SignedIn(value));
       debugPrint("after emitting signup ${value.username}");
     });
@@ -36,6 +36,18 @@ class AuthCubit extends Cubit<AuthState> {
       debugPrint("after emitting login ${value?.username}");
     });
   }
+
+  /// [googleToken] : The token of the user from google.
+  /// 
+  /// This function emits state [Login] after the user login with google.
+  /// This function calls the function [AuthRepo.loginWithGoogle] which makes the request to the server.
+  void loginWithGoogle(String googleToken) async {
+    authRepo.loginWithGoogle(googleToken).then((value) {
+      emit(Login(value));
+      debugPrint("after emitting login ${value?.username}");
+    });
+  }
+
 
   /// This function emits state [SuggestedUsername] in the initState of the signup_page2.
   /// This function calls the function [AuthRepo.getSuggestedUsernames] which makes the request to the server.
@@ -62,14 +74,13 @@ class AuthCubit extends Cubit<AuthState> {
   ///
   /// This function emits state [SignedInWithProfilePhoto] after the user choose his profile picture during signup.
   /// This function calls the function [AuthRepo.updateImageWeb] which makes the request to the server.
-  void changeProfilephotoWeb(User? userWithPP, Uint8List fileAsBytes) {
+  void changeProfilephotoWeb(Uint8List fileAsBytes) {
     if (isClosed) return;
     authRepo
-        .updateImageWeb('profilephoto', fileAsBytes, userWithPP!.accessToken)
+        .updateImageWeb('profilephoto', fileAsBytes, UserData.user!.token)
         .then((image) {
-      userWithPP.profilePic = image as String;
       debugPrint("image from cubit: $image");
-      emit(SignedInWithProfilePhoto(userWithPP));
+      emit(SignedInWithProfilePhoto(UserData.user));
     });
   }
 
@@ -91,6 +102,7 @@ class AuthCubit extends Cubit<AuthState> {
       emit(UpdateGenderDuringSignup(value));
     });
   }
+
   /// [selectedInterests] : [Map] which is the list of the interests selected by the user.
   /// [token] : [String] which is The token of the user.
   ///

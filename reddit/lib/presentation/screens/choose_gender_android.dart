@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -21,7 +20,7 @@ class _ChooseGenderAndroidState extends State<ChooseGenderAndroid> {
   //gender will be null if not selected
   void selectGender(String gender) async {
     BlocProvider.of<AuthCubit>(context)
-        .genderInSignup(UserData.user!.accessToken, gender);
+        .genderInSignup(UserData.user!.token, gender);
     //     url: 'user/me/prefs',
     //     data: {
     //       "gender": gender,

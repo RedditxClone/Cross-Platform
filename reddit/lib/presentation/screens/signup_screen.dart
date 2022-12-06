@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -120,53 +122,39 @@ class _SignupMobileState extends State<SignupMobile> {
   }
 
   //this an async fucntion to log in with google account and store the result in database
-  Future signInWithGoogle() async {
+  void signInWithGoogle() async {
     try {
       var googleAccount = await GoogleSingInApi.loginMob();
-      GoogleSignInAuthentication? x;
       if (googleAccount != null) {
-        googleAccount.authentication.then((value) {
-          x = value;
-        });
-        debugPrint("token ${x?.idToken}");
-        DioHelper.postData(url: 'auth/signup', data: {
-          "userId": googleAccount.id,
-          "email": googleAccount.email,
-          "name": googleAccount.displayName,
-          "imageUrl": googleAccount.photoUrl,
-          "_type": "google",
-          "serverAuthCode": googleAccount.serverAuthCode,
-        }).then((value) {
-          if (value.statusCode == 201) {
-            UserData.user = User.fromJson(jsonDecode(value.data));
-            Navigator.of(context).pushReplacementNamed(
-              chooseGenderScreen,
-            );
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Row(
-                  children: [
-                    const Icon(
-                      Icons.error,
+        var googleToken = await GoogleSingInApi.getGoogleToken();
+        if (googleToken != null) {
+          BlocProvider.of<AuthCubit>(context).loginWithGoogle(googleToken);
+        } else {
+          debugPrint("token is null");
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: [
+                  const Icon(
+                    Icons.error,
+                    color: Colors.red,
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.01,
+                  ),
+                  const Text(
+                    "Error in Signing in with Google",
+                    style: TextStyle(
                       color: Colors.red,
                     ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.01,
-                    ),
-                    const Text(
-                      "Error in Signing in with Google",
-                      style: TextStyle(
-                        color: Colors.red,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            );
-          }
-        });
+            ),
+          );
+        }
       } else {
+        debugPrint("google account is null");
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Row(
@@ -190,6 +178,8 @@ class _SignupMobileState extends State<SignupMobile> {
         );
       }
     } catch (e) {
+      debugPrint("error in google sign in $e");
+      debugPrint("error in google sign in hereeeeeeeeee");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Row(
@@ -689,6 +679,39 @@ class _SignupMobileState extends State<SignupMobile> {
                       ),
                       const Text(
                         'Username or password is incorrect',
+                        style: TextStyle(
+                          color: Colors.red,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
+          }
+          else if (state is Login) {
+            if (state.user != null) {
+              UserData.initUser(state.user!.toJson()); //this couldn't be null
+              debugPrint("success in login");
+              Navigator.of(context).pushReplacementNamed(
+                homePageRoute,
+              );
+            } else {
+              //user = null
+              debugPrint("failed in login");
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Row(
+                    children: [
+                      const Icon(
+                        Icons.error,
+                        color: Colors.red,
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.01,
+                      ),
+                      const Text(
+                        'Please Try Again',
                         style: TextStyle(
                           color: Colors.red,
                         ),

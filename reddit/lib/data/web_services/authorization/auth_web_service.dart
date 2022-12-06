@@ -45,6 +45,22 @@ class AuthWebService {
     }
   }
 
+  /// [googleToken] : The token of the user from google.
+  /// 
+  /// This function makes the request to the server to login the user with google.
+  /// This function calls the function [DioHelper.postData] which makes the request to the server.
+  /// Returns the response from the server.
+  Future loginWithGoogle(String googleToken) async{
+    try {
+      var res = await DioHelper.postData(url: 'auth/google', data: {
+        "token": googleToken,
+      });
+      return res;
+    } on DioError catch (e) {
+      debugPrint("from login $e");
+      return e.response;
+    }
+  }
   /// [username] : The username of the user.
   ///
   /// This function makes the request to check on the username if it's avialable.
@@ -123,7 +139,7 @@ Uint8List fileAsBytes, String key, String token) async {
       );
 
       debugPrint("res of img = ${response.statusCode}");
-      return response.data;
+      return response;
     } catch (e) {
       debugPrint("error in image web ${e.toString()}");
       return '';

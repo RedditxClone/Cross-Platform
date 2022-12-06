@@ -1,9 +1,7 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:reddit/business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
-import 'package:reddit/helper/dio.dart';
 import '../../constants/strings.dart';
 import '../../data/model/auth_model.dart';
 
@@ -40,7 +38,7 @@ class _InterestsAndroidState extends State<InterestsAndroid> {
   //this function is used to add the user interests to the database
   void addInterests() async {
     BlocProvider.of<AuthCubit>(context)
-        .addInterests(selectedInterests, UserData.user!.accessToken);
+        .addInterests(selectedInterests, UserData.user!.token);
   }
 
   Widget mainBody() {

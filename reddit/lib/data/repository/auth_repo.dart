@@ -47,6 +47,33 @@ class AuthRepo {
     return user;
   }
 
+  /// [googleToken] : The token of the user from google.
+  ///
+  /// This function makes the request to the server to log in the user with google.
+  /// and checks on the status code if 201 then sets the user and returns it.
+  /// This function calls the function [AuthWebService.loginWithGoogle] which makes the request to the server.
+  /// RETURNS [User] : the user data.
+  Future<User?> loginWithGoogle(String googleToken) async {
+    // Response res = await authWebService.loginWithGoogle(googleToken);
+    // if (res.statusCode == 201) {
+    //   user = User.fromJson(res.data);
+    // } else {
+    //   user = null;
+    // }
+    // return user;
+    return User.fromJson({
+      'username': 'username',
+      'email': 'email',
+      'profilePhoto': 'profilePic',
+      'token': 'token',
+      'authType': 'type',
+      '_id': 'userId',
+      'gender': 'gender',
+      'displayName': 'displayName',
+      'about': 'about'
+    });
+  }
+
   /// [username] : The username of the user.
   ///
   /// This function makes the request to the server to let the user change password if he forget it.
@@ -113,9 +140,13 @@ class AuthRepo {
   /// Returns [String] : it restuns a string which the link of the profile picture on the server.
   Future<dynamic> updateImageWeb(
       String key, Uint8List fileAsBytes, String token) async {
-    final newVal = await authWebService.updateImageWeb(fileAsBytes, key, token);
-    debugPrint("from repo ${newVal[key]}");
-    return newVal[key];
+    var res = await authWebService.updateImageWeb(fileAsBytes, key, token);
+    if (res.statusCode == 200) {
+      UserData.user?.profilePic = res.data[key];
+      return res.data[key];
+    } else {
+      return null;
+    }
   }
 
   /// [token] : [String] which is The token of the user.

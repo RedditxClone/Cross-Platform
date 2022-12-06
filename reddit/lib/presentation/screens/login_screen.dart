@@ -1,4 +1,4 @@
-import 'dart:convert';
+// ignore_for_file: use_build_context_synchronously
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,7 +8,6 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
 import '../../constants/strings.dart';
 import '../../data/web_services/authorization/login_conroller.dart';
-import '../../helper/dio.dart';
 
 class LoginMobile extends StatefulWidget {
   const LoginMobile({super.key});
@@ -33,7 +32,6 @@ class _LoginMobileState extends State<LoginMobile> {
     passwordController.text = "";
     usernameFocusNode.addListener(_onFocusChangeUsername);
     passwordFocusNode.addListener(_onFocusChangePassword);
-    usernameFocusNode.requestFocus();
   }
 
   @override
@@ -120,49 +118,41 @@ class _LoginMobileState extends State<LoginMobile> {
     );
   }
 
+ 
   //this an async fucntion to log in with google account and store the result in database
-  Future signInWithGoogle() async {
+  void signInWithGoogle() async {
     try {
       var googleAccount = await GoogleSingInApi.loginMob();
       if (googleAccount != null) {
-        DioHelper.postData(url: 'auth/signup', data: {
-          "userId": googleAccount.id,
-          "email": googleAccount.email,
-          "name": googleAccount.displayName,
-          "imageUrl": googleAccount.photoUrl,
-          "_type": "google",
-          "serverAuthCode": googleAccount.serverAuthCode,
-        }).then((value) {
-          if (value.statusCode == 201) {
-            UserData.user = User.fromJson(jsonDecode(value.data));
-            Navigator.of(context).pushReplacementNamed(
-              homePageRoute,
-            );
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Row(
-                  children: [
-                    const Icon(
-                      Icons.error,
+        var googleToken = await GoogleSingInApi.getGoogleToken();
+        if (googleToken != null) {
+          BlocProvider.of<AuthCubit>(context).loginWithGoogle(googleToken);
+        } else {
+          debugPrint("token is null");
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: [
+                  const Icon(
+                    Icons.error,
+                    color: Colors.red,
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.01,
+                  ),
+                  const Text(
+                    "Error in Signing in with Google",
+                    style: TextStyle(
                       color: Colors.red,
                     ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.01,
-                    ),
-                    const Text(
-                      "Error in Signing in with Google",
-                      style: TextStyle(
-                        color: Colors.red,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            );
-          }
-        });
+            ),
+          );
+        }
       } else {
+        debugPrint("google account is null");
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Row(
@@ -186,6 +176,7 @@ class _LoginMobileState extends State<LoginMobile> {
         );
       }
     } catch (e) {
+      debugPrint("error in google sign in $e");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Row(
@@ -569,7 +560,7 @@ class _LoginMobileState extends State<LoginMobile> {
                         width: MediaQuery.of(context).size.width * 0.01,
                       ),
                       const Text(
-                        'Username or password is incorrect',
+                        'Please check your data and try again',
                         style: TextStyle(
                           color: Colors.red,
                         ),
