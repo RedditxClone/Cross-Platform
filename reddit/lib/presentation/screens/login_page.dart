@@ -1,11 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
-
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:reddit/business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
-import 'package:reddit/helper/dio.dart';
 import 'package:url_launcher/link.dart';
 
 import '../../constants/strings.dart';

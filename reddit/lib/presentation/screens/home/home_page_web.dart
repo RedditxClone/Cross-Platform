@@ -897,10 +897,6 @@ class _HomePageWebState extends State<HomePageWeb> {
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.pop(c);
-                          // Navigator.of(context).pushReplacementNamed(
-                          //   homePageRoute,
-                          //   arguments: user,
-                          // );
                         },
                         style: const ButtonStyle(
                           shape: MaterialStatePropertyAll(

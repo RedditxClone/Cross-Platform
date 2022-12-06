@@ -38,7 +38,7 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   /// [googleToken] : The token of the user from google.
-  /// 
+  ///
   /// This function emits state [Login] after the user login with google.
   /// This function calls the function [AuthRepo.loginWithGoogle] which makes the request to the server.
   void loginWithGoogle(String googleToken) async {
@@ -47,7 +47,6 @@ class AuthCubit extends Cubit<AuthState> {
       debugPrint("after emitting login ${value?.username}");
     });
   }
-
 
   /// This function emits state [SuggestedUsername] in the initState of the signup_page2.
   /// This function calls the function [AuthRepo.getSuggestedUsernames] which makes the request to the server.
@@ -70,7 +69,6 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   /// [fileAsBytes] : [Uint8List] which is the image required to be uploaded.
-  /// [userWithPP] : [User] which is an object of the user.
   ///
   /// This function emits state [SignedInWithProfilePhoto] after the user choose his profile picture during signup.
   /// This function calls the function [AuthRepo.updateImageWeb] which makes the request to the server.
@@ -112,6 +110,26 @@ class AuthCubit extends Cubit<AuthState> {
   void addInterests(Map<String, dynamic> selectedInterests, String token) {
     authRepo.addInterests(selectedInterests, token).then((value) {
       emit(AddUserInterests(value));
+    });
+  }
+
+  /// [username] : The username of the user.
+  ///
+  /// This function emits state [ForgetPassword] after the user click on forget password.
+  /// This function calls the function [AuthRepo.forgetPassword] which makes the request to the server.
+  void forgetPassword(String username) {
+    authRepo.forgetPassword(username).then((value) {
+      emit(ForgetPassword(value));
+    });
+  }
+
+  /// [email] : The email of the user.
+  /// 
+  /// This function emits state [ForgetUsername] after the user click on forget username.
+  /// This function calls the function [AuthRepo.forgetUsername] which makes the request to the server.
+  void forgetUsername(String email){
+    authRepo.forgetUsername(email).then((value) {
+      emit(ForgetUsername(value));
     });
   }
 }

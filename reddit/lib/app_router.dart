@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:reddit/data/repository/feed_setting_repository.dart';
 import 'package:reddit/data/web_services/feed_setting_web_services.dart';
+import 'package:reddit/presentation/screens/forget_username_web.dart';
 import 'business_logic/cubit/feed_settings_cubit.dart';
 import 'presentation/screens/feed_setting.dart';
 import 'package:reddit/presentation/screens/profile/others_profile_page_web.dart';
@@ -62,7 +63,6 @@ import 'package:reddit/presentation/screens/choose_profile_screen.dart';
 import 'package:reddit/presentation/screens/forget_password_android.dart';
 import 'package:reddit/presentation/screens/forget_password_web.dart';
 import 'package:reddit/presentation/screens/forget_username_android.dart';
-import 'package:reddit/presentation/screens/forget_username_web.dart';
 import 'package:reddit/presentation/screens/intesrests_android.dart';
 import 'package:reddit/presentation/screens/login_page.dart';
 import 'package:reddit/presentation/screens/login_screen.dart';
@@ -206,11 +206,17 @@ class AppRouter {
         );
       case forgetUsernameWeb:
         return MaterialPageRoute(
-          builder: (_) => const ForgetUsernameWeb(),
+          builder: (_) =>  BlocProvider.value(
+            value: authCubit,
+            child: const ForgetUsernameWeb(),
+          ),
         );
       case forgetPasswordWeb:
         return MaterialPageRoute(
-          builder: (_) => const ForgetPasswordWeb(),
+          builder: (_) => BlocProvider.value(
+            value: authCubit,
+            child: const ForgetPasswordWeb(),
+          ),
         );
       case SIGNU_PAGE1:
         return MaterialPageRoute(
@@ -235,7 +241,10 @@ class AppRouter {
         );
       case forgetPasswordAndroid:
         return MaterialPageRoute(
-          builder: (_) => const ForgetPasswordAndroid(),
+          builder: (_) =>  BlocProvider.value(
+            value: authCubit,
+            child: const ForgetPasswordAndroid(),
+          ),
         );
       case loginScreen:
         return MaterialPageRoute(
@@ -246,7 +255,10 @@ class AppRouter {
         );
       case forgetUsernameAndroid:
         return MaterialPageRoute(
-          builder: (_) => const ForgetUsernameAndroid(),
+          builder: (_) =>  BlocProvider.value(
+            value: authCubit,
+            child: const ForgetUsernameAndroid(),
+          ),
         );
       case interesetesScreen:
         return MaterialPageRoute(

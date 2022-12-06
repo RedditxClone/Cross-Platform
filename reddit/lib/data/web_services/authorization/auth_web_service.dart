@@ -46,11 +46,11 @@ class AuthWebService {
   }
 
   /// [googleToken] : The token of the user from google.
-  /// 
+  ///
   /// This function makes the request to the server to login the user with google.
   /// This function calls the function [DioHelper.postData] which makes the request to the server.
   /// Returns the response from the server.
-  Future loginWithGoogle(String googleToken) async{
+  Future loginWithGoogle(String googleToken) async {
     try {
       var res = await DioHelper.postData(url: 'auth/google', data: {
         "token": googleToken,
@@ -61,16 +61,22 @@ class AuthWebService {
       return e.response;
     }
   }
+
   /// [username] : The username of the user.
   ///
   /// This function makes the request to check on the username if it's avialable.
   /// This function calls the function [DioHelper.postData] which makes the request to the server.
   /// Returns the response from the server.
   Future forgetPassword(String username) async {
-    var res = await DioHelper.postData(url: 'auth/forget-password', data: {
-      "username": username,
-    });
-    return res;
+    try {
+      var res = await DioHelper.postData(url: 'auth/forget-password', data: {
+        "username": username,
+      });
+      return res;
+    } on DioError catch (e) {
+      debugPrint("from dio $e");
+      return e.response;
+    }
   }
 
   // Future changeForgottenPassword(
@@ -88,10 +94,15 @@ class AuthWebService {
   /// This function calls the function [DioHelper.postData] which makes the request to the server.
   /// Returns the response from the server.
   Future forgetUsername(String email) async {
-    var res = await DioHelper.postData(url: 'auth/forget-username', data: {
-      "email": email,
-    });
-    return res;
+    try {
+      var res = await DioHelper.postData(url: 'auth/forget-username', data: {
+        "email": email,
+      });
+      return res;
+    } on DioError catch (e) {
+      debugPrint("from dio $e");
+      return e.response;
+    }
   }
 
   /// This function makes the request to random usernames to suggested to the user.
@@ -99,8 +110,14 @@ class AuthWebService {
   ///
   /// Returns the response from the server.
   Future getSuggestedUsernames() async {
-    var res = await DioHelper.getData(url: "user/random-usernames", query: {});
-    return res;
+    try {
+      var res =
+          await DioHelper.getData(url: "user/random-usernames", query: {});
+      return res;
+    } on DioError catch (e) {
+      debugPrint("from dio $e");
+      return e.response;
+    }
   }
 
   /// [username] : The username of the user.
@@ -109,11 +126,16 @@ class AuthWebService {
   /// This function calls the function [DioHelper.postData] which makes the request to the server.
   /// Returns the response from the server.
   Future checkOnUsername(String username) async {
-    var res =
-        await DioHelper.postData(url: 'user/check-available-username', data: {
-      'username': username,
-    });
-    return res;
+    try {
+      var res =
+          await DioHelper.postData(url: 'user/check-available-username', data: {
+        'username': username,
+      });
+      return res;
+    } on DioError catch (e) {
+      debugPrint("from dio $e");
+      return e.response;
+    }
   }
 
   /// [fileAsBytes] : [Uint8List] which is the image required to be uploaded.
@@ -124,7 +146,7 @@ class AuthWebService {
   /// This function calls the function [DioHelper.patchData] which makes the request to the server.
   /// Returns the response data from the server.
   Future<dynamic> updateImageWeb(
-Uint8List fileAsBytes, String key, String token) async {
+      Uint8List fileAsBytes, String key, String token) async {
     try {
       FormData formData = FormData.fromMap({
         "file": MultipartFile.fromBytes(fileAsBytes,
@@ -153,15 +175,20 @@ Uint8List fileAsBytes, String key, String token) async {
   /// Returns the response data from the server.
   Future addInterests(
       Map<String, dynamic> selectedInterests, String token) async {
-    var res = await DioHelper.patchData(
-        url: 'user/me/prefs',
-        data: selectedInterests,
-        options: Options(
-          headers: {
-            "Authorization": "Bearer $token",
-          },
-        ));
-    return res;
+    try {
+      var res = await DioHelper.patchData(
+          url: 'user/me/prefs',
+          data: selectedInterests,
+          options: Options(
+            headers: {
+              "Authorization": "Bearer $token",
+            },
+          ));
+      return res;
+    } on DioError catch (e) {
+      debugPrint("from dio $e");
+      return e.response;
+    }
   }
 
   /// [token] : [String] which is The token of the user.
@@ -170,16 +197,21 @@ Uint8List fileAsBytes, String key, String token) async {
   /// This function makes the request to udate the user gender during signup.
   /// Returns the response data from the server.
   Future genderInSignup(String gender, String token) async {
-    var res = await DioHelper.patchData(
-        url: 'user/me/prefs',
-        data: {
-          "gender": gender,
-        },
-        options: Options(
-          headers: {
-            "Authorization": "Bearer $token",
+    try {
+      var res = await DioHelper.patchData(
+          url: 'user/me/prefs',
+          data: {
+            "gender": gender,
           },
-        ));
-    return res;
+          options: Options(
+            headers: {
+              "Authorization": "Bearer $token",
+            },
+          ));
+      return res;
+    } on DioError catch (e) {
+      debugPrint("from dio $e");
+      return e.response;
+    }
   }
 }
