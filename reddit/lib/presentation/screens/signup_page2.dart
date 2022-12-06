@@ -296,7 +296,9 @@ class _SignupWeb2State extends State<SignupWeb2> {
                                 usernameEmpty = false;
                                 isAvailable = true;
                                 usernameError = false;
-                                usernameLengthError = false;
+                                usernameLengthError =
+                                    usernameController.text.length < 3 ||
+                                        usernameController.text.length > 20;
                                 passwordFocusNode.requestFocus();
                               });
                             },
@@ -438,7 +440,7 @@ class _SignupWeb2State extends State<SignupWeb2> {
           if (state is SignedIn) {
             if (state.user != null) {
               UserData.initUser(state.user!.toJson()); //this couldn't be null
-              Navigator.of(context).pushReplacementNamed(
+              Navigator.of(context).pushNamed(
                 homePageRoute,
               );
             } else {

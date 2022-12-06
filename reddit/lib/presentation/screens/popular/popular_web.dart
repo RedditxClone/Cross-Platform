@@ -34,7 +34,7 @@ class _PopularWebState extends State<PopularWeb> {
             automaticallyImplyLeading: false,
             backgroundColor: defaultAppbarBackgroundColor,
             title: isLoggedIn
-                ? AppBarWebLoggedIn(user: UserData.user!, screen: 'Popular')
+                ? const AppBarWebLoggedIn( screen: 'Popular')
                 : const AppBarWebNotLoggedIn(screen: 'Popular')),
         body: Container(
           color: defaultWebBackgroundColor,

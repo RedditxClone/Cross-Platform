@@ -1,3 +1,6 @@
+import '../../helper/utils/shared_keys.dart';
+import '../../helper/utils/shared_pref.dart';
+
 class User {
   late String? type;
   late String userId;
@@ -11,6 +14,7 @@ class User {
   late Map<String, dynamic> interests;
   late String displayName;
   late String about;
+  late bool cakeDay;
   User(
       {required this.userId,
       required this.username,
@@ -26,6 +30,7 @@ class User {
     gender = json['gender'];
     displayName = json['displayName'];
     about = json['about'];
+    cakeDay = json['cakeDay'];
   }
   Map<String, dynamic> toJson() {
     return {
@@ -37,7 +42,8 @@ class User {
       '_id': userId,
       'gender': gender,
       'displayName': displayName,
-      'about': about
+      'about': about,
+      'cakeDay': cakeDay,
     };
   }
 }

@@ -144,7 +144,7 @@ class AppRouter {
       case homePageRoute:
         return MaterialPageRoute(
           builder: (_) => BlocProvider(
-            create: ((context) => authCubit),
+            create: (context) => authCubit,
             child: kIsWeb ? const HomePageWeb() : HomePage(),
           ),
         );

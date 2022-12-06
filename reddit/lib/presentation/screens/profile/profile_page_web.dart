@@ -675,7 +675,7 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
               const Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
           automaticallyImplyLeading: false,
           backgroundColor: defaultAppbarBackgroundColor,
-          title: AppBarWebLoggedIn(user: UserData.user!, screen: 'u/user_name')),
+          title: const AppBarWebLoggedIn( screen: 'u/user_name')),
       body: DefaultTabController(
         length: 8,
         child: Scaffold(
