@@ -15,6 +15,7 @@ class User {
   User(
       {required this.userId,
       required this.name,
+      required this.displayName,
       required this.email,
       required this.coverPic,
       required this.profilePic});

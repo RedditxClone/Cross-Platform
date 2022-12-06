@@ -1,11 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/data/model/auth_model.dart';
 
-class UserManagement extends StatelessWidget {
+class UserManagement extends StatefulWidget {
   String screen = '';
+
   UserManagement({required this.screen, super.key});
+
+  @override
+  State<UserManagement> createState() => _UserManagementState();
+}
+
+class _UserManagementState extends State<UserManagement> {
+  User otherUser = User(
+    userId: '1',
+    name: 'bemoi_erian',
+    displayName: 'Bemoi_01  ',
+    email: 'bemoi@hotmail.com',
+    coverPic: '',
+    profilePic: '',
+  );
+
   String addButtonName = '';
+
   Widget emptyUserManagement(context) {
     return Container(
         height: 300,
@@ -34,20 +52,34 @@ class UserManagement extends StatelessWidget {
       ),
       padding: const EdgeInsets.all(10),
       child: Row(children: [
-        CircleAvatar(
-            radius: 17,
-            backgroundColor: Colors.grey,
-            child: UserData.user == null ||
-                    UserData.user!.profilePic == null ||
-                    UserData.user!.profilePic == ''
-                ? const Icon(Icons.person)
-                : Image.network(UserData.user!.profilePic!, fit: BoxFit.cover)),
-        const SizedBox(width: 10),
-        const Text('user_name'),
-        const SizedBox(width: 150),
+        Material(
+          color: Colors.transparent,
+          child: InkWell(
+            hoverColor: defaultThirdColor,
+            onTap: () => Navigator.pushNamed(context, otherProfilePageRoute,
+                arguments: otherUser), // TODO : Navigate to other user profile
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              child: Row(children: [
+                CircleAvatar(
+                    radius: 17,
+                    backgroundColor: Colors.grey,
+                    child: UserData.user == null ||
+                            UserData.user!.profilePic == null ||
+                            UserData.user!.profilePic == ''
+                        ? const Icon(Icons.person)
+                        : Image.network(UserData.user!.profilePic!,
+                            fit: BoxFit.cover)),
+                const SizedBox(width: 10),
+                const Text('user_name'),
+              ]),
+            ),
+          ),
+        ),
+        const SizedBox(width: 148),
         const Text('2 months ago',
             style: TextStyle(fontSize: 13, color: Colors.grey)),
-        SizedBox(width: MediaQuery.of(context).size.width - 860),
+        SizedBox(width: MediaQuery.of(context).size.width - 880),
         InkWell(
             onTap: () => () {},
             child: const Text('Send message',
@@ -179,7 +211,7 @@ class UserManagement extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    addButtonName = screen == 'Approved' ? 'Approve user' : '';
+    addButtonName = widget.screen == 'Approved' ? 'Approve user' : '';
     return Column(
       children: [
         Container(
@@ -215,7 +247,7 @@ class UserManagement extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    '$screen ',
+                    '${widget.screen} ',
                     style: const TextStyle(fontSize: 18),
                   ),
                   const Icon(Icons.info_outline)
