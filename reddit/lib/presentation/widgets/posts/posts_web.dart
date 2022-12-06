@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/theme_colors.dart';
+import 'package:reddit/data/model/posts/posts_model.dart';
 
-class PostsWeb extends StatefulWidget {
-  const PostsWeb({Key? key}) : super(key: key);
-
-  @override
-  State<PostsWeb> createState() => _PostsWebState();
-}
-
-class _PostsWebState extends State<PostsWeb> {
+class PostsWeb extends StatelessWidget {
   late Responsive responsive;
+  PostsModel? postsModel;
+  PostsWeb({this.postsModel, Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     responsive = Responsive(context);
@@ -27,13 +23,29 @@ class _PostsWebState extends State<PostsWeb> {
                   child: Container(
                   color: defaultSecondaryColor.withOpacity(0.001),
                   child: Column(
-                    children: const [
-                      SizedBox(height: 10),
-                      Icon(Icons.arrow_upward, color: Colors.grey),
-                      SizedBox(height: 10),
-                      Text("0", style: TextStyle(fontSize: 13)),
-                      SizedBox(height: 10),
-                      Icon(Icons.arrow_downward, color: Colors.grey),
+                    children: [
+                      const SizedBox(height: 10),
+                      Icon(Icons.arrow_upward,
+                          color: postsModel == null
+                              ? Colors.grey
+                              : postsModel!.upVoted == null
+                                  ? Colors.grey
+                                  : postsModel!.upVoted!
+                                      ? Colors.red
+                                      : Colors.grey),
+                      const SizedBox(height: 10),
+                      Text(
+                          "${postsModel == null ? 0 : postsModel!.numVotes ?? 0}",
+                          style: const TextStyle(fontSize: 13)),
+                      const SizedBox(height: 10),
+                      Icon(Icons.arrow_downward,
+                          color: postsModel == null
+                              ? Colors.grey
+                              : postsModel!.downVoted == null
+                                  ? Colors.grey
+                                  : postsModel!.downVoted!
+                                      ? Colors.blue
+                                      : Colors.grey),
                     ],
                   ),
                 )),
@@ -56,11 +68,13 @@ class _PostsWebState extends State<PostsWeb> {
                             const SizedBox(width: 10),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
-                                Text("r/Community_name",
-                                    style: TextStyle(fontSize: 13)),
-                                Text("u/User_name - 19h",
-                                    style: TextStyle(fontSize: 13)),
+                              children: [
+                                Text(
+                                    "r/${postsModel == null ? '' : postsModel!.subredditName ?? ''}",
+                                    style: const TextStyle(fontSize: 13)),
+                                Text(
+                                    "u/${postsModel == null ? '' : postsModel!.userName ?? ''} . ${getPostDate()}",
+                                    style: const TextStyle(fontSize: 13)),
                               ],
                             ),
                           ]),
@@ -81,23 +95,60 @@ class _PostsWebState extends State<PostsWeb> {
                         responsive.isSmallSizedScreen()
                             ? Row(children: [
                                 IconButton(
-                                    onPressed: () {},
-                                    icon: const Icon(Icons.arrow_upward,
-                                        color: Colors.grey)),
-                                const Text("0", style: TextStyle(fontSize: 13)),
+                                  onPressed: () {
+                                    //upvote with postID
+                                  },
+                                  icon: Icon(Icons.arrow_upward,
+                                      color: postsModel == null
+                                          ? Colors.grey
+                                          : postsModel!.upVoted == null
+                                              ? Colors.grey
+                                              : postsModel!.upVoted!
+                                                  ? Colors.red
+                                                  : Colors.grey),
+                                ),
+                                Text(
+                                    "${postsModel == null ? 0 : postsModel!.numVotes ?? 0}",
+                                    style: TextStyle(
+                                        fontSize: 10,
+                                        color: postsModel == null
+                                            ? Colors.grey
+                                            : postsModel!.upVoted == null
+                                                ? Colors.grey
+                                                : postsModel!.upVoted!
+                                                    ? Colors.red
+                                                    : postsModel!.downVoted ==
+                                                            null
+                                                        ? Colors.grey
+                                                        : postsModel!.downVoted!
+                                                            ? Colors.blue
+                                                            : Colors.grey)),
                                 IconButton(
-                                    onPressed: () {},
-                                    icon: const Icon(Icons.arrow_downward,
-                                        color: Colors.grey)),
+                                    onPressed: () {
+                                      //downvote with postID
+                                    },
+                                    icon: Icon(Icons.arrow_downward,
+                                        color: postsModel == null
+                                            ? Colors.grey
+                                            : postsModel!.downVoted == null
+                                                ? Colors.grey
+                                                : postsModel!.downVoted!
+                                                    ? Colors.blue
+                                                    : Colors.grey)),
                                 const SizedBox(width: 5),
                               ])
                             : const SizedBox(width: 0),
                         InkWell(
-                          onTap: () {},
-                          child: Row(children: const [
-                            Icon(Icons.comment_outlined, color: Colors.grey),
-                            SizedBox(width: 5),
-                            Text("0 Comments", style: TextStyle(fontSize: 13)),
+                          onTap: () {
+                            // Display comments with postID
+                          },
+                          child: Row(children: [
+                            const Icon(Icons.comment_outlined,
+                                color: Colors.grey),
+                            const SizedBox(width: 5),
+                            Text(
+                                "${postsModel == null ? 0 : postsModel!.numComments ?? 0} Comments",
+                                style: const TextStyle(fontSize: 13)),
                           ]),
                         ),
                         const SizedBox(width: 10),
@@ -161,5 +212,45 @@ class _PostsWebState extends State<PostsWeb> {
         ],
       ),
     );
+  }
+
+  String getPostDate() {
+    DateTime? parsedDate = DateTime.tryParse(
+        "${postsModel == null ? '' : postsModel!.publishedDate}");
+    if (parsedDate == null) {
+      return "";
+    }
+    final now = DateTime.now();
+    String letter = "";
+    String number = "";
+    if (parsedDate.year == now.year) {
+      if (parsedDate.month == now.month) {
+        if (parsedDate.day == now.day) {
+          if (parsedDate.hour == now.hour) {
+            if (parsedDate.minute == now.minute) {
+              letter = "s";
+              number = "${now.second - parsedDate.second}";
+            } else {
+              letter = "m";
+              number = "${now.minute - parsedDate.minute}";
+            }
+          } else {
+            letter = "h";
+            number = "${now.hour - parsedDate.hour}";
+          }
+        } else {
+          letter = "d";
+          number = "${now.day - parsedDate.day}";
+        }
+      } else {
+        letter = "M";
+        number = "${now.month - parsedDate.month}";
+      }
+    } else {
+      letter = "y";
+      number = "${now.year - parsedDate.year}";
+    }
+    // debugPrint("${postsModel!.numVotes!}");
+    return number + letter;
   }
 }

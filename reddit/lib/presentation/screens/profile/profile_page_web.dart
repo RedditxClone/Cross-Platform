@@ -508,10 +508,10 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
                       child: Column(
                         children: [
                           _sortBy(),
-                          const PostsWeb(),
-                          const PostsWeb(),
-                          const PostsWeb(),
-                          const PostsWeb(),
+                          PostsWeb(),
+                          PostsWeb(),
+                          PostsWeb(),
+                          PostsWeb(),
                         ],
                       ),
                     ),

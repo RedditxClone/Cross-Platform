@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reddit/business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
+import 'package:reddit/business_logic/cubit/posts/posts_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/presentation/widgets/home_widgets/left_list_not_logged_in.dart';
@@ -146,7 +147,7 @@ class _HomeWebState extends State<HomeWeb> {
       ),
     );
   }
-  
+
   @override
   Widget build(BuildContext context) {
     responsive = Responsive(context);
@@ -200,10 +201,18 @@ class _HomeWebState extends State<HomeWeb> {
                           ),
                           // sort posts
                           _sortBy(),
-                          const PostsWeb(),
-                          const PostsWeb(),
-                          const PostsWeb(),
-                          const PostsWeb(),
+                          BlocBuilder<PostsCubit, PostsState>(
+                            builder: (context, state) {
+                              if (state is PostsLoaded) {
+                                return Column(children: [
+                                  ...state.posts!
+                                      .map((e) => PostsWeb(postsModel: e))
+                                      .toList()
+                                ]);
+                              }
+                              return Container();
+                            },
+                          ),
                         ],
                       ),
                     ),

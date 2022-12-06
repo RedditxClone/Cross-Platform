@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/data/model/auth_model.dart';
@@ -6,6 +7,8 @@ import 'package:reddit/presentation/widgets/home_widgets/left_list_not_logged_in
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_Not_loggedin.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 import 'package:reddit/presentation/widgets/posts/posts_web.dart';
+
+import '../../../business_logic/cubit/posts/posts_cubit.dart';
 
 class PopularWeb extends StatefulWidget {
   PopularWeb({Key? key}) : super(key: key);
@@ -21,6 +24,7 @@ class _PopularWebState extends State<PopularWeb> {
   @override
   void initState() {
     super.initState();
+    BlocProvider.of<PostsCubit>(context).getPosts();
     isLoggedIn = UserData.user != null;
   }
 
@@ -191,10 +195,19 @@ class _PopularWebState extends State<PopularWeb> {
                                             margin: const EdgeInsets.only(
                                                 bottom: 15),
                                           ),
-                                          const PostsWeb(),
-                                          const PostsWeb(),
-                                          const PostsWeb(),
-                                          const PostsWeb(),
+                                          BlocBuilder<PostsCubit, PostsState>(
+                                            builder: (context, state) {
+                                              if (state is PostsLoaded) {
+                                                return Column(children: [
+                                                  ...state.posts!
+                                                      .map((e) => PostsWeb(
+                                                          postsModel: e))
+                                                      .toList()
+                                                ]);
+                                              }
+                                              return Container();
+                                            },
+                                          ),
                                         ],
                                       ),
                                     ),

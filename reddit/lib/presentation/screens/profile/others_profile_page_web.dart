@@ -334,10 +334,10 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
                       child: Column(
                         children: [
                           _sortBy(),
-                          const PostsWeb(),
-                          const PostsWeb(),
-                          const PostsWeb(),
-                          const PostsWeb(),
+                          PostsWeb(),
+                          PostsWeb(),
+                          PostsWeb(),
+                          PostsWeb(),
                         ],
                       ),
                     ),
