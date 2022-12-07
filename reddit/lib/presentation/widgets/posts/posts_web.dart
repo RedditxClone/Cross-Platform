@@ -25,14 +25,19 @@ class PostsWeb extends StatelessWidget {
                   child: Column(
                     children: [
                       const SizedBox(height: 10),
-                      Icon(Icons.arrow_upward,
-                          color: postsModel == null
-                              ? Colors.grey
-                              : postsModel!.voteType == null
-                                  ? Colors.grey
-                                  : postsModel!.voteType! == "up"
-                                      ? Colors.red
-                                      : Colors.grey),
+                      IconButton(
+                        icon: const Icon(Icons.arrow_upward),
+                        color: postsModel == null
+                            ? Colors.grey
+                            : postsModel!.voteType == null
+                                ? Colors.grey
+                                : postsModel!.voteType! == "up"
+                                    ? Colors.red
+                                    : Colors.grey,
+                        onPressed: () {
+                          // Upvote function
+                        },
+                      ),
                       const SizedBox(height: 10),
                       Text(
                           "${postsModel == null ? 0 : postsModel!.votesCount ?? 0}",
@@ -48,14 +53,19 @@ class PostsWeb extends StatelessWidget {
                                               ? Colors.blue
                                               : Colors.grey)),
                       const SizedBox(height: 10),
-                      Icon(Icons.arrow_downward,
-                          color: postsModel == null
-                              ? Colors.grey
-                              : postsModel!.voteType == null
-                                  ? Colors.grey
-                                  : postsModel!.voteType! == "down"
-                                      ? Colors.blue
-                                      : Colors.grey),
+                      IconButton(
+                        icon: const Icon(Icons.arrow_downward),
+                        color: postsModel == null
+                            ? Colors.grey
+                            : postsModel!.voteType == null
+                                ? Colors.grey
+                                : postsModel!.voteType! == "down"
+                                    ? Colors.blue
+                                    : Colors.grey,
+                        onPressed: () {
+                          // Downvote function
+                        },
+                      ),
                     ],
                   ),
                 )),
@@ -70,10 +80,17 @@ class PostsWeb extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Row(children: [
-                            const Icon(
-                              Icons.person_pin,
-                              size: 50,
-                              color: Colors.blue,
+                            CircleAvatar(
+                              radius: 15.0,
+                              backgroundImage: postsModel == null
+                                  ? null
+                                  : postsModel!.user == null
+                                      ? null
+                                      : postsModel!.user!.photo != null
+                                          ? NetworkImage(
+                                              postsModel!.user!.photo!)
+                                          : null,
+                              backgroundColor: Colors.transparent,
                             ),
                             const SizedBox(width: 10),
                             Column(
