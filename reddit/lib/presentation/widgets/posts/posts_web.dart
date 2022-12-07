@@ -28,22 +28,32 @@ class PostsWeb extends StatelessWidget {
                       Icon(Icons.arrow_upward,
                           color: postsModel == null
                               ? Colors.grey
-                              : postsModel!.upVoted == null
+                              : postsModel!.voteType == null
                                   ? Colors.grey
-                                  : postsModel!.upVoted!
+                                  : postsModel!.voteType! == "up"
                                       ? Colors.red
                                       : Colors.grey),
                       const SizedBox(height: 10),
                       Text(
-                          "${postsModel == null ? 0 : postsModel!.numVotes ?? 0}",
-                          style: const TextStyle(fontSize: 13)),
+                          "${postsModel == null ? 0 : postsModel!.votesCount ?? 0}",
+                          style: TextStyle(
+                              fontSize: 13,
+                              color: postsModel == null
+                                  ? Colors.grey
+                                  : postsModel!.voteType == null
+                                      ? Colors.grey
+                                      : postsModel!.voteType! == "up"
+                                          ? Colors.red
+                                          : postsModel!.voteType! == "down"
+                                              ? Colors.blue
+                                              : Colors.grey)),
                       const SizedBox(height: 10),
                       Icon(Icons.arrow_downward,
                           color: postsModel == null
                               ? Colors.grey
-                              : postsModel!.downVoted == null
+                              : postsModel!.voteType == null
                                   ? Colors.grey
-                                  : postsModel!.downVoted!
+                                  : postsModel!.voteType! == "down"
                                       ? Colors.blue
                                       : Colors.grey),
                     ],
@@ -70,10 +80,10 @@ class PostsWeb extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                    "r/${postsModel == null ? '' : postsModel!.subredditName ?? ''}",
+                                    "r/${postsModel == null ? '' : postsModel!.subreddit == null ? '' : postsModel!.subreddit!.name ?? ''}",
                                     style: const TextStyle(fontSize: 13)),
                                 Text(
-                                    "u/${postsModel == null ? '' : postsModel!.userName ?? ''} . ${getPostDate()}",
+                                    "u/${postsModel == null ? '' : postsModel!.user == null ? "" : postsModel!.user!.username ?? ''} . ${getPostDate()}",
                                     style: const TextStyle(fontSize: 13)),
                               ],
                             ),
@@ -101,28 +111,26 @@ class PostsWeb extends StatelessWidget {
                                   icon: Icon(Icons.arrow_upward,
                                       color: postsModel == null
                                           ? Colors.grey
-                                          : postsModel!.upVoted == null
+                                          : postsModel!.voteType == null
                                               ? Colors.grey
-                                              : postsModel!.upVoted!
+                                              : postsModel!.voteType! == "up"
                                                   ? Colors.red
                                                   : Colors.grey),
                                 ),
                                 Text(
-                                    "${postsModel == null ? 0 : postsModel!.numVotes ?? 0}",
+                                    "${postsModel == null ? 0 : postsModel!.votesCount ?? 0}",
                                     style: TextStyle(
                                         fontSize: 10,
                                         color: postsModel == null
                                             ? Colors.grey
-                                            : postsModel!.upVoted == null
+                                            : postsModel!.voteType == null
                                                 ? Colors.grey
-                                                : postsModel!.upVoted!
+                                                : postsModel!.voteType! == "up"
                                                     ? Colors.red
-                                                    : postsModel!.downVoted ==
-                                                            null
-                                                        ? Colors.grey
-                                                        : postsModel!.downVoted!
-                                                            ? Colors.blue
-                                                            : Colors.grey)),
+                                                    : postsModel!.voteType! ==
+                                                            "down"
+                                                        ? Colors.blue
+                                                        : Colors.grey)),
                                 IconButton(
                                     onPressed: () {
                                       //downvote with postID
@@ -130,9 +138,10 @@ class PostsWeb extends StatelessWidget {
                                     icon: Icon(Icons.arrow_downward,
                                         color: postsModel == null
                                             ? Colors.grey
-                                            : postsModel!.downVoted == null
+                                            : postsModel!.voteType == null
                                                 ? Colors.grey
-                                                : postsModel!.downVoted!
+                                                : postsModel!.voteType! ==
+                                                        "down"
                                                     ? Colors.blue
                                                     : Colors.grey)),
                                 const SizedBox(width: 5),
@@ -147,7 +156,7 @@ class PostsWeb extends StatelessWidget {
                                 color: Colors.grey),
                             const SizedBox(width: 5),
                             Text(
-                                "${postsModel == null ? 0 : postsModel!.numComments ?? 0} Comments",
+                                "${postsModel == null ? 0 : postsModel!.commentCount ?? 0} Comments",
                                 style: const TextStyle(fontSize: 13)),
                           ]),
                         ),
