@@ -20,6 +20,9 @@ class PostsWeb extends StatelessWidget {
         children: [
           responsive.isSmallSizedScreen()
               ? const SizedBox(width: 0)
+              // -------------------------------------------------------
+              // -------------VOTE BUTTONS IN LARGE SCREEN--------------
+              // -------------------------------------------------------
               : Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -72,6 +75,9 @@ class PostsWeb extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
+                // --------------------------------------------------
+                // -----USER PHOTO, SUBREDDIT, USER, TIME------------
+                // --------------------------------------------------
                 Container(
                   padding: const EdgeInsets.all(5),
                   child: Row(
@@ -123,6 +129,9 @@ class PostsWeb extends StatelessWidget {
                     ],
                   ),
                 ),
+                // --------------------------------------------------
+                // -------------------POST TITLE---------------------
+                // --------------------------------------------------
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -137,19 +146,45 @@ class PostsWeb extends StatelessWidget {
                     ),
                   ],
                 ),
+                // -------------------------------------------------
+                // -------------------POST TEXT---------------------
+                // -------------------------------------------------
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text(
+                          postsModel == null ? "" : postsModel!.text ?? "",
+                          style: TextStyle(
+                              fontSize: 15, color: Colors.grey.shade300),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                // --------------------------------------------------
+                // -------------------POST PHOTO---------------------
+                // --------------------------------------------------
                 Container(
-                  height: 470,
-                  width: double.infinity,
-                  color: Colors.white12,
-                  // child: const Text("This is a post",
-                  //     style:
-                  //         TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
+                  child: postsModel == null
+                      ? null
+                      : postsModel!.images == null
+                          ? null
+                          : postsModel!.images!.isNotEmpty
+                              ? Image(
+                                  image: NetworkImage(postsModel!.images![0]))
+                              : null,
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
+                        // --------------------------------------------------
+                        // ---------VOTE BUTTONS SMALL SCREEN----------------
+                        // --------------------------------------------------
                         responsive.isSmallSizedScreen()
                             ? Row(children: [
                                 IconButton(
@@ -195,6 +230,9 @@ class PostsWeb extends StatelessWidget {
                                 const SizedBox(width: 5),
                               ])
                             : const SizedBox(width: 0),
+                        // --------------------------------------------------
+                        // --------------COMMENTS BUTTON---------------------
+                        // --------------------------------------------------
                         InkWell(
                           onTap: () {
                             // Open post page
