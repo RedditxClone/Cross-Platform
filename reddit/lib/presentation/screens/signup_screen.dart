@@ -200,8 +200,8 @@ class _SignupMobileState extends State<SignupMobile> {
     }
   }
 
-//this an async fucntion to log in with facebook account and store the result in database
-  Future signInWithFacebook() async {
+//this an async fucntion to log in with github account and store the result in database
+  Future signInWithGithub() async {
     try {
       // var loginResult = await FacebookSignInApi.login();
       // if (loginResult != null) {
@@ -264,7 +264,7 @@ class _SignupMobileState extends State<SignupMobile> {
                 width: MediaQuery.of(context).size.width * 0.01,
               ),
               const Text(
-                "Error in Signing in with Facebook",
+                "Error in Signing in with github",
                 style: TextStyle(
                   color: Colors.red,
                 ),
@@ -276,12 +276,13 @@ class _SignupMobileState extends State<SignupMobile> {
     }
   }
 
-//This function creates buttonns for login with google and facebook
+
+//This function creates buttonns for login with google and github
 //it takes a string that determines the function of the button depends on the passed value
-//is it for google or facebook
+//is it for google or github
   Widget createContinueWithButton(String lable) {
     return OutlinedButton(
-      onPressed: lable == 'google' ? signInWithGoogle : signInWithFacebook,
+      onPressed: lable == 'google' ? signInWithGoogle : signInWithGithub,
       style: OutlinedButton.styleFrom(
         side: const BorderSide(color: Colors.white, width: 1),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
@@ -294,7 +295,7 @@ class _SignupMobileState extends State<SignupMobile> {
             lable == 'google'
                 ? Logo(Logos.google, size: 20)
                 : Logo(
-                    Logos.facebook_f,
+                    Logos.github,
                     size: 20,
                     color: Colors.white,
                   ),
@@ -334,7 +335,7 @@ class _SignupMobileState extends State<SignupMobile> {
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-              child: createContinueWithButton('facebook'),
+              child: createContinueWithButton('github'),
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 10, 0, 30),

@@ -41,7 +41,6 @@ class _LoginWebState extends State<LoginWeb> {
   @override
   void initState() {
     super.initState();
-    // FacebookSignInApi.init();
     usernameFocusNode.addListener(_onFocusChangeUsername);
     passwordFocusNode.addListener(_onFocusChangePassword);
     usernameFocusNode.requestFocus();
@@ -147,8 +146,8 @@ class _LoginWebState extends State<LoginWeb> {
     }
   }
 
-//this an async fucntion to log in with facebook account and store the result in database
-  Future signInWithFacebook() async {
+//this an async fucntion to log in with github account and store the result in database
+  Future signInWithGithub() async {
     try {
       // var loginResult = await FacebookSignInApi.login();
       // if (loginResult != null) {
@@ -206,7 +205,7 @@ class _LoginWebState extends State<LoginWeb> {
                 width: MediaQuery.of(context).size.width * 0.01,
               ),
               const Text(
-                "Error in Signing in with Facebook",
+                "Error in Signing in with github",
                 style: TextStyle(
                   color: Colors.red,
                 ),
@@ -218,14 +217,14 @@ class _LoginWebState extends State<LoginWeb> {
     }
   }
 
-//This function creates buttonns for login with google and facebook
+//This function creates buttonns for login with google and github
 //it takes a string that determines the function of the button depends on the passed value
-//is it for google or facebook
+//is it for google or github
   Widget createContinueWithButton(String lable) {
     return OutlinedButton.icon(
-      onPressed: lable == 'google' ? signInWithGoogle : signInWithFacebook,
+      onPressed: lable == 'google' ? signInWithGoogle : signInWithGithub,
       icon: Logo(
-        lable == 'google' ? Logos.google : Logos.facebook_logo,
+        lable == 'google' ? Logos.google : Logos.github,
         size: 20,
       ),
       label: Text("Continue with $lable",
@@ -236,10 +235,7 @@ class _LoginWebState extends State<LoginWeb> {
           )),
       style: ButtonStyle(
         side: MaterialStateProperty.all(
-          const BorderSide(
-            color: Color.fromARGB(255, 9, 51, 85),
-            width: 1,
-          ),
+          const BorderSide(color: Color.fromARGB(255, 9, 51, 85), width: 1),
         ),
         shape: MaterialStateProperty.all(
           RoundedRectangleBorder(
@@ -249,11 +245,12 @@ class _LoginWebState extends State<LoginWeb> {
         padding: MaterialStateProperty.all(
           lable == 'google'
               ? const EdgeInsets.fromLTRB(39, 20, 39, 20)
-              : const EdgeInsets.fromLTRB(30, 20, 30, 20),
+              : const EdgeInsets.fromLTRB(30, 20, 52, 20),
         ),
       ),
     );
   }
+
 
   void continueLogin() {
     if (loginCorrect) {
@@ -368,7 +365,7 @@ class _LoginWebState extends State<LoginWeb> {
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.01,
                     ),
-                    createContinueWithButton("facebook"),
+                    createContinueWithButton("github"),
                   ],
                 ),
                 SizedBox(

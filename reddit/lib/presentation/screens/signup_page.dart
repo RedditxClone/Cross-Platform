@@ -36,7 +36,6 @@ class _SignupWebState extends State<SignupWeb> {
   @override
   void initState() {
     super.initState();
-    // FacebookSignInApi.init();
   }
 
 //this finction return a TextSpan
@@ -142,8 +141,8 @@ class _SignupWebState extends State<SignupWeb> {
     }
   }
 
-//this an async fucntion to log in with facebook account and store the result in database
-  Future signInWithFacebook() async {
+//this an async fucntion to log in with github account and store the result in database
+  Future signInWithGithub() async {
     try {
       // var loginResult = await FacebookSignInApi.login();
       // if (loginResult != null) {
@@ -201,7 +200,7 @@ class _SignupWebState extends State<SignupWeb> {
                 width: MediaQuery.of(context).size.width * 0.01,
               ),
               const Text(
-                "Error in Signing in with Facebook",
+                "Error in Signing in with github",
                 style: TextStyle(
                   color: Colors.red,
                 ),
@@ -213,14 +212,14 @@ class _SignupWebState extends State<SignupWeb> {
     }
   }
 
-//This function creates buttonns for login with google and facebook
+//This function creates buttonns for login with google and github
 //it takes a string that determines the function of the button depends on the passed value
-//is it for google or facebook
+//is it for google or github
   Widget createContinueWithButton(String lable) {
     return OutlinedButton.icon(
-      onPressed: lable == 'google' ? signInWithGoogle : signInWithFacebook,
+      onPressed: lable == 'google' ? signInWithGoogle : signInWithGithub,
       icon: Logo(
-        lable == 'google' ? Logos.google : Logos.facebook_logo,
+        lable == 'google' ? Logos.google : Logos.github,
         size: 20,
       ),
       label: Text("Continue with $lable",
@@ -241,7 +240,7 @@ class _SignupWebState extends State<SignupWeb> {
         padding: MaterialStateProperty.all(
           lable == 'google'
               ? const EdgeInsets.fromLTRB(39, 20, 39, 20)
-              : const EdgeInsets.fromLTRB(30, 20, 30, 20),
+              : const EdgeInsets.fromLTRB(30, 20, 52, 20),
         ),
       ),
     );
@@ -342,7 +341,7 @@ class _SignupWebState extends State<SignupWeb> {
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.01,
                     ),
-                    createContinueWithButton("facebook"),
+                    createContinueWithButton("Github"),
                   ],
                 ),
                 SizedBox(

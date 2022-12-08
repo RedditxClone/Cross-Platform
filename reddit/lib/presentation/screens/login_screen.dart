@@ -202,7 +202,7 @@ class _LoginMobileState extends State<LoginMobile> {
     }
   }
 
-  Future signInWithFacebook() async {
+  Future signInWithGithub() async {
     try {
       // var loginResult = await FacebookSignInApi.login();
       // if (loginResult != null) {
@@ -259,7 +259,7 @@ class _LoginMobileState extends State<LoginMobile> {
                 width: MediaQuery.of(context).size.width * 0.01,
               ),
               const Text(
-                "Error in Signing in with Facebook",
+                "Error in Signing in with github",
                 style: TextStyle(
                   color: Colors.red,
                 ),
@@ -271,12 +271,12 @@ class _LoginMobileState extends State<LoginMobile> {
     }
   }
 
-//This function creates buttonns for login with google and facebook
+//This function creates buttonns for login with google and github
 //it takes a string that determines the function of the button depends on the passed value
-//is it for google or facebook
+//is it for google or github
   Widget createContinueWithButton(String lable) {
     return OutlinedButton(
-      onPressed: lable == 'google' ? signInWithGoogle : signInWithFacebook,
+      onPressed: lable == 'google' ? signInWithGoogle : signInWithGithub,
       style: OutlinedButton.styleFrom(
         side: const BorderSide(color: Colors.white, width: 1),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
@@ -289,7 +289,7 @@ class _LoginMobileState extends State<LoginMobile> {
             lable == 'google'
                 ? Logo(Logos.google, size: 20)
                 : Logo(
-                    Logos.facebook_f,
+                    Logos.github,
                     size: 20,
                     color: Colors.white,
                   ),
@@ -332,7 +332,7 @@ class _LoginMobileState extends State<LoginMobile> {
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-                  child: createContinueWithButton('facebook'),
+                  child: createContinueWithButton('Github'),
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 10, 0, 30),
