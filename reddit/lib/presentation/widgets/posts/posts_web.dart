@@ -11,76 +11,79 @@ class PostsWeb extends StatelessWidget {
   Widget build(BuildContext context) {
     responsive = Responsive(context);
     return Container(
-      height: 600,
+      // height: 600,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5), color: defaultSecondaryColor),
       margin: const EdgeInsets.only(bottom: 13),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           responsive.isSmallSizedScreen()
               ? const SizedBox(width: 0)
-              : Expanded(
-                  child: Container(
-                  color: defaultSecondaryColor.withOpacity(0.001),
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 10),
-                      IconButton(
-                        icon: const Icon(Icons.arrow_upward),
-                        color: postsModel == null
-                            ? Colors.grey
-                            : postsModel!.voteType == null
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    // const SizedBox(height: 10),
+                    IconButton(
+                      icon: const Icon(Icons.arrow_upward),
+                      color: postsModel == null
+                          ? Colors.grey
+                          : postsModel!.voteType == null
+                              ? Colors.grey
+                              : postsModel!.voteType! == "up"
+                                  ? Colors.red
+                                  : Colors.grey,
+                      onPressed: () {
+                        // Upvote function
+                      },
+                    ),
+                    // const SizedBox(height: 10),
+                    Text(
+                        "${postsModel == null ? 0 : postsModel!.votesCount ?? 0}",
+                        style: TextStyle(
+                            fontSize: 13,
+                            color: postsModel == null
                                 ? Colors.grey
-                                : postsModel!.voteType! == "up"
-                                    ? Colors.red
-                                    : Colors.grey,
-                        onPressed: () {
-                          // Upvote function
-                        },
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                          "${postsModel == null ? 0 : postsModel!.votesCount ?? 0}",
-                          style: TextStyle(
-                              fontSize: 13,
-                              color: postsModel == null
-                                  ? Colors.grey
-                                  : postsModel!.voteType == null
-                                      ? Colors.grey
-                                      : postsModel!.voteType! == "up"
-                                          ? Colors.red
-                                          : postsModel!.voteType! == "down"
-                                              ? Colors.blue
-                                              : Colors.grey)),
-                      const SizedBox(height: 10),
-                      IconButton(
-                        icon: const Icon(Icons.arrow_downward),
-                        color: postsModel == null
-                            ? Colors.grey
-                            : postsModel!.voteType == null
-                                ? Colors.grey
-                                : postsModel!.voteType! == "down"
-                                    ? Colors.blue
-                                    : Colors.grey,
-                        onPressed: () {
-                          // Downvote function
-                        },
-                      ),
-                    ],
-                  ),
-                )),
+                                : postsModel!.voteType == null
+                                    ? Colors.grey
+                                    : postsModel!.voteType! == "up"
+                                        ? Colors.red
+                                        : postsModel!.voteType! == "down"
+                                            ? Colors.blue
+                                            : Colors.grey)),
+                    // const SizedBox(height: 10),
+                    IconButton(
+                      icon: const Icon(Icons.arrow_downward),
+                      color: postsModel == null
+                          ? Colors.grey
+                          : postsModel!.voteType == null
+                              ? Colors.grey
+                              : postsModel!.voteType! == "down"
+                                  ? Colors.blue
+                                  : Colors.grey,
+                      onPressed: () {
+                        // Downvote function
+                      },
+                    ),
+                  ],
+                ),
           Expanded(
             flex: 11,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Container(
-                    padding: const EdgeInsets.all(5),
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  padding: const EdgeInsets.all(5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
                         children: [
-                          Row(children: [
-                            CircleAvatar(
+                          InkWell(
+                            onDoubleTap: () {
+                              // Go to user page
+                            },
+                            child: CircleAvatar(
                               radius: 15.0,
                               backgroundImage: postsModel == null
                                   ? null
@@ -92,20 +95,48 @@ class PostsWeb extends StatelessWidget {
                                           : null,
                               backgroundColor: Colors.transparent,
                             ),
-                            const SizedBox(width: 10),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
+                          ),
+                          const SizedBox(width: 10),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              InkWell(
+                                onTap: (() {
+                                  // Go to subreddit page
+                                }),
+                                child: Text(
                                     "r/${postsModel == null ? '' : postsModel!.subreddit == null ? '' : postsModel!.subreddit!.name ?? ''}",
                                     style: const TextStyle(fontSize: 13)),
-                                Text(
+                              ),
+                              InkWell(
+                                onTap: (() {
+                                  // Go to user page
+                                }),
+                                child: Text(
                                     "u/${postsModel == null ? '' : postsModel!.user == null ? "" : postsModel!.user!.username ?? ''} . ${getPostDate()}",
                                     style: const TextStyle(fontSize: 13)),
-                              ],
-                            ),
-                          ]),
-                        ])),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        postsModel == null ? "" : postsModel!.title ?? "",
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey.shade300),
+                      ),
+                    ),
+                  ],
+                ),
                 Container(
                   height: 470,
                   width: double.infinity,
@@ -166,6 +197,7 @@ class PostsWeb extends StatelessWidget {
                             : const SizedBox(width: 0),
                         InkWell(
                           onTap: () {
+                            // Open post page
                             // Display comments with postID
                           },
                           child: Row(children: [
