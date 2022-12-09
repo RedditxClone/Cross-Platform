@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'app_router.dart';
+import 'data/model/auth_model.dart';
 import 'helper/dio.dart';
 import 'helper/utils/shared_pref.dart';
 
@@ -38,11 +39,11 @@ class MyApp extends StatelessWidget {
       themeMode: ThemeMode.dark,
       debugShowCheckedModeBanner: false,
       onGenerateRoute: appRouter.generateRoute,
-      initialRoute: homePageRoute,
+      // initialRoute: homePageRoute,
 
-      // initialRoute: kIsWeb
-      //     ? (UserData.isLoggedIn ? homePageRoute : popularPageRoute)
-      //     : homePageRoute,
+      initialRoute: kIsWeb
+          ? (UserData.isLogged() ? homePageRoute : popularPageRoute)
+          : homePageRoute,
       // onGenerateInitialRoutes: (String initialRouteName) {
       //   return [
       //     appRouter.generateRoute(RouteSettings(

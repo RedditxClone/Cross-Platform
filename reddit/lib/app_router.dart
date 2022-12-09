@@ -69,6 +69,7 @@ import 'package:reddit/presentation/screens/login_screen.dart';
 import 'package:reddit/presentation/screens/signup_page.dart';
 import 'package:reddit/presentation/screens/signup_page2.dart';
 import 'package:reddit/presentation/screens/signup_screen.dart';
+
 class AppRouter {
   // platform
   bool get isMobile =>
@@ -151,7 +152,11 @@ class AppRouter {
 
       case popularPageRoute:
         return MaterialPageRoute(
-            builder: (_) => kIsWeb ? PopularWeb() : const Popular());
+          builder: (_) => BlocProvider.value(
+            value: authCubit,
+            child: kIsWeb ? PopularWeb() : const Popular(),
+          ),
+        );
 
       case profilePageRoute:
         return MaterialPageRoute(
@@ -206,7 +211,7 @@ class AppRouter {
         );
       case forgetUsernameWeb:
         return MaterialPageRoute(
-          builder: (_) =>  BlocProvider.value(
+          builder: (_) => BlocProvider.value(
             value: authCubit,
             child: const ForgetUsernameWeb(),
           ),
@@ -241,7 +246,7 @@ class AppRouter {
         );
       case forgetPasswordAndroid:
         return MaterialPageRoute(
-          builder: (_) =>  BlocProvider.value(
+          builder: (_) => BlocProvider.value(
             value: authCubit,
             child: const ForgetPasswordAndroid(),
           ),
@@ -255,7 +260,7 @@ class AppRouter {
         );
       case forgetUsernameAndroid:
         return MaterialPageRoute(
-          builder: (_) =>  BlocProvider.value(
+          builder: (_) => BlocProvider.value(
             value: authCubit,
             child: const ForgetUsernameAndroid(),
           ),
