@@ -13,6 +13,7 @@ import 'package:reddit/presentation/screens/modtools/web/modqueue_web.dart';
 import 'package:reddit/presentation/screens/modtools/web/spam_web.dart';
 import 'package:reddit/presentation/screens/modtools/web/traffic_stats.dart';
 import 'package:reddit/presentation/screens/modtools/web/unmoderated.dart';
+import 'package:reddit/presentation/screens/profile/other_user_orfile_screen.dart';
 import 'business_logic/cubit/feed_settings_cubit.dart';
 import 'presentation/screens/feed_setting.dart';
 import 'package:reddit/presentation/screens/profile/others_profile_page_web.dart';
@@ -176,7 +177,7 @@ class AppRouter {
             create: (context) => userProfileCubit,
             child: kIsWeb
                 ? OtherProfilePageWeb(otherUser: otherUser)
-                : const ProfileScreen(),
+                : OtherProfileScreen(otherUser: otherUser),
           ),
         );
 

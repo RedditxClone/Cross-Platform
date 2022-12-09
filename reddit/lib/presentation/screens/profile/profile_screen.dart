@@ -136,16 +136,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Row(
-          children: const [
-            SizedBox(width: 30),
-            CircleAvatar(
+          children: [
+            const SizedBox(width: 30),
+            const CircleAvatar(
                 radius: 20,
                 child: Icon(
                   Icons.person,
                   size: 20,
                 )),
-            SizedBox(width: 10),
-            Text('Markos'),
+            const SizedBox(width: 10),
+            Text(UserData.user!.displayName),
           ],
         ),
         Row(
