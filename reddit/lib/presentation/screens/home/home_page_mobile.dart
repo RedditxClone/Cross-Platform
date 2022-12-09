@@ -18,7 +18,10 @@ import 'package:reddit/presentation/widgets/home_widgets/end_drawer.dart';
 import 'package:reddit/presentation/widgets/home_widgets/left_drawer.dart';
 import 'package:reddit/presentation/widgets/posts/add_post.dart';
 
+import '../../../business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
 import '../../../business_logic/cubit/left_drawer/left_drawer_cubit.dart';
+import '../../../helper/utils/shared_keys.dart';
+import '../../../helper/utils/shared_pref.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
@@ -32,12 +35,11 @@ class _HomePageState extends State<HomePage> {
   int _selectedPageIndex = 0;
   String _screen = 'Home';
   IconData dropDownArrow = Icons.keyboard_arrow_down;
-  late bool isLoggedin;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    isLoggedin = UserData.user != null;
+    BlocProvider.of<AuthCubit>(context)
+        .getUserData(PreferenceUtils.getString(SharedPrefKeys.userId));
   }
 
   Widget buildHomeAppBar() {
@@ -84,7 +86,7 @@ class _HomePageState extends State<HomePage> {
       case 0:
         return {
           'page': _screen == 'Home'
-              ? isLoggedin
+              ? UserData.isLoggedIn
                   ? const Home()
                   : const HomeNotLoggedIn()
               : const Popular(),
@@ -174,13 +176,14 @@ class _HomePageState extends State<HomePage> {
                   Scaffold.of(context).openEndDrawer();
                 },
                 icon: CircleAvatar(
-                    child: isLoggedin && UserData.profileSettings!.profile != ''
+                    child: UserData.isLoggedIn &&
+                            UserData.profileSettings!.profile != ''
                         ? Image.network(
                             UserData.profileSettings!.profile,
                             fit: BoxFit.cover,
                           )
                         : Icon(Icons.person,
-                            color: isLoggedin &&
+                            color: UserData.isLoggedIn &&
                                     UserData.profileSettings!.profile == ''
                                 ? Colors.orange
                                 : Colors.grey,
@@ -209,13 +212,13 @@ class _HomePageState extends State<HomePage> {
       drawer: BlocProvider(
         create: (context) =>
             LeftDrawerCubit(LeftDrawerRepository(LeftDrawerWebServices())),
-        child: LeftDrawer(isLoggedin),
+        child: LeftDrawer(UserData.isLoggedIn),
       ),
       endDrawer: BlocProvider(
         create: (context) =>
             EndDrawerCubit(EndDrawerRepository(SettingsWebServices())),
         child: EndDrawer(
-            isLoggedin,
+            UserData.isLoggedIn,
             UserData.user == null ? "" : UserData.user!.username ?? "",
             UserData.user == null ? "" : UserData.profileSettings!.profile,
             2,
