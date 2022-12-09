@@ -7,20 +7,20 @@ class AuthInitial extends AuthState {}
 
 //sign up
 class SignedIn extends AuthState {
-  final User? user;
-  SignedIn(this.user);
+  final Map<String, dynamic> userDataJson;
+  SignedIn(this.userDataJson);
 }
 
 //sign up and choose profile photo
 class SignedInWithProfilePhoto extends AuthState {
-  final User? user;
-  SignedInWithProfilePhoto(this.user);
+  final String imgUrl;
+  SignedInWithProfilePhoto(this.imgUrl);
 }
 
 //login
 class Login extends AuthState {
-  final User? user;
-  Login(this.user);
+  final Map<String, dynamic> userDataJson;
+  Login(this.userDataJson);
 }
 
 class SuggestedUsername extends AuthState {
@@ -59,6 +59,6 @@ class ForgetUsername extends AuthState {
 }
 
 class GetTheUserData extends AuthState {
-  final User? user;
-  GetTheUserData(this.user);
+  final Map<String, dynamic> userDataJson;
+  GetTheUserData(this.userDataJson);
 }

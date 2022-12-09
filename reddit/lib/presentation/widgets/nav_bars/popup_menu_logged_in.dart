@@ -151,6 +151,10 @@ class PopupMenuLoggedIn extends StatelessWidget {
           case 6:
             _launchUrl('https://www.reddithelp.com/hc/en-us');
             break;
+          case 7:
+            UserData.logout();
+            Navigator.pushReplacementNamed(context, popularPageRoute);
+            break;
           default:
             break;
         }
@@ -158,9 +162,10 @@ class PopupMenuLoggedIn extends StatelessWidget {
       child: Row(
         children: [
           CircleAvatar(
-              child: user.profilePic == null
+              child: UserData.profileSettings!.profile == null
                   ? const Icon(Icons.person)
-                  : Image.network(user.profilePic!, fit: BoxFit.cover)),
+                  : Image.network(UserData.profileSettings!.profile,
+                      fit: BoxFit.cover)),
           const SizedBox(width: 10),
           MediaQuery.of(context).size.width < 950
               ? const SizedBox(width: 0)

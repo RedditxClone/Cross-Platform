@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reddit/data/repository/settings_repository.dart';
 import '../../../../../data/model/auth_model.dart';
+import '../../../../../data/model/safety_user_settings.dart';
 import '../../../../../data/repository/auth_repo.dart';
 part 'auth_state.dart';
 
@@ -18,10 +19,10 @@ class AuthCubit extends Cubit<AuthState> {
   /// This function emits state [SignedIn] after the user sign up.
   /// This function calls the function [AuthRepo.signup] which makes the request to the server.
   void signup(String password, String username, String email) async {
+    if (isClosed) return;
     authRepo.signup(password, username, email).then((value) {
-      settingsRepository.settingsWebServices.token = value!.token;
+      settingsRepository.settingsWebServices.token = value["token"];
       emit(SignedIn(value));
-      debugPrint("after emitting signup ${value.username}");
     });
   }
 
@@ -31,9 +32,9 @@ class AuthCubit extends Cubit<AuthState> {
   /// This function emits state [Login] after the user login.
   /// This function calls the function [AuthRepo.login] which makes the request to the server.
   void login(String password, String username) async {
+    if (isClosed) return;
     authRepo.login(password, username).then((value) {
       emit(Login(value));
-      debugPrint("after emitting login ${value?.username}");
     });
   }
 
@@ -42,15 +43,16 @@ class AuthCubit extends Cubit<AuthState> {
   /// This function emits state [Login] after the user login with google.
   /// This function calls the function [AuthRepo.loginWithGoogle] which makes the request to the server.
   void loginWithGoogle(String googleToken) async {
+    if (isClosed) return;
     authRepo.loginWithGoogle(googleToken).then((value) {
       emit(Login(value));
-      debugPrint("after emitting login ${value?.username}");
     });
   }
 
   /// This function emits state [SuggestedUsername] in the initState of the signup_page2.
   /// This function calls the function [AuthRepo.getSuggestedUsernames] which makes the request to the server.
   void getSuggestedUsernames() async {
+    if (isClosed) return;
     authRepo.getSuggestedUsernames().then((value) {
       emit(SuggestedUsername(value));
       debugPrint("after emitting suggested usernames ${value.toString()}");
@@ -61,7 +63,8 @@ class AuthCubit extends Cubit<AuthState> {
   /// This function emits state [UserNameAvialable] after the user finished writing his username.
   ///
   /// This function calls the function [AuthRepo.checkOnUsername] which makes the request to the server.
-  void checkOnUsername(String username) async {
+  void checkOnUsername(String username) {
+    if (isClosed) return;
     authRepo.checkOnUsername(username).then((value) {
       emit(UserNameAvialable(value));
       debugPrint("after emitting username available $value");
@@ -78,7 +81,7 @@ class AuthCubit extends Cubit<AuthState> {
         .updateImageWeb('profilephoto', fileAsBytes, UserData.user!.token)
         .then((image) {
       debugPrint("image from cubit: $image");
-      emit(SignedInWithProfilePhoto(UserData.user));
+      emit(SignedInWithProfilePhoto(image));
     });
   }
 
@@ -96,6 +99,7 @@ class AuthCubit extends Cubit<AuthState> {
   /// This function calls the function [AuthRepo.genderInSignup] which makes the request to the server.
   /// This function emits state [UpdateGenderDuringSignup] after the
   void genderInSignup(String token, String gender) {
+    if (isClosed) return;
     authRepo.genderInSignup(gender, token).then((value) {
       emit(UpdateGenderDuringSignup(value));
     });
@@ -108,6 +112,7 @@ class AuthCubit extends Cubit<AuthState> {
   /// This function calls the function [AuthRepo.addInterests] which makes the request to the server.
   /// This function emits state [AddUserInterests] after the user choose his interests during signup.
   void addInterests(Map<String, dynamic> selectedInterests, String token) {
+    if (isClosed) return;
     authRepo.addInterests(selectedInterests, token).then((value) {
       emit(AddUserInterests(value));
     });
@@ -118,6 +123,7 @@ class AuthCubit extends Cubit<AuthState> {
   /// This function emits state [ForgetPassword] after the user click on forget password.
   /// This function calls the function [AuthRepo.forgetPassword] which makes the request to the server.
   void forgetPassword(String username) {
+    if (isClosed) return;
     authRepo.forgetPassword(username).then((value) {
       emit(ForgetPassword(value));
     });
@@ -128,6 +134,7 @@ class AuthCubit extends Cubit<AuthState> {
   /// This function emits state [ForgetUsername] after the user click on forget username.
   /// This function calls the function [AuthRepo.forgetUsername] which makes the request to the server.
   void forgetUsername(String email) {
+    if (isClosed) return;
     authRepo.forgetUsername(email).then((value) {
       emit(ForgetUsername(value));
     });
@@ -139,9 +146,9 @@ class AuthCubit extends Cubit<AuthState> {
   /// This function calls the function [AuthRepo.getUserData] which makes the request to the server.
   /// This function emits state [GetTheUserData] after the user login.
   void getUserData(String userId) {
+    if (isClosed) return;
     authRepo.getUserData(userId).then((value) {
       emit(GetTheUserData(value));
-      debugPrint("after emitting get user data ${value!.username}");
     });
   }
 }

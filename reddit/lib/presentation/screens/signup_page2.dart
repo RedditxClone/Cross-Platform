@@ -415,8 +415,8 @@ class _SignupWeb2State extends State<SignupWeb2> {
         },
         listener: (context, state) {
           if (state is SignedIn) {
-            if (state.user != null) {
-              UserData.initUser(state.user!.toJson()); //this couldn't be null
+            if (state.userDataJson != {}) {
+              UserData.initUser(state.userDataJson); //this couldn't be null
               Navigator.of(context).pushNamed(
                 homePageRoute,
               );

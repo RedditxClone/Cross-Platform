@@ -276,7 +276,6 @@ class _SignupMobileState extends State<SignupMobile> {
     }
   }
 
-
 //This function creates buttonns for login with google and github
 //it takes a string that determines the function of the button depends on the passed value
 //is it for google or github
@@ -655,8 +654,8 @@ class _SignupMobileState extends State<SignupMobile> {
         },
         listener: (context, state) {
           if (state is SignedIn) {
-            if (state.user != null) {
-              UserData.initUser(state.user!.toJson()); //this couldn't be null
+            if (state.userDataJson != {}) {
+              UserData.initUser(state.userDataJson); //this couldn't be null
               Navigator.of(context).pushReplacementNamed(
                 chooseGenderScreen,
               );
@@ -685,10 +684,9 @@ class _SignupMobileState extends State<SignupMobile> {
                 ),
               );
             }
-          }
-          else if (state is Login) {
-            if (state.user != null) {
-              UserData.initUser(state.user!.toJson()); //this couldn't be null
+          } else if (state is Login) {
+            if (state.userDataJson != {}) {
+              UserData.initUser(state.userDataJson); //this couldn't be null
               debugPrint("success in login");
               Navigator.of(context).pushReplacementNamed(
                 homePageRoute,

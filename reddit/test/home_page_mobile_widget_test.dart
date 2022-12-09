@@ -6,11 +6,16 @@ import 'package:reddit/presentation/screens/home/home_page_mobile.dart';
 late User user;
 void main() {
   setUp(() {
-    user = User(
-        userId: '1',
-        username: 'mark_yasser',
-        email: 'mark@hotmai.com',
-        profilePic: '');
+    // user = User(
+    //     userId: '1',
+    //     username: 'mark_yasser',
+    //     email: 'mark@hotmai.com',
+    //     profilePic: '');
+    user = User.fromJson({
+      "userId": '1',
+      "username": 'mark_yasser',
+      "email": 'mark@hotmai.com',
+    });
   });
   Widget createWidgetUnderTest() {
     return MaterialApp(

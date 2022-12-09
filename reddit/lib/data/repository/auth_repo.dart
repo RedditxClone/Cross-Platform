@@ -8,7 +8,7 @@ import '../web_services/authorization/auth_web_service.dart';
 
 class AuthRepo {
   final AuthWebService authWebService;
-  User? user;
+  late Map<String, dynamic> user;
   AuthRepo(this.authWebService);
 
   /// [username] : The username of the user.
@@ -18,13 +18,14 @@ class AuthRepo {
   /// This function makes the request to the server to sign up the user.
   /// and checks on the status code if 201 then sets the user and returns it.
   /// This function calls the function [AuthWebService.signup] which makes the request to the server.
-  Future<User?> signup(String password, String username, String email) async {
+  Future<Map<String, dynamic>> signup(
+      String password, String username, String email) async {
     await authWebService.signup(password, username, email).then((value) {
       if (value.statusCode == 201) {
-        user = User.fromJson(value.data);
+        user = value.data;
       } else {
         debugPrint("status code is ${value.statusCode}");
-        user = null;
+        user = {};
       }
     });
     return user;
@@ -37,12 +38,12 @@ class AuthRepo {
   /// and checks on the status code if 201 then sets the user and returns it.
   /// This function calls the function [AuthWebService.login] which makes the request to the server.
   /// RETURNS [User] : the user data.
-  Future<User?> login(String password, String username) async {
+  Future<Map<String, dynamic>> login(String password, String username) async {
     Response res = await authWebService.login(password, username);
     if (res.statusCode == 201) {
-      user = User.fromJson(res.data);
+      user = res.data;
     } else {
-      user = null;
+      user = {};
     }
     return user;
   }
@@ -53,15 +54,15 @@ class AuthRepo {
   /// and checks on the status code if 201 then sets the user and returns it.
   /// This function calls the function [AuthWebService.loginWithGoogle] which makes the request to the server.
   /// RETURNS [User] : the user data.
-  Future<User?> loginWithGoogle(String googleToken) async {
+  Future<Map<String, dynamic>> loginWithGoogle(String googleToken) async {
     // Response res = await authWebService.loginWithGoogle(googleToken);
     // if (res.statusCode == 201) {
-    //   user = User.fromJson(res.data);
+    //   user = res.data;
     // } else {
-    //   user = null;
+    //   user = {};
     // }
     // return user;
-    return User.fromJson({
+    return {
       'username': 'username',
       'email': 'email',
       'profilePhoto': 'profilePic',
@@ -71,7 +72,7 @@ class AuthRepo {
       'gender': 'gender',
       'displayName': 'displayName',
       'about': 'about'
-    });
+    };
   }
 
   /// [username] : The username of the user.
@@ -142,7 +143,7 @@ class AuthRepo {
       String key, Uint8List fileAsBytes, String token) async {
     var res = await authWebService.updateImageWeb(fileAsBytes, key, token);
     if (res.statusCode == 200) {
-      UserData.user?.profilePic = res.data[key];
+      UserData.profileSettings!.profile = res.data[key];
       return res.data[key];
     } else {
       return null;
@@ -157,7 +158,7 @@ class AuthRepo {
   Future<bool> genderInSignup(String gender, String token) async {
     var res = await authWebService.genderInSignup(gender, token);
     if (res.statusCode == 200) {
-      UserData.user?.gender = gender;
+      UserData.accountSettings!.gender = gender;
       return true;
     } else {
       return false;
@@ -185,14 +186,14 @@ class AuthRepo {
   /// This function makes the request to get the user data with the user Id.
   /// This function calls the function [AuthWebService.getUserData] which makes the request to the server.
   /// Returns [User] : it restuns a user object if the status code is 200 and null in case of status code isn't 200.
-  Future<User?> getUserData(String userId) async {
+  Future<Map<String, dynamic>> getUserData(String userId) async {
     var res = await authWebService.getUserData(userId);
     if (res.statusCode == 200) {
       debugPrint("user data from repo: ${res.data.toString()}");
-      user = User.fromJson(res.data);
+      user = res.data;
     } else {
       debugPrint("status code is ${res.statusCode}");
-      user = null;
+      user = {};
     }
     return user;
   }

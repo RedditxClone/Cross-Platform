@@ -767,7 +767,9 @@ class _HomePageWebState extends State<HomePageWeb> {
 
   @override
   Widget build(BuildContext context) {
-    if (UserData.isLogged()) {
+    bool flag = UserData.isLogged();
+    debugPrint("is logged in $flag");
+    if (flag) {
       debugPrint("user is logged in");
       BlocProvider.of<AuthCubit>(context)
           .getUserData(PreferenceUtils.getString(SharedPrefKeys.userId));
@@ -786,8 +788,10 @@ class _HomePageWebState extends State<HomePageWeb> {
                 state is GetTheUserData ||
                 state is SignedIn ||
                 state is SignedInWithProfilePhoto) {
+              debugPrint("state is signed in");
               return const AppBarWebLoggedIn(screen: 'Home');
             } else {
+              debugPrint("state is not signed in");
               return const AppBarWebNotLoggedIn(screen: 'Home');
             }
           },
@@ -802,16 +806,16 @@ class _HomePageWebState extends State<HomePageWeb> {
             return const HomeWeb();
           } else if (state is SignedInWithProfilePhoto) {
             debugPrint("state is SignedInWithProfilePhoto");
-            UserData.user!.profilePic = state.user!.profilePic;
-            debugPrint("user in the home page ${UserData.user?.profilePic}");
+            UserData.profileSettings!.profile = state.imgUrl;
+            debugPrint(
+                "user in the home page ${UserData.profileSettings!.profile}");
             return const HomeWeb();
           } else if (state is Login) {
             return const HomeWeb();
           } else if (state is GetTheUserData) {
-            debugPrint("get user data ${state.user?.toString()}}");
-            if (state.user != null) {
+            if (state.userDataJson != {}) {
               debugPrint("user is nottttttttttttttttttttttttt null");
-              UserData.initUser(state.user!.toJson());
+              UserData.initUser(state.userDataJson);
               return const HomeWeb();
             }
           }

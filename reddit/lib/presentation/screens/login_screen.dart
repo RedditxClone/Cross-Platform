@@ -541,8 +541,8 @@ class _LoginMobileState extends State<LoginMobile> {
         child: mainBody(),
         listener: (context, state) {
           if (state is Login) {
-            if (state.user != null) {
-              UserData.initUser(state.user!.toJson()); //this couldn't be null
+            if (state.userDataJson != {}) {
+              UserData.initUser(state.userDataJson); //this couldn't be null
               Navigator.of(context).pushReplacementNamed(
                 homePageRoute,
               );

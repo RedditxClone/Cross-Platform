@@ -159,7 +159,7 @@ class _HomeWebState extends State<HomeWeb> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // if user is signed in dont display left list
-          UserData.isLoggedIn && MediaQuery.of(context).size.width > 1300
+          !UserData.isLoggedIn && MediaQuery.of(context).size.width > 1300
               ? const LeftList()
               : const SizedBox(width: 0),
           SizedBox(
