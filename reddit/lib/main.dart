@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:reddit/data/model/auth_model.dart';
-import 'package:reddit/helper/utils/shared_keys.dart';
 import 'app_router.dart';
 import 'helper/dio.dart';
 import 'helper/utils/shared_pref.dart';
@@ -21,7 +19,6 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    UserData.isLogged();
     return MaterialApp(
       title: 'Reddit',
       theme: ThemeData(

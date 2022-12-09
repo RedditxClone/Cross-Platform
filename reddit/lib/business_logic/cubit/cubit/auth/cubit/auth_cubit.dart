@@ -147,8 +147,16 @@ class AuthCubit extends Cubit<AuthState> {
   /// This function emits state [GetTheUserData] after the user login.
   void getUserData(String userId) {
     if (isClosed) return;
-    authRepo.getUserData(userId).then((value) {
-      emit(GetTheUserData(value));
-    });
+    bool flag = UserData.isLogged();
+    debugPrint("is logged in $flag");
+    if (flag) {
+      debugPrint("user is logged in");
+      authRepo.getUserData(userId).then((value) {
+        emit(GetTheUserData(value));
+      });
+    } else {
+      debugPrint("user is not logged in");
+      emit(NotLoggedIn());
+    }
   }
 }

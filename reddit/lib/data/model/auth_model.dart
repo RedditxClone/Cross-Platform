@@ -78,8 +78,7 @@ class UserData {
   static bool isLogged() {
     var userToken = PreferenceUtils.getString(SharedPrefKeys.token);
     debugPrint('token sharedpref is $userToken');
-    return userToken
-        .isNotEmpty; //if the token not empty so the user is logged in
+    return userToken != '';
   }
 
   static logout() {

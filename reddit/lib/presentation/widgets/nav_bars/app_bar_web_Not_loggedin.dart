@@ -20,8 +20,7 @@ class _AppBarWebNotLoggedInState extends State<AppBarWebNotLoggedIn> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         InkWell(
-          onTap: () => Navigator.pushReplacementNamed(context, homePageRoute,
-              arguments: null),
+          onTap: () => Navigator.pushReplacementNamed(context, homePageRoute),
           hoverColor: Colors.transparent,
           child: Row(
             children: [

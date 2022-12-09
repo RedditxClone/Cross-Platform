@@ -27,6 +27,8 @@ class _HomePageWebState extends State<HomePageWeb> {
   @override
   void initState() {
     super.initState();
+    BlocProvider.of<AuthCubit>(context)
+          .getUserData(PreferenceUtils.getString(SharedPrefKeys.userId));
     authRepo = AuthRepo(AuthWebService());
   }
 
@@ -767,13 +769,6 @@ class _HomePageWebState extends State<HomePageWeb> {
 
   @override
   Widget build(BuildContext context) {
-    bool flag = UserData.isLogged();
-    debugPrint("is logged in $flag");
-    if (flag) {
-      debugPrint("user is logged in");
-      BlocProvider.of<AuthCubit>(context)
-          .getUserData(PreferenceUtils.getString(SharedPrefKeys.userId));
-    }
     return Scaffold(
       appBar: AppBar(
         shape: const Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
@@ -818,6 +813,8 @@ class _HomePageWebState extends State<HomePageWeb> {
               UserData.initUser(state.userDataJson);
               return const HomeWeb();
             }
+          }else if(state is NotLoggedIn){
+            return const HomeWeb();
           }
           return const Center(
             child: CircularProgressIndicator.adaptive(),

@@ -62,3 +62,5 @@ class GetTheUserData extends AuthState {
   final Map<String, dynamic> userDataJson;
   GetTheUserData(this.userDataJson);
 }
+
+class NotLoggedIn extends AuthState {}
