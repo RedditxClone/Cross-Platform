@@ -214,4 +214,22 @@ class AuthWebService {
       return e.response;
     }
   }
+  
+  /// [userId] : [String] which is The id of the user.
+  /// 
+  /// get the user data with userId
+  /// This function calls the function [DioHelper.getData] which makes the request to the server.
+  /// Returns the response data from the server.
+  Future getUserData(String userId) async {
+    try {
+      var res = await DioHelper.getData(
+        url: 'user/$userId',
+        query: {},
+      );
+      return res;
+    } on DioError catch (e) {
+      debugPrint("from dio $e");
+      return e.response;
+    }
+  }
 }

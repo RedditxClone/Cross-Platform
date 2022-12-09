@@ -53,17 +53,6 @@ class _SignupWeb2State extends State<SignupWeb2> {
   /// This function calls the function [_SignupWeb2State.getSuggestedUsernames] to get all user's safety settings,
   /// then calls [AuthCubit.getSuggestedUsernames] to get user's blocked list.
   void getSuggestedUsernames() async {
-    // await DioHelper.getData(url: "/api/auth/suggested_usernames", query: {})
-    //     .then((value) {
-    //   if (value.statusCode == 200) {
-    //     setState(() {
-    //       suggestedUsernames = value.data;
-    //     });
-    //     debugPrint("suggested usernames are ${suggestedUsernames['user1']}");
-    //   } else {
-    //     debugPrint("Error getting suggested usernames");
-    //   }
-    // });
     BlocProvider.of<AuthCubit>(context).getSuggestedUsernames();
   }
 
@@ -88,18 +77,6 @@ class _SignupWeb2State extends State<SignupWeb2> {
   //function takes the username and checks if it is valid or not
   //this fucntion is called if the user pressed next after typing the username or if the focus is lost from the username field
   void checkOnUsername(String usrName) async {
-    // await DioHelper.postData(url: '/api/user/check-available-username', data: {
-    //   'username': usrName,
-    // }).then((value) {
-    //   setState(() {
-    //     if (value.statusCode == 200) {
-    //       redundantUsername = false;
-    //       debugPrint("Username is available");
-    //     } else {
-    //       redundantUsername = true;
-    //     }
-    //   });
-    // });
     BlocProvider.of<AuthCubit>(context).checkOnUsername(usrName);
   }
 
@@ -433,7 +410,7 @@ class _SignupWeb2State extends State<SignupWeb2> {
           }
 
           return const Center(
-            child: CircularProgressIndicator(),
+            child: CircularProgressIndicator.adaptive(),
           );
         },
         listener: (context, state) {

@@ -1,6 +1,7 @@
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-
+import 'package:oauth2/oauth2.dart' as oauth2;
+import'package:flutter/services.dart';
 class GoogleSingInApi {
   static const clientIdWeb =
       '731962970730-93vd9ao2c9ckhmguioje6ar6jmjk3cic.apps.googleusercontent.com';
@@ -95,3 +96,9 @@ class GoogleSingInApi {
   //   return userMap;
   // }
 // }
+
+class GithubAuthenticator {
+  // CredentialsStorage? _credentialsStore;
+  var x ="dadsad";
+  var  y = Uri.parse('adsad');
+}

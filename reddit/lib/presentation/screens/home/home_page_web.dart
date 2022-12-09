@@ -8,10 +8,12 @@ import 'package:reddit/business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
 import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/data/web_services/authorization/auth_web_service.dart';
+import 'package:reddit/helper/utils/shared_keys.dart';
 import 'package:reddit/presentation/screens/home/home_web.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_Not_loggedin.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 import '../../../../data/repository/auth_repo.dart';
+import '../../../helper/utils/shared_pref.dart';
 
 class HomePageWeb extends StatefulWidget {
   const HomePageWeb({Key? key}) : super(key: key);
@@ -21,12 +23,10 @@ class HomePageWeb extends StatefulWidget {
 }
 
 class _HomePageWebState extends State<HomePageWeb> {
-  late bool isLoggedIn;
   late AuthRepo authRepo;
   @override
   void initState() {
     super.initState();
-    isLoggedIn = UserData.user != null;
     authRepo = AuthRepo(AuthWebService());
   }
 
@@ -767,33 +767,56 @@ class _HomePageWebState extends State<HomePageWeb> {
 
   @override
   Widget build(BuildContext context) {
+    if (UserData.isLogged()) {
+      debugPrint("user is logged in");
+      BlocProvider.of<AuthCubit>(context)
+          .getUserData(PreferenceUtils.getString(SharedPrefKeys.userId));
+    }
     return Scaffold(
       appBar: AppBar(
-          shape:
-              const Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
-          automaticallyImplyLeading: false,
-          backgroundColor: defaultAppbarBackgroundColor,
-          title: isLoggedIn
-              ? const AppBarWebLoggedIn( screen: 'Home')
-              : const AppBarWebNotLoggedIn(screen: 'Home')),
+        shape: const Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
+        automaticallyImplyLeading: false,
+        backgroundColor: defaultAppbarBackgroundColor,
+        // title: UserData.isLoggedIn
+        //     ? const AppBarWebLoggedIn(screen: 'Home')
+        //     : const AppBarWebNotLoggedIn(screen: 'Home'),
+        title: BlocBuilder<AuthCubit, AuthState>(
+          builder: (context, state) {
+            if (state is Login ||
+                state is GetTheUserData ||
+                state is SignedIn ||
+                state is SignedInWithProfilePhoto) {
+              return const AppBarWebLoggedIn(screen: 'Home');
+            } else {
+              return const AppBarWebNotLoggedIn(screen: 'Home');
+            }
+          },
+        ),
+      ),
       body: BlocBuilder<AuthCubit, AuthState>(
         builder: (context, state) {
-          debugPrint("user in the home page ${UserData.user?.email}");
           if (state is SignedIn) {
             debugPrint("state is signed in");
             WidgetsBinding.instance
                 .addPostFrameCallback((_) => showDialogToChooseGender());
-            return HomeWeb(isLoggedIn: isLoggedIn);
+            return const HomeWeb();
           } else if (state is SignedInWithProfilePhoto) {
             debugPrint("state is SignedInWithProfilePhoto");
             UserData.user!.profilePic = state.user!.profilePic;
             debugPrint("user in the home page ${UserData.user?.profilePic}");
-            return HomeWeb(isLoggedIn: isLoggedIn);
+            return const HomeWeb();
           } else if (state is Login) {
-            return HomeWeb(isLoggedIn: isLoggedIn);
+            return const HomeWeb();
+          } else if (state is GetTheUserData) {
+            debugPrint("get user data ${state.user?.toString()}}");
+            if (state.user != null) {
+              debugPrint("user is nottttttttttttttttttttttttt null");
+              UserData.initUser(state.user!.toJson());
+              return const HomeWeb();
+            }
           }
           return const Center(
-            child: CircularProgressIndicator(),
+            child: CircularProgressIndicator.adaptive(),
           );
         },
       ),

@@ -7,6 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:reddit/business_logic/cubit/end_drawer/end_drawer_cubit.dart';
 import 'package:reddit/constants/strings.dart';
+import 'package:reddit/data/model/auth_model.dart';
 
 import '../../../business_logic/cubit/create_community_cubit.dart';
 import '../../../data/repository/create_community_repository.dart';
@@ -420,7 +421,7 @@ class EndDrawer extends StatelessWidget {
               ),
               ListTile(
                 onTap: () {
-                  // Logout function
+                  UserData.logout();
                 },
                 leading: const Icon(Icons.exit_to_app),
                 title: const Text(

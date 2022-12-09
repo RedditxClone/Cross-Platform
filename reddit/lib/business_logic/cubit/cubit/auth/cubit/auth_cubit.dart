@@ -124,12 +124,24 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   /// [email] : The email of the user.
-  /// 
+  ///
   /// This function emits state [ForgetUsername] after the user click on forget username.
   /// This function calls the function [AuthRepo.forgetUsername] which makes the request to the server.
-  void forgetUsername(String email){
+  void forgetUsername(String email) {
     authRepo.forgetUsername(email).then((value) {
       emit(ForgetUsername(value));
+    });
+  }
+
+  /// [userId] : [String] which is The id of the user.
+  ///
+  /// This function makes the request to get the user data with the user Id.
+  /// This function calls the function [AuthRepo.getUserData] which makes the request to the server.
+  /// This function emits state [GetTheUserData] after the user login.
+  void getUserData(String userId) {
+    authRepo.getUserData(userId).then((value) {
+      emit(GetTheUserData(value));
+      debugPrint("after emitting get user data ${value!.username}");
     });
   }
 }

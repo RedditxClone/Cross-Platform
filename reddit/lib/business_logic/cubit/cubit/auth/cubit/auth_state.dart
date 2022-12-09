@@ -57,3 +57,8 @@ class ForgetUsername extends AuthState {
   final bool isSent;
   ForgetUsername(this.isSent);
 }
+
+class GetTheUserData extends AuthState {
+  final User? user;
+  GetTheUserData(this.user);
+}

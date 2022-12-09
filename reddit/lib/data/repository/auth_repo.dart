@@ -179,4 +179,21 @@ class AuthRepo {
       return false;
     }
   }
+
+  /// [userId] : [String] which is The id of the user.
+  ///
+  /// This function makes the request to get the user data with the user Id.
+  /// This function calls the function [AuthWebService.getUserData] which makes the request to the server.
+  /// Returns [User] : it restuns a user object if the status code is 200 and null in case of status code isn't 200.
+  Future<User?> getUserData(String userId) async {
+    var res = await authWebService.getUserData(userId);
+    if (res.statusCode == 200) {
+      debugPrint("user data from repo: ${res.data.toString()}");
+      user = User.fromJson(res.data);
+    } else {
+      debugPrint("status code is ${res.statusCode}");
+      user = null;
+    }
+    return user;
+  }
 }

@@ -66,6 +66,7 @@ class _SignupWebState extends State<SignupWeb> {
       if (googleAccount != null) {
         var googleToken = await GoogleSingInApi.getGoogleToken();
         if (googleToken != null) {
+          debugPrint("token is $googleToken");
           BlocProvider.of<AuthCubit>(context).loginWithGoogle(googleToken);
         } else {
           debugPrint("token is null");

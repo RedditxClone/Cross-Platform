@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:reddit/data/model/auth_model.dart';
+import 'package:reddit/helper/utils/shared_keys.dart';
 import 'app_router.dart';
 import 'helper/dio.dart';
 import 'helper/utils/shared_pref.dart';
@@ -15,10 +18,10 @@ class MyApp extends StatelessWidget {
   final AppRouter appRouter;
   MyApp({Key? key, required this.appRouter}) : super(key: key);
 
-  bool isLoggedIn = false;
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    UserData.isLogged();
     return MaterialApp(
       title: 'Reddit',
       theme: ThemeData(
@@ -39,11 +42,11 @@ class MyApp extends StatelessWidget {
       themeMode: ThemeMode.dark,
       debugShowCheckedModeBanner: false,
       onGenerateRoute: appRouter.generateRoute,
-      // initialRoute: SIGNU_PAGE1,
+      initialRoute: homePageRoute,
 
-      initialRoute: kIsWeb
-          ? (isLoggedIn ? homePageRoute : popularPageRoute)
-          : homePageRoute,
+      // initialRoute: kIsWeb
+      //     ? (UserData.isLoggedIn ? homePageRoute : popularPageRoute)
+      //     : homePageRoute,
       // onGenerateInitialRoutes: (String initialRouteName) {
       //   return [
       //     appRouter.generateRoute(RouteSettings(
