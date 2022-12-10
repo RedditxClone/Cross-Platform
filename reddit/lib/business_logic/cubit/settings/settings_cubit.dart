@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/data/model/user_settings.dart';
 import 'package:reddit/data/repository/settings_repository.dart';
 
@@ -34,6 +35,7 @@ class SettingsCubit extends Cubit<SettingsState> {
     settingsRepository.updateImage('coverphoto', img).then((image) {
       settings.cover = image;
       debugPrint(image);
+      UserData.user!.coverPic = settings.cover = image;
       emit(SettingsChanged(settings));
     });
   }
@@ -47,7 +49,7 @@ class SettingsCubit extends Cubit<SettingsState> {
   void changeCoverphotoWeb(ProfileSettings settings, Uint8List fileAsBytes) {
     if (isClosed) return;
     settingsRepository.updateImageWeb('coverphoto', fileAsBytes).then((image) {
-      settings.cover = image;
+      UserData.user!.coverPic = settings.cover = image;
       debugPrint(image);
       emit(SettingsChanged(settings));
     });
@@ -64,6 +66,7 @@ class SettingsCubit extends Cubit<SettingsState> {
     settingsRepository.updateImage('profilephoto', img).then((image) {
       settings.profile = image;
       debugPrint(image);
+      UserData.user!.profilePic = image;
       emit(SettingsChanged(settings));
     });
   }
@@ -80,6 +83,7 @@ class SettingsCubit extends Cubit<SettingsState> {
         .updateImageWeb('profilephoto', fileAsBytes)
         .then((image) {
       settings.profile = image;
+      UserData.user!.profilePic = image;
       debugPrint(image);
       emit(SettingsChanged(settings));
     });
@@ -94,7 +98,8 @@ class SettingsCubit extends Cubit<SettingsState> {
   void updateSettings(ProfileSettings settings, Map changed) {
     if (isClosed) return;
     settingsRepository.updatePrefs(changed).then((val) {
-      settings.displayName = val;
+      UserData.user!.displayName = settings.displayName;
+      debugPrint("settings updated : $val");
       emit(SettingsChanged(settings));
     });
   }

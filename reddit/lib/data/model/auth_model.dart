@@ -7,6 +7,7 @@ class User {
   late String?
       profilePic; //in case of google or facebook user it will be taken from the google or facebook and in case of reddit sign in it will be null
   String? accessToken;
+  String? coverPic;
   late String? serverAuthCode;
   late String? gender; //could be null if the user didn't choose
   late Map<String, dynamic> interests;
@@ -14,18 +15,22 @@ class User {
   User(
       {required this.userId,
       required this.name,
+      required this.displayName,
       required this.email,
+      required this.coverPic,
       required this.profilePic});
   User.fromJson(Map<String, dynamic> json) {
     userId = json['_id'];
     name = json['username'];
     email = json['email'];
     profilePic = json['profilePhoto'];
+    coverPic = json['coverPhoto'];
     // accessToken = json['accessToken'];
     type = json['authType'];
     // serverAuthCode = json['serverAuthCode'];
     gender = json['gender'];
-    displayName = json['displayName'];
+    displayName =
+        json['displayName'] == '' ? json['username'] : json['displayName'];
   }
 }
 

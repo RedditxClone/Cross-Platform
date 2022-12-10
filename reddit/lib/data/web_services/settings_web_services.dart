@@ -10,7 +10,8 @@ import 'package:reddit/constants/strings.dart';
 class SettingsWebServices {
   late Dio dio;
   bool isMockerServer = useMockServerForAllWebServices;
-  String token = '';
+  String token =
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzNzI0ZjQ3NTg0NmUxM2VmZjg4MDkxOSIsImlhdCI6MTY3MDA5MzEyNiwiZXhwIjoxNjcwOTU3MTI2fQ.deTnytMu5joScXuSj4aKCAikc6KgEnGZy8BWwWQgbIU';
   SettingsWebServices() {
     BaseOptions options = BaseOptions(
       baseUrl: isMockerServer ? mockUrl : baseUrl,
@@ -101,14 +102,13 @@ class SettingsWebServices {
   /// This function Performs patch request to the endpoint `baseUrl/user/me/prefs` to update some user's profile settings.
   Future<dynamic> updatePrefs(Map changed) async {
     try {
-      Response response = await dio.patch(
-          '/// Returns status code 200 if success and 401 if an error occured',
+      Response response = await dio.patch('user/me/prefs',
           data: changed,
           options: Options(
             headers: {"Authorization": "Bearer $token"},
           ));
       debugPrint(response.statusCode.toString());
-      return response.data;
+      return response.statusCode;
     } catch (e) {
       return null;
     }

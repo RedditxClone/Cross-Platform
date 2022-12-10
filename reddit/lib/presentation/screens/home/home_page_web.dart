@@ -324,92 +324,6 @@ class _HomePageWebState extends State<HomePageWeb> {
                         ),
                       ),
                     ),
-                    // Padding(
-                    //   padding: const EdgeInsets.all(8.0),
-                    //   child: ElevatedButton(
-                    //     onPressed: () {
-                    //       setState(() {
-                    //         if (!choosed) {
-                    //           buttonColor3 ==
-                    //                   const Color.fromARGB(255, 82, 46, 46)
-                    //               ? null
-                    //               : selectGender("Non-binary");
-                    //           buttonColor3 =
-                    //               const Color.fromARGB(255, 82, 46, 46);
-                    //           choosed = true;
-                    //         }
-                    //       });
-                    //     },
-                    //     style: ElevatedButton.styleFrom(
-                    //       foregroundColor: Colors.grey,
-                    //       backgroundColor: buttonColor3,
-                    //       shape: RoundedRectangleBorder(
-                    //         borderRadius: BorderRadius.circular(30),
-                    //         side: BorderSide(
-                    //           color: buttonColor3 ==
-                    //                   const Color.fromARGB(255, 82, 46, 46)
-                    //               ? Colors.red
-                    //               : buttonColor3,
-                    //         ),
-                    //       ),
-                    //     ),
-                    //     child: Container(
-                    //       padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                    //       width: MediaQuery.of(dialogContext).size.width,
-                    //       child: const Text(
-                    //         "Non-binary",
-                    //         style: TextStyle(
-                    //           fontSize: 20,
-                    //           color: Colors.black,
-                    //         ),
-                    //         textAlign: TextAlign.center,
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
-                    // Padding(
-                    //   padding: const EdgeInsets.all(8.0),
-                    //   child: ElevatedButton(
-                    //     onPressed: () {
-                    //       setState(() {
-                    //         if (!choosed) {
-                    //           buttonColor4 ==
-                    //                   const Color.fromARGB(255, 82, 46, 46)
-                    //               ? null
-                    //               : selectGender("I prefer not to say");
-                    //           buttonColor4 =
-                    //               const Color.fromARGB(255, 82, 46, 46);
-                    //           choosed = true;
-                    //         }
-                    //       });
-                    //     },
-                    //     style: ElevatedButton.styleFrom(
-                    //       foregroundColor: Colors.grey,
-                    //       backgroundColor: buttonColor4,
-                    //       shape: RoundedRectangleBorder(
-                    //         borderRadius: BorderRadius.circular(30),
-                    //         side: BorderSide(
-                    //           color: buttonColor4 ==
-                    //                   const Color.fromARGB(255, 82, 46, 46)
-                    //               ? Colors.red
-                    //               : buttonColor4,
-                    //         ),
-                    //       ),
-                    //     ),
-                    //     child: Container(
-                    //       padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                    //       width: MediaQuery.of(dialogContext).size.width,
-                    //       child: const Text(
-                    //         "I prefer not to say",
-                    //         style: TextStyle(
-                    //           fontSize: 20,
-                    //           color: Colors.black,
-                    //         ),
-                    //         textAlign: TextAlign.center,
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
                   ],
                 ),
               ),
@@ -880,7 +794,7 @@ class _HomePageWebState extends State<HomePageWeb> {
     return Scaffold(
       appBar: AppBar(
           shape:
-              const Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
+              const Border(bottom: BorderSide(color: Colors.grey, width: 0.3)),
           automaticallyImplyLeading: false,
           backgroundColor: defaultAppbarBackgroundColor,
           title: isLoggedIn

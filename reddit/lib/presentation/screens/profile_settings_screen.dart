@@ -430,31 +430,6 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     );
   }
 
-  Widget editProfileBottomSheet(BuildContext ctx) {
-    return Scaffold(
-        appBar: AppBar(
-          leading: const CloseButton(),
-          centerTitle: true,
-          title: const Text('Edit Profile'),
-          actions: [
-            TextButton(
-                onPressed: () {
-                  // displayMsg(ctx, Colors.green, 'Success','Your settings has been saved');
-
-                  if (changed.isNotEmpty) {
-                    BlocProvider.of<SettingsCubit>(context)
-                        .updateSettings(profileSettings!, changed);
-                  }
-                  // BlocProvider.of<SettingsCubit>(context).changeAbout(about.text)
-                  // BlocProvider.of<SettingsCubit>(context).updateContentVisiblity(contentVisibility);
-                  // BlocProvider.of<SettingsCubit>(context).updateShowactiveInCom(showActiveCommunities);
-                },
-                child: const Text('Save', style: TextStyle(fontSize: 20)))
-          ],
-        ),
-        body: buildEditProfileBody(ctx));
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -465,7 +440,10 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
         actions: [
           TextButton(
               onPressed: () {
-                // displayMsg(context, Colors.green, 'Success','Your settings has been saved');
+                if (changed.isNotEmpty) {
+                  BlocProvider.of<SettingsCubit>(context)
+                      .updateSettings(profileSettings!, changed);
+                }
               },
               child: const Text('Save', style: TextStyle(fontSize: 20)))
         ],

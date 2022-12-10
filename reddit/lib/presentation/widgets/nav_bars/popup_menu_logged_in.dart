@@ -1,17 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reddit/business_logic/cubit/create_community_cubit.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/data/model/auth_model.dart';
+import 'package:reddit/data/repository/create_community_repository.dart';
+import 'package:reddit/data/web_services/create_community_web_services.dart';
+import 'package:reddit/presentation/screens/create_community_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PopupMenuLoggedIn extends StatelessWidget {
-  User user;
-  PopupMenuLoggedIn({required this.user, Key? key}) : super(key: key);
+  const PopupMenuLoggedIn({Key? key}) : super(key: key);
   Future<void> _launchUrl(String link) async {
     Uri url = Uri.parse(link);
     if (!await launchUrl(url)) {
       throw 'Could not launch $url';
     }
+  }
+
+  void createCommunityDialog(BuildContext ctx) {
+    showDialog(
+        context: ctx,
+        barrierDismissible: false,
+        builder: (_) => BlocProvider(
+              create: (context) => CreateCommunityCubit(
+                  CreateCommunityRepository(CreateCommunityWebServices())),
+              child: const CreateCommunityScreen(),
+            ));
   }
 
   @override
@@ -148,6 +163,9 @@ class PopupMenuLoggedIn extends StatelessWidget {
           case 3:
             Navigator.pushNamed(context, settingsTabsRoute);
             break;
+          case 4:
+            createCommunityDialog(context);
+            break;
           case 6:
             _launchUrl('https://www.reddithelp.com/hc/en-us');
             break;
@@ -158,16 +176,19 @@ class PopupMenuLoggedIn extends StatelessWidget {
       child: Row(
         children: [
           CircleAvatar(
-              child: user.profilePic == null
+              child: UserData.user!.profilePic == null ||
+                      UserData.user!.profilePic == ''
                   ? const Icon(Icons.person)
-                  : Image.network(user.profilePic!, fit: BoxFit.cover)),
+                  : Image.network(UserData.user!.profilePic!,
+                      fit: BoxFit.cover)),
           const SizedBox(width: 10),
           MediaQuery.of(context).size.width < 950
               ? const SizedBox(width: 0)
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(user.name!, style: const TextStyle(fontSize: 15)),
+                    Text(UserData.user!.name!,
+                        style: const TextStyle(fontSize: 15)),
                     const Text('karma', style: TextStyle(fontSize: 10)),
                   ],
                 )

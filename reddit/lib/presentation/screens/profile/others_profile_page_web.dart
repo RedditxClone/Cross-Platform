@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:icons_plus/icons_plus.dart';
+import 'package:reddit/business_logic/cubit/user_profile/user_profile_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/data/model/auth_model.dart';
@@ -6,18 +9,58 @@ import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 import 'package:reddit/presentation/widgets/posts/posts_web.dart';
 
 class OtherProfilePageWeb extends StatefulWidget {
-  const OtherProfilePageWeb({super.key});
+  late User otherUser;
+  OtherProfilePageWeb({required this.otherUser, super.key});
 
   @override
   State<OtherProfilePageWeb> createState() => _OtherProfilePageWebState();
 }
 
 class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
-  User user =
-      User(userId: 'userId', name: 'name', email: 'email', profilePic: null);
   late Responsive _responsive;
   String sortBy = 'new';
   bool _isOverviewTab = true;
+  bool _isFollowed = false;
+
+  /// [context] : build context.
+  /// [color] : color of the error msg to be displayer e.g. ('red' : error , 'blue' : success ).
+  /// [title] : message to be displayed to the user.
+  void displayMsg(BuildContext context, Color color, String title) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      width: 400,
+      content: Container(
+          height: 50,
+          padding: const EdgeInsets.all(5),
+          decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              color: Colors.black,
+              borderRadius: const BorderRadius.all(Radius.circular(10))),
+          child: Row(
+            children: [
+              Container(
+                margin: const EdgeInsets.only(right: 10),
+                decoration: BoxDecoration(
+                    color: color,
+                    borderRadius: const BorderRadius.all(Radius.circular(10))),
+                width: 9,
+              ),
+              Logo(
+                Logos.reddit,
+                color: Colors.white,
+                size: 20,
+              ),
+              const SizedBox(width: 10),
+              Text(
+                title,
+                style: const TextStyle(fontSize: 16, color: Colors.white),
+              ),
+            ],
+          )),
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+    ));
+  }
 
   Widget _sortBy() {
     return Container(
@@ -121,6 +164,57 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
     );
   }
 
+  Widget _follow() {
+    return ElevatedButton(
+      onPressed: () {
+        BlocProvider.of<UserProfileCubit>(context).follow(
+            "6391e21409dfc46c3d93189d"); // TODO :  change this to the id of the other user
+      },
+      style: const ButtonStyle(
+        shape: MaterialStatePropertyAll(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(25),
+            ),
+          ),
+        ),
+        padding: MaterialStatePropertyAll(EdgeInsets.all(0.0)),
+      ),
+      child: Ink(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(Radius.circular(80.0)),
+        ),
+        child: Container(
+          constraints: const BoxConstraints(minWidth: 70.0, minHeight: 20.0),
+          alignment: Alignment.center,
+          child: const Text(
+            'Follow',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _unfollow() {
+    return OutlinedButton(
+      onPressed: () => BlocProvider.of<UserProfileCubit>(context)
+          .unfollow("6391e21409dfc46c3d93189d"),
+      style: OutlinedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
+          side: const BorderSide(width: 1, color: Colors.white),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(25))),
+      child: const Text(
+        "Unfollow",
+        style: TextStyle(color: Colors.white, fontSize: 15),
+      ),
+    );
+  }
+
   Widget _buildProfileCard() {
     return Container(
       height: 400,
@@ -139,19 +233,20 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
                 ],
               ),
               //---------------Other profile picture------------------
-              const CircleAvatar(
+              CircleAvatar(
                   radius: 60,
-                  child: Icon(
-                    // TODO : display profile picture here
-                    Icons.person,
-                    size: 50,
-                  )),
+                  child: widget.otherUser.profilePic == null ||
+                          widget.otherUser.profilePic == ''
+                      ? const Icon(Icons.person, size: 50)
+                      : Image.network(widget.otherUser.profilePic!,
+                          fit: BoxFit.cover)),
             ],
           ),
-          const Text('User',
-              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
-          const Text('u/user_name . 26m',
-              style: TextStyle(fontSize: 12, color: Colors.grey)),
+          Text(widget.otherUser.displayName,
+              style:
+                  const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+          Text('u/${widget.otherUser.name} . 26m',
+              style: const TextStyle(fontSize: 12, color: Colors.grey)),
           const SizedBox(height: 20),
           //--------------------karma and cake day-------------
           Padding(
@@ -159,27 +254,24 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('Karma',
-                        style: TextStyle(
-                            fontSize: 13, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 5),
-                    Row(
-                      children: const [
-                        Icon(
-                          Icons.settings,
-                          color: Colors.blue,
-                          size: 10,
-                        ),
-                        SizedBox(width: 5),
-                        Text('10,532', // TODO : add karma number here
-                            style: TextStyle(fontSize: 10, color: Colors.grey)),
-                      ],
-                    )
-                  ],
-                ),
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  const Text('Karma',
+                      style:
+                          TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 5),
+                  Row(
+                    children: const [
+                      Icon(
+                        Icons.settings,
+                        color: Colors.blue,
+                        size: 10,
+                      ),
+                      SizedBox(width: 5),
+                      Text('10,532', // TODO : add karma number here
+                          style: TextStyle(fontSize: 10, color: Colors.grey)),
+                    ],
+                  )
+                ]),
                 SizedBox(
                     width: MediaQuery.of(context).size.width < 1600 &&
                             MediaQuery.of(context).size.width >= 1100
@@ -219,42 +311,19 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
             children: [
               Expanded(
                 child: Container(
-                  width: 165,
-                  height: 50,
-                  padding: const EdgeInsets.all(10),
-                  child: ElevatedButton(
-                    onPressed: () {}, // TODO :  follow request here
-                    style: const ButtonStyle(
-                      shape: MaterialStatePropertyAll(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(25),
-                          ),
-                        ),
-                      ),
-                      padding: MaterialStatePropertyAll(EdgeInsets.all(0.0)),
-                    ),
-                    child: Ink(
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(Radius.circular(80.0)),
-                      ),
-                      child: Container(
-                        constraints: const BoxConstraints(
-                            minWidth: 70.0, minHeight: 20.0),
-                        alignment: Alignment.center,
-                        child: const Text(
-                          'Follow',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                    width: 165,
+                    height: 50,
+                    padding: const EdgeInsets.all(10),
+                    child: BlocBuilder<UserProfileCubit, UserProfileState>(
+                      builder: (context, state) {
+                        if (state is FollowOtherUserSuccess) {
+                          return _unfollow();
+                        } else if (state is UnFollowOtherUserSuccess) {
+                          return _follow();
+                        }
+                        return _follow();
+                      },
+                    )),
               ),
               Expanded(
                 child: Container(
@@ -464,6 +533,16 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
     );
   }
 
+  Widget _buildBody() {
+    return TabBarView(
+      children: [
+        _buildOverview(),
+        _buildPosts(),
+        _buildPosts(),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     _responsive = Responsive(context);
@@ -473,7 +552,8 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
               const Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
           automaticallyImplyLeading: false,
           backgroundColor: defaultAppbarBackgroundColor,
-          title: AppBarWebLoggedIn(user: user, screen: 'u/user_name')),
+          title:
+              AppBarWebLoggedIn(user: UserData.user!, screen: 'u/user_name')),
       body: DefaultTabController(
         length: 3,
         child: Scaffold(
@@ -515,13 +595,23 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
               ],
             ),
           ),
-          body: TabBarView(
-            children: [
-              _buildOverview(),
-              _buildPosts(),
-              _buildPosts(),
-            ],
-          ),
+          body: BlocListener<UserProfileCubit, UserProfileState>(
+              listener: (context, state) {
+                if (state is FollowOtherUserSuccess) {
+                  displayMsg(context, Colors.blue,
+                      ' Successfully followed u/${widget.otherUser.name}');
+                } else if (state is FollowOtherUserNotSuccess) {
+                  displayMsg(context, Colors.red,
+                      'An error has occured. please try again later');
+                } else if (state is UnFollowOtherUserSuccess) {
+                  displayMsg(context, Colors.blue,
+                      ' Successfully unfollowed u/${widget.otherUser.name}');
+                } else if (state is UnFollowOtherUserNotSuccess) {
+                  displayMsg(context, Colors.red,
+                      'An error has occured. please try again later');
+                }
+              },
+              child: _buildBody()),
         ),
       ),
     );

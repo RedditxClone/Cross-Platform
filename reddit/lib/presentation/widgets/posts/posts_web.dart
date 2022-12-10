@@ -101,15 +101,6 @@ class _PostsWebState extends State<PostsWeb> {
                           ]),
                         ),
                         const SizedBox(width: 10),
-                        InkWell(
-                          onTap: () {},
-                          child: Row(children: const [
-                            Icon(Icons.add_box_outlined, color: Colors.grey),
-                            SizedBox(width: 5),
-                            Text("Awards", style: TextStyle(fontSize: 13)),
-                          ]),
-                        ),
-                        const SizedBox(width: 10),
                         responsive.isSmallSizedScreen()
                             ? const SizedBox(width: 0)
                             : InkWell(
@@ -130,20 +121,6 @@ class _PostsWebState extends State<PostsWeb> {
                             Text("Save", style: TextStyle(fontSize: 13)),
                           ]),
                         ),
-                        MediaQuery.of(context).size.width < 550
-                            ? const SizedBox(width: 0)
-                            : const SizedBox(width: 10),
-                        MediaQuery.of(context).size.width < 550
-                            ? const SizedBox(width: 0)
-                            : InkWell(
-                                onTap: () {},
-                                child: Row(children: const [
-                                  Icon(Icons.tornado_outlined,
-                                      color: Colors.grey),
-                                  SizedBox(width: 5),
-                                  Text("Tip", style: TextStyle(fontSize: 13)),
-                                ]),
-                              ),
                         const SizedBox(width: 10),
                         InkWell(
                           onTap: () {},
