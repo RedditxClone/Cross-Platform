@@ -86,9 +86,25 @@ class _HomePageState extends State<HomePage> {
       case 0:
         return {
           'page': _screen == 'Home'
-              ? UserData.isLoggedIn
-                  ? const Home()
-                  : const HomeNotLoggedIn()
+              ? BlocBuilder<AuthCubit, AuthState>(builder: (context, state) {
+                  if (state is Login ||
+                      state is GetTheUserData ||
+                      state is SignedIn) {
+                    if (state is Login && state.userDataJson != {}) {
+                      debugPrint("user is nottttttttttttttttttttttttt null");
+                      UserData.initUser(state.userDataJson);
+                      return const Home();
+                    } else if (state is GetTheUserData &&
+                        state.userDataJson != {}) {
+                          
+                      UserData.initUser(state.userDataJson);
+                      return const Home();
+                    } else if (state is SignedIn && state.userDataJson != {}) {
+                      return const Home();
+                    }
+                  }
+                  return const HomeNotLoggedIn();
+                })
               : const Popular(),
           'appbar_title': Container(
             decoration: BoxDecoration(
@@ -169,26 +185,44 @@ class _HomePageState extends State<HomePage> {
         // ignore: prefer_const_literals_to_create_immutables
         actions: [
           getPage(_selectedPageIndex)['appbar_action'] as Widget,
-          Builder(builder: (context) {
-            return IconButton(
-                key: const Key('user-icon'),
-                onPressed: () {
-                  Scaffold.of(context).openEndDrawer();
-                },
-                icon: CircleAvatar(
-                    child: UserData.isLoggedIn &&
-                            UserData.profileSettings!.profile != ''
-                        ? Image.network(
-                            UserData.profileSettings!.profile,
-                            fit: BoxFit.cover,
-                          )
-                        : Icon(Icons.person,
-                            color: UserData.isLoggedIn &&
-                                    UserData.profileSettings!.profile == ''
-                                ? Colors.orange
-                                : Colors.grey,
-                            size: 25)));
-          })
+          BlocBuilder<AuthCubit, AuthState>(
+            builder: (context, state) {
+              if (state is Login ||
+                  state is GetTheUserData ||
+                  state is SignedIn ||
+                  state is SignedInWithProfilePhoto) {
+                return IconButton(
+                    key: const Key('user-icon'),
+                    onPressed: () {
+                      Scaffold.of(context).openEndDrawer();
+                    },
+                    icon: CircleAvatar(
+                      child: UserData.profileSettings!.profile.isNotEmpty
+                          ? Image.network(
+                              UserData.profileSettings!.profile,
+                              fit: BoxFit.cover,
+                            )
+                          : const Icon(
+                              Icons.person,
+                              color: Colors.grey,
+                              size: 25,
+                            ),
+                    ));
+              } else {
+                return IconButton(
+                    key: const Key('user-icon'),
+                    onPressed: () {
+                      Scaffold.of(context).openEndDrawer();
+                    },
+                    icon: const CircleAvatar(
+                        child: Icon(
+                      Icons.person,
+                      color: Colors.grey,
+                      size: 25,
+                    )));
+              }
+            },
+          )
         ],
       ),
       //--------------------------Body--------------------------//
@@ -212,7 +246,7 @@ class _HomePageState extends State<HomePage> {
       drawer: BlocProvider(
         create: (context) =>
             LeftDrawerCubit(LeftDrawerRepository(LeftDrawerWebServices())),
-        child: LeftDrawer(UserData.isLoggedIn),
+        child: LeftDrawer(),
       ),
       endDrawer: BlocProvider(
         create: (context) =>

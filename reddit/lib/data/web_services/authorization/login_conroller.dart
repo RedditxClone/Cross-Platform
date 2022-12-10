@@ -7,15 +7,13 @@ class GoogleSingInApi {
       '731962970730-93vd9ao2c9ckhmguioje6ar6jmjk3cic.apps.googleusercontent.com';
   static const clientIdAndroid =
       '731962970730-eogvrnvtmkq777vvd7s5gumlguqql9o2.apps.googleusercontent.com';
-  static final GoogleSignIn _googleSignInMob = GoogleSignIn(
-    clientId: clientIdAndroid,
-  );
+  static final GoogleSignIn _googleSignInMob = GoogleSignIn();
   static final GoogleSignIn googleSignInWeb = GoogleSignIn(
     clientId: clientIdWeb,
   );
 
   static Future<GoogleSignInAccount?> loginMob() {
-    _googleSignInMob.signOut();
+    // _googleSignInMob.signOut();
     return _googleSignInMob.signIn();
   }
 

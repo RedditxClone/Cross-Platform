@@ -59,40 +59,6 @@ class _LoginMobileState extends State<LoginMobile> {
 
   //function to log in with reddit accound it's called when the user presses the sign up button or if the user pressed done after typing the password
   void loginContinue(BuildContext ctx) async {
-    // DioHelper.postData(url: '/api/auth/login', data: {
-    //   "password": passwordController.text,
-    //   "name": usernameController.text,
-    // }).then((value) {
-    //   if (value.statusCode == 201) {
-    //     debugPrint('success login');
-    //     UserData.user = User.fromJson(jsonDecode(value.data));
-    //     Navigator.of(ctx).pushReplacementNamed(
-    //       homePageRoute,
-    //     );
-    //   } else {
-    //     ScaffoldMessenger.of(context).showSnackBar(
-    //       SnackBar(
-    //         content: Row(
-    //           children: const [
-    //             Icon(
-    //               Icons.error,
-    //               color: Colors.red,
-    //             ),
-    //             SizedBox(
-    //               width: 10,
-    //             ),
-    //             Text(
-    //               'Username or password is incorrect',
-    //               style: TextStyle(
-    //                 color: Colors.red,
-    //               ),
-    //             ),
-    //           ],
-    //         ),
-    //       ),
-    //     );
-    //   }
-    // });
     BlocProvider.of<AuthCubit>(context)
         .login(passwordController.text, usernameController.text);
   }
@@ -126,7 +92,7 @@ class _LoginMobileState extends State<LoginMobile> {
         var googleToken = await GoogleSingInApi.getGoogleToken();
         debugPrint("google account ${googleAccount.email}");
         if (googleToken != null) {
-          debugPrint("token is $googleToken");
+          debugPrint("Google Token: $googleToken");
           BlocProvider.of<AuthCubit>(context).loginWithGoogle(googleToken);
         } else {
           debugPrint("token is null");
