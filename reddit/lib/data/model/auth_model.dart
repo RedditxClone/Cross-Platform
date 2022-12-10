@@ -3,16 +3,18 @@ import 'package:reddit/data/model/safety_user_settings.dart';
 import 'package:reddit/data/model/user_settings.dart';
 import '../../helper/utils/shared_keys.dart';
 import '../../helper/utils/shared_pref.dart';
+import '../web_services/authorization/login_conroller.dart';
 import 'account_settings_model.dart';
 import 'email_settings.dart';
 import 'feed_setting_model.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class User {
-  late String? type;
+  late String type;
   late String userId;
-  late String?
+  late String
       username; //in case of google or facebook user it will be taken from the google or facebook and in case of reddit sign in it will be the username
-  late String? email;
+  late String email;
   // late String?
   //     profilePic; //in case of google or facebook user it will be taken from the google or facebook and in case of reddit sign in it will be null
   late String token;
@@ -82,6 +84,13 @@ class UserData {
   }
 
   static logout() {
+    if (UserData.user!.type == 'google') {
+      if (kIsWeb) {
+        GoogleSingInApi.logoutWeb();
+      } else {
+        GoogleSingInApi.logoutMob();
+      }
+    }
     PreferenceUtils.setString(SharedPrefKeys.token, '');
     PreferenceUtils.setString(SharedPrefKeys.userId, '');
     UserData.user = null;

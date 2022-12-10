@@ -46,6 +46,7 @@ class AuthCubit extends Cubit<AuthState> {
     if (isClosed) return;
     authRepo.loginWithGoogle(googleToken).then((value) {
       emit(Login(value));
+      debugPrint("after emitting login ${value.toString()}");
     });
   }
 

@@ -219,12 +219,12 @@ class _HomePageState extends State<HomePage> {
             EndDrawerCubit(EndDrawerRepository(SettingsWebServices())),
         child: EndDrawer(
             UserData.isLoggedIn,
-            UserData.user == null ? "" : UserData.user!.username ?? "",
+            UserData.user == null ? "" : UserData.user!.username,
             UserData.user == null ? "" : UserData.profileSettings!.profile,
             2,
             35,
             true,
-            UserData.user == null ? "" : UserData.user!.email ?? ""),
+            UserData.user == null ? "" : UserData.user!.email),
       ),
     );
   }

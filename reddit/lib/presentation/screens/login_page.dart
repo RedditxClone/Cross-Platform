@@ -71,6 +71,7 @@ class _LoginWebState extends State<LoginWeb> {
       if (googleAccount != null) {
         var googleToken = await GoogleSingInApi.getGoogleToken();
         if (googleToken != null) {
+          debugPrint("Google Token: $googleToken");
           BlocProvider.of<AuthCubit>(context).loginWithGoogle(googleToken);
         } else {
           debugPrint("token is null");
@@ -253,20 +254,6 @@ class _LoginWebState extends State<LoginWeb> {
 
   void continueLogin() {
     if (loginCorrect) {
-      // DioHelper.postData(url: "/api/auth/login", data: {
-      //   "username": usernameController.text,
-      //   "password": passwordController.text,
-      // }).then((value) {
-      //   if (value.statusCode == 201) {
-      //     newUser = User.fromJson(jsonDecode(value.data));
-      //     Navigator.of(context).pushReplacementNamed(homePageRoute,
-      //         arguments: newUser); //navigate to home page
-      //   } else {
-      //     setState(() {
-      //       loginCorrect = false;
-      //     });
-      //   }
-      // });
       BlocProvider.of<AuthCubit>(context)
           .login(passwordController.text, usernameController.text);
     } else {
@@ -677,8 +664,9 @@ class _LoginWebState extends State<LoginWeb> {
         child: mainBody(),
         listener: (context, state) {
           if (state is Login) {
-            if (state.userDataJson != {}) {
-              UserData.initUser(state.userDataJson); //this couldn't be null
+            if (state.userDataJson.isNotEmpty) {
+              debugPrint("login success");
+              UserData.initUser(state.userDataJson);
               Navigator.of(context).pushReplacementNamed(
                 homePageRoute,
               );

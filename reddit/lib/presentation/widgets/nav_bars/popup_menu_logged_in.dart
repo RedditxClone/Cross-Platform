@@ -153,6 +153,7 @@ class PopupMenuLoggedIn extends StatelessWidget {
             break;
           case 7:
             UserData.logout();
+            debugPrint("after logout func");
             Navigator.pushReplacementNamed(context, popularPageRoute);
             break;
           default:
@@ -162,7 +163,7 @@ class PopupMenuLoggedIn extends StatelessWidget {
       child: Row(
         children: [
           CircleAvatar(
-              child: UserData.profileSettings!.profile == null
+              child: UserData.profileSettings!.profile == ''
                   ? const Icon(Icons.person)
                   : Image.network(UserData.profileSettings!.profile,
                       fit: BoxFit.cover)),
@@ -172,7 +173,7 @@ class PopupMenuLoggedIn extends StatelessWidget {
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(user.username!, style: const TextStyle(fontSize: 15)),
+                    Text(user.username, style: const TextStyle(fontSize: 15)),
                     const Text('karma', style: TextStyle(fontSize: 10)),
                   ],
                 )
