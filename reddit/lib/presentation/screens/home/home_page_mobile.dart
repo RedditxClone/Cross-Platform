@@ -93,17 +93,20 @@ class _HomePageState extends State<HomePage> {
                     if (state is Login && state.userDataJson != {}) {
                       debugPrint("user is nottttttttttttttttttttttttt null");
                       UserData.initUser(state.userDataJson);
+                      debugPrint("user is ${UserData.isLogged()}");
                       return const Home();
                     } else if (state is GetTheUserData &&
                         state.userDataJson != {}) {
-                          
                       UserData.initUser(state.userDataJson);
                       return const Home();
                     } else if (state is SignedIn && state.userDataJson != {}) {
                       return const Home();
                     }
+                  } else if (state is NotLoggedIn) {
+                    return const HomeNotLoggedIn();
                   }
-                  return const HomeNotLoggedIn();
+                  return const Center(
+                      child: CircularProgressIndicator.adaptive());
                 })
               : const Popular(),
           'appbar_title': Container(
@@ -252,13 +255,9 @@ class _HomePageState extends State<HomePage> {
         create: (context) =>
             EndDrawerCubit(EndDrawerRepository(SettingsWebServices())),
         child: EndDrawer(
-            UserData.isLoggedIn,
-            UserData.user == null ? "" : UserData.user!.username,
-            UserData.user == null ? "" : UserData.profileSettings!.profile,
-            2,
-            35,
-            true,
-            UserData.user == null ? "" : UserData.user!.email),
+          2,
+          35,
+        ),
       ),
     );
   }

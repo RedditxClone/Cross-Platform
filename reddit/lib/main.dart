@@ -6,15 +6,16 @@ import 'data/model/auth_model.dart';
 import 'helper/dio.dart';
 import 'helper/utils/shared_pref.dart';
 
-void main() {
-  runApp(MyApp(appRouter: AppRouter()));
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   DioHelper.init();
-  PreferenceUtils.init();
+  await PreferenceUtils.init();
+  runApp(MyApp(appRouter: AppRouter()));
 }
 
 class MyApp extends StatelessWidget {
   final AppRouter appRouter;
-  MyApp({Key? key, required this.appRouter}) : super(key: key);
+  const MyApp({Key? key, required this.appRouter}) : super(key: key);
 
   // This widget is the root of your application.
   @override

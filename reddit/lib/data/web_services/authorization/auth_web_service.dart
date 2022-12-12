@@ -38,6 +38,7 @@ class AuthWebService {
         "username": username,
         "password": password,
       });
+      // debugPrint("from login ${res.statusCode}");
       return res;
     } on DioError catch (e) {
       debugPrint("from login $e");

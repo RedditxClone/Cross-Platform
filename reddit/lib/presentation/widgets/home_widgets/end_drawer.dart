@@ -16,25 +16,17 @@ import '../../screens/create_community_screen.dart';
 
 /// Class that build the UI of the homepage end drawer
 class EndDrawer extends StatelessWidget {
-  late int _karma;
-  late int _redditAge;
-  late String _username;
-  late String _profilePicture;
-  late String _email;
-  late bool _isLoggedIn;
-  late bool _isMan;
+  late final int _karma;
+  late final int _redditAge;
   File? imgProfile;
-  EndDrawer(this._isLoggedIn, this._username, this._profilePicture, this._karma,
-      this._redditAge, this._isMan, this._email,
-      {Key? key})
-      : super(key: key);
+  EndDrawer(this._karma, this._redditAge, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
       backgroundColor: Colors.black,
       width: 300,
-      child: _isLoggedIn
+      child: UserData.isLoggedIn
           ? _buildLoggedInEndDrawer(context)
           : _buildLoggedOutEndDrawer(context),
     );
@@ -132,14 +124,15 @@ class EndDrawer extends StatelessWidget {
           onTap: () {
             chooseProfilePhotoBottomSheet(context);
           },
-          child: _profilePicture == ""
+          child: UserData.profileSettings!.profile == ""
               ? const Icon(
                   Icons.person_pin,
                   size: 240,
                 )
               : CircleAvatar(
                   radius: 120.0,
-                  backgroundImage: NetworkImage(_profilePicture),
+                  backgroundImage:
+                      NetworkImage(UserData.profileSettings!.profile),
                   backgroundColor: Colors.transparent,
                 ),
         );
@@ -156,9 +149,9 @@ class EndDrawer extends StatelessWidget {
         // TODO: this may be changed by another settings page
         // Navigator.of(context).pop();
         Navigator.of(context).pushNamed(accountSettingsRoute, arguments: {
-          "username": _username,
-          "email": _email,
-          "gender": _isMan,
+          "username": UserData.user!.username,
+          "email": UserData.user!.email,
+          "gender": UserData.accountSettings!.gender == 'male',//_isMan
         });
       },
     );
@@ -306,7 +299,7 @@ class EndDrawer extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            "u/$_username",
+            "u/${UserData.user!.username}",
             style: const TextStyle(
               fontSize: 19,
             ),
@@ -344,7 +337,7 @@ class EndDrawer extends StatelessWidget {
               ),
               ListTile(
                 leading: const Icon(Icons.person),
-                title: Text("u/$_username"),
+                title: Text("u/${UserData.user!.username}"),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -414,7 +407,7 @@ class EndDrawer extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(8, 12, 0, 0),
-                child: Text("U/${_username.toUpperCase()}"),
+                child: Text("U/${UserData.user!.username.toUpperCase()}"),
               ),
               const Divider(
                 color: Colors.grey,
@@ -422,6 +415,7 @@ class EndDrawer extends StatelessWidget {
               ListTile(
                 onTap: () {
                   UserData.logout();
+                  Navigator.of(context).pushReplacementNamed(homePageRoute);
                 },
                 leading: const Icon(Icons.exit_to_app),
                 title: const Text(
