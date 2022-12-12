@@ -1,4 +1,4 @@
-import 'dart:convert';
+// ignore_for_file: use_build_context_synchronously
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,7 +8,6 @@ import 'package:reddit/data/model/auth_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
 import '../../data/web_services/authorization/login_conroller.dart';
-import '../../helper/dio.dart';
 
 class SignupMobile extends StatefulWidget {
   const SignupMobile({super.key});
@@ -88,18 +87,6 @@ class _SignupMobileState extends State<SignupMobile> {
   //function takes the username and checks if it is valid or not
   //this fucntion is called if the user pressed next after typing the username or if the focus is lost from the username field
   void checkOnUsername(String usrName) async {
-    // await DioHelper.postData(url: '/api/user/check-available-username', data: {
-    //   'username': usrName,
-    // }).then((value) {
-    //   setState(() {
-    //     if (value.statusCode == 200) {
-    //       isAvailable = false;
-    //       debugPrint("Username is available");
-    //     } else {
-    //       isAvailable = true;
-    //     }
-    //   });
-    // });
     BlocProvider.of<AuthCubit>(context).checkOnUsername(usrName);
   }
 
@@ -107,71 +94,6 @@ class _SignupMobileState extends State<SignupMobile> {
   void signUpContinue(BuildContext ctx) async {
     BlocProvider.of<AuthCubit>(ctx).signup(
         passwordController.text, usernameController.text, emailController.text);
-    // if (user != null) {
-    //   Navigator.of(ctx).pushReplacementNamed(
-    //     chooseGenderScreen,
-    //     arguments: user,
-    //   );
-    // } else {
-    //   //user = null
-    //   debugPrint("user is $user");
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(
-    //       content: Row(
-    //         children: [
-    //           const Icon(
-    //             Icons.error,
-    //             color: Colors.red,
-    //           ),
-    //           SizedBox(
-    //             width: MediaQuery.of(context).size.width * 0.01,
-    //           ),
-    //           const Text(
-    //             'Username or password is incorrect',
-    //             style: TextStyle(
-    //               color: Colors.red,
-    //             ),
-    //           ),
-    //         ],
-    //       ),
-    //     ),
-    //   );
-    // await DioHelper.postData(url: '/api/auth/signup', data: {
-    //   "password": passwordController.text,
-    //   "name": usernameController.text,
-    //   "email": emailController.text,
-    // }).then((value) {
-    //   if (value.statusCode == 201) {
-    //     newUser = User.fromJson(jsonDecode(value.data));
-    //     Navigator.of(ctx).pushReplacementNamed(
-    //       chooseGenderScreen,
-    //       arguments: newUser,
-    //     );
-    //   } else {
-    //     ScaffoldMessenger.of(context).showSnackBar(
-    //       SnackBar(
-    //         content: Row(
-    //           children: [
-    //             const Icon(
-    //               Icons.error,
-    //               color: Colors.red,
-    //             ),
-    //             SizedBox(
-    //               width: MediaQuery.of(context).size.width * 0.01,
-    //             ),
-    //             const Text(
-    //               'Username or password is incorrect',
-    //               style: TextStyle(
-    //                 color: Colors.red,
-    //               ),
-    //             ),
-    //           ],
-    //         ),
-    //       ),
-    //     );
-    //   }
-    // });
-    // }
   }
 
 //this finction return a TextSpan
@@ -196,48 +118,39 @@ class _SignupMobileState extends State<SignupMobile> {
   }
 
   //this an async fucntion to log in with google account and store the result in database
-  Future signInWithGoogle() async {
+  void signInWithGoogle() async {
     try {
       var googleAccount = await GoogleSingInApi.loginMob();
       if (googleAccount != null) {
-        DioHelper.postData(url: 'auth/signup', data: {
-          "userId": googleAccount.id,
-          "email": googleAccount.email,
-          "name": googleAccount.displayName,
-          "imageUrl": googleAccount.photoUrl,
-          "_type": "google",
-          "serverAuthCode": googleAccount.serverAuthCode,
-        }).then((value) {
-          if (value.statusCode == 201) {
-            UserData.user = User.fromJson(jsonDecode(value.data));
-            Navigator.of(context).pushReplacementNamed(
-              chooseGenderScreen,
-            );
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Row(
-                  children: [
-                    const Icon(
-                      Icons.error,
+        var googleToken = await GoogleSingInApi.getGoogleToken();
+        if (googleToken != null) {
+          BlocProvider.of<AuthCubit>(context).loginWithGoogle(googleToken);
+        } else {
+          debugPrint("token is null");
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: [
+                  const Icon(
+                    Icons.error,
+                    color: Colors.red,
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.01,
+                  ),
+                  const Text(
+                    "Error in Signing in with Google",
+                    style: TextStyle(
                       color: Colors.red,
                     ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.01,
-                    ),
-                    const Text(
-                      "Error in Signing in with Google",
-                      style: TextStyle(
-                        color: Colors.red,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            );
-          }
-        });
+            ),
+          );
+        }
       } else {
+        debugPrint("google account is null");
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Row(
@@ -261,6 +174,8 @@ class _SignupMobileState extends State<SignupMobile> {
         );
       }
     } catch (e) {
+      debugPrint("error in google sign in $e");
+      debugPrint("error in google sign in hereeeeeeeeee");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Row(
@@ -285,57 +200,57 @@ class _SignupMobileState extends State<SignupMobile> {
     }
   }
 
-//this an async fucntion to log in with facebook account and store the result in database
-  Future signInWithFacebook() async {
+//this an async fucntion to log in with github account and store the result in database
+  Future signInWithGithub() async {
     try {
-      var loginResult = await FacebookSignInApi.login();
-      if (loginResult != null) {
-        var fbUser = await FacebookSignInApi
-            .getUserData(); //post request to add user data
-        DioHelper.postData(url: 'auth/signup', data: {
-          "name": fbUser['name'] as String,
-          "email": fbUser['email'] as String,
-          "imageUrl": fbUser['picture']['data']['url'] as String,
-          "userId": loginResult.accessToken?.userId,
-          "_type": "facebook",
-          "accessToken": loginResult.accessToken?.token,
-        }).then((value) {
-          if (value.statusCode == 201) {
-            UserData.user = User.fromJson(jsonDecode(value.data));
-            Navigator.of(context).pushReplacementNamed(
-              chooseGenderScreen,
-            );
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Row(
-                  children: [
-                    const Icon(
-                      Icons.error,
-                      color: Colors.red,
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.01,
-                    ),
-                    const Text(
-                      "Error in Signing in with Facebook",
-                      style: TextStyle(
-                        color: Colors.red,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }
-        });
-        // newUser = User(
-        //   name: fbUser['name'] as String,
-        //   email: fbUser['email'] as String,
-        //   imageUrl: fbUser['picture']['data']['url'] as String,
-        //   userId: fbUser['id'] as String,
-        // );
-      }
+      // var loginResult = await FacebookSignInApi.login();
+      // if (loginResult != null) {
+      //   var fbUser = await FacebookSignInApi
+      //       .getUserData(); //post request to add user data
+      //   DioHelper.postData(url: 'auth/signup', data: {
+      //     "name": fbUser['name'] as String,
+      //     "email": fbUser['email'] as String,
+      //     "imageUrl": fbUser['picture']['data']['url'] as String,
+      //     "userId": loginResult.accessToken?.userId,
+      //     "_type": "facebook",
+      //     "accessToken": loginResult.accessToken?.token,
+      //   }).then((value) {
+      //     if (value.statusCode == 201) {
+      //       UserData.user = User.fromJson(jsonDecode(value.data));
+      //       Navigator.of(context).pushReplacementNamed(
+      //         chooseGenderScreen,
+      //       );
+      //     } else {
+      //       ScaffoldMessenger.of(context).showSnackBar(
+      //         SnackBar(
+      //           content: Row(
+      //             children: [
+      //               const Icon(
+      //                 Icons.error,
+      //                 color: Colors.red,
+      //               ),
+      //               SizedBox(
+      //                 width: MediaQuery.of(context).size.width * 0.01,
+      //               ),
+      //               const Text(
+      //                 "Error in Signing in with Facebook",
+      //                 style: TextStyle(
+      //                   color: Colors.red,
+      //                 ),
+      //               ),
+      //             ],
+      //           ),
+      //         ),
+      //       );
+      //     }
+      //   });
+      // newUser = User(
+      //   name: fbUser['name'] as String,
+      //   email: fbUser['email'] as String,
+      //   imageUrl: fbUser['picture']['data']['url'] as String,
+      //   userId: fbUser['id'] as String,
+      // );
+      // }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -349,7 +264,7 @@ class _SignupMobileState extends State<SignupMobile> {
                 width: MediaQuery.of(context).size.width * 0.01,
               ),
               const Text(
-                "Error in Signing in with Facebook",
+                "Error in Signing in with github",
                 style: TextStyle(
                   color: Colors.red,
                 ),
@@ -361,12 +276,12 @@ class _SignupMobileState extends State<SignupMobile> {
     }
   }
 
-//This function creates buttonns for login with google and facebook
+//This function creates buttonns for login with google and github
 //it takes a string that determines the function of the button depends on the passed value
-//is it for google or facebook
+//is it for google or github
   Widget createContinueWithButton(String lable) {
     return OutlinedButton(
-      onPressed: lable == 'google' ? signInWithGoogle : signInWithFacebook,
+      onPressed: lable == 'google' ? signInWithGoogle : signInWithGithub,
       style: OutlinedButton.styleFrom(
         side: const BorderSide(color: Colors.white, width: 1),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
@@ -379,7 +294,7 @@ class _SignupMobileState extends State<SignupMobile> {
             lable == 'google'
                 ? Logo(Logos.google, size: 20)
                 : Logo(
-                    Logos.facebook_f,
+                    Logos.github,
                     size: 20,
                     color: Colors.white,
                   ),
@@ -419,7 +334,7 @@ class _SignupMobileState extends State<SignupMobile> {
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-              child: createContinueWithButton('facebook'),
+              child: createContinueWithButton('github'),
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 10, 0, 30),
@@ -739,8 +654,8 @@ class _SignupMobileState extends State<SignupMobile> {
         },
         listener: (context, state) {
           if (state is SignedIn) {
-            if (state.user != null) {
-              UserData.initUser(state.user); //this couldn't be null
+            if (state.userDataJson != {}) {
+              UserData.initUser(state.userDataJson); //this couldn't be null
               Navigator.of(context).pushReplacementNamed(
                 chooseGenderScreen,
               );
@@ -760,6 +675,38 @@ class _SignupMobileState extends State<SignupMobile> {
                       ),
                       const Text(
                         'Username or password is incorrect',
+                        style: TextStyle(
+                          color: Colors.red,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
+          } else if (state is Login) {
+            if (state.userDataJson != {}) {
+              UserData.initUser(state.userDataJson); //this couldn't be null
+              debugPrint("success in login");
+              Navigator.of(context).pushReplacementNamed(
+                homePageRoute,
+              );
+            } else {
+              //user = null
+              debugPrint("failed in login");
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Row(
+                    children: [
+                      const Icon(
+                        Icons.error,
+                        color: Colors.red,
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.01,
+                      ),
+                      const Text(
+                        'Please Try Again',
                         style: TextStyle(
                           color: Colors.red,
                         ),

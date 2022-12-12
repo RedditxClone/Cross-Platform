@@ -6,7 +6,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:reddit/business_logic/cubit/subreddit_page_cubit.dart';
+import 'package:reddit/constants/strings.dart';
+import 'package:reddit/constants/theme_colors.dart';
+import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/data/model/subreddit_model.dart';
+import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_Not_loggedin.dart';
+import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 import '../../constants/colors.dart';
 import '../../constants/font_sizes.dart';
 
@@ -100,9 +105,13 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
     return _mobilePlatform
         ? null
         : AppBar(
+            shape: const Border(
+                bottom: BorderSide(color: Colors.grey, width: 0.3)),
             automaticallyImplyLeading: false,
-            backgroundColor: cardsColor,
-          );
+            backgroundColor: defaultAppbarBackgroundColor,
+            title: UserData.user != null
+                ? const AppBarWebLoggedIn( screen: 'r/subreddit')
+                : const AppBarWebNotLoggedIn(screen: 'r/subreddit'));
   }
 
   Widget _buildAbout(SubredditPageState state) {
@@ -190,12 +199,35 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                                   fontSize: 15,
                                   fontWeight: FontWeight.w500),
                             ),
-                            IconButton(
-                                onPressed: () {},
-                                icon: const Icon(
-                                  Icons.list,
-                                  color: darkFontColor,
-                                ))
+                            Row(
+                              children: [
+                                InkWell(
+                                    onTap: () => Navigator.pushNamed(
+                                        context, modqueueRoute),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(5),
+                                      child: Row(children: const [
+                                        Icon(
+                                          Icons.shield_outlined,
+                                          color: darkFontColor,
+                                        ),
+                                        Text(
+                                          "Mod tools",
+                                          style: TextStyle(
+                                              color: darkFontColor,
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                      ]),
+                                    )),
+                                IconButton(
+                                    onPressed: () {},
+                                    icon: const Icon(
+                                      Icons.more_horiz,
+                                      color: darkFontColor,
+                                    ))
+                              ],
+                            )
                           ],
                         ),
                         const SizedBox(

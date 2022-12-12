@@ -30,8 +30,7 @@ class LeftList extends StatelessWidget {
                     padding: const EdgeInsets.only(left: 10),
                     child: InkWell(
                         onTap: () {
-                          Navigator.pushNamed(context, homePageRoute,
-                              arguments: null);
+                          Navigator.pushNamed(context, homePageRoute);
                         },
                         child: Row(children: const [
                           Icon(Icons.home_filled, size: 20),

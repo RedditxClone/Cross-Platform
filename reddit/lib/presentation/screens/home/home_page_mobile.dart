@@ -18,10 +18,13 @@ import 'package:reddit/presentation/widgets/home_widgets/end_drawer.dart';
 import 'package:reddit/presentation/widgets/home_widgets/left_drawer.dart';
 import 'package:reddit/presentation/widgets/posts/add_post.dart';
 
+import '../../../business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
 import '../../../business_logic/cubit/left_drawer/left_drawer_cubit.dart';
+import '../../../helper/utils/shared_keys.dart';
+import '../../../helper/utils/shared_pref.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage( {Key? key}) : super(key: key);
+  HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -32,12 +35,11 @@ class _HomePageState extends State<HomePage> {
   int _selectedPageIndex = 0;
   String _screen = 'Home';
   IconData dropDownArrow = Icons.keyboard_arrow_down;
-  late bool isLoggedin;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    isLoggedin = UserData.user != null;
+    BlocProvider.of<AuthCubit>(context)
+        .getUserData(PreferenceUtils.getString(SharedPrefKeys.userId));
   }
 
   Widget buildHomeAppBar() {
@@ -84,9 +86,28 @@ class _HomePageState extends State<HomePage> {
       case 0:
         return {
           'page': _screen == 'Home'
-              ? isLoggedin
-                  ? const Home()
-                  : const HomeNotLoggedIn()
+              ? BlocBuilder<AuthCubit, AuthState>(builder: (context, state) {
+                  if (state is Login ||
+                      state is GetTheUserData ||
+                      state is SignedIn) {
+                    if (state is Login && state.userDataJson != {}) {
+                      debugPrint("user is nottttttttttttttttttttttttt null");
+                      UserData.initUser(state.userDataJson);
+                      debugPrint("user is ${UserData.isLogged()}");
+                      return const Home();
+                    } else if (state is GetTheUserData &&
+                        state.userDataJson != {}) {
+                      UserData.initUser(state.userDataJson);
+                      return const Home();
+                    } else if (state is SignedIn && state.userDataJson != {}) {
+                      return const Home();
+                    }
+                  } else if (state is NotLoggedIn) {
+                    return const HomeNotLoggedIn();
+                  }
+                  return const Center(
+                      child: CircularProgressIndicator.adaptive());
+                })
               : const Popular(),
           'appbar_title': Container(
             decoration: BoxDecoration(
@@ -167,24 +188,44 @@ class _HomePageState extends State<HomePage> {
         // ignore: prefer_const_literals_to_create_immutables
         actions: [
           getPage(_selectedPageIndex)['appbar_action'] as Widget,
-          Builder(builder: (context) {
-            return IconButton(
-                key: const Key('user-icon'),
-                onPressed: () {
-                  Scaffold.of(context).openEndDrawer();
-                },
-                icon: CircleAvatar(
-                    child: isLoggedin && UserData.user!.profilePic != null
-                        ? Image.network(
-                            UserData.user!.profilePic!,
-                            fit: BoxFit.cover,
-                          )
-                        : Icon(Icons.person,
-                            color: isLoggedin && UserData.user!.profilePic == null
-                                ? Colors.orange
-                                : Colors.grey,
-                            size: 25)));
-          })
+          BlocBuilder<AuthCubit, AuthState>(
+            builder: (context, state) {
+              if (state is Login ||
+                  state is GetTheUserData ||
+                  state is SignedIn ||
+                  state is SignedInWithProfilePhoto) {
+                return IconButton(
+                    key: const Key('user-icon'),
+                    onPressed: () {
+                      Scaffold.of(context).openEndDrawer();
+                    },
+                    icon: CircleAvatar(
+                      child: UserData.profileSettings!.profile.isNotEmpty
+                          ? Image.network(
+                              UserData.profileSettings!.profile,
+                              fit: BoxFit.cover,
+                            )
+                          : const Icon(
+                              Icons.person,
+                              color: Colors.grey,
+                              size: 25,
+                            ),
+                    ));
+              } else {
+                return IconButton(
+                    key: const Key('user-icon'),
+                    onPressed: () {
+                      Scaffold.of(context).openEndDrawer();
+                    },
+                    icon: const CircleAvatar(
+                        child: Icon(
+                      Icons.person,
+                      color: Colors.grey,
+                      size: 25,
+                    )));
+              }
+            },
+          )
         ],
       ),
       //--------------------------Body--------------------------//
@@ -208,19 +249,15 @@ class _HomePageState extends State<HomePage> {
       drawer: BlocProvider(
         create: (context) =>
             LeftDrawerCubit(LeftDrawerRepository(LeftDrawerWebServices())),
-        child: LeftDrawer(isLoggedin),
+        child: LeftDrawer(),
       ),
       endDrawer: BlocProvider(
         create: (context) =>
             EndDrawerCubit(EndDrawerRepository(SettingsWebServices())),
         child: EndDrawer(
-            isLoggedin,
-            UserData.user == null ? "" : UserData.user!.name ?? "",
-            UserData.user == null ? "" : UserData.user!.profilePic ?? "",
-            2,
-            35,
-            true,
-            UserData.user == null ? "" : UserData.user!.email ?? ""),
+          2,
+          35,
+        ),
       ),
     );
   }

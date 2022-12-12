@@ -5,21 +5,19 @@ import 'package:reddit/business_logic/cubit/left_drawer/left_drawer_cubit.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/data/model/left_drawer/left_drawer_model.dart';
 
+import '../../../data/model/auth_model.dart';
 import '../../../data/repository/left_drawer/left_drawer_repository.dart';
 import '../../../data/web_services/left_drawer/left_drawer_web_services.dart';
 
 /// Build the UI of the left drawer of home page on android.
 class LeftDrawer extends StatefulWidget {
-  late bool _isLoggedIn;
-
-  LeftDrawer(this._isLoggedIn, {Key? key}) : super(key: key);
+  LeftDrawer({Key? key}) : super(key: key);
 
   @override
-  State<LeftDrawer> createState() => _LeftDrawerState(_isLoggedIn);
+  State<LeftDrawer> createState() => _LeftDrawerState();
 }
 
 class _LeftDrawerState extends State<LeftDrawer> {
-  late bool _isLoggedIn;
   late LeftDrawerRepository leftDrawerRepository =
       LeftDrawerRepository(LeftDrawerWebServices());
 
@@ -27,11 +25,10 @@ class _LeftDrawerState extends State<LeftDrawer> {
   List<LeftDrawerModel>? _yourCommunities;
   List<LeftDrawerModel>? _following;
   List<LeftDrawerModel>? _favorites;
-  _LeftDrawerState(this._isLoggedIn);
   @override
   void initState() {
     super.initState();
-    if (_isLoggedIn) {
+    if (UserData.isLoggedIn) {
       BlocProvider.of<LeftDrawerCubit>(context).getLeftDrawerData();
     }
   }
@@ -41,7 +38,7 @@ class _LeftDrawerState extends State<LeftDrawer> {
     return Drawer(
       backgroundColor: Colors.black,
       width: 300,
-      child: widget._isLoggedIn
+      child: UserData.isLoggedIn
           ? _buildLoggedInEndDrawer(context)
           : _buildLoggedOutEndDrawer(context),
     );

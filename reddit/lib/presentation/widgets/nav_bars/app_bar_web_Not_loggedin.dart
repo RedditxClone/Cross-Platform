@@ -20,8 +20,7 @@ class _AppBarWebNotLoggedInState extends State<AppBarWebNotLoggedIn> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         InkWell(
-          onTap: () => Navigator.pushReplacementNamed(context, homePageRoute,
-              arguments: null),
+          onTap: () => Navigator.pushReplacementNamed(context, homePageRoute),
           hoverColor: Colors.transparent,
           child: Row(
             children: [
@@ -81,7 +80,8 @@ class _AppBarWebNotLoggedInState extends State<AppBarWebNotLoggedIn> {
           children: [
             MediaQuery.of(context).size.width > 800
                 ? OutlinedButton(
-                    onPressed: () => Navigator.pushNamed(context, SIGNU_PAGE1),
+                    onPressed: () =>
+                        Navigator.of(context).pushNamed(SIGNU_PAGE1),
                     style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                             vertical: 15, horizontal: 25),
@@ -97,7 +97,7 @@ class _AppBarWebNotLoggedInState extends State<AppBarWebNotLoggedIn> {
             const SizedBox(width: 20),
             MediaQuery.of(context).size.width > 800
                 ? ElevatedButton(
-                    onPressed: () => Navigator.pushNamed(context, loginPage),
+                    onPressed: () => Navigator.of(context).pushNamed(loginPage),
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(

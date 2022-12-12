@@ -53,17 +53,6 @@ class _SignupWeb2State extends State<SignupWeb2> {
   /// This function calls the function [_SignupWeb2State.getSuggestedUsernames] to get all user's safety settings,
   /// then calls [AuthCubit.getSuggestedUsernames] to get user's blocked list.
   void getSuggestedUsernames() async {
-    // await DioHelper.getData(url: "/api/auth/suggested_usernames", query: {})
-    //     .then((value) {
-    //   if (value.statusCode == 200) {
-    //     setState(() {
-    //       suggestedUsernames = value.data;
-    //     });
-    //     debugPrint("suggested usernames are ${suggestedUsernames['user1']}");
-    //   } else {
-    //     debugPrint("Error getting suggested usernames");
-    //   }
-    // });
     BlocProvider.of<AuthCubit>(context).getSuggestedUsernames();
   }
 
@@ -88,18 +77,6 @@ class _SignupWeb2State extends State<SignupWeb2> {
   //function takes the username and checks if it is valid or not
   //this fucntion is called if the user pressed next after typing the username or if the focus is lost from the username field
   void checkOnUsername(String usrName) async {
-    // await DioHelper.postData(url: '/api/user/check-available-username', data: {
-    //   'username': usrName,
-    // }).then((value) {
-    //   setState(() {
-    //     if (value.statusCode == 200) {
-    //       redundantUsername = false;
-    //       debugPrint("Username is available");
-    //     } else {
-    //       redundantUsername = true;
-    //     }
-    //   });
-    // });
     BlocProvider.of<AuthCubit>(context).checkOnUsername(usrName);
   }
 
@@ -107,73 +84,6 @@ class _SignupWeb2State extends State<SignupWeb2> {
   void signUpContinue(BuildContext ctx) async {
     BlocProvider.of<AuthCubit>(ctx)
         .signup(passwordController.text, usernameController.text, userEmail);
-    // if (user != null) {
-    //   Navigator.of(ctx).pushReplacementNamed(
-    //     homePageRoute,
-    //     arguments: user,
-    //   );
-    // } else {
-    //   //user = null
-    //   debugPrint("failed in signing up");
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(
-    //       content: Row(
-    //         children: [
-    //           const Icon(
-    //             Icons.error,
-    //             color: Colors.red,
-    //           ),
-    //           SizedBox(
-    //             width: MediaQuery.of(context).size.width * 0.01,
-    //           ),
-    //           const Text(
-    //             'Username or password is incorrect',
-    //             style: TextStyle(
-    //               color: Colors.red,
-    //             ),
-    //           ),
-    //         ],
-    //       ),
-    //     ),
-    //   );
-    // }
-
-    // await DioHelper.postData(url: '/api/auth/signup', data: {
-    //   "password": passwordController.text,
-    //   "name": usernameController.text,
-    //   "email": user.email,
-    // }).then((value) {
-    //   if (value.statusCode == 201) {
-    //     user = User.fromJson(jsonDecode(value.data));
-    //     Navigator.of(ctx).pushReplacementNamed(
-    //       homePageRoute,
-    //       arguments: user,
-    //     );
-    //   } else {
-    //     debugPrint(user.toString());
-    //     ScaffoldMessenger.of(context).showSnackBar(
-    //       SnackBar(
-    //         content: Row(
-    //           children: [
-    //             const Icon(
-    //               Icons.error,
-    //               color: Colors.red,
-    //             ),
-    //             SizedBox(
-    //               width: MediaQuery.of(context).size.width * 0.01,
-    //             ),
-    //             const Text(
-    //               'Username or password is incorrect',
-    //               style: TextStyle(
-    //                 color: Colors.red,
-    //               ),
-    //             ),
-    //           ],
-    //         ),
-    //       ),
-    //     );
-    //   }
-    // });
   }
 
   Widget mainBody() {
@@ -363,7 +273,9 @@ class _SignupWeb2State extends State<SignupWeb2> {
                                 usernameEmpty = false;
                                 isAvailable = true;
                                 usernameError = false;
-                                usernameLengthError = false;
+                                usernameLengthError =
+                                    usernameController.text.length < 3 ||
+                                        usernameController.text.length > 20;
                                 passwordFocusNode.requestFocus();
                               });
                             },
@@ -498,14 +410,14 @@ class _SignupWeb2State extends State<SignupWeb2> {
           }
 
           return const Center(
-            child: CircularProgressIndicator(),
+            child: CircularProgressIndicator.adaptive(),
           );
         },
         listener: (context, state) {
           if (state is SignedIn) {
-            if (state.user != null) {
-              UserData.initUser(state.user); //this couldn't be null
-              Navigator.of(context).pushReplacementNamed(
+            if (state.userDataJson != {}) {
+              UserData.initUser(state.userDataJson); //this couldn't be null
+              Navigator.of(context).pushNamed(
                 homePageRoute,
               );
             } else {

@@ -34,11 +34,11 @@ class _PopularWebState extends State<PopularWeb> {
     return Scaffold(
         appBar: AppBar(
             shape: const Border(
-                bottom: BorderSide(color: Colors.grey, width: 0.5)),
+                bottom: BorderSide(color: Colors.grey, width: 0.3)),
             automaticallyImplyLeading: false,
             backgroundColor: defaultAppbarBackgroundColor,
             title: isLoggedIn
-                ? AppBarWebLoggedIn(user: UserData.user!, screen: 'Popular')
+                ? const AppBarWebLoggedIn( screen: 'Popular')
                 : const AppBarWebNotLoggedIn(screen: 'Popular')),
         body: Container(
           color: defaultWebBackgroundColor,

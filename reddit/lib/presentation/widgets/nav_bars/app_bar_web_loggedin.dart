@@ -4,18 +4,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:reddit/business_logic/cubit/create_community_cubit.dart';
+import 'package:reddit/business_logic/cubit/subreddit_page_cubit.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/data/model/auth_model.dart';
 // import 'package:reddit/data/model/signin.dart';
 import 'package:reddit/data/repository/create_community_repository.dart';
+import 'package:reddit/data/repository/subreddit_page_repository.dart';
 import 'package:reddit/data/web_services/create_community_web_services.dart';
+import 'package:reddit/data/web_services/subreddit_page_web_services.dart';
 import 'package:reddit/presentation/screens/create_community_screen.dart';
+import 'package:reddit/presentation/screens/subreddit_screen.dart';
 import 'package:reddit/presentation/widgets/nav_bars/popup_menu_logged_in.dart';
 
 class AppBarWebLoggedIn extends StatefulWidget {
   final String screen;
-  final User user;
-  const AppBarWebLoggedIn({Key? key, required this.screen, required this.user})
+  const AppBarWebLoggedIn({Key? key, required this.screen})
       : super(key: key);
 
   @override
@@ -37,13 +40,24 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
   void routeToPage(val) {
     switch (val) {
       case 'Home':
-        Navigator.pushNamed(context, homePageRoute, arguments: widget.user);
+        Navigator.pushNamed(context, homePageRoute);
         break;
       case 'Popular':
-        Navigator.pushNamed(context, popularPageRoute, arguments: widget.user);
+        Navigator.pushNamed(context, popularPageRoute);
         break;
       case 'Create Community':
         createCommunityDialog();
+        break;
+      case 'r/subreddit':
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (_) => BlocProvider(
+                    create: (context) => SubredditPageCubit(
+                        SubredditPageRepository(SubredditWebServices())),
+                    child: const SubredditPageScreen(
+                      subredditId: 'reddit', //TODO : add here subreddit name
+                    ))));
         break;
       case 'User settings':
         Navigator.pushNamed(context, settingsTabsRoute);
@@ -100,6 +114,15 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
                 ? const SizedBox(width: 0)
                 : const Text('Create Community', style: TextStyle(fontSize: 15))
           ])),
+      DropdownMenuItem(
+          value: 'r/subreddit',
+          child: Row(children: [
+            const CircleAvatar(radius: 13, child: Icon(Icons.person, size: 15)),
+            const SizedBox(width: 8),
+            MediaQuery.of(context).size.width < 930
+                ? const SizedBox(width: 0)
+                : const Text('r/subreddit', style: TextStyle(fontSize: 15))
+          ])),
       //
       const DropdownMenuItem(
           enabled: false,
@@ -133,6 +156,7 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
                 ? const SizedBox(width: 0)
                 : const Text('u/user_name', style: TextStyle(fontSize: 15))
           ])),
+
       DropdownMenuItem(
           value: 'Create Post',
           child: Row(children: [
@@ -240,9 +264,7 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
         ]),
         MediaQuery.of(context).size.width < 520
             ? const SizedBox(width: 0)
-            : PopupMenuLoggedIn(
-                user: widget.user,
-              ),
+            : const PopupMenuLoggedIn(),
       ],
     );
   }
