@@ -5,13 +5,13 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:reddit/constants/strings.dart';
+import 'package:reddit/data/model/auth_model.dart';
 
 /// This class is responsible of performing profile settings requests to the REST API
 class SettingsWebServices {
   late Dio dio;
   bool isMockerServer = useMockServerForAllWebServices;
-  String token =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzNzI0ZjQ3NTg0NmUxM2VmZjg4MDkxOSIsImlhdCI6MTY3MDA5MzEyNiwiZXhwIjoxNjcwOTU3MTI2fQ.deTnytMu5joScXuSj4aKCAikc6KgEnGZy8BWwWQgbIU';
+
   SettingsWebServices() {
     BaseOptions options = BaseOptions(
       baseUrl: isMockerServer ? mockUrl : baseUrl,
@@ -31,7 +31,7 @@ class SettingsWebServices {
     try {
       Response response = await dio.get('user/me/prefs',
           options: Options(
-            headers: {"Authorization": "Bearer $token"},
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
       debugPrint(response.statusCode.toString());
       return response.data;
@@ -57,7 +57,7 @@ class SettingsWebServices {
       Response response = await dio.patch('user/me/$key',
           data: formData,
           options: Options(
-            headers: {"Authorization": "Bearer $token"},
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
       debugPrint(response.statusCode.toString());
       return response.data;
@@ -84,7 +84,7 @@ class SettingsWebServices {
       Response response = await dio.patch('user/me/$key',
           data: formData,
           options: Options(
-            headers: {"Authorization": "Bearer $token"},
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
       debugPrint(response.statusCode.toString());
       return response.data;
@@ -105,7 +105,7 @@ class SettingsWebServices {
       Response response = await dio.patch('user/me/prefs',
           data: changed,
           options: Options(
-            headers: {"Authorization": "Bearer $token"},
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
       debugPrint(response.statusCode.toString());
       return response.statusCode;

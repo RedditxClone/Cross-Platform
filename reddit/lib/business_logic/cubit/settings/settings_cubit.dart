@@ -35,7 +35,7 @@ class SettingsCubit extends Cubit<SettingsState> {
     settingsRepository.updateImage('coverphoto', img).then((image) {
       settings.cover = image;
       debugPrint(image);
-      UserData.user!.coverPic = settings.cover = image;
+      UserData.profileSettings!.cover = settings.cover = image;
       emit(SettingsChanged(settings));
     });
   }
@@ -49,7 +49,7 @@ class SettingsCubit extends Cubit<SettingsState> {
   void changeCoverphotoWeb(ProfileSettings settings, Uint8List fileAsBytes) {
     if (isClosed) return;
     settingsRepository.updateImageWeb('coverphoto', fileAsBytes).then((image) {
-      UserData.user!.coverPic = settings.cover = image;
+      UserData.profileSettings!.cover = settings.cover = image;
       debugPrint(image);
       emit(SettingsChanged(settings));
     });

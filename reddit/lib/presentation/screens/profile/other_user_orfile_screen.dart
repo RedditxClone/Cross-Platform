@@ -205,11 +205,11 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                 ],
               ),
               const SizedBox(height: 20),
-              Text(widget.otherUser.displayName,
+              Text(widget.otherUser.displayName??"",
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 30)),
               const SizedBox(height: 10),
-              Text('u/${widget.otherUser.name} . 1 karma . 3 Oct 2022',
+              Text('u/${widget.otherUser.username} . 1 karma . 3 Oct 2022',
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 13)),
               const SizedBox(height: 10),
@@ -257,7 +257,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                   size: 20,
                 )),
             const SizedBox(width: 10),
-            Text(widget.otherUser.displayName),
+            Text(widget.otherUser.displayName??""),
           ],
         ),
         Row(
@@ -337,13 +337,13 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
             listener: (context, state) {
               if (state is FollowOtherUserSuccess) {
                 displayMsg(context, Colors.green,
-                    ' Followed u/${widget.otherUser.name}');
+                    ' Followed u/${widget.otherUser.username}');
               } else if (state is FollowOtherUserNotSuccess) {
                 displayMsg(context, Colors.red,
                     'An error has occured. please try again later');
               } else if (state is UnFollowOtherUserSuccess) {
                 displayMsg(context, Colors.green,
-                    ' Unfollowed u/${widget.otherUser.name}');
+                    ' Unfollowed u/${widget.otherUser.username}');
               } else if (state is UnFollowOtherUserNotSuccess) {
                 displayMsg(context, Colors.red,
                     'An error has occured. please try again later');

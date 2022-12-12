@@ -2,12 +2,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:reddit/constants/strings.dart';
+import 'package:reddit/data/model/auth_model.dart';
 
 class SubredditWebServices {
   late Dio dio;
-  String token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzODhhNjFiNWUwYjU4M2Y0YTc5ZTQxYSIsImlhdCI6MTY2OTg5OTgwMywiZXhwIjoxNjcwNzYzODAzfQ.19uD_QlcThGaS_lZ0iE92q0771WwJSB2jgWfJPTWkn8";
-  SubredditWebServices() {
+ SubredditWebServices() {
     BaseOptions options = BaseOptions(
       baseUrl:
           "https://f1c179b0-0158-4a47-ba39-7b803b8ae58a.mock.pstmn.io/api/",
@@ -22,7 +21,7 @@ class SubredditWebServices {
     try {
       Response response = await dio.get("subreddit/$subreddit/$mode",
           options: Options(
-            headers: {"Authorization": "Bearer $token"},
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
 
       return response.data;
@@ -35,7 +34,7 @@ class SubredditWebServices {
     try {
       Response response = await dio.get("subreddit/r/",
           options: Options(
-            headers: {"Authorization": "Bearer $token"},
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
 
       return response.data;
@@ -48,7 +47,7 @@ class SubredditWebServices {
     try {
       Response response = await dio.get("subreddit/r/$subreddit/icon",
           options: Options(
-            headers: {"Authorization": "Bearer $token"},
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
 
       return response.data;
@@ -69,7 +68,7 @@ class SubredditWebServices {
       Response response = await dio.post('subreddit/r/$subredditName/icon',
           data: formData,
           options: Options(
-            headers: {"Authorization": "Bearer $token"},
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
 
       if (response.statusCode == 201) {
@@ -88,7 +87,7 @@ class SubredditWebServices {
     try {
       Response response = await dio.get("subreddit/r/$subreddit/description",
           options: Options(
-            headers: {"Authorization": "Bearer $token"},
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
 
       return response.data;
@@ -101,7 +100,7 @@ class SubredditWebServices {
     try {
       Response response = await dio.get("subreddit/r/$subreddit/moderators",
           options: Options(
-            headers: {"Authorization": "Bearer $token"},
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
 
       return response.data;

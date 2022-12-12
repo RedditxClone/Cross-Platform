@@ -25,14 +25,13 @@ void main() async {
   Map<String, String>? patchResponse;
   Map<String, dynamic>? settingsFromWebServices;
   setUp(() {
-    testUser = User(
-        userId: '1',
-        name: 'mark_yasser',
-        displayName: 'mark',
-        email: 'mark@hotmail.com',
-        coverPic: null,
-        profilePic: null);
-    UserData.initUser(testUser);
+    testUser = User.fromJson({
+      "userId": '1',
+      "username": 'mark_yasser',
+      "displayName": 'mark',
+      "email": 'mark@hotmail.com',
+      "profilePic": null
+    });
     settingsFromWebServices = {
       "profilephoto":
           "https://image.shutterstock.com/mosaic_250/2780032/1854697390/stock-photo-head-shot-young-attractive-businessman-in-glasses-standing-in-modern-office-pose-for-camera-1854697390.jpg",

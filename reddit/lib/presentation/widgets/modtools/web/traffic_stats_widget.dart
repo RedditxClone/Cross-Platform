@@ -13,14 +13,16 @@ class TrafficStatsWidget extends StatefulWidget {
 }
 
 class _TrafficStatsWidgetState extends State<TrafficStatsWidget> {
-  User otherUser = User(
-    userId: '1',
-    name: 'bemoi_erian',
-    displayName: 'Bemoi_01  ',
-    email: 'bemoi@hotmail.com',
-    coverPic: '',
-    profilePic: '',
-  );
+  User otherUser = User.fromJson({
+    'username': "username",
+      'email': "email",
+      'profilePhoto': "profilePic",
+      'token': "token",
+      'authType': "type",
+      '_id': "userId",
+      'displayName': "displayName",
+      'cakeDay': false,
+  });
   Widget _buildTable() {
     return Container(
       height: 1000,

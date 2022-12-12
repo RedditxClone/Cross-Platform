@@ -2,11 +2,10 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:reddit/constants/strings.dart';
+import 'package:reddit/data/model/auth_model.dart';
 
 class HistoryPageWebServices {
   late Dio dio;
-  String token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzODhhNjFiNWUwYjU4M2Y0YTc5ZTQxYSIsImlhdCI6MTY2OTg5OTgwMywiZXhwIjoxNjcwNzYzODAzfQ.19uD_QlcThGaS_lZ0iE92q0771WwJSB2jgWfJPTWkn8";
   HistoryPageWebServices() {
     BaseOptions options = BaseOptions(
       baseUrl: baseUrl,
@@ -21,7 +20,7 @@ class HistoryPageWebServices {
     try {
       Response response = await dio.get("user/$userID/$mode",
           options: Options(
-            headers: {"Authorization": "Bearer $token"},
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
 
       return response.data;

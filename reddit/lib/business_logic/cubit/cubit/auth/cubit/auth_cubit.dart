@@ -21,7 +21,6 @@ class AuthCubit extends Cubit<AuthState> {
   void signup(String password, String username, String email) async {
     if (isClosed) return;
     authRepo.signup(password, username, email).then((value) {
-      settingsRepository.settingsWebServices.token = value["token"];
       emit(SignedIn(value));
     });
   }
