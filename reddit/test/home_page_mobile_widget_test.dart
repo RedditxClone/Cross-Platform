@@ -5,6 +5,7 @@ import 'package:reddit/presentation/screens/home/home_page_mobile.dart';
 
 late User user;
 void main() {
+  User? testUser;
   setUp(() {
     // user = User(
     //     userId: '1',
@@ -15,8 +16,11 @@ void main() {
       "userId": '1',
       "username": 'mark_yasser',
       "email": 'mark@hotmai.com',
+      "displayName": 'mark',
+      "profilePic": null
     });
   });
+
   Widget createWidgetUnderTest() {
     return MaterialApp(
       home: HomePage(),

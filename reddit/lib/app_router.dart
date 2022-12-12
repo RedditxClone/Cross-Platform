@@ -1,8 +1,20 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:reddit/business_logic/cubit/user_profile/user_profile_cubit.dart';
+import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/data/repository/feed_setting_repository.dart';
+import 'package:reddit/data/repository/user_profile/user_profile_repository.dart';
 import 'package:reddit/data/web_services/feed_setting_web_services.dart';
 import 'package:reddit/presentation/screens/forget_username_web.dart';
+import 'package:reddit/data/web_services/user_profile/user_profile_webservices.dart';
+import 'package:reddit/presentation/screens/modtools/mobile/mod_list_screen.dart';
+import 'package:reddit/presentation/screens/modtools/web/approved_web.dart';
+import 'package:reddit/presentation/screens/modtools/web/edited_Web.dart';
+import 'package:reddit/presentation/screens/modtools/web/modqueue_web.dart';
+import 'package:reddit/presentation/screens/modtools/web/spam_web.dart';
+import 'package:reddit/presentation/screens/modtools/web/traffic_stats.dart';
+import 'package:reddit/presentation/screens/modtools/web/unmoderated.dart';
+import 'package:reddit/presentation/screens/profile/other_user_orfile_screen.dart';
 import 'business_logic/cubit/feed_settings_cubit.dart';
 import 'presentation/screens/feed_setting.dart';
 import 'package:reddit/presentation/screens/profile/others_profile_page_web.dart';
@@ -79,16 +91,13 @@ class AppRouter {
 
   late AccountSettingsRepository accountSettingsRepository;
   late AccountSettingsCubit accountSettingsCubit;
-
   late SafetySettingsRepository safetySettingsRepository;
   late SafetySettingsCubit safetySettingsCubit;
   late SettingsRepository settingsRepository;
   late SettingsCubit settingsCubit;
-
   late EmailSettingsRepository emailSettingsReposity;
   late EmailSettingsCubit emailSettingsCubit;
   late EmailSettingsWebServices emailSettingsWebServices;
-
   late AuthRepo authRepo;
   late SubredditPageCubit subredditPageCubit;
   late SubredditPageRepository subredditPageRepository;
@@ -100,6 +109,9 @@ class AppRouter {
   late CreateCommunityRepository communityRepository;
   late CreateCommunityCubit createCommunityCubit;
   late CreateCommunityWebServices communityWebServices;
+  late UserProfileWebServices userProfileWebServices;
+  late UserProfileRepository userProfileRepository;
+  late UserProfileCubit userProfileCubit;
 
   AppRouter() {
     // initialise repository and cubit objects
@@ -108,27 +120,27 @@ class AppRouter {
     safetySettingsCubit = SafetySettingsCubit(safetySettingsRepository);
     settingsRepository = SettingsRepository(SettingsWebServices());
     settingsCubit = SettingsCubit(settingsRepository);
-
     emailSettingsWebServices = EmailSettingsWebServices();
     emailSettingsReposity = EmailSettingsRepository(emailSettingsWebServices);
     emailSettingsCubit = EmailSettingsCubit(emailSettingsReposity);
-
     accountSettingsRepository =
         AccountSettingsRepository(AccountSettingsWebServices());
     accountSettingsCubit = AccountSettingsCubit(accountSettingsRepository);
     authRepo = AuthRepo(AuthWebService());
     authCubit = AuthCubit(authRepo, settingsRepository);
-
     subredditWebServices = SubredditWebServices();
     subredditPageRepository = SubredditPageRepository(subredditWebServices);
     subredditPageCubit = SubredditPageCubit(subredditPageRepository);
     historyPageWebServices = HistoryPageWebServices();
     historyPageRepository = HistoryPageRepository(historyPageWebServices);
     historyPageCubit = HistoryPageCubit(historyPageRepository);
-
     communityWebServices = CreateCommunityWebServices();
     communityRepository = CreateCommunityRepository(communityWebServices);
     createCommunityCubit = CreateCommunityCubit(communityRepository);
+
+    userProfileWebServices = UserProfileWebServices();
+    userProfileRepository = UserProfileRepository(userProfileWebServices);
+    userProfileCubit = UserProfileCubit(userProfileRepository);
   }
   Route? generateRoute(RouteSettings settings) {
     final arguments = settings.arguments;
@@ -164,20 +176,68 @@ class AppRouter {
                 kIsWeb ? const ProfilePageWeb() : const ProfileScreen());
 
       case otherProfilePageRoute:
+        final otherUser = settings.arguments as User;
         return MaterialPageRoute(
-            builder: (_) =>
-                kIsWeb ? const OtherProfilePageWeb() : const ProfileScreen());
+          builder: (_) => BlocProvider(
+            create: (context) => userProfileCubit,
+            child: kIsWeb
+                ? OtherProfilePageWeb(otherUser: otherUser)
+                : OtherProfileScreen(otherUser: otherUser),
+          ),
+        );
+
       case subredditPageScreenRoute:
         return MaterialPageRoute(
             builder: (_) => BlocProvider.value(
                 value: subredditPageCubit,
                 child: const SubredditPageScreen(subredditId: "redditx_")));
+      //---------------------------------------------------------------------------
+      //------------------------------MOD LIST-------------------------------------
+      //---------------------------------------------------------------------------
+      case modlistRoute:
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider.value(
+                value: subredditPageCubit, child: const ModListScreen()));
 
+      case modqueueRoute:
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider.value(
+                value: subredditPageCubit, child: const ModQueueWeb()));
+
+      case spamRoute:
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider.value(
+                value: subredditPageCubit,
+                child: kIsWeb ? const SpamWeb() : null));
+      case unmoderatedRoute:
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider.value(
+                value: subredditPageCubit,
+                child: kIsWeb ? const UnmoderatedWeb() : null));
+
+      case approvedRoute:
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider.value(
+                value: subredditPageCubit,
+                child: kIsWeb ? const ApprovedWeb() : null));
+
+      case editedRoute:
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider.value(
+                value: subredditPageCubit,
+                child: kIsWeb ? const EditedWeb() : null));
+
+      case tafficRoute:
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider.value(
+                value: subredditPageCubit,
+                child: kIsWeb ? const TrafficStatsWeb() : null));
+      //---------------------------------------------------------------------------
       case historyPageScreenRoute:
         return MaterialPageRoute(
             builder: (_) => BlocProvider.value(
                   value: historyPageCubit,
-                  child: HistoryPageScreen(
+                  child: const HistoryPageScreen(
                     userID: "6388a61b5e0b583f4a79e41a",
                   ),
                 ));
@@ -188,27 +248,14 @@ class AppRouter {
                   child: const CreateCommunityScreen(),
                 ));
 
-      // case emailSettingsWebScreenRoute:
-      //   return MaterialPageRoute(
-      //       builder: (_) => BlocProvider.value(
-      //             value: emailSettingsCubit,
-      //             child: const EmailSettingsWeb(),
-      //           ));
-      // case HOME_PAGE:
-      //   final user = settings.arguments as User;
-      //   return MaterialPageRoute(
-      //     builder: (_) => Home(user: user),
-      //   );
       case SIGNU_PAGE2:
         final userEmail = settings.arguments as String;
         return MaterialPageRoute(
-          builder: (_) => BlocProvider.value(
-            value: authCubit,
-            child: SignupWeb2(
-              userEmail: userEmail,
-            ),
-          ),
-        );
+            builder: (_) => BlocProvider.value(
+                value: authCubit,
+                child: SignupWeb2(
+                  userEmail: userEmail,
+                )));
       case forgetUsernameWeb:
         return MaterialPageRoute(
           builder: (_) => BlocProvider.value(
@@ -351,7 +398,7 @@ class AppRouter {
         return MaterialPageRoute(
             builder: (_) => BlocProvider(
                   create: (BuildContext context) => settingsCubit,
-                  child: ProfileSettingsScreen(),
+                  child: const ProfileSettingsScreen(),
                 ));
 
       default:

@@ -121,7 +121,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
       listener: (context, state) {
         if (state is CreateCommunityCreated) {
           BlocProvider.of<CreateCommunityCubit>(context).close();
-          Navigator.pushReplacement(
+          Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (_) => BlocProvider(

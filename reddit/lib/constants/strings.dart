@@ -5,7 +5,7 @@
 const baseUrl = String.fromEnvironment('BASE_URL', defaultValue: '');
 const mockUrl = 'https://a3a539c4-1746-44d4-8e06-d579a1d30d53.mock.pstmn.io/';
 // Use mock server instead of our backend server
-const useMockServerForAllWebServices = true;
+const useMockServerForAllWebServices = false;
 //---------------------------------------
 // -----------homepage routes-----------
 //---------------------------------------
@@ -76,3 +76,16 @@ const gitHubClientID = '278e3e6f443383001225';
 const subredditPageScreenRoute = "/subredditPageScreen";
 const historyPageScreenRoute = '/HistoryPageScreen';
 const createCommunityScreenRoute = '/CreateCommunityScreen';
+//---------------------------------------
+//-----------Mod tools Route-------------
+//---------------------------------------
+const modlistRoute = '/modlist';
+const modqueueRoute = '/modqueue';
+const spamRoute = '/spam';
+const editedRoute = '/edited';
+const approvedRoute = '/approved';
+const communitySettingsRoute = '/communitysettings';
+const tafficRoute = '/taffic';
+const rulesRoute = '/rules';
+const unmoderatedRoute = '/unmod';
+const moderatorsRoute = '/mod';
