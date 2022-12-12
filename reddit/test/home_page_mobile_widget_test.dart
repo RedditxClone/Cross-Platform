@@ -7,14 +7,18 @@ late User user;
 void main() {
   User? testUser;
   setUp(() {
-    testUser = User(
-        userId: '1',
-        name: 'mark_yasser',
-        displayName: 'mark',
-        email: 'mark@hotmail.com',
-        coverPic: null,
-        profilePic: null);
-    UserData.initUser(testUser);
+    // user = User(
+    //     userId: '1',
+    //     username: 'mark_yasser',
+    //     email: 'mark@hotmai.com',
+    //     profilePic: '');
+    user = User.fromJson({
+      "userId": '1',
+      "username": 'mark_yasser',
+      "email": 'mark@hotmai.com',
+      "displayName": 'mark',
+      "profilePic": null
+    });
   });
 
   Widget createWidgetUnderTest() {

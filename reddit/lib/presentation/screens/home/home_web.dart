@@ -3,12 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reddit/business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/theme_colors.dart';
+import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/presentation/widgets/home_widgets/left_list_not_logged_in.dart';
 import 'package:reddit/presentation/widgets/posts/posts_web.dart';
 
 class HomeWeb extends StatefulWidget {
-  final bool isLoggedIn;
-  const HomeWeb({Key? key, required this.isLoggedIn}) : super(key: key);
+  const HomeWeb({Key? key}) : super(key: key);
   @override
   State<HomeWeb> createState() => _HomeWebState();
 }
@@ -146,7 +146,7 @@ class _HomeWebState extends State<HomeWeb> {
       ),
     );
   }
-  
+
   @override
   Widget build(BuildContext context) {
     responsive = Responsive(context);
@@ -159,13 +159,14 @@ class _HomeWebState extends State<HomeWeb> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // if user is signed in dont display left list
-          !widget.isLoggedIn && MediaQuery.of(context).size.width > 1300
+          !UserData.isLoggedIn && MediaQuery.of(context).size.width > 1300
               ? const LeftList()
               : const SizedBox(width: 0),
           SizedBox(
-            width: widget.isLoggedIn || MediaQuery.of(context).size.width < 1300
-                ? MediaQuery.of(context).size.width
-                : MediaQuery.of(context).size.width - 280,
+            width:
+                UserData.isLoggedIn || MediaQuery.of(context).size.width < 1300
+                    ? MediaQuery.of(context).size.width
+                    : MediaQuery.of(context).size.width - 280,
             child: SingleChildScrollView(
               controller: ScrollController(),
               child: Row(

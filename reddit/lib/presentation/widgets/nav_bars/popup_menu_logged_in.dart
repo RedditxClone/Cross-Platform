@@ -169,6 +169,11 @@ class PopupMenuLoggedIn extends StatelessWidget {
           case 6:
             _launchUrl('https://www.reddithelp.com/hc/en-us');
             break;
+          case 7:
+            UserData.logout();
+            debugPrint("after logout func");
+            Navigator.pushReplacementNamed(context, popularPageRoute);
+            break;
           default:
             break;
         }
@@ -187,7 +192,7 @@ class PopupMenuLoggedIn extends StatelessWidget {
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(UserData.user!.name!,
+                    Text(UserData.user!.username,
                         style: const TextStyle(fontSize: 15)),
                     const Text('karma', style: TextStyle(fontSize: 10)),
                   ],

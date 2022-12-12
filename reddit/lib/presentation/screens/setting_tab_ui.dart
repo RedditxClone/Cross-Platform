@@ -47,7 +47,7 @@ class _SettingTabUiState extends State<SettingTabUi> {
           automaticallyImplyLeading: false,
           backgroundColor: defaultAppbarBackgroundColor,
           title:
-              AppBarWebLoggedIn(user: UserData.user!, screen: 'User settings')),
+              const AppBarWebLoggedIn(screen: 'User settings')),
       body: SingleChildScrollView(
         child: Row(
           children: [

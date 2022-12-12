@@ -8,7 +8,7 @@ import '../web_services/authorization/auth_web_service.dart';
 
 class AuthRepo {
   final AuthWebService authWebService;
-  User? user;
+  late Map<String, dynamic> user;
   AuthRepo(this.authWebService);
 
   /// [username] : The username of the user.
@@ -18,13 +18,14 @@ class AuthRepo {
   /// This function makes the request to the server to sign up the user.
   /// and checks on the status code if 201 then sets the user and returns it.
   /// This function calls the function [AuthWebService.signup] which makes the request to the server.
-  Future<User?> signup(String password, String username, String email) async {
+  Future<Map<String, dynamic>> signup(
+      String password, String username, String email) async {
     await authWebService.signup(password, username, email).then((value) {
       if (value.statusCode == 201) {
-        user = User.fromJson(value.data);
+        user = value.data;
       } else {
-        debugPrint("user is null $user");
-        user = null;
+        debugPrint("status code is ${value.statusCode}");
+        user = {};
       }
     });
     return user;
@@ -37,28 +38,112 @@ class AuthRepo {
   /// and checks on the status code if 201 then sets the user and returns it.
   /// This function calls the function [AuthWebService.login] which makes the request to the server.
   /// RETURNS [User] : the user data.
-  Future<User?> login(String password, String username) async {
-    Response res = await authWebService.login(password, username);
-    if (res.statusCode == 201) {
-      user = User.fromJson(res.data);
-    } else {
-      user = null;
-    }
+  Future<Map<String, dynamic>> login(String password, String username) async {
+    await authWebService.login(password, username).then((value) {
+      if (value.statusCode == 201) {
+        user = value.data;
+      } else {
+        debugPrint("status code is ${value.statusCode}");
+        user = {};
+      }
+    });
     return user;
   }
 
-  /// This function makes the request to the server to let the user change password if he forget it.
-  /// This function calls the function [AuthWebService.forgetPassword] which makes the request to the server.
-  Future forgetPassword(String username) async {
-    var res = await authWebService.forgetPassword(username);
-    return res;
+  /// [googleToken] : The token of the user from google.
+  ///
+  /// This function makes the request to the server to log in the user with google.
+  /// and checks on the status code if 201 then sets the user and returns it.
+  /// This function calls the function [AuthWebService.loginWithGoogle] which makes the request to the server.
+  /// RETURNS [User] : the user data.
+  Future<Map<String, dynamic>> loginWithGoogle(String googleToken) async {
+    // Response res = await authWebService.loginWithGoogle(googleToken);
+    // if (res.statusCode == 201) {
+    //   user = res.data;
+    // } else {
+    //   user = {};
+    // }
+    // return user;
+    return {
+      "_id": "638f22afb3b5edb0aa8d46ba",
+      "token": googleToken,
+      "username": "bbnpo",
+      "email": "ewxcf@kjdlasd.com",
+      "authType": "google",
+      "profilePhoto": "",
+      "coverPhoto": "",
+      "countryCode": "",
+      "gender": "",
+      "accountClosed": false,
+      "displayName": "",
+      "about": "",
+      "socialLinks": [],
+      "nsfw": false,
+      "allowFollow": true,
+      "contentVisibility": true,
+      "activeInCommunitiesVisibility": true,
+      "badCommentAutoCollapse": "off",
+      "showInSearch": true,
+      "adultContent": false,
+      "autoPlayMedia": true,
+      "personalizeAllOfReddit": true,
+      "personalizeAdsInformation": true,
+      "personalizeAdsYourActivity": true,
+      "personalizeRecGeneralLocation": true,
+      "personalizeRecOurPartners": true,
+      "useTwoFactorAuthentication": true,
+      "suggestedSort": "hot",
+      "inboxMessages": true,
+      "mentions": true,
+      "commentsOnPost": true,
+      "upvotePosts": true,
+      "upvoteComments": true,
+      "repliesComments": true,
+      "activityComments": true,
+      "activityOnThreads": true,
+      "newFollowers": true,
+      "newPostFlair": true,
+      "newUserFlair": true,
+      "pinnedPosts": true,
+      "postsYouFollow": true,
+      "commentsYouFollow": true,
+      "redditAnnouncements": true,
+      "cakeDay": true,
+      "acceptPms": "everyone",
+      "whitelisted": [],
+      "safeBrowsingMode": false,
+      "chatRequest": true,
+      "newFollower": false,
+      "unSubscribe": false
+    };
   }
 
-  Future changeForgottenPassword(
-      String password, String username, String token) async {
-    var res =
-        await authWebService.changeForgottenPassword(password, username, token);
-    return res;
+  /// [username] : The username of the user.
+  ///
+  /// This function makes the request to the server to let the user change password if he forget it.
+  /// This function calls the function [AuthWebService.forgetPassword] which makes the request to the server.
+  /// Returns [bool] which is true if the email sent successfully and false if it's not.
+  Future<bool> forgetPassword(String username) async {
+    var res = await authWebService.forgetPassword(username);
+    if (res.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /// [email] : The email of the user.
+  ///
+  /// This function makes the request to the server if the user requested to get his username.
+  /// This function calls the function [AuthWebService.forgetUsername] which makes the request to the server.
+  /// Returns [bool] which is true if the email sent successfully and false if it's not.
+  Future<bool> forgetUsername(String email) async {
+    var res = await authWebService.forgetUsername(email);
+    if (res.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   /// This function makes the request to the server to check on the username if it is available or not.
@@ -99,8 +184,60 @@ class AuthRepo {
   /// Returns [String] : it restuns a string which the link of the profile picture on the server.
   Future<dynamic> updateImageWeb(
       String key, Uint8List fileAsBytes, String token) async {
-    final newVal = await authWebService.updateImageWeb(fileAsBytes, key, token);
-    debugPrint("from repo ${newVal[key]}");
-    return newVal[key];
+    var res = await authWebService.updateImageWeb(fileAsBytes, key, token);
+    if (res.statusCode == 200) {
+      UserData.profileSettings!.profile = res.data[key];
+      return res.data[key];
+    } else {
+      return null;
+    }
+  }
+
+  /// [token] : [String] which is The token of the user.
+  /// [gender] : [String] the gender selected by the user
+  ///
+  /// This function makes the request to udate the user gender during signup.
+  /// Returns [bool] which is true if the gender updated successfully and false if it's not.
+  Future<bool> genderInSignup(String gender, String token) async {
+    var res = await authWebService.genderInSignup(gender, token);
+    if (res.statusCode == 200) {
+      UserData.accountSettings!.gender = gender;
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /// [selectedInterests] : [Map] which is the list of the interests selected by the user.
+  /// [token] : [String] which is The token of the user.
+  ///
+  /// This function makes the request to update the user interests during signup.
+  /// Returns [bool] which is true if the interests updated successfully and false if it's not.
+  Future<bool> addInterests(
+      Map<String, dynamic> selectedInterests, String token) async {
+    var res = await authWebService.addInterests(selectedInterests, token);
+    if (res.statusCode == 200) {
+      UserData.user?.interests = selectedInterests;
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /// [userId] : [String] which is The id of the user.
+  ///
+  /// This function makes the request to get the user data with the user Id.
+  /// This function calls the function [AuthWebService.getUserData] which makes the request to the server.
+  /// Returns [User] : it restuns a user object if the status code is 200 and null in case of status code isn't 200.
+  Future<Map<String, dynamic>> getUserData(String userId) async {
+    var res = await authWebService.getUserData(userId);
+    if (res.statusCode == 200) {
+      debugPrint("user data from repo: ${res.data.toString()}");
+      user = res.data;
+    } else {
+      debugPrint("status code is ${res.statusCode}");
+      user = {};
+    }
+    return user;
   }
 }

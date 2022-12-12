@@ -241,9 +241,9 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
             ),
           ],
         ),
-        Text(UserData.user!.displayName,
+        Text(UserData.user!.displayName ?? "",
             style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
-        Text('u/${UserData.user!.name} . 1m',
+        Text('u/${UserData.user!.username} . 1m',
             style: const TextStyle(fontSize: 12, color: Colors.grey)),
         //------------change profile picture button----------
         Container(
@@ -676,8 +676,7 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
               const Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
           automaticallyImplyLeading: false,
           backgroundColor: defaultAppbarBackgroundColor,
-          title:
-              AppBarWebLoggedIn(user: UserData.user!, screen: 'u/user_name')),
+          title: const AppBarWebLoggedIn(screen: 'u/user_name')),
       body: DefaultTabController(
         length: 8,
         child: Scaffold(

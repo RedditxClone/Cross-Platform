@@ -242,10 +242,10 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
                           fit: BoxFit.cover)),
             ],
           ),
-          Text(widget.otherUser.displayName,
+          Text(widget.otherUser.displayName ?? "",
               style:
                   const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
-          Text('u/${widget.otherUser.name} . 26m',
+          Text('u/${widget.otherUser.username} . 26m',
               style: const TextStyle(fontSize: 12, color: Colors.grey)),
           const SizedBox(height: 20),
           //--------------------karma and cake day-------------
@@ -552,8 +552,7 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
               const Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
           automaticallyImplyLeading: false,
           backgroundColor: defaultAppbarBackgroundColor,
-          title:
-              AppBarWebLoggedIn(user: UserData.user!, screen: 'u/user_name')),
+          title: const AppBarWebLoggedIn(screen: 'u/user_name')),
       body: DefaultTabController(
         length: 3,
         child: Scaffold(
@@ -599,13 +598,13 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
               listener: (context, state) {
                 if (state is FollowOtherUserSuccess) {
                   displayMsg(context, Colors.blue,
-                      ' Successfully followed u/${widget.otherUser.name}');
+                      ' Successfully followed u/${widget.otherUser.username}');
                 } else if (state is FollowOtherUserNotSuccess) {
                   displayMsg(context, Colors.red,
                       'An error has occured. please try again later');
                 } else if (state is UnFollowOtherUserSuccess) {
                   displayMsg(context, Colors.blue,
-                      ' Successfully unfollowed u/${widget.otherUser.name}');
+                      ' Successfully unfollowed u/${widget.otherUser.username}');
                 } else if (state is UnFollowOtherUserNotSuccess) {
                   displayMsg(context, Colors.red,
                       'An error has occured. please try again later');

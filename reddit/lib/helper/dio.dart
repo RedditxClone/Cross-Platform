@@ -2,10 +2,10 @@ import 'package:dio/dio.dart';
 import 'package:reddit/constants/strings.dart';
 
 class DioHelper {
-  static late Dio dio;
+  static late Dio _dio;
 
   static init() {
-    dio = Dio(
+    _dio = Dio(
       BaseOptions(
         baseUrl: baseUrl,
         receiveDataWhenStatusError: true,
@@ -19,7 +19,7 @@ class DioHelper {
     required String url,
     required Map<String, dynamic> query,
   }) async {
-    var response = await dio.get(url, queryParameters: query);
+    var response = await _dio.get(url, queryParameters: query);
     return response;
   }
 
@@ -28,7 +28,7 @@ class DioHelper {
     required Map<String, dynamic> query,
     required Map<String, dynamic> headers,
   }) async {
-    var response = await dio.get(
+    var response = await _dio.get(
       url,
       queryParameters: query,
       options: Options(headers: headers),
@@ -40,7 +40,7 @@ class DioHelper {
     required String url,
     required Map<String, dynamic> data,
   }) async {
-    var response = await dio.post(url, data: data);
+    var response = await _dio.post(url, data: data);
     return response;
   }
 
@@ -49,7 +49,7 @@ class DioHelper {
     required dynamic data,
     required Options? options,
   }) async {
-    var response = await dio.patch(url, data: data, options: options);
+    var response = await _dio.patch(url, data: data, options: options);
     return response;
   }
 
@@ -58,7 +58,7 @@ class DioHelper {
     required Map<String, dynamic> data,
     required Map<String, dynamic> headers,
   }) async {
-    var response = await dio.post(
+    var response = await _dio.post(
       url,
       data: data,
       options: Options(headers: headers),

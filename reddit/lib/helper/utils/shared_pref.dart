@@ -13,7 +13,7 @@ class PreferenceUtils {
     return _prefsInstance!; //we are sure that _prefsInstance is not null because we initialized it in the beginning of the app in init method
   }
 
-  static String getString(SharedPrefKeys key, [String defValue = "no value"]) {
+  static String getString(SharedPrefKeys key, [String defValue = '']) {
     return _prefsInstance?.getString(key.name) ?? defValue;
   }
 

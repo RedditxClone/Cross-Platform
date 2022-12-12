@@ -13,15 +13,13 @@ class UserManagement extends StatefulWidget {
 }
 
 class _UserManagementState extends State<UserManagement> {
-  User otherUser = User(
-    userId: '1',
-    name: 'bemoi_erian',
-    displayName: 'Bemoi_01  ',
-    email: 'bemoi@hotmail.com',
-    coverPic: '',
-    profilePic: '',
-  );
-
+  User otherUser = User.fromJson({
+    "userId": '1',
+    "username": 'bemoi_erian',
+    "displayName": 'Bemoi_01  ',
+    "email": 'bemoi@hotmail.com',
+    "profilePic": '',
+  });
   String addButtonName = '';
 
   Widget emptyUserManagement(context) {

@@ -1,14 +1,15 @@
 import 'package:dio/dio.dart';
 import 'package:reddit/constants/strings.dart';
 
+import '../model/auth_model.dart';
+
 class AccountSettingsWebServices {
-  bool useMockServer = true;
+  bool useMockServer = false;
   // Mock URL For Mockoon
   // String mockUrl =` TargetPlatform.android == defaultTargetPlatform
   //     ? "http://10.0.2.2:3001/"
   //     : "http://127.0.0.1:3001/";
   // Mock URL For Postman
-  final dummyToken = "";
   String mockUrl =
       "https://a8eda59d-d8f3-4ef2-9581-29e6473824d9.mock.pstmn.io/";
   late Dio dio;
@@ -28,7 +29,7 @@ class AccountSettingsWebServices {
     try {
       Response response = await dio.get('user/me/prefs',
           options: Options(
-            headers: {"Authorization": "Bearer $dummyToken"},
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
       print(response.data);
       return response.data;
@@ -53,7 +54,7 @@ class AccountSettingsWebServices {
       Response response = await dio.patch('user/me/prefs',
           data: newAccSettings,
           options: Options(
-            headers: {"Authorization": "Bearer $dummyToken"},
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
       if (response.statusCode == 200) {
         print("Account settings updated successfully");
@@ -75,7 +76,7 @@ class AccountSettingsWebServices {
       Response response = await dio.patch('auth/change_password',
           data: changePasswordMap,
           options: Options(
-            headers: {"Authorization": "Bearer $dummyToken"},
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
       if (response.statusCode == 200) {
         print("Password changed successfully");

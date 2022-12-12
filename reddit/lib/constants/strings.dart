@@ -64,11 +64,12 @@ const getHelpPage =
     'https://reddithelp.com/hc/en-us/sections/360008917491-Account-Security';
 const signupScreen = '/signupScreen';
 const loginScreen = '/loginScreen';
-const forgetPasswordAndroid = '/forgetPasswordAndroud';
-const forgetUsernameAndroid = '/forgetUsernameAndroud';
+const forgetPasswordAndroid = '/forgetPasswordAndroid';
+const forgetUsernameAndroid = '/forgetUsernameAndroid';
 const interesetesScreen = '/interesetesScreen';
 const chooseGenderScreen = '/chooseGenderScreen';
 const chooseProfileImgScreen = '/chooseProfileImgScreen';
+const gitHubClientID = '278e3e6f443383001225';
 //---------------------------------------
 // ------subreddit page route---------
 //---------------------------------------

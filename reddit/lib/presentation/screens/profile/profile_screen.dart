@@ -78,11 +78,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
               const SizedBox(height: 20),
-              Text(UserData.user!.displayName,
+              Text(UserData.user!.displayName??"",
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 30)),
               const SizedBox(height: 10),
-              Text('u/${UserData.user!.name} . 1 karma . 41d . 3 Oct 2022',
+              Text('u/${UserData.user!.username} . 1 karma . 41d . 3 Oct 2022',
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 13)),
               const SizedBox(height: 20),
@@ -145,7 +145,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   size: 20,
                 )),
             const SizedBox(width: 10),
-            Text(UserData.user!.displayName),
+            Text(UserData.user!.displayName??""),
           ],
         ),
         Row(

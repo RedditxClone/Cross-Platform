@@ -5,6 +5,7 @@ import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/data/repository/feed_setting_repository.dart';
 import 'package:reddit/data/repository/user_profile/user_profile_repository.dart';
 import 'package:reddit/data/web_services/feed_setting_web_services.dart';
+import 'package:reddit/presentation/screens/forget_username_web.dart';
 import 'package:reddit/data/web_services/user_profile/user_profile_webservices.dart';
 import 'package:reddit/presentation/screens/modtools/mobile/mod_list_screen.dart';
 import 'package:reddit/presentation/screens/modtools/web/approved_web.dart';
@@ -74,7 +75,6 @@ import 'package:reddit/presentation/screens/choose_profile_screen.dart';
 import 'package:reddit/presentation/screens/forget_password_android.dart';
 import 'package:reddit/presentation/screens/forget_password_web.dart';
 import 'package:reddit/presentation/screens/forget_username_android.dart';
-import 'package:reddit/presentation/screens/forget_username_web.dart';
 import 'package:reddit/presentation/screens/intesrests_android.dart';
 import 'package:reddit/presentation/screens/login_page.dart';
 import 'package:reddit/presentation/screens/login_screen.dart';
@@ -156,14 +156,19 @@ class AppRouter {
 
       case homePageRoute:
         return MaterialPageRoute(
-            builder: (_) => BlocProvider(
-                  create: ((context) => authCubit),
-                  child: kIsWeb ? const HomePageWeb() : HomePage(),
-                ));
+          builder: (_) => BlocProvider(
+            create: (context) => authCubit,
+            child: kIsWeb ? const HomePageWeb() : HomePage(),
+          ),
+        );
 
       case popularPageRoute:
         return MaterialPageRoute(
-            builder: (_) => kIsWeb ? PopularWeb() : const Popular());
+          builder: (_) => BlocProvider.value(
+            value: authCubit,
+            child: kIsWeb ? PopularWeb() : const Popular(),
+          ),
+        );
 
       case profilePageRoute:
         return MaterialPageRoute(
@@ -253,15 +258,24 @@ class AppRouter {
                 )));
       case forgetUsernameWeb:
         return MaterialPageRoute(
-          builder: (_) => const ForgetUsernameWeb(),
+          builder: (_) => BlocProvider.value(
+            value: authCubit,
+            child: const ForgetUsernameWeb(),
+          ),
         );
       case forgetPasswordWeb:
         return MaterialPageRoute(
-          builder: (_) => const ForgetPasswordWeb(),
+          builder: (_) => BlocProvider.value(
+            value: authCubit,
+            child: const ForgetPasswordWeb(),
+          ),
         );
       case SIGNU_PAGE1:
         return MaterialPageRoute(
-          builder: (_) => const SignupWeb(),
+          builder: (_) => BlocProvider.value(
+            value: authCubit,
+            child: const SignupWeb(),
+          ),
         );
       case loginPage:
         return MaterialPageRoute(
@@ -279,7 +293,10 @@ class AppRouter {
         );
       case forgetPasswordAndroid:
         return MaterialPageRoute(
-          builder: (_) => const ForgetPasswordAndroid(),
+          builder: (_) => BlocProvider.value(
+            value: authCubit,
+            child: const ForgetPasswordAndroid(),
+          ),
         );
       case loginScreen:
         return MaterialPageRoute(
@@ -290,11 +307,17 @@ class AppRouter {
         );
       case forgetUsernameAndroid:
         return MaterialPageRoute(
-          builder: (_) => const ForgetUsernameAndroid(),
+          builder: (_) => BlocProvider.value(
+            value: authCubit,
+            child: const ForgetUsernameAndroid(),
+          ),
         );
       case interesetesScreen:
         return MaterialPageRoute(
-          builder: (_) => const InteresetesAndroid(),
+          builder: (_) => BlocProvider.value(
+            value: authCubit,
+            child: const InterestsAndroid(),
+          ),
         );
       case chooseProfileImgScreen:
         return MaterialPageRoute(
@@ -305,7 +328,10 @@ class AppRouter {
         );
       case chooseGenderScreen:
         return MaterialPageRoute(
-          builder: (_) => const ChooseGenderAndroid(),
+          builder: (_) => BlocProvider.value(
+            value: authCubit,
+            child: const ChooseGenderAndroid(),
+          ),
         );
       /*
       case example:
