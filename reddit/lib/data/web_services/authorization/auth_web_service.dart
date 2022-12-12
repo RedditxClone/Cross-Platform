@@ -2,9 +2,19 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:http_parser/http_parser.dart';
+import 'package:reddit/constants/strings.dart';
 import 'package:reddit/helper/dio.dart';
 
 class AuthWebService {
+  final Dio _dio = Dio(
+    BaseOptions(
+      baseUrl: 'https://github.com/login/oauth/',
+      receiveDataWhenStatusError: true,
+      sendTimeout: 5000,
+      receiveTimeout: 5000,
+    ),
+  );
+
   /// [username] : The username of the user.
   /// [password] : The password of the user.
   /// [email] : The email of the user.
@@ -56,6 +66,21 @@ class AuthWebService {
       var res = await DioHelper.postData(url: 'auth/google', data: {
         "token": googleToken,
       });
+      return res;
+    } on DioError catch (e) {
+      debugPrint("from login $e");
+      return e.response;
+    }
+  }
+
+  /// [googleToken] : The token of the user from google.
+  ///
+  /// This function makes the request to the server to login the user with google.
+  /// This function calls the function [DioHelper.postData] which makes the request to the server.
+  /// Returns the response from the server.
+  Future loginWithGitHub(String googleToken) async {
+    try {
+      var res = _dio.get('authorize?client_id=$gitHubClientID');
       return res;
     } on DioError catch (e) {
       debugPrint("from login $e");
@@ -215,9 +240,9 @@ class AuthWebService {
       return e.response;
     }
   }
-  
+
   /// [userId] : [String] which is The id of the user.
-  /// 
+  ///
   /// get the user data with userId
   /// This function calls the function [DioHelper.getData] which makes the request to the server.
   /// Returns the response data from the server.

@@ -69,6 +69,7 @@ const forgetUsernameAndroid = '/forgetUsernameAndroid';
 const interesetesScreen = '/interesetesScreen';
 const chooseGenderScreen = '/chooseGenderScreen';
 const chooseProfileImgScreen = '/chooseProfileImgScreen';
+const gitHubClientID = '278e3e6f443383001225';
 //---------------------------------------
 // ------subreddit page route---------
 //---------------------------------------

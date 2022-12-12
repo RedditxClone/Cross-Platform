@@ -188,6 +188,11 @@ class _SignupWebState extends State<SignupWeb> {
       //     }
       //   });
       // }
+      launchUrl(
+        Uri.parse(
+            'https://github.com/login/oauth/authorize?client_id=$gitHubClientID'),
+        webOnlyWindowName: '_self',
+      );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

@@ -39,12 +39,14 @@ class AuthRepo {
   /// This function calls the function [AuthWebService.login] which makes the request to the server.
   /// RETURNS [User] : the user data.
   Future<Map<String, dynamic>> login(String password, String username) async {
-    Response res = await authWebService.login(password, username);
-    if (res.statusCode == 201) {
-      user = res.data;
-    } else {
-      user = {};
-    }
+    await authWebService.login(password, username).then((value) {
+      if (value.statusCode == 201) {
+        user = value.data;
+      } else {
+        debugPrint("status code is ${value.statusCode}");
+        user = {};
+      }
+    });
     return user;
   }
 
