@@ -49,16 +49,9 @@ class SafetySettingsCubit extends Cubit<SafetySettingsState> {
   /// then if exist it calls the function [SafetySettingsRepository.blockUser] to block this user.
   void blockUser(SafetySettings settings, String username) async {
     if (isClosed) return;
-    await settingsRepository
-        .checkUsernameAvailable(username)
-        .then((usernameExist) {
-      if (usernameExist == 200) {
-        // if this username exist
-        settingsRepository.blockUser(username).then((val) {
-          settings.blocked.add(username); // append to the list
-          emit(BlockListUpdated(settings, username));
-        });
-      }
+    settingsRepository.blockUser(username).then((val) {
+      settings.blocked.add(username); // append to the list
+      emit(BlockListUpdated(settings, username));
     });
   }
 
@@ -70,12 +63,9 @@ class SafetySettingsCubit extends Cubit<SafetySettingsState> {
   /// This function calls the function [SafetySettingsRepository.unBlockUser] to update the safety settings.
   void unBlockUser(SafetySettings settings, String username) {
     if (isClosed) return;
-    settingsRepository.unBlockUser(username).then((usernameExist) {
-      if (usernameExist == 200) {
-        // if user name exist
-        settings.blocked.remove(username); // remove from list
-        emit(BlockListUpdated(settings, username));
-      }
+    settingsRepository.unBlockUser(username).then((value) {
+      settings.blocked.remove(username); // remove from list
+      emit(BlockListUpdated(settings, username));
     });
   }
 }

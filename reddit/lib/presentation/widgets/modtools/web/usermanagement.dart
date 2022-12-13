@@ -13,13 +13,6 @@ class UserManagement extends StatefulWidget {
 }
 
 class _UserManagementState extends State<UserManagement> {
-  User otherUser = User.fromJson({
-    "userId": '1',
-    "username": 'bemoi_erian',
-    "displayName": 'Bemoi_01  ',
-    "email": 'bemoi@hotmail.com',
-    "profilePic": '',
-  });
   String addButtonName = '';
 
   Widget emptyUserManagement(context) {
@@ -55,7 +48,8 @@ class _UserManagementState extends State<UserManagement> {
           child: InkWell(
             hoverColor: defaultThirdColor,
             onTap: () => Navigator.pushNamed(context, otherProfilePageRoute,
-                arguments: otherUser), // TODO : Navigate to other user profile
+                arguments:
+                    "638f9e7d31186b7fd21bae89"), // TODO : Navigate to other user profile
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               child: Row(children: [
