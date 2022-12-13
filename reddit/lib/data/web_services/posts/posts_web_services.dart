@@ -23,7 +23,7 @@ class PostsWebServices {
 
   /// `Returns` home page posts.
   /// This function performs `GET` request to the endpoint ``.
-  Future<dynamic> getPosts() async {
+  Future<dynamic> getTimelinePosts() async {
     try {
       Response response = await dio.get('post/timeline');
       debugPrint("posts in web services ${response.data}");
@@ -31,7 +31,21 @@ class PostsWebServices {
       return response.data;
     } catch (e) {
       print(e);
-      return "Error in posts web services";
+      return "";
+    }
+  }
+
+  /// `Returns` home page posts.
+  /// This function performs `GET` request to the endpoint ``.
+  Future<dynamic> getProfilePosts() async {
+    try {
+      Response response = await dio.get('post/me');
+      debugPrint("posts in web services ${response.data}");
+      debugPrint("posts status code in web services ${response.statusCode}");
+      return response.data;
+    } catch (e) {
+      print(e);
+      return "";
     }
   }
 }

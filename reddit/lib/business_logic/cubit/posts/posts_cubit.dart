@@ -16,11 +16,11 @@ class PostsCubit extends Cubit<PostsState> {
   /// state [PostsLoaded] when account settings is loaded successfully.
   /// This function is called inside the initState of the account settings screens.
   /// This function calls the function [AccountSettingsRepository.getAccountSettings] to get the user's account settings.
-  void getPosts() {
+  void getTimelinePosts() {
     // To avoid state error when you leave the settings page
     if (isClosed) return;
     emit(PostsLoading());
-    postsRepository.getPosts().then((posts) {
+    postsRepository.getTimelinePosts().then((posts) {
       // start the state existing in characters_state
       // here you sent characters list to characters loaded state
       emit(PostsLoaded(posts));

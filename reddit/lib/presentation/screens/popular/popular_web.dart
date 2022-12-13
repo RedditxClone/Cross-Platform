@@ -24,7 +24,7 @@ class _PopularWebState extends State<PopularWeb> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<PostsCubit>(context).getPosts();
+    BlocProvider.of<PostsCubit>(context).getTimelinePosts();
     isLoggedIn = UserData.user != null;
   }
 
@@ -38,7 +38,7 @@ class _PopularWebState extends State<PopularWeb> {
             automaticallyImplyLeading: false,
             backgroundColor: defaultAppbarBackgroundColor,
             title: isLoggedIn
-                ? const AppBarWebLoggedIn( screen: 'Popular')
+                ? const AppBarWebLoggedIn(screen: 'Popular')
                 : const AppBarWebNotLoggedIn(screen: 'Popular')),
         body: Container(
           color: defaultWebBackgroundColor,

@@ -10,10 +10,12 @@ class PostsRepository {
 
   /// Returns [List] of [PostsModel] object that contains the communities you are currently joined in
   /// after getting it from [PostsWebServices] and mapping it to the model list.
-  Future<List<PostsModel>> getPosts() async {
-    final posts = await postsDrawerWebServices.getPosts();
+  Future<List<PostsModel>> getTimelinePosts() async {
+    final posts = await postsDrawerWebServices.getTimelinePosts();
     debugPrint("posts from repo:");
     debugPrint("$posts");
-    return List<PostsModel>.from(posts.map((i) => PostsModel.fromJson(i)));
+    return posts == ""
+        ? []
+        : List<PostsModel>.from(posts.map((i) => PostsModel.fromJson(i)));
   }
 }
