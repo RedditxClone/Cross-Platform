@@ -12,8 +12,8 @@ class PostsRepository {
   /// after getting it from [PostsWebServices] and mapping it to the model list.
   Future<List<PostsModel>> getPosts() async {
     final posts = await postsDrawerWebServices.getPosts();
-    // debugPrint("posts from repo:");
-    // debugPrint("$posts");
+    debugPrint("posts from repo:");
+    debugPrint("$posts");
     return List<PostsModel>.from(posts.map((i) => PostsModel.fromJson(i)));
   }
 }

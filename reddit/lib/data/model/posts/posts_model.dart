@@ -39,14 +39,14 @@ class PostsModel {
     userId = json['userId'];
     nsfw = json['nsfw'];
     spoiler = json['spoiler'];
-    flair = json['flair'].cast<String>();
+    // flair = json['flair'].cast<String>();
     images = json['images'].cast<String>();
     commentCount = json['commentCount'];
     title = json['title'];
     publishedDate = json['publishedDate'];
     postId = json['postId'];
-    subreddit = json['subreddit'] != null
-        ? new PostSubreddit.fromJson(json['subreddit'])
+    subreddit = json['subredditInfo'] != null
+        ? new PostSubreddit.fromJson(json['subredditInfo'])
         : null;
     user = json['user'] != null ? new PostUser.fromJson(json['user']) : null;
     voteType = json['voteType'];

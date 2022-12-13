@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/data/model/posts/posts_model.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 class PostsWeb extends StatelessWidget {
   late Responsive responsive;
+  CarouselController buttonCarouselController = CarouselController();
+
   PostsModel? postsModel;
   PostsWeb({this.postsModel, Key? key}) : super(key: key);
   @override
@@ -173,8 +176,56 @@ class PostsWeb extends StatelessWidget {
                       : postsModel!.images == null
                           ? null
                           : postsModel!.images!.isNotEmpty
-                              ? Image(
-                                  image: NetworkImage(postsModel!.images![0]))
+                              ? Row(
+                                  children: [
+                                    postsModel!.images!.length > 1
+                                        ? IconButton(
+                                            onPressed: () =>
+                                                buttonCarouselController
+                                                    .previousPage(
+                                                        duration:
+                                                            const Duration(
+                                                                milliseconds:
+                                                                    300),
+                                                        curve: Curves.linear),
+                                            icon: const Icon(
+                                                Icons.arrow_circle_left),
+                                          )
+                                        : Container(),
+                                    Expanded(
+                                      flex: 10,
+                                      child: CarouselSlider(
+                                        items: postsModel!.images!
+                                            .map((e) => Image.network(e))
+                                            .toList(),
+                                        carouselController:
+                                            buttonCarouselController,
+                                        options: CarouselOptions(
+                                          autoPlay: false,
+                                          enlargeCenterPage: true,
+                                          viewportFraction: 1,
+                                          aspectRatio: 5 / 4,
+                                          enableInfiniteScroll: false,
+                                          // initialPage: 2,
+                                        ),
+                                      ),
+                                    ),
+                                    postsModel!.images!.length > 1
+                                        ? IconButton(
+                                            onPressed: () =>
+                                                buttonCarouselController
+                                                    .nextPage(
+                                                        duration:
+                                                            const Duration(
+                                                                milliseconds:
+                                                                    300),
+                                                        curve: Curves.linear),
+                                            icon: const Icon(
+                                                Icons.arrow_circle_right),
+                                          )
+                                        : Container(),
+                                  ],
+                                )
                               : null,
                 ),
                 Padding(
