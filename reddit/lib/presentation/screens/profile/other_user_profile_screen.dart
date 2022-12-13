@@ -233,6 +233,63 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
     );
   }
 
+  void _moreOptionsBottomSheet(BuildContext ctx) {
+    showModalBottomSheet(
+        context: ctx,
+        builder: (_) {
+          return Container(
+            height: 170,
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              children: [
+                TextButton(
+                    onPressed: () {},
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: const [
+                        Icon(
+                          Icons.person_off_outlined,
+                          color: Colors.white,
+                        ),
+                        SizedBox(width: 20),
+                        Text("Block accout",
+                            style: TextStyle(fontSize: 20, color: Colors.white))
+                      ],
+                    )),
+                TextButton(
+                    onPressed: () {},
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: const [
+                        Icon(
+                          Icons.mail_outline,
+                          color: Colors.white,
+                        ),
+                        SizedBox(width: 20),
+                        Text("Send a message",
+                            style: TextStyle(fontSize: 20, color: Colors.white))
+                      ],
+                    )),
+                ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.grey,
+                      backgroundColor: const Color.fromRGBO(90, 90, 90, 100),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0)),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        "Close",
+                        style: TextStyle(fontSize: 15, color: Colors.grey),
+                      ),
+                    )),
+              ],
+            ),
+          );
+        });
+  }
+
   Widget tabBar() {
     return Scaffold(
         appBar: AppBar(
@@ -279,7 +336,8 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                 onPressed: () {},
                 icon: const Icon(Icons.file_upload_outlined, size: 30)),
             IconButton(
-                onPressed: () {}, icon: const Icon(Icons.more_horiz, size: 30)),
+                onPressed: () => _moreOptionsBottomSheet(context),
+                icon: const Icon(Icons.more_horiz, size: 30)),
           ],
         ),
       ],

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:reddit/business_logic/cubit/user_profile/user_profile_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
+import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
@@ -376,8 +377,38 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
               ),
             ],
           ),
+          Container(
+            padding: const EdgeInsets.only(left: 5),
+            height: 30,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _moreOptions('Send Message',
+                    () => Navigator.pushNamed(context, sendMessageRoute)),
+              ],
+            ),
+          )
         ],
       ),
+    );
+  }
+
+  Widget _moreOptions(String title, Function func) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        TextButton(
+            onPressed: () {
+              func();
+            },
+            child: Text(
+              title,
+              style: const TextStyle(
+                  fontSize: 13,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold),
+            )),
+      ],
     );
   }
 
