@@ -172,8 +172,12 @@ class AppRouter {
 
       case profilePageRoute:
         return MaterialPageRoute(
-            builder: (_) =>
-                kIsWeb ? const ProfilePageWeb() : const ProfileScreen());
+            builder: (_) => kIsWeb
+                ? const ProfilePageWeb()
+                : BlocProvider.value(
+                    value: settingsCubit,
+                    child: const ProfileScreen(),
+                  ));
 
       case otherProfilePageRoute:
         final userID = settings.arguments as String;

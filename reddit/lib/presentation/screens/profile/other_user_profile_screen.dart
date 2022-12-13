@@ -143,7 +143,6 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [Colors.redAccent, Colors.black]))),
-        // add social links
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
@@ -222,11 +221,11 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
               Text('u/${otherUser!.username} . 1 karma . 3 Oct 2022',
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 13)),
-              const SizedBox(height: 10),
-              const Text(
-                  'about this user bla bla bla bla...', // TODO : replace this text with the about of the user
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-              const SizedBox(height: 40),
+              const SizedBox(height: 5),
+              Text(otherUser!.about!,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 14)),
+              const SizedBox(height: 60),
             ],
           ),
         )
@@ -317,7 +316,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
   Widget _buildAppBar() {
     return SliverAppBar(
       stretch: true,
-      expandedHeight: 350,
+      expandedHeight: 320,
       title: _upperAppBar(),
       elevation: 0,
       flexibleSpace: FlexibleSpaceBar(

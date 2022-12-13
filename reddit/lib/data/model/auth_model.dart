@@ -20,6 +20,7 @@ class User {
       profilePic; //in case of google or facebook user it will be taken from the google or facebook and in case of reddit sign in it will be null
   late String token;
   late String? displayName;
+  late String? about;
   late Map<String, dynamic> interests;
   late bool cakeDay;
   User.fromJson(Map<String, dynamic> json) {
@@ -36,7 +37,7 @@ class User {
     type = json['authType'];
     // gender = json['gender'];
     displayName = json['displayName'];
-    // about = json['about'];
+    about = json['about'];
     cakeDay = json['cakeDay'];
   }
   Map<String, dynamic> toJson() {

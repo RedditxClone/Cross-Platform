@@ -21,8 +21,10 @@ class SettingsCubit extends Cubit<SettingsState> {
     if (isClosed) return;
     settingsRepository.getUserSettings().then((userSettings) {
       // get user profile settings
-      emit(SettingsAvailable(userSettings));
       settings = userSettings;
+      UserData.user!.displayName = settings!.displayName;
+      UserData.profileSettings = settings;
+      emit(SettingsAvailable(userSettings));
     });
   }
 
@@ -98,9 +100,25 @@ class SettingsCubit extends Cubit<SettingsState> {
   void updateSettings(ProfileSettings settings, Map changed) {
     if (isClosed) return;
     settingsRepository.updatePrefs(changed).then((val) {
-      UserData.user!.displayName = settings.displayName;
-      debugPrint("settings updated : $val");
-      emit(SettingsChanged(settings));
+      print(val);
+      if (val == 200) {
+        settings.displayName =
+            changed['displayName'] != null && changed['displayName'] != ''
+                ? changed['displayName']
+                : settings.displayName;
+        settings.about = changed['about'] != null && changed['about'] != ''
+            ? changed['about']
+            : settings.about;
+        settings.activeInCommunitiesVisibility =
+            changed['activeInCommunitiesVisibility'] ??
+                settings.activeInCommunitiesVisibility;
+        settings.contentVisibility =
+            changed['contentVisibility'] ?? settings.contentVisibility;
+        UserData.user!.displayName = settings.displayName;
+        debugPrint("settings updated : $val");
+        UserData.profileSettings = settings;
+        emit(SettingsChanged(settings));
+      }
     });
   }
 }
