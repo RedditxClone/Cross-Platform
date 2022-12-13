@@ -1,3 +1,5 @@
+import 'package:reddit/constants/strings.dart';
+
 /// # Settings data model
 class ProfileSettings {
   late String profile;
@@ -21,8 +23,9 @@ class ProfileSettings {
 
   /// ### Transform the data from json to Settings Class object
   ProfileSettings.fromjson(Map<String, dynamic> json) {
-    profile = json['profilephoto'] ?? '';
-    cover = json['coverphoto'] ?? '';
+    profile =
+        json['profilePhoto'] == '' ? '' : imagesUrl + json['profilePhoto'];
+    cover = json['coverPhoto'] == '' ? '' : imagesUrl + json['coverPhoto'];
     displayName = json['displayName'] ?? '';
     about = json['about'] ?? '';
     nsfw = json['nsfw'];

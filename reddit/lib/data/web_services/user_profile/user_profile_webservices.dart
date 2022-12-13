@@ -1,12 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:reddit/constants/strings.dart';
+import 'package:reddit/data/model/auth_model.dart';
 
 class UserProfileWebServices {
   bool useMockServer = false;
   String mockUrl =
       "https://a8eda59d-d8f3-4ef2-9581-29e6473824d9.mock.pstmn.io/";
-  String token =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzOGYxYWJkYjNiNWVkYjBhYThkNDZhYSIsImlhdCI6MTY3MDM1NjgyMywiZXhwIjoxNjcxMjIwODIzfQ.ipNuYQi1Lnq6Vz9crxrri6KRvvcZs-srd4D78aE7VF8';
+
   late Dio dio;
   UserProfileWebServices() {
     BaseOptions options = BaseOptions(
@@ -19,6 +19,24 @@ class UserProfileWebServices {
   }
 
   /// [userId] : the id of user to be followed
+  /// `Returns` : [User] info
+  Future<dynamic> getUserInfo(String userId) async {
+    try {
+      Response response = await dio.get('user/$userId',
+          options: Options(
+            headers: {"Authorization": "Bearer  ${UserData.user!.token}"},
+          ));
+      print(response.statusCode);
+      return response.data;
+    } catch (e) {
+      if (e is DioError) {
+        print(e);
+        return "";
+      }
+    }
+  }
+
+  /// [userId] : the id of user to be followed
   /// `Returns` [statusCode] of the request:
   /// - 201: you have followed the user successfully
   /// - 400: either you are following the user or there is a block between you and the user
@@ -27,7 +45,7 @@ class UserProfileWebServices {
     try {
       Response response = await dio.post('user/$userId/follow',
           options: Options(
-            headers: {"Authorization": "Bearer $token"},
+            headers: {"Authorization": "Bearer  ${UserData.user!.token}"},
           ));
       print(response.statusCode);
       return response.statusCode;
@@ -48,7 +66,7 @@ class UserProfileWebServices {
     try {
       Response response = await dio.post('user/$userId/unfollow',
           options: Options(
-            headers: {"Authorization": "Bearer $token"},
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
       print(response.statusCode);
       return response.statusCode;

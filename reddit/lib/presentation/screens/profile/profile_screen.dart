@@ -52,12 +52,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const CircleAvatar(
+                  CircleAvatar(
                       radius: 50,
-                      child: Icon(
-                        Icons.person,
-                        size: 50,
-                      )),
+                      child: UserData.user!.profilePic == ''
+                          ? const Icon(
+                              Icons.person,
+                              size: 50,
+                            )
+                          : Image.network(
+                              UserData.user!.profilePic!,
+                              fit: BoxFit.cover,
+                            )),
                   SizedBox(
                     width: 60,
                     child: OutlinedButton(
@@ -78,7 +83,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
               const SizedBox(height: 20),
-              Text(UserData.user!.displayName??"",
+              Text(
+                  UserData.user!.displayName == ''
+                      ? UserData.user!.username
+                      : UserData.user!.displayName!,
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 30)),
               const SizedBox(height: 10),
@@ -138,14 +146,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Row(
           children: [
             const SizedBox(width: 30),
-            const CircleAvatar(
+            CircleAvatar(
                 radius: 20,
-                child: Icon(
-                  Icons.person,
-                  size: 20,
-                )),
+                child: UserData.user!.profilePic == ''
+                    ? const Icon(
+                        Icons.person,
+                        size: 20,
+                      )
+                    : Image.network(
+                        UserData.user!.profilePic!,
+                        fit: BoxFit.cover,
+                      )),
             const SizedBox(width: 10),
-            Text(UserData.user!.displayName??""),
+            Text(
+              UserData.user!.displayName == ''
+                  ? UserData.user!.username
+                  : UserData.user!.displayName!,
+            ),
           ],
         ),
         Row(

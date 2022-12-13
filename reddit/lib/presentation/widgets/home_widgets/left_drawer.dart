@@ -212,7 +212,11 @@ class _LeftDrawerState extends State<LeftDrawer> {
                         ..._following!.map(
                           (e) {
                             return ListTile(
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.pushNamed(
+                                    context, otherProfilePageRoute,
+                                    arguments: "638f9e7d31186b7fd21bae89");
+                              }, // TODO : Navigate to user profile
                               leading: CircleAvatar(
                                 radius: 15.0,
                                 backgroundImage: NetworkImage(e.image!),

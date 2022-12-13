@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reddit/constants/strings.dart';
 import 'package:reddit/data/model/safety_user_settings.dart';
 import 'package:reddit/data/model/user_settings.dart';
 import '../../helper/utils/shared_keys.dart';
@@ -25,7 +26,8 @@ class User {
     userId = json['_id'];
     username = json['username'];
     email = json['email'];
-    profilePic = json['profilePhoto'];
+    profilePic =
+        json['profilePhoto'] == '' ? '' : imagesUrl + json['profilePhoto'];
     if (UserData.isLogged()) {
       token = PreferenceUtils.getString(SharedPrefKeys.token);
     } else {

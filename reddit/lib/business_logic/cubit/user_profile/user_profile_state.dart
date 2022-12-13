@@ -5,6 +5,11 @@ abstract class UserProfileState {}
 
 class UserProfileInitial extends UserProfileState {}
 
+class UserInfoAvailable extends UserProfileState {
+  User userInfo;
+  UserInfoAvailable(this.userInfo);
+}
+
 class FollowOtherUserSuccess extends UserProfileState {}
 
 class FollowOtherUserNotSuccess extends UserProfileState {}
