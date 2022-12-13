@@ -20,117 +20,70 @@ void main() async {
   late MockDiscoverPageWebService mockDiscoverPageWebService;
   late DiscoverPageRepository discoverPageRepository;
   late DiscoverPageCubit discoverPageCubit;
-  const List<String> settingsListFromWebServices = [
-    '''{
-        "postId": "1",
-        "imageUrl": "https://preview.redd.it/0xo9bo1t9ct91.png?width=622&format=png&auto=webp&s=bc3dea6ce391d716c891030c919ddc004e3c6644",
-        "subredditName": "Post 1"
-    }''',
-    '''{
-        "postId": "2",
-        "imageUrl": "https://preview.redd.it/0xo9bo1t9ct91.png?width=622&format=png&auto=webp&s=bc3dea6ce391d716c891030c919ddc004e3c6644",
-        "subredditName": "Post 2"
-    }''',
-    '''{
-        "postId": "3",
-        "imageUrl": "https://preview.redd.it/0xo9bo1t9ct91.png?width=622&format=png&auto=webp&s=bc3dea6ce391d716c891030c919ddc004e3c6644",
-        "subredditName": "Post 3"
-    }''',
-    '''{
-        "postId": "4",
-        "imageUrl": "https://preview.redd.it/0xo9bo1t9ct91.png?width=622&format=png&auto=webp&s=bc3dea6ce391d716c891030c919ddc004e3c6644",
-        "subredditName": "Post 4"
-    }''',
-    '''{
-        "postId": "5",
-        "imageUrl": "https://preview.redd.it/0xo9bo1t9ct91.png?width=622&format=png&auto=webp&s=bc3dea6ce391d716c891030c919ddc004e3c6644",
-        "subredditName": "Post 5"
-    }''',
-    '''{
-        "postId": "6",
-        "imageUrl": "https://preview.redd.it/0xo9bo1t9ct91.png?width=622&format=png&auto=webp&s=bc3dea6ce391d716c891030c919ddc004e3c6644",
-        "subredditName": "Post 6"
-    }''',
-    '''{
-        "postId": "7",
-        "imageUrl": "https://preview.redd.it/0xo9bo1t9ct91.png?width=622&format=png&auto=webp&s=bc3dea6ce391d716c891030c919ddc004e3c6644",
-        "subredditName": "Post 7"
-    }''',
-    '''{
-        "postId": "8",
-        "imageUrl": "https://preview.redd.it/0xo9bo1t9ct91.png?width=622&format=png&auto=webp&s=bc3dea6ce391d716c891030c919ddc004e3c6644",
-        "subredditName": "Post 8"
-    }''',
-    '''{
-        "postId": "9",
-        "imageUrl": "https://preview.redd.it/0xo9bo1t9ct91.png?width=622&format=png&auto=webp&s=bc3dea6ce391d716c891030c919ddc004e3c6644",
-        "subredditName": "Post 9"
-    }''',
-    '''{
-        "postId": "10",
-        "imageUrl": "https://preview.redd.it/0xo9bo1t9ct91.png?width=622&format=png&auto=webp&s=bc3dea6ce391d716c891030c919ddc004e3c6644",
-        "subredditName": "Post 10"
-    }'''
-  ];
-  const String settingsFromWebServices = '''[
+  final List<Map<String, dynamic>> postsListFromWebServices = [
     {
-        "postId": "1",
-        "imageUrl": "https://preview.redd.it/0xo9bo1t9ct91.png?width=622&format=png&auto=webp&s=bc3dea6ce391d716c891030c919ddc004e3c6644",
-        "subredditName": "Post 1"
+      'postId': '1',
+      'imageUrl':
+          'https://preview.redd.it/0xo9bo1t9ct91.png?width=622&format=png&auto=webp&s=bc3dea6ce391d716c891030c919ddc004e3c6644',
+      'subredditName': 'Post 1'
     },
     {
-        "postId": "2",
-        "imageUrl": "https://preview.redd.it/0xo9bo1t9ct91.png?width=622&format=png&auto=webp&s=bc3dea6ce391d716c891030c919ddc004e3c6644",
-        "subredditName": "Post 2"
+      'postId': '2',
+      'imageUrl':
+          'https://preview.redd.it/0xo9bo1t9ct91.png?width=622&format=png&auto=webp&s=bc3dea6ce391d716c891030c919ddc004e3c6644',
+      'subredditName': 'Post 2'
     },
     {
-        "postId": "3",
-        "imageUrl": "https://preview.redd.it/0xo9bo1t9ct91.png?width=622&format=png&auto=webp&s=bc3dea6ce391d716c891030c919ddc004e3c6644",
-        "subredditName": "Post 3"
+      'postId': '3',
+      'imageUrl':
+          'https://preview.redd.it/0xo9bo1t9ct91.png?width=622&format=png&auto=webp&s=bc3dea6ce391d716c891030c919ddc004e3c6644',
+      'subredditName': 'Post 3'
     },
     {
-        "postId": "4",
-        "imageUrl": "https://preview.redd.it/0xo9bo1t9ct91.png?width=622&format=png&auto=webp&s=bc3dea6ce391d716c891030c919ddc004e3c6644",
-        "subredditName": "Post 4"
+      'postId': '4',
+      'imageUrl':
+          'https://preview.redd.it/0xo9bo1t9ct91.png?width=622&format=png&auto=webp&s=bc3dea6ce391d716c891030c919ddc004e3c6644',
+      'subredditName': 'Post 4'
     },
     {
-        "postId": "5",
-        "imageUrl": "https://preview.redd.it/0xo9bo1t9ct91.png?width=622&format=png&auto=webp&s=bc3dea6ce391d716c891030c919ddc004e3c6644",
-        "subredditName": "Post 5"
+      'postId': '5',
+      'imageUrl':
+          'https://preview.redd.it/0xo9bo1t9ct91.png?width=622&format=png&auto=webp&s=bc3dea6ce391d716c891030c919ddc004e3c6644',
+      'subredditName': 'Post 5'
     },
     {
-        "postId": "6",
-        "imageUrl": "https://preview.redd.it/0xo9bo1t9ct91.png?width=622&format=png&auto=webp&s=bc3dea6ce391d716c891030c919ddc004e3c6644",
-        "subredditName": "Post 6"
+      'postId': '6',
+      'imageUrl':
+          'https://preview.redd.it/0xo9bo1t9ct91.png?width=622&format=png&auto=webp&s=bc3dea6ce391d716c891030c919ddc004e3c6644',
+      'subredditName': 'Post 6'
     },
     {
-        "postId": "7",
-        "imageUrl": "https://preview.redd.it/0xo9bo1t9ct91.png?width=622&format=png&auto=webp&s=bc3dea6ce391d716c891030c919ddc004e3c6644",
-        "subredditName": "Post 7"
+      'postId': '7',
+      'imageUrl':
+          'https://preview.redd.it/0xo9bo1t9ct91.png?width=622&format=png&auto=webp&s=bc3dea6ce391d716c891030c919ddc004e3c6644',
+      'subredditName': 'Post 7'
     },
     {
-        "postId": "8",
-        "imageUrl": "https://preview.redd.it/0xo9bo1t9ct91.png?width=622&format=png&auto=webp&s=bc3dea6ce391d716c891030c919ddc004e3c6644",
-        "subredditName": "Post 8"
+      'postId': '8',
+      'imageUrl':
+          'https://preview.redd.it/0xo9bo1t9ct91.png?width=622&format=png&auto=webp&s=bc3dea6ce391d716c891030c919ddc004e3c6644',
+      'subredditName': 'Post 8'
     },
     {
-        "postId": "9",
-        "imageUrl": "https://preview.redd.it/0xo9bo1t9ct91.png?width=622&format=png&auto=webp&s=bc3dea6ce391d716c891030c919ddc004e3c6644",
-        "subredditName": "Post 9"
+      'postId': '9',
+      'imageUrl':
+          'https://preview.redd.it/0xo9bo1t9ct91.png?width=622&format=png&auto=webp&s=bc3dea6ce391d716c891030c919ddc004e3c6644',
+      'subredditName': 'Post 9'
     },
     {
-        "postId": "10",
-        "imageUrl": "https://preview.redd.it/0xo9bo1t9ct91.png?width=622&format=png&auto=webp&s=bc3dea6ce391d716c891030c919ddc004e3c6644",
-        "subredditName": "Post 10"
+      'postId': '10',
+      'imageUrl':
+          'https://preview.redd.it/0xo9bo1t9ct91.png?width=622&format=png&auto=webp&s=bc3dea6ce391d716c891030c919ddc004e3c6644',
+      'subredditName': 'Post 10'
     }
-]''';
+  ];
 
-  final List<DiscoverPageModel> settingsFromRepository = [
-    DiscoverPageModel(
-        postId: "0",
-        imageUrl:
-            "https://preview.redd.it/0xo9bo1t9ct91.png?width=622&format=png&auto=webp&s=bc3dea6ce391d716c891030c919ddc004e3c6644",
-        subredditName: "Post 0"),
+  final List<DiscoverPageModel> postsListFromRepository = [
     DiscoverPageModel(
         postId: "1",
         imageUrl:
@@ -175,7 +128,12 @@ void main() async {
         postId: "9",
         imageUrl:
             "https://preview.redd.it/0xo9bo1t9ct91.png?width=622&format=png&auto=webp&s=bc3dea6ce391d716c891030c919ddc004e3c6644",
-        subredditName: "Post 9")
+        subredditName: "Post 9"),
+    DiscoverPageModel(
+        postId: "10",
+        imageUrl:
+            "https://preview.redd.it/0xo9bo1t9ct91.png?width=622&format=png&auto=webp&s=bc3dea6ce391d716c891030c919ddc004e3c6644",
+        subredditName: "Post 10")
   ];
 
   group("State test", () {
@@ -192,7 +150,7 @@ void main() async {
       'Random Posts loaded state is emitted correctly after getting Random Posts data from server',
       setUp: () {
         when(() => mockDiscoverPageWebService.getAllRandomPosts()).thenAnswer(
-          (_) async => settingsFromWebServices,
+          (_) async => postsListFromWebServices,
         );
       },
       build: () {
@@ -204,55 +162,67 @@ void main() async {
     // Test if mapping from Json to model is correct
     group('Model test', () {
       test('Discover Page Model is generated correctly', () {
+        List<DiscoverPageModel> postsListFromModelling =
+            postsListFromWebServices
+                .map((randomPost) => DiscoverPageModel.fromJson(randomPost))
+                .toList();
+        // for (var i = 0; i < 10; i++) {
+        //   DiscoverPageModel postFromRepository = postsListFromRepository[i];
+        //   String postFromRepository_postId = postFromRepository.postId;
+        //   String postFromRepository_imageUrl = postFromRepository.imageUrl;
+        //   String postFromRepository_subredditName =
+        //       postFromRepository.subredditName;
+        //   DiscoverPageModel postFromModelling = postsListFromModelling[i];
+        //   String postFromModelling_postId = postFromModelling.postId;
+        //   String postFromModelling_imageUrl = postFromModelling.imageUrl;
+        //   String postFromModelling_subredditName =
+        //       postFromModelling.subredditName;
+        //   print("Random Post $i from repo:");
+        //   print(
+        //       "$postFromRepository , $postFromRepository_postId , $postFromRepository_imageUrl , $postFromRepository_subredditName");
+        //   print("Random Post $i from Model:");
+        //   print(
+        //       "$postFromModelling , $postFromModelling_postId , $postFromModelling_imageUrl , $postFromModelling_subredditName");
+        // }
         expect(
-          DiscoverPageModel.fromJson(
-              jsonDecode(settingsListFromWebServices[0])),
-          settingsFromRepository[0],
+          postsListFromModelling[0],
+          postsListFromRepository[0],
         );
         expect(
-          DiscoverPageModel.fromJson(
-              jsonDecode(settingsListFromWebServices[1])),
-          settingsFromRepository[1],
+          postsListFromModelling[1],
+          postsListFromRepository[1],
         );
         expect(
-          DiscoverPageModel.fromJson(
-              jsonDecode(settingsListFromWebServices[2])),
-          settingsFromRepository[2],
+          postsListFromModelling[2],
+          postsListFromRepository[2],
         );
         expect(
-          DiscoverPageModel.fromJson(
-              jsonDecode(settingsListFromWebServices[3])),
-          settingsFromRepository[3],
+          postsListFromModelling[3],
+          postsListFromRepository[3],
         );
         expect(
-          DiscoverPageModel.fromJson(
-              jsonDecode(settingsListFromWebServices[4])),
-          settingsFromRepository[4],
+          postsListFromModelling[4],
+          postsListFromRepository[4],
         );
         expect(
-          DiscoverPageModel.fromJson(
-              jsonDecode(settingsListFromWebServices[5])),
-          settingsFromRepository[5],
+          postsListFromModelling[5],
+          postsListFromRepository[5],
         );
         expect(
-          DiscoverPageModel.fromJson(
-              jsonDecode(settingsListFromWebServices[6])),
-          settingsFromRepository[6],
+          postsListFromModelling[6],
+          postsListFromRepository[6],
         );
         expect(
-          DiscoverPageModel.fromJson(
-              jsonDecode(settingsListFromWebServices[7])),
-          settingsFromRepository[7],
+          postsListFromModelling[7],
+          postsListFromRepository[7],
         );
         expect(
-          DiscoverPageModel.fromJson(
-              jsonDecode(settingsListFromWebServices[8])),
-          settingsFromRepository[8],
+          postsListFromModelling[8],
+          postsListFromRepository[8],
         );
         expect(
-          DiscoverPageModel.fromJson(
-              jsonDecode(settingsListFromWebServices[9])),
-          settingsFromRepository[9],
+          postsListFromModelling[9],
+          postsListFromRepository[9],
         );
       });
     });
