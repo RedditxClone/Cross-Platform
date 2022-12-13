@@ -2,6 +2,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reddit/business_logic/cubit/end_drawer/end_drawer_cubit.dart';
+import 'package:reddit/business_logic/cubit/posts/posts_cubit.dart';
 import 'package:reddit/data/repository/end_drawer/end_drawer_repository.dart';
 import 'package:reddit/data/repository/left_drawer/left_drawer_repository.dart';
 import 'package:reddit/data/web_services/left_drawer/left_drawer_web_services.dart';
@@ -94,10 +95,12 @@ class _HomePageState extends State<HomePage> {
                       debugPrint("user is nottttttttttttttttttttttttt null");
                       UserData.initUser(state.userDataJson);
                       debugPrint("user is ${UserData.isLogged()}");
+                      BlocProvider.of<PostsCubit>(context).getTimelinePosts();
                       return const Home();
                     } else if (state is GetTheUserData &&
                         state.userDataJson != {}) {
                       UserData.initUser(state.userDataJson);
+                      BlocProvider.of<PostsCubit>(context).getTimelinePosts();
                       return const Home();
                     } else if (state is SignedIn && state.userDataJson != {}) {
                       return const Home();

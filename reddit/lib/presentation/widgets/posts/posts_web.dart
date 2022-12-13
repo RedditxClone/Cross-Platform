@@ -178,7 +178,8 @@ class PostsWeb extends StatelessWidget {
                           : postsModel!.images!.isNotEmpty
                               ? Row(
                                   children: [
-                                    postsModel!.images!.length > 1
+                                    postsModel!.images!.length > 1 &&
+                                            !responsive.isSmallSizedScreen()
                                         ? IconButton(
                                             onPressed: () =>
                                                 buttonCarouselController
@@ -210,7 +211,8 @@ class PostsWeb extends StatelessWidget {
                                         ),
                                       ),
                                     ),
-                                    postsModel!.images!.length > 1
+                                    postsModel!.images!.length > 1 &&
+                                            !responsive.isSmallSizedScreen()
                                         ? IconButton(
                                             onPressed: () =>
                                                 buttonCarouselController
@@ -237,49 +239,54 @@ class PostsWeb extends StatelessWidget {
                         // ---------VOTE BUTTONS SMALL SCREEN----------------
                         // --------------------------------------------------
                         responsive.isSmallSizedScreen()
-                            ? Row(children: [
-                                IconButton(
-                                  onPressed: () {
-                                    //upvote with postID
-                                  },
-                                  icon: Icon(Icons.arrow_upward,
-                                      color: postsModel == null
-                                          ? Colors.grey
-                                          : postsModel!.voteType == null
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                    IconButton(
+                                      onPressed: () {
+                                        //upvote with postID
+                                      },
+                                      icon: Icon(Icons.arrow_upward,
+                                          color: postsModel == null
                                               ? Colors.grey
-                                              : postsModel!.voteType! == "up"
-                                                  ? Colors.red
-                                                  : Colors.grey),
-                                ),
-                                Text(
-                                    "${postsModel == null ? 0 : postsModel!.votesCount ?? 0}",
-                                    style: TextStyle(
-                                        fontSize: 10,
-                                        color: postsModel == null
-                                            ? Colors.grey
-                                            : postsModel!.voteType == null
+                                              : postsModel!.voteType == null
+                                                  ? Colors.grey
+                                                  : postsModel!.voteType! ==
+                                                          "up"
+                                                      ? Colors.red
+                                                      : Colors.grey),
+                                    ),
+                                    Text(
+                                        "${postsModel == null ? 0 : postsModel!.votesCount ?? 0}",
+                                        style: TextStyle(
+                                            fontSize: 10,
+                                            color: postsModel == null
                                                 ? Colors.grey
-                                                : postsModel!.voteType! == "up"
-                                                    ? Colors.red
+                                                : postsModel!.voteType == null
+                                                    ? Colors.grey
+                                                    : postsModel!.voteType! ==
+                                                            "up"
+                                                        ? Colors.red
+                                                        : postsModel!
+                                                                    .voteType! ==
+                                                                "down"
+                                                            ? Colors.blue
+                                                            : Colors.grey)),
+                                    IconButton(
+                                        onPressed: () {
+                                          //downvote with postID
+                                        },
+                                        icon: Icon(Icons.arrow_downward,
+                                            color: postsModel == null
+                                                ? Colors.grey
+                                                : postsModel!.voteType == null
+                                                    ? Colors.grey
                                                     : postsModel!.voteType! ==
                                                             "down"
                                                         ? Colors.blue
                                                         : Colors.grey)),
-                                IconButton(
-                                    onPressed: () {
-                                      //downvote with postID
-                                    },
-                                    icon: Icon(Icons.arrow_downward,
-                                        color: postsModel == null
-                                            ? Colors.grey
-                                            : postsModel!.voteType == null
-                                                ? Colors.grey
-                                                : postsModel!.voteType! ==
-                                                        "down"
-                                                    ? Colors.blue
-                                                    : Colors.grey)),
-                                const SizedBox(width: 5),
-                              ])
+                                    const SizedBox(width: 5),
+                                  ])
                             : const SizedBox(width: 0),
                         // --------------------------------------------------
                         // --------------COMMENTS BUTTON---------------------
