@@ -81,6 +81,7 @@ import 'package:reddit/presentation/screens/login_screen.dart';
 import 'package:reddit/presentation/screens/signup_page.dart';
 import 'package:reddit/presentation/screens/signup_page2.dart';
 import 'package:reddit/presentation/screens/signup_screen.dart';
+import 'package:reddit/presentation/screens/all_inbox_screen.dart';
 
 class AppRouter {
   // platform
@@ -195,6 +196,48 @@ class AppRouter {
             builder: (_) => BlocProvider.value(
                 value: subredditPageCubit,
                 child: const SubredditPageScreen(subredditId: "redditx_")));
+      //---------------------------------------------------------------------------
+      //------------------------------MOD LIST-------------------------------------
+      //---------------------------------------------------------------------------
+      case modlistRoute:
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider.value(
+                value: subredditPageCubit, child: const ModListScreen()));
+
+      case modqueueRoute:
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider.value(
+                value: subredditPageCubit, child: const ModQueueWeb()));
+
+      case spamRoute:
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider.value(
+                value: subredditPageCubit,
+                child: kIsWeb ? const SpamWeb() : null));
+      case unmoderatedRoute:
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider.value(
+                value: subredditPageCubit,
+                child: kIsWeb ? const UnmoderatedWeb() : null));
+
+      case approvedRoute:
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider.value(
+                value: subredditPageCubit,
+                child: kIsWeb ? const ApprovedWeb() : null));
+
+      case editedRoute:
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider.value(
+                value: subredditPageCubit,
+                child: kIsWeb ? const EditedWeb() : null));
+
+      case tafficRoute:
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider.value(
+                value: subredditPageCubit,
+                child: kIsWeb ? const TrafficStatsWeb() : null));
+      //---------------------------------------------------------------------------
       //---------------------------------------------------------------------------
       //------------------------------MOD LIST-------------------------------------
       //---------------------------------------------------------------------------
@@ -405,6 +448,12 @@ class AppRouter {
                   child: const ProfileSettingsScreen(),
                 ));
 
+      //---------------------------------------------------------------------------
+      //------------------------------InboxScreens---------------------------------
+      //---------------------------------------------------------------------------
+      case allInboxRoute:
+        return MaterialPageRoute(builder: (_) => const AllInboxScreen());
+      //---------------------------------------------------------------------------
       default:
         return null;
     }

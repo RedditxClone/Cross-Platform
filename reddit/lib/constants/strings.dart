@@ -91,3 +91,9 @@ const tafficRoute = '/taffic';
 const rulesRoute = '/rules';
 const unmoderatedRoute = '/unmod';
 const moderatorsRoute = '/mod';
+//---------------------------------------
+//-----------Mod tools Route-------------
+//---------------------------------------
+const allInboxRoute = '/allInbox';
+const sentInboxRoute = '/sentInbox';
+const replyInboxRoute = '/replyInbox';

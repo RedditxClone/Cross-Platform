@@ -43,9 +43,7 @@ class MyApp extends StatelessWidget {
       // initialRoute: homePageRoute,
       // initialRoute: tafficRoute,
 
-      initialRoute: kIsWeb
-          ? (UserData.isLogged() ? homePageRoute : popularPageRoute)
-          : homePageRoute,
+      initialRoute: allInboxRoute,
 
       // onGenerateInitialRoutes: (String initialRouteName) {
       //   return [

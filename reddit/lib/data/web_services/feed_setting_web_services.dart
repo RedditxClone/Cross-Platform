@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print, duplicate_ignore
+
 import 'package:dio/dio.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:flutter/cupertino.dart';
