@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:reddit/business_logic/cubit/user_profile/user_profile_cubit.dart';
+import 'package:reddit/constants/strings.dart';
 import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/presentation/widgets/posts/posts.dart';
 
@@ -14,10 +15,11 @@ class OtherProfileScreen extends StatefulWidget {
 }
 
 class _OtherProfileScreenState extends State<OtherProfileScreen> {
-  late User otherUser;
+  User? otherUser;
   @override
   void initState() {
     super.initState();
+    print(widget.userID);
     BlocProvider.of<UserProfileCubit>(context).getUserInfo(widget.userID);
   }
 
@@ -84,8 +86,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
       width: 80,
       child: OutlinedButton(
           onPressed: () {
-            BlocProvider.of<UserProfileCubit>(context).follow(widget
-                .userID); // TODO :  change this to the id of the other user
+            BlocProvider.of<UserProfileCubit>(context).follow(widget.userID);
           },
           style: ElevatedButton.styleFrom(
             side: const BorderSide(width: 1.0, color: Colors.white),
@@ -212,13 +213,13 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
               ),
               const SizedBox(height: 20),
               Text(
-                  otherUser.displayName == ''
-                      ? otherUser.username
-                      : otherUser.displayName!,
+                  otherUser!.displayName == ''
+                      ? otherUser!.username
+                      : otherUser!.displayName!,
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 30)),
               const SizedBox(height: 10),
-              Text('u/${otherUser.username} . 1 karma . 3 Oct 2022',
+              Text('u/${otherUser!.username} . 1 karma . 3 Oct 2022',
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 13)),
               const SizedBox(height: 10),
@@ -266,7 +267,11 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                   size: 20,
                 )),
             const SizedBox(width: 10),
-            Text(otherUser.displayName ?? ""),
+            Text(
+              otherUser!.displayName == ''
+                  ? otherUser!.username
+                  : otherUser!.displayName!,
+            ),
           ],
         ),
         Row(
@@ -309,6 +314,31 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
     );
   }
 
+  Widget _buildAppBar() {
+    return SliverAppBar(
+      stretch: true,
+      expandedHeight: 350,
+      title: _upperAppBar(),
+      elevation: 0,
+      flexibleSpace: FlexibleSpaceBar(
+        background: _appBarContent(),
+      ),
+      backgroundColor: Colors.redAccent,
+      pinned: true,
+      bottom: const TabBar(
+        indicator: UnderlineTabIndicator(
+          borderSide: BorderSide(width: 3.0, color: Colors.blue),
+          insets: EdgeInsets.symmetric(horizontal: 30.0, vertical: 0),
+        ),
+        tabs: [
+          Tab(text: 'Posts'),
+          Tab(text: 'Comments'),
+          Tab(text: 'About'),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -322,47 +352,30 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
               builder: (context, state) {
                 if (state is UserInfoAvailable) {
                   otherUser = state.userInfo;
-                  return SliverAppBar(
-                    stretch: true,
-                    expandedHeight: 350,
-                    title: _upperAppBar(),
-                    elevation: 0,
-                    flexibleSpace: FlexibleSpaceBar(
-                      background: _appBarContent(),
-                    ),
-                    backgroundColor: Colors.redAccent,
-                    pinned: true,
-                    bottom: const TabBar(
-                      indicator: UnderlineTabIndicator(
-                        borderSide: BorderSide(width: 3.0, color: Colors.blue),
-                        insets:
-                            EdgeInsets.symmetric(horizontal: 30.0, vertical: 0),
-                      ),
-                      tabs: [
-                        Tab(text: 'Posts'),
-                        Tab(text: 'Comments'),
-                        Tab(text: 'About'),
-                      ],
-                    ),
-                  );
-                } else {
-                  return const Center(child: CircularProgressIndicator());
+                  return _buildAppBar();
                 }
+                if (state is FollowOtherUserSuccess ||
+                    state is FollowOtherUserNotSuccess ||
+                    state is UnFollowOtherUserSuccess ||
+                    state is UnFollowOtherUserNotSuccess) {
+                  return _buildAppBar();
+                }
+                return const SliverAppBar();
               },
-            )
+            ),
           ];
         },
         body: BlocListener<UserProfileCubit, UserProfileState>(
             listener: (context, state) {
           if (state is FollowOtherUserSuccess) {
             displayMsg(
-                context, Colors.green, ' Followed u/${otherUser.username}');
+                context, Colors.green, ' Followed u/${otherUser!.username}');
           } else if (state is FollowOtherUserNotSuccess) {
             displayMsg(context, Colors.red,
                 'An error has occured. please try again later');
           } else if (state is UnFollowOtherUserSuccess) {
             displayMsg(
-                context, Colors.green, ' Unfollowed u/${otherUser.username}');
+                context, Colors.green, ' Unfollowed u/${otherUser!.username}');
           } else if (state is UnFollowOtherUserNotSuccess) {
             displayMsg(context, Colors.red,
                 'An error has occured. please try again later');
@@ -372,9 +385,13 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
             if (state is UserInfoAvailable) {
               otherUser = state.userInfo;
               return _buildBody();
-            } else {
-              return const Center(child: CircularProgressIndicator());
+            } else if (state is FollowOtherUserSuccess ||
+                state is FollowOtherUserNotSuccess ||
+                state is UnFollowOtherUserSuccess ||
+                state is UnFollowOtherUserNotSuccess) {
+              return _buildBody();
             }
+            return const Center(child: CircularProgressIndicator());
           },
         )),
       ),
