@@ -12,7 +12,7 @@ import 'package:reddit/presentation/screens/forget_username_web.dart';
 import 'package:reddit/data/web_services/user_profile/user_profile_webservices.dart';
 import 'package:reddit/presentation/screens/modtools/mobile/mod_list_screen.dart';
 import 'package:reddit/presentation/screens/modtools/web/approved_web.dart';
-import 'package:reddit/presentation/screens/modtools/web/edited_Web.dart';
+import 'package:reddit/presentation/screens/modtools/web/edited_web.dart';
 import 'package:reddit/presentation/screens/modtools/web/modqueue_web.dart';
 import 'package:reddit/presentation/screens/modtools/web/spam_web.dart';
 import 'package:reddit/presentation/screens/modtools/web/traffic_stats.dart';
