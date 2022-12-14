@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reddit/business_logic/cubit/cubit/change_password_cubit.dart';
 import 'package:reddit/constants/theme_colors.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -69,25 +70,28 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AccountSettingsCubit, AccountSettingsState>(
-      builder: (context, state) {
-        if (state is AccountSettingsLoaded) {
-          accountSettings = state.accSettings;
-          _isMale = accountSettings!.gender == "male" ? 1 : 0;
-          return buildAccountSettingsUI();
-        } else if (state is PasswordUpdatedSuccessfully) {
-          // displayMsg(context, Colors.white, Colors.green,
-          //     "Password updated successfully");
-          return buildAccountSettingsUI();
+    return BlocListener<ChangePasswordCubit, ChangePasswordState>(
+      listener: (context, state) {
+        if (state is PasswordUpdatedSuccessfully) {
+          displayMsg(context, Colors.white, Colors.green,
+              "Password updated successfully");
         } else if (state is WrongPassword) {
-          // displayMsg(context, Colors.white, Colors.green, "Wrong password");
-          return buildAccountSettingsUI();
-        } else {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          displayMsg(context, Colors.white, Colors.green, "Wrong password");
         }
       },
+      child: BlocBuilder<AccountSettingsCubit, AccountSettingsState>(
+        builder: (context, state) {
+          if (state is AccountSettingsLoaded) {
+            accountSettings = state.accSettings;
+            _isMale = accountSettings!.gender == "male" ? 1 : 0;
+            return buildAccountSettingsUI();
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        },
+      ),
     );
   }
 
@@ -110,7 +114,7 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
           ),
           // subtitle
           _accountPreferencesWidget(),
-          _connectedAccountsWidget(),
+          // _connectedAccountsWidget(),
           _deleteAccountWidget()
           //
         ],
@@ -707,7 +711,7 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
         _updatePasswordNewPasswordController.text.length >= 8 &&
         _updatePasswordOldPasswordController.text.isNotEmpty &&
         _updatePasswordNewPasswordController.text.isNotEmpty) {
-      BlocProvider.of<AccountSettingsCubit>(context).changePassword(
+      BlocProvider.of<ChangePasswordCubit>(context).changePassword(
         ChangePasswordModel(
           oldPassword: _updatePasswordOldPasswordController.text,
           newPassword: _updatePasswordNewPasswordController.text,

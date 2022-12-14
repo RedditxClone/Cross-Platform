@@ -73,7 +73,7 @@ class AccountSettingsWebServices {
   /// This function Performs `PATCH` request to the endpoint `baseUrl/auth/change_password`.
   Future<int> changePassword(Map<String, dynamic> changePasswordMap) async {
     try {
-      Response response = await dio.patch('auth/change_password',
+      Response response = await dio.patch('auth/change-password',
           data: changePasswordMap,
           options: Options(
             headers: {"Authorization": "Bearer ${UserData.user!.token}"},

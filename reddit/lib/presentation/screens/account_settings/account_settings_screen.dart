@@ -71,7 +71,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
             child: ListView(
               children: [
                 _basicSettingsWidget(context),
-                _connectedAccountsSettingsWidget(),
+                // _connectedAccountsSettingsWidget(),
                 _blockingAndPermissionsSettingsWidget(),
               ],
             ),

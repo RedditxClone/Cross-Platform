@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reddit/business_logic/cubit/cubit/account_settings_cubit.dart';
+import 'package:reddit/business_logic/cubit/cubit/change_password_cubit.dart';
 import 'package:reddit/business_logic/cubit/email_settings_cubit.dart';
 import 'package:reddit/business_logic/cubit/feed_settings_cubit.dart';
 import 'package:reddit/business_logic/cubit/settings/safety_settings_cubit.dart';
@@ -46,8 +47,7 @@ class _SettingTabUiState extends State<SettingTabUi> {
               const Border(bottom: BorderSide(color: Colors.grey, width: 0.3)),
           automaticallyImplyLeading: false,
           backgroundColor: defaultAppbarBackgroundColor,
-          title:
-              const AppBarWebLoggedIn(screen: 'User settings')),
+          title: const AppBarWebLoggedIn(screen: 'User settings')),
       body: SingleChildScrollView(
         child: Row(
           children: [
@@ -114,10 +114,19 @@ class _SettingTabUiState extends State<SettingTabUi> {
                           flex: 3,
                           child: TabBarView(
                             children: <Widget>[
-                              BlocProvider(
-                                create: (context) => AccountSettingsCubit(
-                                    AccountSettingsRepository(
-                                        AccountSettingsWebServices())),
+                              MultiBlocProvider(
+                                providers: [
+                                  BlocProvider(
+                                    create: (context) => AccountSettingsCubit(
+                                        AccountSettingsRepository(
+                                            AccountSettingsWebServices())),
+                                  ),
+                                  BlocProvider(
+                                    create: (context) => ChangePasswordCubit(
+                                        AccountSettingsRepository(
+                                            AccountSettingsWebServices())),
+                                  ),
+                                ],
                                 child: const AccountSettingsScreenWeb(),
                               ),
                               BlocProvider(

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:reddit/business_logic/cubit/cubit/change_password_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_home_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_my_profile_cubit.dart';
 import 'package:reddit/data/repository/posts/posts_repository.dart';
@@ -95,6 +96,7 @@ class AppRouter {
 
   late AccountSettingsRepository accountSettingsRepository;
   late AccountSettingsCubit accountSettingsCubit;
+  late ChangePasswordCubit changePasswordCubit;
   late SafetySettingsRepository safetySettingsRepository;
   late SafetySettingsCubit safetySettingsCubit;
   late SettingsRepository settingsRepository;
@@ -134,6 +136,7 @@ class AppRouter {
     accountSettingsRepository =
         AccountSettingsRepository(AccountSettingsWebServices());
     accountSettingsCubit = AccountSettingsCubit(accountSettingsRepository);
+    changePasswordCubit = ChangePasswordCubit(accountSettingsRepository);
     authRepo = AuthRepo(AuthWebService());
     authCubit = AuthCubit(authRepo, settingsRepository);
     subredditWebServices = SubredditWebServices();
@@ -402,8 +405,15 @@ class AppRouter {
                   create: (context) => accountSettingsCubit,
                   child: AccountSettingsScreen(arguments),
                 )
-              : BlocProvider(
-                  create: (context) => accountSettingsCubit,
+              : MultiBlocProvider(
+                  providers: [
+                    BlocProvider(
+                      create: (context) => accountSettingsCubit,
+                    ),
+                    BlocProvider(
+                      create: (context) => changePasswordCubit,
+                    ),
+                  ],
                   child: const AccountSettingsScreenWeb(),
                 ),
         );
@@ -416,9 +426,8 @@ class AppRouter {
       case changePasswordRoute:
         return MaterialPageRoute(builder: (context) {
           Map<String, dynamic> argMap = arguments as Map<String, dynamic>;
-          return BlocProvider.value(
-            value: BlocProvider.of<AccountSettingsCubit>(
-                argMap["context"] as BuildContext),
+          return BlocProvider(
+            create: (context) => changePasswordCubit,
             child: ChangePasswordScreen(arguments),
           );
         });
