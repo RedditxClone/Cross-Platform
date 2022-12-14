@@ -192,7 +192,7 @@ class AppRouter {
                       value: authCubit,
                     ),
                   ],
-                  child: kIsWeb ? PopularWeb() : const Popular(),
+                  child: PopularWeb(),
                 ));
 
       case profilePageRoute:
