@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:reddit/business_logic/cubit/messages/messages_cubit.dart';
 import 'package:reddit/business_logic/cubit/user_profile/user_profile_cubit.dart';
-import 'package:reddit/constants/strings.dart';
+import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/presentation/widgets/posts/posts.dart';
 
@@ -236,6 +236,47 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
     );
   }
 
+  void _showBlockDialog(buildcontext) {
+    showDialog(
+        context: context,
+        builder: (_) {
+          return AlertDialog(
+            title: const Text("Are you sure?"),
+            content:
+                const Text("Your won't see posts or comments from this user."),
+            actions: [
+              ElevatedButton(
+                onPressed: () => Navigator.pop(context),
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: defaultThirdColor,
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 10, horizontal: 20),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25))),
+                child: const Text(
+                  "CANCEL",
+                  style: TextStyle(color: Colors.grey, fontSize: 13),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () => BlocProvider.of<UserProfileCubit>(buildcontext)
+                    .blockUser(otherUser!.userId), // TODO : CHANGE TO USERNAME
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 10, horizontal: 20),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25))),
+                child: const Text(
+                  "BLOCK",
+                  style: TextStyle(color: Colors.white, fontSize: 13),
+                ),
+              )
+            ],
+          );
+        });
+  }
+
   void _sendMessageBottomSheet(BuildContext buildcontext) {
     showModalBottomSheet(
         isScrollControlled: true,
@@ -312,7 +353,10 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
             child: Column(
               children: [
                 TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pop(context);
+                      _showBlockDialog(buildcontext);
+                    },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: const [
@@ -471,74 +515,86 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: DefaultTabController(
-      initialIndex: 0,
-      length: 3,
-      child: NestedScrollView(
-        headerSliverBuilder: (_, bool innerBoxIsScrolled) {
-          return [
-            BlocBuilder<UserProfileCubit, UserProfileState>(
-              builder: (context, state) {
-                if (state is UserInfoAvailable) {
-                  otherUser = state.userInfo;
-                  return _buildAppBar(context);
-                }
-                if (state is FollowOtherUserSuccess ||
-                    state is FollowOtherUserNotSuccess ||
-                    state is UnFollowOtherUserSuccess ||
-                    state is UnFollowOtherUserNotSuccess) {
-                  return _buildAppBar(context);
-                }
-                return const SliverAppBar();
-              },
-            ),
-          ];
-        },
-        body: BlocListener<MessagesCubit, MessagesState>(
-          listener: (context, state) {
-            if (state is MessageSent) {
-              Navigator.pop(context);
-              displayMsg(
-                  context, Colors.green, ' Message is sent successfully');
-            } else if (state is EmptySubject) {
-              displayMsg(context, Colors.red, 'Please enter a subject');
-            } else if (state is EmptyBody) {
-              displayMsg(context, Colors.red, 'Please enter a message');
-            } else {
-              displayMsg(context, Colors.red, 'An error has occured');
-            }
-          },
-          child: BlocListener<UserProfileCubit, UserProfileState>(
-              listener: (context, state) {
-            if (state is FollowOtherUserSuccess) {
-              displayMsg(
-                  context, Colors.green, ' Followed u/${otherUser!.username}');
-            } else if (state is FollowOtherUserNotSuccess) {
-              displayMsg(context, Colors.red,
-                  'An error has occured. please try again later');
-            } else if (state is UnFollowOtherUserSuccess) {
-              displayMsg(context, Colors.green,
-                  ' Unfollowed u/${otherUser!.username}');
-            } else if (state is UnFollowOtherUserNotSuccess) {
-              displayMsg(context, Colors.red,
-                  'An error has occured. please try again later');
-            }
-          }, child: BlocBuilder<UserProfileCubit, UserProfileState>(
-            builder: (context, state) {
-              if (state is UserInfoAvailable) {
-                otherUser = state.userInfo;
-                return _buildBody();
-              } else if (state is FollowOtherUserSuccess ||
-                  state is FollowOtherUserNotSuccess ||
-                  state is UnFollowOtherUserSuccess ||
-                  state is UnFollowOtherUserNotSuccess) {
-                return _buildBody();
-              }
-              return const Center(child: CircularProgressIndicator());
+      body: DefaultTabController(
+        initialIndex: 0,
+        length: 3,
+        child: NestedScrollView(
+            headerSliverBuilder: (_, bool innerBoxIsScrolled) {
+              return [
+                BlocBuilder<UserProfileCubit, UserProfileState>(
+                  builder: (context, state) {
+                    if (state is UserInfoAvailable) {
+                      otherUser = state.userInfo;
+                      return _buildAppBar(context);
+                    }
+                    if (state is FollowOtherUserSuccess ||
+                        state is FollowOtherUserNotSuccess ||
+                        state is UnFollowOtherUserSuccess ||
+                        state is UnFollowOtherUserNotSuccess) {
+                      return _buildAppBar(context);
+                    }
+                    return const SliverAppBar();
+                  },
+                ),
+              ];
             },
-          )),
-        ),
+            body: MultiBlocListener(
+              listeners: [
+                BlocListener<MessagesCubit, MessagesState>(
+                    listener: (context, state) {
+                  if (state is MessageSent) {
+                    Navigator.pop(context);
+                    displayMsg(
+                        context, Colors.green, ' Message is sent successfully');
+                  } else if (state is EmptySubject) {
+                    displayMsg(context, Colors.red, 'Please enter a subject');
+                  } else if (state is EmptyBody) {
+                    displayMsg(context, Colors.red, 'Please enter a message');
+                  } else {
+                    displayMsg(context, Colors.red, 'An error has occured');
+                  }
+                }),
+                BlocListener<UserProfileCubit, UserProfileState>(
+                    listener: (context, state) {
+                  if (state is FollowOtherUserSuccess) {
+                    displayMsg(context, Colors.green,
+                        ' Followed u/${otherUser!.username}!');
+                  } else if (state is FollowOtherUserNotSuccess) {
+                    displayMsg(context, Colors.red,
+                        'An error has occured. please try again later');
+                  } else if (state is UnFollowOtherUserSuccess) {
+                    displayMsg(context, Colors.green,
+                        ' Unfollowed u/${otherUser!.username}!');
+                  } else if (state is UnFollowOtherUserNotSuccess) {
+                    displayMsg(context, Colors.red,
+                        'An error has occured. please try again later');
+                  } else if (state is UserBlocked) {
+                    displayMsg(context, Colors.blue,
+                        ' ${otherUser!.username} was blocked');
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  } else if (state is ErrorOccured) {
+                    displayMsg(context, Colors.red, 'An error has occured');
+                  }
+                })
+              ],
+              child: BlocBuilder<UserProfileCubit, UserProfileState>(
+                builder: (context, state) {
+                  if (state is UserInfoAvailable) {
+                    otherUser = state.userInfo;
+                    return _buildBody();
+                  } else if (state is FollowOtherUserSuccess ||
+                      state is FollowOtherUserNotSuccess ||
+                      state is UnFollowOtherUserSuccess ||
+                      state is UnFollowOtherUserNotSuccess) {
+                    return _buildBody();
+                  }
+                  return const Center(child: CircularProgressIndicator());
+                },
+              ),
+            )),
       ),
-    ));
+    );
   }
 }
