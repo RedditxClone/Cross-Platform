@@ -6,8 +6,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:reddit/business_logic/cubit/create_community_cubit.dart';
 import 'package:reddit/business_logic/cubit/subreddit_page_cubit.dart';
 import 'package:reddit/constants/strings.dart';
-import 'package:reddit/data/model/auth_model.dart';
-// import 'package:reddit/data/model/signin.dart';
 import 'package:reddit/data/repository/create_community_repository.dart';
 import 'package:reddit/data/repository/subreddit_page_repository.dart';
 import 'package:reddit/data/web_services/create_community_web_services.dart';
@@ -15,8 +13,6 @@ import 'package:reddit/data/web_services/subreddit_page_web_services.dart';
 import 'package:reddit/presentation/screens/create_community_screen.dart';
 import 'package:reddit/presentation/screens/subreddit_screen.dart';
 import 'package:reddit/presentation/widgets/nav_bars/popup_menu_logged_in.dart';
-
-import '../search_delegate.dart';
 
 class AppBarWebLoggedIn extends StatefulWidget {
   final String screen;
@@ -38,25 +34,14 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
             ));
   }
 
-  FocusNode searchFocusNode = FocusNode();
   @override
   void initState() {
     super.initState();
-    searchFocusNode.addListener(_onFocusChangeSearch);
-  }
-
-  void _onFocusChangeSearch() {
-    if (searchFocusNode.hasFocus) {
-      showSearch(context: context, delegate: MySearchWidget());
-      debugPrint("Focus on search: ${searchFocusNode.hasFocus.toString()}");
-    }
   }
 
   @override
   void dispose() {
     super.dispose();
-    searchFocusNode.removeListener(_onFocusChangeSearch);
-    searchFocusNode.dispose();
   }
 
   void routeToPage(val) {
@@ -242,7 +227,6 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
           width: 0.25 * MediaQuery.of(context).size.width,
           height: 40,
           child: TextField(
-            focusNode: searchFocusNode,
             textAlignVertical: TextAlignVertical.center,
             decoration: InputDecoration(
               border: OutlineInputBorder(
