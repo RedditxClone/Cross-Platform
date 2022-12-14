@@ -408,7 +408,10 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => CountryScreen(arguments));
       case manageBlockedAccountsRoute:
         return MaterialPageRoute(
-            builder: (_) => const ManageBlockedAccountsScreen());
+            builder: (_) => BlocProvider(
+                  create: (context) => safetySettingsCubit,
+                  child: const ManageBlockedAccountsScreen(),
+                ));
 
       // case safetySettingsRoute:
       //   return MaterialPageRoute(
