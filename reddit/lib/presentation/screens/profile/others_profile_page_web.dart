@@ -21,7 +21,6 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
   late Responsive _responsive;
   String sortBy = 'new';
   bool _isOverviewTab = true;
-  bool _isFollowed = false;
   late User otherUser;
   @override
   void initState() {
@@ -225,7 +224,7 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
 
   Widget _buildProfileCard() {
     return Container(
-      height: 400,
+      height: 425,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5), color: defaultSecondaryColor),
       margin: const EdgeInsets.only(bottom: 15),
@@ -379,7 +378,7 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
           ),
           Container(
             padding: const EdgeInsets.only(left: 5),
-            height: 30,
+            height: 60,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -387,6 +386,10 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
                     'Send Message',
                     () => Navigator.pushNamed(context, sendMessageRoute,
                         arguments: otherUser.username)),
+                _moreOptions(
+                    'Block User',
+                    () => BlocProvider.of<UserProfileCubit>(context)
+                        .blockUser(otherUser.userId))
               ],
             ),
           )
@@ -651,6 +654,11 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
             } else if (state is UnFollowOtherUserNotSuccess) {
               displayMsg(context, Colors.red,
                   'An error has occured. please try again later');
+            } else if (state is UserBlocked) {
+              displayMsg(context, Colors.blue,
+                  ' ${otherUser.username} is now blocked');
+            } else if (state is ErrorOccured) {
+              displayMsg(context, Colors.red, 'An error has occured');
             }
           }, child: BlocBuilder<UserProfileCubit, UserProfileState>(
             builder: (context, state) {
@@ -660,7 +668,9 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
               } else if (state is FollowOtherUserSuccess ||
                   state is FollowOtherUserNotSuccess ||
                   state is UnFollowOtherUserSuccess ||
-                  state is UnFollowOtherUserNotSuccess) {
+                  state is UnFollowOtherUserNotSuccess ||
+                  state is UserBlocked ||
+                  state is ErrorOccured) {
                 return _buildBody();
               }
               return const Center(child: CircularProgressIndicator());
