@@ -1,14 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reddit/business_logic/cubit/messages/messages_cubit.dart';
 import 'package:reddit/constants/colors.dart';
 import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/presentation/widgets/messages/message_tab_bar.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 
-class SendMessageWeb extends StatelessWidget {
+class SendMessageWeb extends StatefulWidget {
   SendMessageWeb({super.key});
+
+  @override
+  State<SendMessageWeb> createState() => _SendMessageWebState();
+}
+
+class _SendMessageWebState extends State<SendMessageWeb> {
   TextEditingController fromController = TextEditingController();
+
   TextEditingController toController = TextEditingController();
+
   TextEditingController subjectController = TextEditingController();
+
   TextEditingController messageController = TextEditingController();
 
   Widget _title(String title) {
@@ -38,25 +49,67 @@ class SendMessageWeb extends StatelessWidget {
                   OutlineInputBorder(borderRadius: BorderRadius.circular(3)),
               contentPadding: const EdgeInsets.all(15),
             )),
+        const SizedBox(height: 5),
+        title == 'to'
+            ? BlocBuilder<MessagesCubit, MessagesState>(
+                builder: (context, state) {
+                if (state is EmptyUsername) {
+                  return const Text('please enter a username',
+                      style: TextStyle(color: Colors.red));
+                } else if (state is NoSuchUser) {
+                  return const Text('That user is invalid',
+                      style: TextStyle(color: Colors.red));
+                }
+                return const SizedBox(width: 0);
+              })
+            : title == 'subject'
+                ? BlocBuilder<MessagesCubit, MessagesState>(
+                    builder: (context, state) {
+                    if (state is EmptySubject) {
+                      return const Text('please enter a subject',
+                          style: TextStyle(color: Colors.red));
+                    }
+                    return const SizedBox(width: 0);
+                  })
+                : const SizedBox(width: 0)
       ],
     );
   }
 
   Widget _sendMessageButton() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 15),
-      child: ElevatedButton(
-        onPressed: () {},
-        style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),
-        child: const Text(
-          "Send",
-          style: TextStyle(color: Colors.black, fontSize: 16),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 15),
+          child: ElevatedButton(
+            onPressed: () => BlocProvider.of<MessagesCubit>(context)
+                .sendMessage(subjectController.text, messageController.text,
+                    toController.text),
+            style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5))),
+            child: const Text(
+              "Send",
+              style: TextStyle(color: Colors.black, fontSize: 16),
+            ),
+          ),
         ),
-      ),
+        const SizedBox(width: 20),
+        BlocBuilder<MessagesCubit, MessagesState>(builder: (context, state) {
+          if (state is MessageSent) {
+            subjectController.text = '';
+            messageController.text = '';
+            toController.text = '';
+            return const Text('your message has been delivered',
+                style: TextStyle(color: Colors.white));
+          }
+          return const SizedBox(width: 0);
+        })
+      ],
     );
   }
 

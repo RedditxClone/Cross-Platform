@@ -1,12 +1,16 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:reddit/business_logic/cubit/messages/messages_cubit.dart';
 import 'package:reddit/business_logic/cubit/user_profile/user_profile_cubit.dart';
 import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/data/repository/feed_setting_repository.dart';
+import 'package:reddit/data/repository/messages/messages_repository.dart';
 import 'package:reddit/data/repository/user_profile/user_profile_repository.dart';
 import 'package:reddit/data/web_services/feed_setting_web_services.dart';
+import 'package:reddit/data/web_services/messages/messages_web_services.dart';
 import 'package:reddit/presentation/screens/forget_username_web.dart';
 import 'package:reddit/data/web_services/user_profile/user_profile_webservices.dart';
+import 'package:reddit/presentation/screens/message/send_message_web.dart';
 import 'package:reddit/presentation/screens/modtools/mobile/mod_list_screen.dart';
 import 'package:reddit/presentation/screens/modtools/web/approved_web.dart';
 import 'package:reddit/presentation/screens/modtools/web/edited_web.dart';
@@ -112,6 +116,9 @@ class AppRouter {
   late UserProfileWebServices userProfileWebServices;
   late UserProfileRepository userProfileRepository;
   late UserProfileCubit userProfileCubit;
+  late MessagesWebServices messagesWebServices;
+  late MessagesRepository messagesRepository;
+  late MessagesCubit messagesCubit;
 
   AppRouter() {
     // initialise repository and cubit objects
@@ -141,6 +148,10 @@ class AppRouter {
     userProfileWebServices = UserProfileWebServices();
     userProfileRepository = UserProfileRepository(userProfileWebServices);
     userProfileCubit = UserProfileCubit(userProfileRepository);
+
+    messagesWebServices = MessagesWebServices();
+    messagesRepository = MessagesRepository(messagesWebServices);
+    messagesCubit = MessagesCubit(messagesRepository);
   }
   Route? generateRoute(RouteSettings settings) {
     final arguments = settings.arguments;
@@ -403,6 +414,12 @@ class AppRouter {
             builder: (_) => BlocProvider(
                   create: (BuildContext context) => settingsCubit,
                   child: const ProfileSettingsScreen(),
+                ));
+      case sendMessageRoute:
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider(
+                  create: (BuildContext context) => messagesCubit,
+                  child: SendMessageWeb(),
                 ));
 
       default:
