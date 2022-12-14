@@ -21,7 +21,7 @@ class AccountSettingsScreen extends StatefulWidget {
 class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
   /// Account settings model retrieved from backend
   AccountSettingsModel? accountSettings;
-  bool _isMan = true;
+  late int _isMan;
   String _country = "";
   // get these value from server
   late String _email = "bemoi.erian@gmail.com";
@@ -33,7 +33,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
     Map<String, Object>? argMap = arguments as Map<String, Object>?;
     _email = argMap == null ? "" : argMap["email"] as String? ?? "";
     _username = argMap == null ? "" : argMap["username"] as String? ?? "";
-    _isMan = argMap == null ? true : argMap["gender"] as bool? ?? true;
+    _isMan = argMap == null ? 3 : argMap["gender"] as int? ?? 3;
   }
 
   /// Calling bloc BlocProvider inside initState
@@ -59,7 +59,11 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
       builder: (context, state) {
         if (state is AccountSettingsLoaded) {
           accountSettings = state.accSettings;
-          _isMan = accountSettings!.gender == "male" ? true : false;
+          _isMan = accountSettings!.gender == "male"
+              ? 0
+              : accountSettings!.gender == ""
+                  ? 2
+                  : 1;
           // Get country name from country code returned from server
           for (var map in countryNamesMap) {
             if (map["code"] == accountSettings!.countryCode) {
@@ -481,7 +485,11 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               children: [
                 const Text("Gender"),
                 Text(
-                  _isMan ? "Man" : "Woman",
+                  _isMan == 0
+                      ? "Man"
+                      : _isMan == 1
+                          ? "Woman"
+                          : "Prefer not to say",
                   style: TextStyle(color: Colors.grey.shade500),
                 )
               ],
@@ -518,7 +526,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                   topLeft: Radius.circular(30), topRight: Radius.circular(30)),
               color: Colors.grey.shade900,
             ),
-            height: 200,
+            height: 270,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
@@ -550,8 +558,24 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                 Card(
                   color: Colors.grey.shade900,
                   child: ListTile(
+                    title: const Text("Prefer not to say"),
+                    leading: _isMan == 2
+                        ? const Icon(Icons.check_circle)
+                        : const Icon(Icons.circle_outlined),
+                    onTap: () {
+                      Navigator.pop(context);
+                      accountSettings!.gender = "";
+                      // Update settings request
+                      BlocProvider.of<AccountSettingsCubit>(context)
+                          .updateAccountSettings(accountSettings!);
+                    },
+                  ),
+                ),
+                Card(
+                  color: Colors.grey.shade900,
+                  child: ListTile(
                     title: const Text("Man"),
-                    leading: _isMan
+                    leading: _isMan == 0
                         ? const Icon(Icons.check_circle)
                         : const Icon(Icons.circle_outlined),
                     onTap: () {
@@ -567,7 +591,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                   color: Colors.grey.shade900,
                   child: ListTile(
                     title: const Text("Woman"),
-                    leading: !_isMan
+                    leading: _isMan == 1
                         ? const Icon(Icons.check_circle)
                         : const Icon(Icons.circle_outlined),
                     onTap: () {

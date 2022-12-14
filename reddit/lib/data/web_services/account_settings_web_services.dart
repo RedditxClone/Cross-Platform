@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:reddit/constants/strings.dart';
 
 import '../model/auth_model.dart';
@@ -57,13 +58,14 @@ class AccountSettingsWebServices {
             headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
       if (response.statusCode == 200) {
-        print("Account settings updated successfully");
+        debugPrint("Account settings updated successfully");
+        // debugPrint("Account settings {$newAccSettings}");
       } else {
-        print("Failed to updateAccount settings");
+        debugPrint("Failed to updateAccount settings");
       }
       return response.statusCode!;
     } catch (e) {
-      print(e);
+      debugPrint("$e");
       return 404;
     }
   }

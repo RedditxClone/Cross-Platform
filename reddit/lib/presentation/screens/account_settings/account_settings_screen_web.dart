@@ -83,7 +83,11 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
         builder: (context, state) {
           if (state is AccountSettingsLoaded) {
             accountSettings = state.accSettings;
-            _isMale = accountSettings!.gender == "male" ? 1 : 0;
+            _isMale = accountSettings!.gender == "male"
+                ? 1
+                : accountSettings!.gender == ""
+                    ? 2
+                    : 0;
             return buildAccountSettingsUI();
           } else {
             return const Center(
@@ -689,10 +693,19 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
               DropdownMenuItem(
                 value: 1,
                 child: Text("Man"),
+              ),
+              DropdownMenuItem(
+                value: 2,
+                child: Text("Prefer not to say"),
               )
             ],
             onChanged: (value) {
-              accountSettings!.gender = (value == 1 ? "male" : "female");
+              accountSettings!.gender = (value == 1
+                  ? "male"
+                  : value == 0
+                      ? "female"
+                      : "");
+              // debugPrint("Gender value $value");
               BlocProvider.of<AccountSettingsCubit>(context)
                   .updateAccountSettings(accountSettings!);
             },
