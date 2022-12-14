@@ -24,7 +24,7 @@ class PostsHomeCubit extends Cubit<PostsHomeState> {
     postsRepository.getTimelinePosts().then((posts) {
       // start the state existing in characters_state
       // here you sent characters list to characters loaded state
-      debugPrint("Home posts null");
+      // debugPrint("Home posts null");
 
       emit(PostsLoaded(posts));
       this.posts = posts;
