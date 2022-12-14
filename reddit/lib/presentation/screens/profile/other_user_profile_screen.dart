@@ -260,7 +260,8 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
               ),
               ElevatedButton(
                 onPressed: () => BlocProvider.of<UserProfileCubit>(buildcontext)
-                    .blockUser(otherUser!.userId), // TODO : CHANGE TO USERNAME
+                    .blockUser(
+                        otherUser!.username), // TODO : CHANGE TO USERNAME
                 style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
                     padding: const EdgeInsets.symmetric(
