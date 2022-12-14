@@ -50,6 +50,7 @@ dependencies:
   url_launcher: ^6.1.6
   webview_flutter_plus: ^0.3.0+2
   oauth2: ^2.0.1
+  material_floating_search_bar: ^0.3.7
 
 dev_dependencies:
   flutter_launcher_icons: ^0.10.0

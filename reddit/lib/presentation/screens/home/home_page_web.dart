@@ -775,9 +775,6 @@ class _HomePageWebState extends State<HomePageWeb> {
         shape: const Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
         automaticallyImplyLeading: false,
         backgroundColor: defaultAppbarBackgroundColor,
-        // title: UserData.isLoggedIn
-        //     ? const AppBarWebLoggedIn(screen: 'Home')
-        //     : const AppBarWebNotLoggedIn(screen: 'Home'),
         title: BlocBuilder<AuthCubit, AuthState>(
           builder: (context, state) {
             if (state is Login ||
