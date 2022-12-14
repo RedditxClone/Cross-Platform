@@ -151,7 +151,7 @@ class EndDrawer extends StatelessWidget {
         Navigator.of(context).pushNamed(accountSettingsRoute, arguments: {
           "username": UserData.user!.username,
           "email": UserData.user!.email,
-          "gender": UserData.accountSettings!.gender == 'male',//_isMan
+          "gender": UserData.accountSettings!.gender == 'male', //_isMan
         });
       },
     );
@@ -407,7 +407,7 @@ class EndDrawer extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(8, 12, 0, 0),
-                child: Text("U/${UserData.user!.username.toUpperCase()}"),
+                child: Text("U/${UserData.user!.username ?? "".toUpperCase()}"),
               ),
               const Divider(
                 color: Colors.grey,

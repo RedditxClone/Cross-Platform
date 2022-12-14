@@ -38,7 +38,7 @@ class _InterestsAndroidState extends State<InterestsAndroid> {
   //this function is used to add the user interests to the database
   void addInterests() async {
     BlocProvider.of<AuthCubit>(context)
-        .addInterests(selectedInterests, UserData.user!.token);
+        .addInterests(selectedInterests, UserData.user!.token ?? "");
   }
 
   Widget mainBody() {

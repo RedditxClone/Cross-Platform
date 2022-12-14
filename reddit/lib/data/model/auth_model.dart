@@ -10,17 +10,17 @@ import 'feed_setting_model.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class User {
-  late String type;
-  late String userId;
-  late String
+  late String? type;
+  late String? userId;
+  late String?
       username; //in case of google or facebook user it will be taken from the google or facebook and in case of reddit sign in it will be the username
-  late String email;
+  late String? email;
   late String?
       profilePic; //in case of google or facebook user it will be taken from the google or facebook and in case of reddit sign in it will be null
-  late String token;
+  late String? token;
   late String? displayName;
-  late Map<String, dynamic> interests;
-  late bool cakeDay;
+  late Map<String, dynamic>? interests;
+  late bool? cakeDay;
   User.fromJson(Map<String, dynamic> json) {
     userId = json['_id'];
     username = json['username'];
@@ -72,8 +72,9 @@ class UserData {
     UserData.feedSettings = FeedSettingModel.fromJson(json);
     UserData.accountSettings = AccountSettingsModel.fromJson(json);
     UserData.isLoggedIn = true;
-    PreferenceUtils.setString(SharedPrefKeys.token, UserData.user!.token);
-    PreferenceUtils.setString(SharedPrefKeys.userId, UserData.user!.userId);
+    PreferenceUtils.setString(SharedPrefKeys.token, UserData.user!.token ?? "");
+    PreferenceUtils.setString(
+        SharedPrefKeys.userId, UserData.user!.userId ?? "");
   }
 
   static bool isLogged() {

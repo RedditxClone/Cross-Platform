@@ -20,68 +20,7 @@ class _ChooseGenderAndroidState extends State<ChooseGenderAndroid> {
   //gender will be null if not selected
   void selectGender(String gender) async {
     BlocProvider.of<AuthCubit>(context)
-        .genderInSignup(UserData.user!.token, gender);
-    //     url: 'user/me/prefs',
-    //     data: {
-    //       "gender": gender,
-    //     },
-    //     options: Options(
-    //       headers: {
-    //         "Authorization":
-    //             "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzN2ZlNjM4NWUwYjU4M2Y0YTc5ZTM0ZiIsImlhdCI6MTY2OTkwNjQyMiwiZXhwIjoxNjcwNzcwNDIyfQ.Jukdcxvc1j8i78uNshWkPPpBBwh9mMFRoQT6hGgLrY4"
-    //       },
-    //     )).then((res) {
-    //   res = res as Response;
-    //   if (res.statusCode == 200) {
-    //     ScaffoldMessenger.of(context).showSnackBar(
-    //       SnackBar(
-    //         content: Row(
-    //           children: const [
-    //             Icon(
-    //               Icons.reddit,
-    //               color: Colors.green,
-    //             ),
-    //             SizedBox(
-    //               width: 10,
-    //             ),
-    //             Text(
-    //               'Data add successfully',
-    //               style: TextStyle(
-    //                 color: Colors.black,
-    //                 backgroundColor: Colors.white,
-    //               ),
-    //             ),
-    //           ],
-    //         ),
-    //       ),
-    //     );
-    //     Navigator.of(context).pushReplacementNamed(
-    //       interesetesScreen,
-    //     );
-    //   } else {
-    //     ScaffoldMessenger.of(context).showSnackBar(
-    //       SnackBar(
-    //         content: Row(
-    //           children: const [
-    //             Icon(
-    //               Icons.error,
-    //               color: Colors.red,
-    //             ),
-    //             SizedBox(
-    //               width: 10,
-    //             ),
-    //             Text(
-    //               'Error in storing your data please try again',
-    //               style: TextStyle(
-    //                 color: Colors.red,
-    //               ),
-    //             ),
-    //           ],
-    //         ),
-    //       ),
-    //     );
-    //   }
-    // });
+        .genderInSignup(UserData.user!.token!, gender);
   }
 
   Widget mainBody() {

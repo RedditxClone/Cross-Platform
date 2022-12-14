@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reddit/data/repository/settings_repository.dart';
 import '../../../../../data/model/auth_model.dart';
-import '../../../../../data/model/safety_user_settings.dart';
 import '../../../../../data/repository/auth_repo.dart';
 part 'auth_state.dart';
 
@@ -78,7 +77,7 @@ class AuthCubit extends Cubit<AuthState> {
   void changeProfilephotoWeb(Uint8List fileAsBytes) {
     if (isClosed) return;
     authRepo
-        .updateImageWeb('profilephoto', fileAsBytes, UserData.user!.token)
+        .updateImageWeb('profilephoto', fileAsBytes, UserData.user!.token??"")
         .then((image) {
       debugPrint("image from cubit: $image");
       emit(SignedInWithProfilePhoto(image));

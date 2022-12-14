@@ -28,7 +28,7 @@ class _HomePageWebState extends State<HomePageWeb> {
   void initState() {
     super.initState();
     BlocProvider.of<AuthCubit>(context)
-          .getUserData(PreferenceUtils.getString(SharedPrefKeys.userId));
+        .getUserData(PreferenceUtils.getString(SharedPrefKeys.userId));
     authRepo = AuthRepo(AuthWebService());
   }
 
@@ -58,7 +58,7 @@ class _HomePageWebState extends State<HomePageWeb> {
   //this function is used to add the user interests to the database
   void addInterests() {
     authRepo
-        .addInterests(selectedInterests, UserData.user!.token)
+        .addInterests(selectedInterests, UserData.user!.token ?? "")
         .then((value) {
       if (value) {
         Navigator.of(context).pop();
@@ -91,7 +91,7 @@ class _HomePageWebState extends State<HomePageWeb> {
   //This function takes the selected gender and sends it to the server
   //gender will be null if not selected
   void selectGender(String gender) async {
-    authRepo.genderInSignup(gender, UserData.user!.token).then((updated) {
+    authRepo.genderInSignup(gender, UserData.user!.token!).then((updated) {
       if (updated) {
         debugPrint("success gender");
         ScaffoldMessenger.of(context).showSnackBar(
@@ -519,7 +519,8 @@ class _HomePageWebState extends State<HomePageWeb> {
       imgCover = await imagePicker.readAsBytes();
       // BlocProvider.of<AuthCubit>(context)
       //     .changeProfilephotoWeb(UserData.user, imgCover!);
-      authRepo.updateImageWeb('profilephoto', imgCover!, UserData.user!.token);
+      authRepo.updateImageWeb(
+          'profilephoto', imgCover!, UserData.user!.token ?? "");
       displayMsg(context, Colors.blue, 'Changes Saved');
     } on PlatformException catch (e) {
       debugPrint("Error in pickImageWeb: ${e.toString()}");
@@ -813,7 +814,7 @@ class _HomePageWebState extends State<HomePageWeb> {
               UserData.initUser(state.userDataJson);
               return const HomeWeb();
             }
-          }else if(state is NotLoggedIn){
+          } else if (state is NotLoggedIn) {
             return const HomeWeb();
           }
           return const Center(
