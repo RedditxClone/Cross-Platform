@@ -383,8 +383,10 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _moreOptions('Send Message',
-                    () => Navigator.pushNamed(context, sendMessageRoute)),
+                _moreOptions(
+                    'Send Message',
+                    () => Navigator.pushNamed(context, sendMessageRoute,
+                        arguments: otherUser.username)),
               ],
             ),
           )

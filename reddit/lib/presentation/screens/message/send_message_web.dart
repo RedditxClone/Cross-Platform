@@ -7,7 +7,8 @@ import 'package:reddit/presentation/widgets/messages/message_tab_bar.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 
 class SendMessageWeb extends StatefulWidget {
-  SendMessageWeb({super.key});
+  final String username;
+  const SendMessageWeb({required this.username, super.key});
 
   @override
   State<SendMessageWeb> createState() => _SendMessageWebState();
@@ -21,6 +22,11 @@ class _SendMessageWebState extends State<SendMessageWeb> {
   TextEditingController subjectController = TextEditingController();
 
   TextEditingController messageController = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    toController.text = widget.username;
+  }
 
   Widget _title(String title) {
     return Column(
@@ -81,7 +87,7 @@ class _SendMessageWebState extends State<SendMessageWeb> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Padding(
-          padding: const EdgeInsets.only(top: 15),
+          padding: const EdgeInsets.only(top: 10),
           child: ElevatedButton(
             onPressed: () => BlocProvider.of<MessagesCubit>(context)
                 .sendMessage(subjectController.text, messageController.text,
@@ -125,7 +131,9 @@ class _SendMessageWebState extends State<SendMessageWeb> {
                   : 0),
           Container(
             padding: const EdgeInsets.all(15),
-            width: MediaQuery.of(context).size.width - 700,
+            width: MediaQuery.of(context).size.width - 1200 > 0
+                ? 800
+                : MediaQuery.of(context).size.width - 30,
             decoration: BoxDecoration(
               color: cardsColor,
               borderRadius: BorderRadius.circular(8),
@@ -135,7 +143,7 @@ class _SendMessageWebState extends State<SendMessageWeb> {
               children: [
                 //------------- Display Name--------------
 
-                _textField('from', fromController),
+                // _textField('from', fromController),
                 _textField('to', toController),
                 _textField('subject', subjectController),
                 _textField('message', messageController),
@@ -161,11 +169,13 @@ class _SendMessageWebState extends State<SendMessageWeb> {
           automaticallyImplyLeading: false,
           backgroundColor: defaultAppbarBackgroundColor,
           title: const AppBarWebLoggedIn(screen: 'Messages')),
-      body: Column(
-        children: [
-          MessagesTabBar(index: 0),
-          _sendMessageBody(context),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            MessagesTabBar(index: 0),
+            _sendMessageBody(context),
+          ],
+        ),
       ),
     );
   }

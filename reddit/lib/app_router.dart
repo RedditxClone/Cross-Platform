@@ -416,10 +416,11 @@ class AppRouter {
                   child: const ProfileSettingsScreen(),
                 ));
       case sendMessageRoute:
+        String username = arguments as String;
         return MaterialPageRoute(
             builder: (_) => BlocProvider(
                   create: (BuildContext context) => messagesCubit,
-                  child: SendMessageWeb(),
+                  child: SendMessageWeb(username: username),
                 ));
 
       default:

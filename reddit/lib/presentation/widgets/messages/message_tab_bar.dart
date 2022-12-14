@@ -11,7 +11,12 @@ class MessagesTabBar extends StatelessWidget {
     return Container(
       color: cardsColor,
       padding: EdgeInsets.fromLTRB(
-          30, 20, MediaQuery.of(context).size.width - 500, 20),
+          30,
+          20,
+          MediaQuery.of(context).size.width - 500 > 0
+              ? MediaQuery.of(context).size.width - 500
+              : 20,
+          20),
       child: Row(children: [
         TextButton(
             onPressed: () =>
