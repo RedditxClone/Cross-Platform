@@ -50,6 +50,8 @@ dependencies:
   url_launcher: ^6.1.6
   webview_flutter_plus: ^0.3.0+2
   oauth2: ^2.0.1
+  carousel_slider: ^4.2.0
+  flutter_markdown: ^0.6.13
 
 dev_dependencies:
   flutter_launcher_icons: ^0.10.0

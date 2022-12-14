@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reddit/business_logic/cubit/posts/posts_my_profile_cubit.dart';
 import 'package:reddit/business_logic/cubit/settings/settings_cubit.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/presentation/widgets/posts/posts.dart';
+
+import '../../widgets/posts/posts_web.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -13,6 +16,13 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    BlocProvider.of<PostsMyProfileCubit>(context).getMyProfilePosts();
+  }
+
   Widget _empty() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -167,14 +177,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildPosts() {
     return SingleChildScrollView(
-      child: Column(
-        children: const [
-          Posts(),
-          Posts(),
-          Posts(),
-          Posts(),
-          Posts(),
-        ],
+      child: BlocBuilder<PostsMyProfileCubit, PostsMyProfileState>(
+        builder: (context, state) {
+          if (state is PostsLoaded) {
+            return Column(children: [
+              ...state.posts!.map((e) => PostsWeb(postsModel: e)).toList()
+            ]);
+          }
+          return Container();
+        },
       ),
     );
   }

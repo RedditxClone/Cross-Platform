@@ -72,6 +72,7 @@ class _LeftDrawerState extends State<LeftDrawer> {
           title: const Text("Login to add your communities"),
           onTap: () {
             // TODO: open login dropdown
+            Navigator.pushNamed(context, loginScreen);
           },
         )
       ],
