@@ -64,7 +64,7 @@ class PostsWeb extends StatelessWidget {
                 // --------------------------------------------------
                 // -----USER PHOTO, SUBREDDIT, USER, TIME------------
                 // --------------------------------------------------
-                postInfo(),
+                postInfo(context),
                 // --------------------------------------------------
                 // -------------------POST TITLE---------------------
                 // --------------------------------------------------
@@ -181,7 +181,7 @@ class PostsWeb extends StatelessWidget {
     );
   }
 
-  Widget postInfo() {
+  Widget postInfo(context) {
     return Padding(
       padding: const EdgeInsets.all(5.0),
       child: Container(
@@ -215,6 +215,12 @@ class PostsWeb extends StatelessWidget {
                     InkWell(
                       onTap: (() {
                         // Go to subreddit page
+                        Navigator.pushNamed(context, subredditPageScreenRoute,
+                            arguments: postsModel == null
+                                ? ''
+                                : postsModel!.subreddit == null
+                                    ? ""
+                                    : postsModel!.subreddit!.id);
                       }),
                       child: Text(
                           "r/${postsModel == null ? '' : postsModel!.subreddit == null ? '' : postsModel!.subreddit!.name ?? ''}",
@@ -223,6 +229,12 @@ class PostsWeb extends StatelessWidget {
                     InkWell(
                       onTap: (() {
                         // Go to user page
+                        Navigator.pushNamed(context, otherProfilePageRoute,
+                            arguments: postsModel == null
+                                ? ''
+                                : postsModel!.user == null
+                                    ? ""
+                                    : postsModel!.user!.id);
                       }),
                       child: Text(
                           "u/${postsModel == null ? '' : postsModel!.user == null ? "" : postsModel!.user!.username ?? ''} . ${getPostDate()}",
@@ -510,8 +522,8 @@ class PostsWeb extends StatelessWidget {
                                 .entries
                                 .map((entry) {
                               return Container(
-                                width: 5.0,
-                                height: 5.0,
+                                // width: 5.0,
+                                // height: 5.0,
                                 margin: const EdgeInsets.symmetric(
                                     vertical: 4.0, horizontal: 4.0),
                                 decoration: BoxDecoration(
@@ -520,6 +532,12 @@ class PostsWeb extends StatelessWidget {
                                         _currentMediaIndex == entry.key
                                             ? 0.9
                                             : 0.4)),
+                                child: Icon(
+                                  _currentMediaIndex == entry.key
+                                      ? Icons.circle_rounded
+                                      : Icons.circle_outlined,
+                                  size: 10,
+                                ),
                               );
                             }).toList(),
                           );
@@ -531,8 +549,8 @@ class PostsWeb extends StatelessWidget {
                                 .entries
                                 .map((entry) {
                               return Container(
-                                width: 5.0,
-                                height: 5.0,
+                                // width: 5.0,
+                                // height: 5.0,
                                 margin: const EdgeInsets.symmetric(
                                     vertical: 4.0, horizontal: 4.0),
                                 decoration: BoxDecoration(
@@ -541,6 +559,12 @@ class PostsWeb extends StatelessWidget {
                                         _currentMediaIndex == entry.key
                                             ? 0.9
                                             : 0.4)),
+                                child: Icon(
+                                  _currentMediaIndex == entry.key
+                                      ? Icons.circle_rounded
+                                      : Icons.circle_outlined,
+                                  size: 10,
+                                ),
                               );
                             }).toList(),
                           );
