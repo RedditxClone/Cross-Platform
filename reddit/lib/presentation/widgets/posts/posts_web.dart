@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/constants/responsive.dart';
+import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/data/model/posts/posts_model.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -101,7 +102,7 @@ class PostsWeb extends StatelessWidget {
                                     : postsModel!.user == null
                                         ? null
                                         : postsModel!.user!.photo != null
-                                            ? NetworkImage(
+                                            ? NetworkImage(imagesUrl +
                                                 postsModel!.user!.photo!)
                                             : null,
                                 backgroundColor: Colors.transparent,
@@ -204,7 +205,8 @@ class PostsWeb extends StatelessWidget {
                                       flex: 10,
                                       child: CarouselSlider(
                                         items: postsModel!.images!
-                                            .map((e) => Image.network(e))
+                                            .map((e) =>
+                                                Image.network(imagesUrl + e))
                                             .toList(),
                                         carouselController:
                                             buttonCarouselController,
