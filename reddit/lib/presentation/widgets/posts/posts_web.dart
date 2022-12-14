@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reddit/business_logic/cubit/posts/media_index_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
@@ -9,6 +11,8 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 class PostsWeb extends StatelessWidget {
   late Responsive responsive;
   CarouselController buttonCarouselController = CarouselController();
+  late MediaIndexCubit mediaIndexCubit;
+  late int _currentMediaIndex;
   final String _markdownData = """
  # Minimal Markdown Test
  ---
@@ -28,7 +32,10 @@ class PostsWeb extends StatelessWidget {
  ornare, in ullamcorper magna congue.
  """;
   PostsModel? postsModel;
-  PostsWeb({this.postsModel, Key? key}) : super(key: key);
+  PostsWeb({this.postsModel, Key? key}) : super(key: key) {
+    _currentMediaIndex = 0;
+    mediaIndexCubit = new MediaIndexCubit(_currentMediaIndex);
+  }
   @override
   Widget build(BuildContext context) {
     responsive = Responsive(context);
@@ -70,6 +77,7 @@ class PostsWeb extends StatelessWidget {
                 // --------------POST PHOTOS, VIDEOS-----------------
                 // --------------------------------------------------
                 postMedia(),
+                mediaIndex(),
                 // --------------------------------------------------
                 // ---------------POST BOTTOM BUTTONS----------------
                 // --------------------------------------------------
@@ -287,7 +295,7 @@ class PostsWeb extends StatelessWidget {
                         // -------------------MEDIA SLIDER----------------------
                         // -----------------------------------------------------
                         Expanded(
-                          flex: 10,
+                          // flex: 10,
                           child: CarouselSlider(
                             items: postsModel!.images!
                                 .map((e) => Image.network(imagesUrl + e))
@@ -299,9 +307,19 @@ class PostsWeb extends StatelessWidget {
                               viewportFraction: 1,
                               aspectRatio: 5 / 4,
                               enableInfiniteScroll: false,
+                              onPageChanged: (index, reason) {
+                                _currentMediaIndex = index;
+                                mediaIndexCubit
+                                    .changeMediaIndex(_currentMediaIndex);
+                              },
                             ),
                           ),
                         ),
+                        Container(
+                            // height: 15,
+                            // width: 20,
+                            // child: ,
+                            ),
                         // -----------------------------------------------------
                         // ---------NEXT IMAGE BUTTON IN LARGE SCREEN-----------
                         // -----------------------------------------------------
@@ -372,31 +390,34 @@ class PostsWeb extends StatelessWidget {
                           ? Colors.red
                           : Colors.grey),
         ),
-        Text("${postsModel == null ? 0 : postsModel!.votesCount ?? 0}",
-            style: TextStyle(
-                fontSize: 10,
-                color: postsModel == null
-                    ? Colors.grey
-                    : postsModel!.voteType == null
-                        ? Colors.grey
-                        : postsModel!.voteType! == "up"
-                            ? Colors.red
-                            : postsModel!.voteType! == "down"
-                                ? Colors.blue
-                                : Colors.grey)),
+        Text(
+          "${postsModel == null ? 0 : postsModel!.votesCount ?? 0}",
+          style: TextStyle(
+              fontSize: 13,
+              color: postsModel == null
+                  ? Colors.grey
+                  : postsModel!.voteType == null
+                      ? Colors.grey
+                      : postsModel!.voteType! == "up"
+                          ? Colors.red
+                          : postsModel!.voteType! == "down"
+                              ? Colors.blue
+                              : Colors.grey),
+        ),
         IconButton(
-            onPressed: () {
-              //downvote with postID
-            },
-            icon: Icon(Icons.arrow_downward,
-                color: postsModel == null
-                    ? Colors.grey
-                    : postsModel!.voteType == null
-                        ? Colors.grey
-                        : postsModel!.voteType! == "down"
-                            ? Colors.blue
-                            : Colors.grey)),
-        const SizedBox(width: 5),
+          onPressed: () {
+            //downvote with postID
+          },
+          icon: Icon(Icons.arrow_downward,
+              color: postsModel == null
+                  ? Colors.grey
+                  : postsModel!.voteType == null
+                      ? Colors.grey
+                      : postsModel!.voteType! == "down"
+                          ? Colors.blue
+                          : Colors.grey),
+        ),
+        // const SizedBox(width: 5),
       ],
     );
   }
@@ -468,6 +489,66 @@ class PostsWeb extends StatelessWidget {
       onPressed: () => buttonCarouselController.nextPage(
           duration: const Duration(milliseconds: 300), curve: Curves.linear),
       icon: const Icon(Icons.arrow_circle_right),
+    );
+  }
+
+  Widget mediaIndex() {
+    return Container(
+      child: postsModel == null
+          ? null
+          : postsModel!.images == null
+              ? null
+              : postsModel!.images!.length > 1
+                  ? BlocBuilder<MediaIndexCubit, MediaIndexState>(
+                      bloc: mediaIndexCubit,
+                      builder: (context, state) {
+                        if (state is MediaIndexInitial) {
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: postsModel!.images!
+                                .asMap()
+                                .entries
+                                .map((entry) {
+                              return Container(
+                                width: 5.0,
+                                height: 5.0,
+                                margin: const EdgeInsets.symmetric(
+                                    vertical: 4.0, horizontal: 4.0),
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.white.withOpacity(
+                                        _currentMediaIndex == entry.key
+                                            ? 0.9
+                                            : 0.4)),
+                              );
+                            }).toList(),
+                          );
+                        } else if (state is MediaIndexChanged) {
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: postsModel!.images!
+                                .asMap()
+                                .entries
+                                .map((entry) {
+                              return Container(
+                                width: 5.0,
+                                height: 5.0,
+                                margin: const EdgeInsets.symmetric(
+                                    vertical: 4.0, horizontal: 4.0),
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.white.withOpacity(
+                                        _currentMediaIndex == entry.key
+                                            ? 0.9
+                                            : 0.4)),
+                              );
+                            }).toList(),
+                          );
+                        }
+                        return Container();
+                      },
+                    )
+                  : null,
     );
   }
 }
