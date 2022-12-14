@@ -31,7 +31,6 @@ class _HomePageWebState extends State<HomePageWeb> {
     BlocProvider.of<AuthCubit>(context)
         .getUserData(PreferenceUtils.getString(SharedPrefKeys.userId));
     authRepo = AuthRepo(AuthWebService());
-    BlocProvider.of<PostsHomeCubit>(context).getTimelinePosts();
   }
 
   Map<String, String> interests = {
@@ -800,22 +799,32 @@ class _HomePageWebState extends State<HomePageWeb> {
             debugPrint("state is signed in");
             WidgetsBinding.instance
                 .addPostFrameCallback((_) => showDialogToChooseGender());
+            BlocProvider.of<PostsHomeCubit>(context).getTimelinePosts();
+
             return const HomeWeb();
           } else if (state is SignedInWithProfilePhoto) {
             debugPrint("state is SignedInWithProfilePhoto");
             UserData.profileSettings!.profile = state.imgUrl;
             debugPrint(
                 "user in the home page ${UserData.profileSettings!.profile}");
+            BlocProvider.of<PostsHomeCubit>(context).getTimelinePosts();
+
             return const HomeWeb();
           } else if (state is Login) {
+            BlocProvider.of<PostsHomeCubit>(context).getTimelinePosts();
+
             return const HomeWeb();
           } else if (state is GetTheUserData) {
             if (state.userDataJson != {}) {
               debugPrint("user is nottttttttttttttttttttttttt null");
               UserData.initUser(state.userDataJson);
+              BlocProvider.of<PostsHomeCubit>(context).getTimelinePosts();
+
               return const HomeWeb();
             }
           } else if (state is NotLoggedIn) {
+            BlocProvider.of<PostsHomeCubit>(context).getTimelinePosts();
+
             return const HomeWeb();
           }
           return const Center(
