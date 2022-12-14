@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:reddit/constants/strings.dart';
 import 'package:reddit/data/model/user_settings.dart';
 import 'package:reddit/data/web_services/settings_web_services.dart';
 
@@ -21,7 +22,7 @@ class SettingsRepository {
   /// This function calls the function [SettingsWebServices.updateImage] that updates any photo on mobile.
   Future<dynamic> updateImage(String key, File val) async {
     final newVal = await settingsWebServices.updateImage(val, key);
-    return newVal[key];
+    return imagesUrl + newVal['$key' 'Photo'];
   }
 
   /// [key] : [String] that defines the type of photo we want to change 'coverPhoto' or 'profilePhoto'
@@ -32,7 +33,7 @@ class SettingsRepository {
   /// This function calls the function [SettingsWebServices.updateImageWeb] that updates any photo on web.
   Future<dynamic> updateImageWeb(String key, Uint8List fileAsBytes) async {
     final newVal = await settingsWebServices.updateImageWeb(fileAsBytes, key);
-    return newVal[key];
+    return imagesUrl + newVal['$key' 'Photo'];
   }
 
   /// [changed] : a [Map] that contains only the changed profile settings

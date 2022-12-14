@@ -239,7 +239,7 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
                 children: [
                   Container(
                     decoration: const BoxDecoration(shape: BoxShape.circle),
-                    child: (profileSettings!.profile != '')
+                    child: profileSettings!.profile != ''
                         ? GestureDetector(
                             onTap: () =>
                                 pickImageWeb(ImageSource.gallery, 'profile'),

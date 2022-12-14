@@ -17,7 +17,7 @@ import 'package:reddit/presentation/screens/modtools/web/modqueue_web.dart';
 import 'package:reddit/presentation/screens/modtools/web/spam_web.dart';
 import 'package:reddit/presentation/screens/modtools/web/traffic_stats.dart';
 import 'package:reddit/presentation/screens/modtools/web/unmoderated.dart';
-import 'package:reddit/presentation/screens/profile/other_user_orfile_screen.dart';
+import 'package:reddit/presentation/screens/profile/other_user_profile_screen.dart';
 import 'business_logic/cubit/feed_settings_cubit.dart';
 import 'presentation/screens/feed_setting.dart';
 import 'package:reddit/presentation/screens/profile/others_profile_page_web.dart';
@@ -194,17 +194,21 @@ class AppRouter {
 
       case profilePageRoute:
         return MaterialPageRoute(
-            builder: (_) =>
-                kIsWeb ? const ProfilePageWeb() : const ProfileScreen());
+            builder: (_) => kIsWeb
+                ? const ProfilePageWeb()
+                : BlocProvider.value(
+                    value: settingsCubit,
+                    child: const ProfileScreen(),
+                  ));
 
       case otherProfilePageRoute:
-        final otherUser = settings.arguments as User;
+        final userID = settings.arguments as String;
         return MaterialPageRoute(
           builder: (_) => BlocProvider(
             create: (context) => userProfileCubit,
             child: kIsWeb
-                ? OtherProfilePageWeb(otherUser: otherUser)
-                : OtherProfileScreen(otherUser: otherUser),
+                ? OtherProfilePageWeb(userID: userID)
+                : OtherProfileScreen(userID: userID),
           ),
         );
 

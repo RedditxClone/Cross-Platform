@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reddit/business_logic/cubit/settings/settings_cubit.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/presentation/widgets/posts/posts.dart';
@@ -52,12 +54,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const CircleAvatar(
+                  CircleAvatar(
                       radius: 50,
-                      child: Icon(
-                        Icons.person,
-                        size: 50,
-                      )),
+                      child: UserData.user!.profilePic == ''
+                          ? const Icon(
+                              Icons.person,
+                              size: 50,
+                            )
+                          : Image.network(
+                              UserData.user!.profilePic!,
+                              fit: BoxFit.cover,
+                            )),
                   SizedBox(
                     width: 60,
                     child: OutlinedButton(
@@ -78,33 +85,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
               const SizedBox(height: 20),
-              Text(UserData.user!.displayName??"",
+              Text(
+                  UserData.user!.displayName == ''
+                      ? UserData.user!.username
+                      : UserData.user!.displayName!,
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 30)),
               const SizedBox(height: 10),
               Text('u/${UserData.user!.username} . 1 karma . 41d . 3 Oct 2022',
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 13)),
-              const SizedBox(height: 20),
-              Container(
-                padding: const EdgeInsets.symmetric(vertical: 15),
-                width: 160,
-                child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 30, 30, 30),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                    child: Row(
-                      children: const [
-                        Icon(Icons.add),
-                        Text('Add social links')
-                      ],
-                    )),
-              ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 5),
+              Text(UserData.profileSettings!.about,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 13)),
+              const SizedBox(height: 60),
             ],
           ),
         )
@@ -138,14 +133,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Row(
           children: [
             const SizedBox(width: 30),
-            const CircleAvatar(
+            CircleAvatar(
                 radius: 20,
-                child: Icon(
-                  Icons.person,
-                  size: 20,
-                )),
+                child: UserData.user!.profilePic == ''
+                    ? const Icon(
+                        Icons.person,
+                        size: 20,
+                      )
+                    : Image.network(
+                        UserData.user!.profilePic!,
+                        fit: BoxFit.cover,
+                      )),
             const SizedBox(width: 10),
-            Text(UserData.user!.displayName??""),
+            Text(
+              UserData.user!.displayName == ''
+                  ? UserData.user!.username
+                  : UserData.user!.displayName!,
+            ),
           ],
         ),
         Row(
@@ -175,50 +179,62 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  Widget _buildBody() {
+    return TabBarView(
+      children: [
+        _buildPosts(),
+        _empty(),
+        _empty(),
+      ],
+    );
+  }
+
+  Widget _buildAppBar() {
+    return SliverAppBar(
+      stretch: true,
+      expandedHeight: 320,
+      title: _upperAppBar(),
+      elevation: 0,
+      flexibleSpace: FlexibleSpaceBar(
+        background: _appBarContent(),
+      ),
+      backgroundColor: Colors.redAccent,
+      pinned: true,
+      bottom: const TabBar(
+        indicator: UnderlineTabIndicator(
+          borderSide: BorderSide(width: 3.0, color: Colors.blue),
+          insets: EdgeInsets.symmetric(horizontal: 30.0, vertical: 0),
+        ),
+        tabs: [
+          Tab(text: 'Posts'),
+          Tab(text: 'Comments'),
+          Tab(text: 'About'),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: DefaultTabController(
-      initialIndex: 0,
-      length: 3,
-      child: NestedScrollView(
-        headerSliverBuilder: (_, bool innerBoxIsScrolled) {
-          return [
-            SliverAppBar(
-              stretch: true,
-              expandedHeight: 400,
-              title: _upperAppBar(),
-              elevation: 0,
-              flexibleSpace: FlexibleSpaceBar(
-                background: _appBarContent(),
-              ),
-              backgroundColor: Colors.redAccent,
-              pinned: true,
-              bottom: const TabBar(
-                indicator: UnderlineTabIndicator(
-                  borderSide: BorderSide(width: 3.0, color: Colors.blue),
-                  insets: EdgeInsets.symmetric(horizontal: 30.0, vertical: 0),
-                ),
-                tabs: [
-                  Tab(text: 'Posts'),
-                  Tab(text: 'Comments'),
-                  Tab(text: 'About'),
-                ],
-              ),
-            ),
-          ];
-        },
-        body: Container(
-          color: Colors.black,
-          child: TabBarView(
-            children: [
-              _buildPosts(),
-              _empty(),
-              _empty(),
-            ],
-          ),
-        ),
+      body: DefaultTabController(
+        initialIndex: 0,
+        length: 3,
+        child: NestedScrollView(
+            headerSliverBuilder: (_, bool innerBoxIsScrolled) {
+              return [
+                BlocBuilder<SettingsCubit, SettingsState>(
+                  builder: (context, state) {
+                    if (state is SettingsChanged) {
+                      return _buildAppBar();
+                    }
+                    return _buildAppBar();
+                  },
+                )
+              ];
+            },
+            body: _buildBody()),
       ),
-    ));
+    );
   }
 }
