@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:reddit/business_logic/cubit/messages/messages_cubit.dart';
 import 'package:reddit/business_logic/cubit/user_profile/user_profile_cubit.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/data/model/auth_model.dart';
@@ -16,6 +17,9 @@ class OtherProfileScreen extends StatefulWidget {
 
 class _OtherProfileScreenState extends State<OtherProfileScreen> {
   User? otherUser;
+  TextEditingController subjectController = TextEditingController();
+
+  TextEditingController messageController = TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -106,8 +110,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
       width: 126,
       child: OutlinedButton(
           onPressed: () {
-            BlocProvider.of<UserProfileCubit>(context).unfollow(widget
-                .userID); // TODO :  change this to the id of the other user
+            BlocProvider.of<UserProfileCubit>(context).unfollow(widget.userID);
           },
           style: ElevatedButton.styleFrom(
             side: const BorderSide(width: 1.0, color: Colors.white),
@@ -233,9 +236,75 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
     );
   }
 
-  void _moreOptionsBottomSheet(BuildContext ctx) {
+  void _sendMessageBottomSheet(BuildContext buildcontext) {
     showModalBottomSheet(
-        context: ctx,
+        isScrollControlled: true,
+        enableDrag: false,
+        context: buildcontext,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(25.0),
+          ),
+        ),
+        builder: (_) {
+          return FractionallySizedBox(
+            heightFactor: 0.9,
+            child: Scaffold(
+              appBar: AppBar(
+                leading: CloseButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                actions: [
+                  TextButton(
+                      onPressed: () {
+                        BlocProvider.of<MessagesCubit>(buildcontext)
+                            .sendMessage(subjectController.text,
+                                messageController.text, otherUser!.username);
+                      },
+                      child: const Text('Send', style: TextStyle(fontSize: 20)))
+                ],
+              ),
+              body: Container(
+                height: MediaQuery.of(context).size.height - 50,
+                padding: const EdgeInsets.fromLTRB(10, 20, 10, 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'u/ ${otherUser!.username}',
+                      style: const TextStyle(fontSize: 18),
+                    ),
+                    const SizedBox(height: 5),
+                    const Divider(thickness: 1, color: Colors.grey),
+                    const SizedBox(height: 5),
+                    TextField(
+                      controller: subjectController,
+                      decoration: const InputDecoration(
+                        labelText: 'Subject',
+                        border: InputBorder.none,
+                      ),
+                    ),
+                    const Divider(thickness: 1, color: Colors.grey),
+                    TextField(
+                        controller: messageController,
+                        decoration: const InputDecoration(
+                          labelText: 'Message',
+                          border: InputBorder.none,
+                        )),
+                    const Divider(thickness: 1, color: Colors.grey),
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
+  }
+
+  void _moreOptionsBottomSheet(BuildContext buildcontext) {
+    showModalBottomSheet(
+        context: buildcontext,
         builder: (_) {
           return Container(
             height: 170,
@@ -257,7 +326,10 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                       ],
                     )),
                 TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pop(context);
+                      _sendMessageBottomSheet(buildcontext);
+                    },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: const [
@@ -271,7 +343,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                       ],
                     )),
                 ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () => Navigator.pop(context),
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.grey,
                       backgroundColor: const Color.fromRGBO(90, 90, 90, 100),
@@ -309,7 +381,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
     ));
   }
 
-  Widget _upperAppBar() {
+  Widget _upperAppBar(buildcontext) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -336,7 +408,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                 onPressed: () {},
                 icon: const Icon(Icons.file_upload_outlined, size: 30)),
             IconButton(
-                onPressed: () => _moreOptionsBottomSheet(context),
+                onPressed: () => _moreOptionsBottomSheet(buildcontext),
                 icon: const Icon(Icons.more_horiz, size: 30)),
           ],
         ),
@@ -371,11 +443,11 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
     );
   }
 
-  Widget _buildAppBar() {
+  Widget _buildAppBar(buildcontext) {
     return SliverAppBar(
       stretch: true,
       expandedHeight: 320,
-      title: _upperAppBar(),
+      title: _upperAppBar(buildcontext),
       elevation: 0,
       flexibleSpace: FlexibleSpaceBar(
         background: _appBarContent(),
@@ -409,48 +481,60 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
               builder: (context, state) {
                 if (state is UserInfoAvailable) {
                   otherUser = state.userInfo;
-                  return _buildAppBar();
+                  return _buildAppBar(context);
                 }
                 if (state is FollowOtherUserSuccess ||
                     state is FollowOtherUserNotSuccess ||
                     state is UnFollowOtherUserSuccess ||
                     state is UnFollowOtherUserNotSuccess) {
-                  return _buildAppBar();
+                  return _buildAppBar(context);
                 }
                 return const SliverAppBar();
               },
             ),
           ];
         },
-        body: BlocListener<UserProfileCubit, UserProfileState>(
-            listener: (context, state) {
-          if (state is FollowOtherUserSuccess) {
-            displayMsg(
-                context, Colors.green, ' Followed u/${otherUser!.username}');
-          } else if (state is FollowOtherUserNotSuccess) {
-            displayMsg(context, Colors.red,
-                'An error has occured. please try again later');
-          } else if (state is UnFollowOtherUserSuccess) {
-            displayMsg(
-                context, Colors.green, ' Unfollowed u/${otherUser!.username}');
-          } else if (state is UnFollowOtherUserNotSuccess) {
-            displayMsg(context, Colors.red,
-                'An error has occured. please try again later');
-          }
-        }, child: BlocBuilder<UserProfileCubit, UserProfileState>(
-          builder: (context, state) {
-            if (state is UserInfoAvailable) {
-              otherUser = state.userInfo;
-              return _buildBody();
-            } else if (state is FollowOtherUserSuccess ||
-                state is FollowOtherUserNotSuccess ||
-                state is UnFollowOtherUserSuccess ||
-                state is UnFollowOtherUserNotSuccess) {
-              return _buildBody();
+        body: BlocListener<MessagesCubit, MessagesState>(
+          listener: (context, state) {
+            if (state is MessageSent) {
+              Navigator.pop(context);
+              displayMsg(
+                  context, Colors.green, ' Message is sent successfully');
+            } else {
+              displayMsg(context, Colors.red,
+                  'An error has occured. please try again later');
             }
-            return const Center(child: CircularProgressIndicator());
           },
-        )),
+          child: BlocListener<UserProfileCubit, UserProfileState>(
+              listener: (context, state) {
+            if (state is FollowOtherUserSuccess) {
+              displayMsg(
+                  context, Colors.green, ' Followed u/${otherUser!.username}');
+            } else if (state is FollowOtherUserNotSuccess) {
+              displayMsg(context, Colors.red,
+                  'An error has occured. please try again later');
+            } else if (state is UnFollowOtherUserSuccess) {
+              displayMsg(context, Colors.green,
+                  ' Unfollowed u/${otherUser!.username}');
+            } else if (state is UnFollowOtherUserNotSuccess) {
+              displayMsg(context, Colors.red,
+                  'An error has occured. please try again later');
+            }
+          }, child: BlocBuilder<UserProfileCubit, UserProfileState>(
+            builder: (context, state) {
+              if (state is UserInfoAvailable) {
+                otherUser = state.userInfo;
+                return _buildBody();
+              } else if (state is FollowOtherUserSuccess ||
+                  state is FollowOtherUserNotSuccess ||
+                  state is UnFollowOtherUserSuccess ||
+                  state is UnFollowOtherUserNotSuccess) {
+                return _buildBody();
+              }
+              return const Center(child: CircularProgressIndicator());
+            },
+          )),
+        ),
       ),
     ));
   }

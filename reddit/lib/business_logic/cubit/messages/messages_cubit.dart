@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
 import 'package:reddit/data/repository/messages/messages_repository.dart';
 
@@ -16,6 +17,7 @@ class MessagesCubit extends Cubit<MessagesState> {
   /// - [MessageSent]   :  message created successfully
   void sendMessage(String subject, String body, String username) {
     if (isClosed) return;
+    print('inside message cubit');
     Map<String, dynamic> messageData = {
       'subject': subject,
       'body': body,
@@ -26,6 +28,10 @@ class MessagesCubit extends Cubit<MessagesState> {
     }
     if (subject == '') {
       emit(EmptySubject());
+      return;
+    }
+    if (!kIsWeb && body == '') {
+      emit(EmptyBody());
       return;
     }
     messageRepository.sendMessage(messageData, username).then((statusCode) {

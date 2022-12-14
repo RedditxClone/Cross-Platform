@@ -10,7 +10,7 @@ import 'package:reddit/data/web_services/feed_setting_web_services.dart';
 import 'package:reddit/data/web_services/messages/messages_web_services.dart';
 import 'package:reddit/presentation/screens/forget_username_web.dart';
 import 'package:reddit/data/web_services/user_profile/user_profile_webservices.dart';
-import 'package:reddit/presentation/screens/message/send_message_web.dart';
+import 'package:reddit/presentation/screens/messages/send_message_web.dart';
 import 'package:reddit/presentation/screens/modtools/mobile/mod_list_screen.dart';
 import 'package:reddit/presentation/screens/modtools/web/approved_web.dart';
 import 'package:reddit/presentation/screens/modtools/web/edited_web.dart';
@@ -193,8 +193,15 @@ class AppRouter {
       case otherProfilePageRoute:
         final userID = settings.arguments as String;
         return MaterialPageRoute(
-          builder: (_) => BlocProvider(
-            create: (context) => userProfileCubit,
+          builder: (_) => MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (context) => userProfileCubit,
+              ),
+              BlocProvider(
+                create: (context) => messagesCubit,
+              ),
+            ],
             child: kIsWeb
                 ? OtherProfilePageWeb(userID: userID)
                 : OtherProfileScreen(userID: userID),

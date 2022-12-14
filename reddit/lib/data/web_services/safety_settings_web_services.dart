@@ -126,7 +126,7 @@ class SafetySettingsWebServices {
           options: Options(
             headers: {"Authorization": "Bearer  ${UserData.user!.token}"},
           ));
-      return {"blocked": []}; // TODO : return response.data when
+      return response.data;
     } catch (e) {
       return [];
     }

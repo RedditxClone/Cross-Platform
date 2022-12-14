@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:reddit/business_logic/cubit/settings/safety_settings_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
+import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/data/model/safety_user_settings.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -41,7 +42,7 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
   }
 
   Widget _createBlockedList(BuildContext ctx) {
-    List<dynamic> blocked = safetySettings!.blocked;
+    List<User> blocked = safetySettings!.blocked;
     return Container(
       constraints: const BoxConstraints(maxHeight: 500),
       child: ListView.builder(
@@ -59,7 +60,7 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
                     children: [
                       InkWell(
                           onTap: () {},
-                          child: Text(blocked[index],
+                          child: Text(blocked[index].username,
                               style: const TextStyle(fontSize: 15))),
                       const SizedBox(width: 10),
                       const Text('just now',
@@ -68,7 +69,8 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
                   ),
                   InkWell(
                       onTap: () => BlocProvider.of<SafetySettingsCubit>(context)
-                          .unBlockUser(safetySettings!, blocked[index]),
+                          .unBlockUser(
+                              safetySettings!, blocked[index].username),
                       child: const Text('Remove',
                           style: TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold))),
