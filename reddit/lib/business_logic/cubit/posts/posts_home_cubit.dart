@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
 import 'package:reddit/data/model/posts/posts_model.dart';
 import 'package:reddit/data/repository/posts/posts_repository.dart';
@@ -23,6 +24,8 @@ class PostsHomeCubit extends Cubit<PostsHomeState> {
     postsRepository.getTimelinePosts().then((posts) {
       // start the state existing in characters_state
       // here you sent characters list to characters loaded state
+      debugPrint("Home posts null");
+
       emit(PostsLoaded(posts));
       this.posts = posts;
     });
