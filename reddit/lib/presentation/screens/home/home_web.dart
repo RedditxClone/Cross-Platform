@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reddit/business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
-import 'package:reddit/business_logic/cubit/posts/posts_cubit.dart';
+import 'package:reddit/business_logic/cubit/posts/posts_home_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/data/model/auth_model.dart';
@@ -202,7 +202,10 @@ class _HomeWebState extends State<HomeWeb> {
                           ),
                           // sort posts
                           _sortBy(),
-                          BlocBuilder<PostsCubit, PostsState>(
+                          // -----------------------------------------------
+                          // ---------------------POSTS---------------------
+                          // -----------------------------------------------
+                          BlocBuilder<PostsHomeCubit, PostsHomeState>(
                             builder: (context, state) {
                               if (state is PostsLoaded) {
                                 return Column(children: [

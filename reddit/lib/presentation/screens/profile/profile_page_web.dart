@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:reddit/business_logic/cubit/posts/posts_my_profile_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
@@ -15,6 +17,13 @@ class ProfilePageWeb extends StatefulWidget {
 }
 
 class _ProfilePageWebState extends State<ProfilePageWeb> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    BlocProvider.of<PostsMyProfileCubit>(context).getMyProfilePosts();
+  }
+
   late Responsive _responsive;
   String _outlineButtonLabel = 'Joined';
   String sortBy = 'new';
@@ -509,14 +518,18 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
                     child: Container(
                       padding: const EdgeInsets.all(15),
                       width: 10,
-                      child: Column(
-                        children: [
-                          _sortBy(),
-                          PostsWeb(),
-                          PostsWeb(),
-                          PostsWeb(),
-                          PostsWeb(),
-                        ],
+                      child:
+                          BlocBuilder<PostsMyProfileCubit, PostsMyProfileState>(
+                        builder: (context, state) {
+                          if (state is PostsLoaded) {
+                            return Column(children: [
+                              ...state.posts!
+                                  .map((e) => PostsWeb(postsModel: e))
+                                  .toList()
+                            ]);
+                          }
+                          return Container();
+                        },
                       ),
                     ),
                   ),

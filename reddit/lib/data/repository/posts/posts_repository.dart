@@ -12,10 +12,15 @@ class PostsRepository {
   /// after getting it from [PostsWebServices] and mapping it to the model list.
   Future<List<PostsModel>> getTimelinePosts() async {
     final posts = await postsDrawerWebServices.getTimelinePosts();
-    debugPrint("posts from repo:");
+    debugPrint("Timeline posts from repo:");
     debugPrint("$posts");
-    return posts == ""
-        ? []
-        : List<PostsModel>.from(posts.map((i) => PostsModel.fromJson(i)));
+    return List<PostsModel>.from(posts.map((i) => PostsModel.fromJson(i)));
+  }
+
+  Future<List<PostsModel>> getMyProfilePosts() async {
+    final posts = await postsDrawerWebServices.getMyProfilePosts();
+    debugPrint("My profile posts from repo:");
+    debugPrint("$posts");
+    return List<PostsModel>.from(posts.map((i) => PostsModel.fromJson(i)));
   }
 }

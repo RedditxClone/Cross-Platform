@@ -3,13 +3,13 @@ import 'package:meta/meta.dart';
 import 'package:reddit/data/model/posts/posts_model.dart';
 import 'package:reddit/data/repository/posts/posts_repository.dart';
 
-part 'posts_state.dart';
+part 'posts_home_state.dart';
 
-class PostsCubit extends Cubit<PostsState> {
+class PostsHomeCubit extends Cubit<PostsHomeState> {
   final PostsRepository postsRepository;
 
   List<PostsModel>? posts;
-  PostsCubit(this.postsRepository) : super(PostsInitial());
+  PostsHomeCubit(this.postsRepository) : super(PostsInitial());
 
   /// This function emits:
   /// state [PostsLoading] to indicate that data is loading from the server.

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:reddit/business_logic/cubit/posts/posts_cubit.dart';
+import 'package:reddit/business_logic/cubit/posts/posts_home_cubit.dart';
+import 'package:reddit/business_logic/cubit/posts/posts_my_profile_cubit.dart';
 import 'package:reddit/data/repository/posts/posts_repository.dart';
 import 'package:reddit/data/web_services/posts/posts_web_services.dart';
 import 'package:reddit/business_logic/cubit/user_profile/user_profile_cubit.dart';
@@ -118,7 +119,8 @@ class AppRouter {
 
   late PostsWebServices postsWebServices;
   late PostsRepository postsRepository;
-  late PostsCubit postsCubit;
+  late PostsHomeCubit postsHomeCubit;
+  late PostsMyProfileCubit postsMyProfileCubit;
   AppRouter() {
     // initialise repository and cubit objects
     safetySettingsRepository =
@@ -146,7 +148,8 @@ class AppRouter {
 
     postsWebServices = PostsWebServices();
     postsRepository = PostsRepository(postsWebServices);
-    postsCubit = PostsCubit(postsRepository);
+    postsHomeCubit = PostsHomeCubit(postsRepository);
+    postsMyProfileCubit = PostsMyProfileCubit(postsRepository);
     userProfileWebServices = UserProfileWebServices();
     userProfileRepository = UserProfileRepository(userProfileWebServices);
     userProfileCubit = UserProfileCubit(userProfileRepository);
@@ -171,7 +174,7 @@ class AppRouter {
                 create: ((context) => authCubit),
               ),
               BlocProvider(
-                create: (context) => postsCubit,
+                create: (context) => postsHomeCubit,
               ),
             ],
             child: kIsWeb ? HomePageWeb() : HomePage(),
@@ -183,7 +186,7 @@ class AppRouter {
             builder: (_) => MultiBlocProvider(
                   providers: [
                     BlocProvider(
-                      create: (context) => postsCubit,
+                      create: (context) => postsHomeCubit,
                     ),
                     BlocProvider.value(
                       value: authCubit,
@@ -195,7 +198,14 @@ class AppRouter {
       case profilePageRoute:
         return MaterialPageRoute(
             builder: (_) => kIsWeb
-                ? const ProfilePageWeb()
+                ? MultiBlocProvider(
+                    providers: [
+                      BlocProvider(
+                        create: (context) => postsMyProfileCubit,
+                      ),
+                    ],
+                    child: const ProfilePageWeb(),
+                  )
                 : BlocProvider.value(
                     value: settingsCubit,
                     child: const ProfileScreen(),
