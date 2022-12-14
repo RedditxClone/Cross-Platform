@@ -500,9 +500,12 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
               Navigator.pop(context);
               displayMsg(
                   context, Colors.green, ' Message is sent successfully');
+            } else if (state is EmptySubject) {
+              displayMsg(context, Colors.red, 'Please enter a subject');
+            } else if (state is EmptyBody) {
+              displayMsg(context, Colors.red, 'Please enter a message');
             } else {
-              displayMsg(context, Colors.red,
-                  'An error has occured. please try again later');
+              displayMsg(context, Colors.red, 'An error has occured');
             }
           },
           child: BlocListener<UserProfileCubit, UserProfileState>(
