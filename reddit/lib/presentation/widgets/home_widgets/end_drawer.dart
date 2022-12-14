@@ -87,6 +87,7 @@ class EndDrawer extends StatelessWidget {
                   title: const Text("Sign up / Log in"),
                   onTap: () {
                     // TODO: go to sign up / log in page
+                    Navigator.pushNamed(context, loginScreen);
                   },
                 ),
                 ListTile(
@@ -151,7 +152,7 @@ class EndDrawer extends StatelessWidget {
         Navigator.of(context).pushNamed(accountSettingsRoute, arguments: {
           "username": UserData.user!.username,
           "email": UserData.user!.email,
-          "gender": UserData.accountSettings!.gender == 'male',//_isMan
+          "gender": UserData.accountSettings!.gender == 'male', //_isMan
         });
       },
     );

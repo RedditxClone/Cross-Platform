@@ -1,6 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:reddit/business_logic/cubit/messages/messages_cubit.dart';
+import 'package:reddit/business_logic/cubit/posts/posts_home_cubit.dart';
+import 'package:reddit/business_logic/cubit/posts/posts_my_profile_cubit.dart';
+import 'package:reddit/data/repository/posts/posts_repository.dart';
+import 'package:reddit/data/web_services/posts/posts_web_services.dart';
 import 'package:reddit/business_logic/cubit/user_profile/user_profile_cubit.dart';
 import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/data/repository/feed_setting_repository.dart';
@@ -120,6 +124,10 @@ class AppRouter {
   late MessagesRepository messagesRepository;
   late MessagesCubit messagesCubit;
 
+  late PostsWebServices postsWebServices;
+  late PostsRepository postsRepository;
+  late PostsHomeCubit postsHomeCubit;
+  late PostsMyProfileCubit postsMyProfileCubit;
   AppRouter() {
     // initialise repository and cubit objects
     safetySettingsRepository =
@@ -145,6 +153,10 @@ class AppRouter {
     communityRepository = CreateCommunityRepository(communityWebServices);
     createCommunityCubit = CreateCommunityCubit(communityRepository);
 
+    postsWebServices = PostsWebServices();
+    postsRepository = PostsRepository(postsWebServices);
+    postsHomeCubit = PostsHomeCubit(postsRepository);
+    postsMyProfileCubit = PostsMyProfileCubit(postsRepository);
     userProfileWebServices = UserProfileWebServices();
     userProfileRepository = UserProfileRepository(userProfileWebServices);
     userProfileCubit = UserProfileCubit(userProfileRepository);
@@ -167,26 +179,53 @@ class AppRouter {
 
       case homePageRoute:
         return MaterialPageRoute(
-          builder: (_) => BlocProvider(
-            create: (context) => authCubit,
-            child: kIsWeb ? const HomePageWeb() : HomePage(),
+          builder: (_) => MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: ((context) => authCubit),
+              ),
+              BlocProvider(
+                create: (context) => postsHomeCubit,
+              ),
+            ],
+            child: kIsWeb ? HomePageWeb() : HomePage(),
           ),
         );
 
       case popularPageRoute:
         return MaterialPageRoute(
-          builder: (_) => BlocProvider.value(
-            value: authCubit,
-            child: kIsWeb ? PopularWeb() : const Popular(),
-          ),
-        );
+            builder: (_) => MultiBlocProvider(
+                  providers: [
+                    BlocProvider(
+                      create: (context) => postsHomeCubit,
+                    ),
+                    BlocProvider.value(
+                      value: authCubit,
+                    ),
+                  ],
+                  child: PopularWeb(),
+                ));
 
       case profilePageRoute:
         return MaterialPageRoute(
             builder: (_) => kIsWeb
-                ? const ProfilePageWeb()
-                : BlocProvider.value(
-                    value: settingsCubit,
+                ? MultiBlocProvider(
+                    providers: [
+                      BlocProvider(
+                        create: (context) => postsMyProfileCubit,
+                      ),
+                    ],
+                    child: const ProfilePageWeb(),
+                  )
+                : MultiBlocProvider(
+                    providers: [
+                      BlocProvider.value(
+                        value: settingsCubit,
+                      ),
+                      BlocProvider(
+                        create: (context) => postsMyProfileCubit,
+                      ),
+                    ],
                     child: const ProfileScreen(),
                   ));
 

@@ -37,9 +37,8 @@ class _AppBarWebNotLoggedInState extends State<AppBarWebNotLoggedIn> {
         SizedBox(
           width: 80,
           child: InkWell(
-            onTap: () => Navigator.pushReplacementNamed(
-                context, popularPageRoute,
-                arguments: null),
+            onTap: () =>
+                Navigator.pushNamed(context, popularPageRoute, arguments: null),
             hoverColor: Colors.transparent,
             child: Row(
               children: [
