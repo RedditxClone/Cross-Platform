@@ -206,8 +206,15 @@ class AppRouter {
                     ],
                     child: const ProfilePageWeb(),
                   )
-                : BlocProvider.value(
-                    value: settingsCubit,
+                : MultiBlocProvider(
+                    providers: [
+                      BlocProvider.value(
+                        value: settingsCubit,
+                      ),
+                      BlocProvider(
+                        create: (context) => postsMyProfileCubit,
+                      ),
+                    ],
                     child: const ProfileScreen(),
                   ));
 

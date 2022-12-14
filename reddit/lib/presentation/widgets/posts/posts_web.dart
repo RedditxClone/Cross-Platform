@@ -81,55 +81,58 @@ class PostsWeb extends StatelessWidget {
                 // --------------------------------------------------
                 // -----USER PHOTO, SUBREDDIT, USER, TIME------------
                 // --------------------------------------------------
-                Container(
-                  padding: const EdgeInsets.all(5),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          InkWell(
-                            onDoubleTap: () {
-                              // Go to user page
-                            },
-                            child: CircleAvatar(
-                              radius: 15.0,
-                              backgroundImage: postsModel == null
-                                  ? null
-                                  : postsModel!.user == null
-                                      ? null
-                                      : postsModel!.user!.photo != null
-                                          ? NetworkImage(
-                                              postsModel!.user!.photo!)
-                                          : null,
-                              backgroundColor: Colors.transparent,
+                Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Container(
+                    padding: const EdgeInsets.all(5),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            InkWell(
+                              onDoubleTap: () {
+                                // Go to user page
+                              },
+                              child: CircleAvatar(
+                                radius: 15.0,
+                                backgroundImage: postsModel == null
+                                    ? null
+                                    : postsModel!.user == null
+                                        ? null
+                                        : postsModel!.user!.photo != null
+                                            ? NetworkImage(
+                                                postsModel!.user!.photo!)
+                                            : null,
+                                backgroundColor: Colors.transparent,
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 10),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              InkWell(
-                                onTap: (() {
-                                  // Go to subreddit page
-                                }),
-                                child: Text(
-                                    "r/${postsModel == null ? '' : postsModel!.subreddit == null ? '' : postsModel!.subreddit!.name ?? ''}",
-                                    style: const TextStyle(fontSize: 13)),
-                              ),
-                              InkWell(
-                                onTap: (() {
-                                  // Go to user page
-                                }),
-                                child: Text(
-                                    "u/${postsModel == null ? '' : postsModel!.user == null ? "" : postsModel!.user!.username ?? ''} . ${getPostDate()}",
-                                    style: const TextStyle(fontSize: 13)),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
+                            const SizedBox(width: 10),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                InkWell(
+                                  onTap: (() {
+                                    // Go to subreddit page
+                                  }),
+                                  child: Text(
+                                      "r/${postsModel == null ? '' : postsModel!.subreddit == null ? '' : postsModel!.subreddit!.name ?? ''}",
+                                      style: const TextStyle(fontSize: 13)),
+                                ),
+                                InkWell(
+                                  onTap: (() {
+                                    // Go to user page
+                                  }),
+                                  child: Text(
+                                      "u/${postsModel == null ? '' : postsModel!.user == null ? "" : postsModel!.user!.username ?? ''} . ${getPostDate()}",
+                                      style: const TextStyle(fontSize: 13)),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 // --------------------------------------------------
@@ -139,12 +142,15 @@ class PostsWeb extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Expanded(
-                      child: Text(
-                        postsModel == null ? "" : postsModel!.title ?? "",
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey.shade300),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                        child: Text(
+                          postsModel == null ? "" : postsModel!.title ?? "",
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey.shade300),
+                        ),
                       ),
                     ),
                   ],
@@ -157,7 +163,8 @@ class PostsWeb extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 5.0, vertical: 8.0),
                         child: Text(
                           postsModel == null ? "" : postsModel!.text ?? "",
                           style: TextStyle(
