@@ -3,7 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:reddit/business_logic/cubit/left_drawer/left_drawer_cubit.dart';
 import 'package:reddit/constants/strings.dart';
-import 'package:reddit/data/model/left_drawer/left_drawer_model.dart';
+import 'package:reddit/data/model/left_drawer/following_users_drawer_model.dart';
+import 'package:reddit/data/model/left_drawer/joined_subreddits_drawer_model.dart';
 
 import '../../../data/model/auth_model.dart';
 import '../../../data/repository/left_drawer/left_drawer_repository.dart';
@@ -22,8 +23,8 @@ class _LeftDrawerState extends State<LeftDrawer> {
       LeftDrawerRepository(LeftDrawerWebServices());
 
   // List<LeftDrawerModel>? _moderating;
-  // List<LeftDrawerModel>? _yourCommunities;
-  LeftDrawerModel? _following;
+  List<JoinedSubredditsDrawerModel>? _yourCommunities;
+  FollowingUsersDrawerModel? _following;
   // List<LeftDrawerModel>? _favorites;
   @override
   void initState() {
@@ -162,7 +163,7 @@ class _LeftDrawerState extends State<LeftDrawer> {
               // --------------------------------------------
               // ------------Get joined communities----------
               // --------------------------------------------
-              const ExpansionTile(
+              ExpansionTile(
                 initiallyExpanded: true,
                 textColor: Colors.white,
                 iconColor: Colors.white,
@@ -170,39 +171,55 @@ class _LeftDrawerState extends State<LeftDrawer> {
                 title: Text("Your Communities"),
                 // Children are the subreddits that you are currently moderating
                 children: [
-                  // ListTile(
-                  //   leading: const FaIcon(FontAwesomeIcons.plus),
-                  //   title: const Text("Create a community"),
-                  //   onTap: () {
-                  //     // TODO: got to create community page
-                  //     Navigator.pushNamed(
-                  //         context, createCommunityScreenRoute);
-                  //   },
-                  // ),
-                  // ..._yourCommunities!.map(
-                  //   (e) {
-                  //     return ListTile(
-                  //       onTap: () {},
-                  //       leading: CircleAvatar(
-                  //         radius: 15.0,
-                  //         backgroundImage: NetworkImage(e.image!),
-                  //         backgroundColor: Colors.transparent,
-                  //       ),
-                  //       title: Text("r/${e.name}"),
-                  //       trailing: e.favorite!
-                  //           ? IconButton(
-                  //               onPressed: () {
-                  //                 _removeFromFavorites(e);
-                  //               },
-                  //               icon: const Icon(Icons.star))
-                  //           : IconButton(
-                  //               onPressed: () {
-                  //                 _addToFavorites(e);
-                  //               },
-                  //               icon: const Icon(Icons.star_border)),
-                  //     );
-                  //   },
-                  // ).toList(),
+                  ListTile(
+                    leading: const FaIcon(FontAwesomeIcons.plus),
+                    title: const Text("Create a community"),
+                    onTap: () {
+                      // TODO: got to create community page
+                      Navigator.pushNamed(context, createCommunityScreenRoute);
+                    },
+                  ),
+                  BlocBuilder<LeftDrawerCubit, LeftDrawerState>(
+                    builder: (context, state) {
+                      if (state is LeftDrawerDataLoaded) {
+                        _yourCommunities = state.yourCommunities;
+                        return Column(
+                          children: _yourCommunities!.map(
+                            (e) {
+                              return ListTile(
+                                onTap: () {
+                                  Navigator.pushNamed(
+                                      context, subredditPageScreenRoute,
+                                      arguments: e.sId!);
+                                },
+                                leading: const Icon(Icons.groups_sharp),
+                                // Icon of subreddit doesn't exist in api
+                                // leading: CircleAvatar(
+                                //   radius: 15.0,
+                                //   backgroundImage:
+                                //       NetworkImage(imagesUrl + e.profilePhoto!),
+                                //   backgroundColor: Colors.transparent,
+                                // ),
+                                title: Text("r/${e.name}"),
+                                // trailing: e.favorite!
+                                //     ? IconButton(
+                                //         onPressed: () {
+                                //           _removeFromFavorites(e);
+                                //         },
+                                //         icon: const Icon(Icons.star))
+                                //     : IconButton(
+                                //         onPressed: () {
+                                //           _addToFavorites(e);
+                                //         },
+                                //         icon: const Icon(Icons.star_border)),
+                              );
+                            },
+                          ).toList(),
+                        );
+                      }
+                      return Container();
+                    },
+                  )
                 ],
               ),
               ExpansionTile(
@@ -211,42 +228,43 @@ class _LeftDrawerState extends State<LeftDrawer> {
                 iconColor: Colors.white,
                 maintainState: true,
                 title: const Text("Following"),
-                // Children are the subreddits that you are currently moderating
+                // Children are the users that you are currently following
                 children: [
                   BlocBuilder<LeftDrawerCubit, LeftDrawerState>(
                     builder: (context, state) {
                       if (state is LeftDrawerDataLoaded) {
                         _following = state.following;
                         return Column(
-                            children: _following!.data!.map(
-                          (e) {
-                            return ListTile(
-                              onTap: () {
-                                Navigator.pushNamed(
-                                    context, otherProfilePageRoute,
-                                    arguments: e.sId!);
-                              }, // TODO : Navigate to user profile
-                              leading: CircleAvatar(
-                                radius: 15.0,
-                                backgroundImage:
-                                    NetworkImage(imagesUrl + e.profilePhoto!),
-                                backgroundColor: Colors.transparent,
-                              ),
-                              title: Text("r/${e.username}"),
-                              // trailing: e.favorite!
-                              //     ? IconButton(
-                              //         onPressed: () {
-                              //           _removeFromFavorites(e);
-                              //         },
-                              //         icon: const Icon(Icons.star))
-                              //     : IconButton(
-                              //         onPressed: () {
-                              //           _addToFavorites(e);
-                              //         },
-                              //         icon: const Icon(Icons.star_border)),
-                            );
-                          },
-                        ).toList());
+                          children: _following!.data!.map(
+                            (e) {
+                              return ListTile(
+                                onTap: () {
+                                  Navigator.pushNamed(
+                                      context, otherProfilePageRoute,
+                                      arguments: e.sId!);
+                                }, // TODO : Navigate to user profile
+                                leading: CircleAvatar(
+                                  radius: 15.0,
+                                  backgroundImage:
+                                      NetworkImage(imagesUrl + e.profilePhoto!),
+                                  backgroundColor: Colors.transparent,
+                                ),
+                                title: Text("r/${e.username}"),
+                                // trailing: e.favorite!
+                                //     ? IconButton(
+                                //         onPressed: () {
+                                //           _removeFromFavorites(e);
+                                //         },
+                                //         icon: const Icon(Icons.star))
+                                //     : IconButton(
+                                //         onPressed: () {
+                                //           _addToFavorites(e);
+                                //         },
+                                //         icon: const Icon(Icons.star_border)),
+                              );
+                            },
+                          ).toList(),
+                        );
                       }
                       return Container();
                     },

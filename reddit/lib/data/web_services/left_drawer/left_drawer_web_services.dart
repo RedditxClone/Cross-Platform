@@ -40,7 +40,10 @@ class LeftDrawerWebServices {
   /// This function performs `GET` request to the endpoint `baseUrl/user/joined_communities`.
   Future<dynamic> getYourCommunities() async {
     try {
-      Response response = await dio.get('user/joined_communities');
+      Response response = await dio.get('/subreddit/join/me',
+          options: Options(
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+          ));
       print(response.data);
       return response.data;
     } catch (e) {
@@ -57,7 +60,7 @@ class LeftDrawerWebServices {
           options: Options(
             headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
-      debugPrint("${response.data}");
+      // debugPrint("${response.data}");
       return response.data;
     } catch (e) {
       debugPrint("$e");

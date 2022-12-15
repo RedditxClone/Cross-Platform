@@ -2,7 +2,8 @@ import 'package:async/async.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
-import 'package:reddit/data/model/left_drawer/left_drawer_model.dart';
+import 'package:reddit/data/model/left_drawer/following_users_drawer_model.dart';
+import 'package:reddit/data/model/left_drawer/joined_subreddits_drawer_model.dart';
 
 import '../../../data/repository/left_drawer/left_drawer_repository.dart';
 
@@ -13,9 +14,9 @@ part 'left_drawer_state.dart';
 class LeftDrawerCubit extends Cubit<LeftDrawerState> {
   final LeftDrawerRepository leftDrawerRepository;
   // List<LeftDrawerModel>? moderatingCommunities;
-  // List<LeftDrawerModel>? yourCommunities;
-  LeftDrawerModel? following;
-  List<LeftDrawerModel> favorites = <LeftDrawerModel>[];
+  List<JoinedSubredditsDrawerModel>? yourCommunities;
+  FollowingUsersDrawerModel? following;
+  List<FollowingUsersDrawerModel> favorites = <FollowingUsersDrawerModel>[];
   LeftDrawerCubit(this.leftDrawerRepository) : super(LeftDrawerInitial());
 
   /// This function emits:
@@ -31,13 +32,13 @@ class LeftDrawerCubit extends Cubit<LeftDrawerState> {
     // emit(moderatingCommunitiesLoading());
     FutureGroup futureGroup = FutureGroup();
     // futureGroup.add(leftDrawerRepository.getModeratingCommunities());
-    // futureGroup.add(leftDrawerRepository.getYourCommunities());
+    futureGroup.add(leftDrawerRepository.getYourCommunities());
     futureGroup.add(leftDrawerRepository.getFollowingUsers());
     futureGroup.close();
     futureGroup.future.then((value) {
       // moderatingCommunities = value[0];
-      // yourCommunities = value[1];
-      following = value[0];
+      yourCommunities = value[0];
+      following = value[1];
       // favorites.clear();
       // for (var i = 0; i < yourCommunities!.length; i++) {
       //   if (yourCommunities![i].favorite!) {
@@ -54,8 +55,8 @@ class LeftDrawerCubit extends Cubit<LeftDrawerState> {
       //     favorites.add(following![i]);
       //   }
       // }
-      debugPrint("$following");
-      emit(LeftDrawerDataLoaded([], [], following!, []));
+      // debugPrint("$following");
+      emit(LeftDrawerDataLoaded([], yourCommunities!, following!, []));
     });
   }
 

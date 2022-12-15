@@ -1,10 +1,10 @@
-class LeftDrawerModel {
+class FollowingUsersDrawerModel {
   List<Data>? data;
   Meta? meta;
 
-  LeftDrawerModel({this.data, this.meta});
+  FollowingUsersDrawerModel({this.data, this.meta});
 
-  LeftDrawerModel.fromJson(Map<String, dynamic> json) {
+  FollowingUsersDrawerModel.fromJson(Map<String, dynamic> json) {
     if (json['data'] != null) {
       data = <Data>[];
       json['data'].forEach((v) {

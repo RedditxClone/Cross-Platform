@@ -461,6 +461,8 @@ class EndDrawer extends StatelessWidget {
       final imageTemp = File(image.path);
 
       imgProfile = imageTemp;
+      // BlocProvider.of<AuthCubit>(context).changeProfilephotoMob(imageTemp);
+
       BlocProvider.of<EndDrawerCubit>(context).changeProfilephoto(imageTemp);
     } on PlatformException catch (e) {
       displayMsg(context, Colors.red, 'Error', 'Could not load image');

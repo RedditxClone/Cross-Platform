@@ -7,29 +7,29 @@ class LeftDrawerInitial extends LeftDrawerState {}
 
 /// Emitted when (moderatingCommunities [moderating], joined communities [yourCommunities], following users [following], favorites [favorites]) are loaded successfully].
 class LeftDrawerDataLoaded extends LeftDrawerState {
-  final List<LeftDrawerModel> moderating;
-  final List<LeftDrawerModel> yourCommunities;
-  final LeftDrawerModel following;
-  final List<LeftDrawerModel> favorites;
+  final List<FollowingUsersDrawerModel> moderating;
+  final List<JoinedSubredditsDrawerModel> yourCommunities;
+  final FollowingUsersDrawerModel following;
+  final List<FollowingUsersDrawerModel> favorites;
 
   LeftDrawerDataLoaded(
       this.moderating, this.yourCommunities, this.following, this.favorites);
 }
 
 class ModeratingCommunitiesLoaded extends LeftDrawerState {
-  final List<LeftDrawerModel> leftDrawerCommunityModel;
+  final List<FollowingUsersDrawerModel> leftDrawerCommunityModel;
 
   ModeratingCommunitiesLoaded(this.leftDrawerCommunityModel);
 }
 
 class YourCommunitiesLoaded extends LeftDrawerState {
-  final List<LeftDrawerModel> leftDrawerCommunityModel;
+  final List<FollowingUsersDrawerModel> leftDrawerCommunityModel;
 
   YourCommunitiesLoaded(this.leftDrawerCommunityModel);
 }
 
 class FollowingUsersLoaded extends LeftDrawerState {
-  final LeftDrawerModel leftDrawerFollowingModel;
+  final FollowingUsersDrawerModel leftDrawerFollowingModel;
 
   FollowingUsersLoaded(this.leftDrawerFollowingModel);
 }
