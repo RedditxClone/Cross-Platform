@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:reddit/business_logic/cubit/messages/messages_cubit.dart';
 import 'package:reddit/business_logic/cubit/user_profile/user_profile_cubit.dart';
+import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/presentation/widgets/posts/posts.dart';
@@ -25,6 +26,12 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
     super.initState();
     print(widget.userID);
     BlocProvider.of<UserProfileCubit>(context).getUserInfo(widget.userID);
+  }
+
+  @override
+  void dispose() {
+    otherUser = null;
+    super.dispose();
   }
 
   /// [context] : build context.
@@ -90,7 +97,10 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
       width: 80,
       child: OutlinedButton(
           onPressed: () {
-            BlocProvider.of<UserProfileCubit>(context).follow(widget.userID);
+            UserData.isLoggedIn
+                ? BlocProvider.of<UserProfileCubit>(context)
+                    .follow(widget.userID)
+                : Navigator.pushNamed(context, loginScreen);
           },
           style: ElevatedButton.styleFrom(
             side: const BorderSide(width: 1.0, color: Colors.white),
@@ -192,23 +202,6 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                         },
                       ),
                       const SizedBox(width: 10),
-                      SizedBox(
-                        width: 70,
-                        child: OutlinedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              side: const BorderSide(
-                                  width: 1.0, color: Colors.white),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(32.0),
-                              ),
-                            ),
-                            child: const Text(
-                              'Invite',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 15),
-                            )),
-                      ),
                     ],
                   ),
                 ],
@@ -349,31 +342,36 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
         context: buildcontext,
         builder: (_) {
           return Container(
-            height: 170,
+            height: UserData.isLoggedIn ? 170 : 120,
             padding: const EdgeInsets.all(10),
             child: Column(
               children: [
+                UserData.isLoggedIn
+                    ? TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          _showBlockDialog(buildcontext);
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: const [
+                            Icon(
+                              Icons.person_off_outlined,
+                              color: Colors.white,
+                            ),
+                            SizedBox(width: 20),
+                            Text("Block accout",
+                                style: TextStyle(
+                                    fontSize: 20, color: Colors.white))
+                          ],
+                        ))
+                    : const SizedBox(width: 0, height: 0),
                 TextButton(
                     onPressed: () {
                       Navigator.pop(context);
-                      _showBlockDialog(buildcontext);
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: const [
-                        Icon(
-                          Icons.person_off_outlined,
-                          color: Colors.white,
-                        ),
-                        SizedBox(width: 20),
-                        Text("Block accout",
-                            style: TextStyle(fontSize: 20, color: Colors.white))
-                      ],
-                    )),
-                TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      _sendMessageBottomSheet(buildcontext);
+                      UserData.isLoggedIn
+                          ? _sendMessageBottomSheet(buildcontext)
+                          : Navigator.pushNamed(context, loginScreen);
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -444,6 +442,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
               otherUser!.displayName == ''
                   ? otherUser!.username
                   : otherUser!.displayName!,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),

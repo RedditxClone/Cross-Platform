@@ -380,18 +380,22 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
           UserData.isLoggedIn
               ? Container(
                   padding: const EdgeInsets.only(left: 5),
-                  height: 60,
+                  height: UserData.isLoggedIn ? 60 : 35,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _moreOptions(
                           'Send Message',
-                          () => Navigator.pushNamed(context, sendMessageRoute,
-                              arguments: otherUser.username)),
-                      _moreOptions(
-                          'Block User',
-                          () => BlocProvider.of<UserProfileCubit>(context)
-                              .blockUser(otherUser.userId))
+                          () => UserData.isLoggedIn
+                              ? Navigator.pushNamed(context, sendMessageRoute,
+                                  arguments: otherUser.username)
+                              : Navigator.pushNamed(context, loginPage)),
+                      UserData.isLoggedIn
+                          ? _moreOptions(
+                              'Block User',
+                              () => BlocProvider.of<UserProfileCubit>(context)
+                                  .blockUser(otherUser.userId))
+                          : const SizedBox(width: 0, height: 0)
                     ],
                   ),
                 )

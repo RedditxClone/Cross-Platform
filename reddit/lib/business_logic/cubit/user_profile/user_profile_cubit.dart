@@ -56,10 +56,7 @@ class UserProfileCubit extends Cubit<UserProfileState> {
 
   /// [username] : Username of the user to be blocked.
   ///
-  /// Emits sate BlockListUpdated on blocking a user (if existed) from safety settings page.
-  ///
-  /// This function calls the function [SafetySettingsRepository.checkUsernameAvailable] to check the existance of [username],
-  /// then if exist it calls the function [SafetySettingsRepository.blockUser] to block this user.
+  /// Emits sate [UserBlocked] on blocking a user (if existed) and [ErrorOccured] if not found or if and error occured.
   void blockUser(String username) async {
     if (isClosed) return;
     userProfileRepository.blockUser(username).then((statuscode) {
