@@ -44,11 +44,21 @@ class LeftDrawerWebServices {
           options: Options(
             headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
-      print(response.data);
+      // print(response.data);
+      debugPrint(
+          "Get joined communities, Status code is ${response.statusCode!}");
+
       return response.data;
     } catch (e) {
-      print(e);
-      return "Error in left drawer web services";
+      if (e is DioError) {
+        if (e.response!.statusCode == 403) {
+          print("Unauthorized");
+        }
+        debugPrint("Get communities, Status code ${e.response!.statusCode!}");
+      } else {
+        debugPrint("$e");
+      }
+      return [];
     }
   }
 
@@ -61,18 +71,21 @@ class LeftDrawerWebServices {
             headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
       // debugPrint("${response.data}");
+      debugPrint("Get following, Status code ${response.statusCode!}");
       return response.data;
     } catch (e) {
       debugPrint("$e");
       if (e is DioError) {
-        // if (e.response!.statusCode == 403) {
-        //   debugPrint("Wrong password");
-        // } else if (e.response!.statusCode == 401) {
-        //   debugPrint("Unauthorized");
-        // }
-        debugPrint(e.message);
+        if (e.response!.statusCode == 403) {
+          print("Unauthorized");
+        }
+        debugPrint(
+            "Error in following, Status code ${e.response!.statusCode!}");
+      } else {
+        debugPrint("$e");
       }
-      return "Error in left drawer web services";
+      // return [];
+      return {};
     }
   }
 
