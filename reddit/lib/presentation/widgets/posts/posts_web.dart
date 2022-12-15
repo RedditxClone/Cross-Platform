@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:reddit/business_logic/cubit/posts/media_index_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/vote_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
+import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/data/model/posts/posts_model.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -88,7 +91,7 @@ class PostsWeb extends StatelessWidget {
                 // --------------------------------------------------
                 // ---------------POST BOTTOM BUTTONS----------------
                 // --------------------------------------------------
-                postBottomButtons(),
+                postBottomButtons(context),
               ],
             ),
           ),
@@ -236,8 +239,23 @@ class PostsWeb extends StatelessWidget {
             Row(
               children: [
                 InkWell(
-                  onDoubleTap: () {
+                  onTap: () {
                     // Go to user page
+                    if (postsModel != null) {
+                      if (postsModel!.user != null) {
+                        if (postsModel!.user!.id != null) {
+                          if (UserData.user != null) {
+                            if (postsModel!.user!.id! ==
+                                UserData.user!.userId) {
+                              Navigator.pushNamed(context, profilePageRoute);
+                            }
+                          } else {
+                            Navigator.pushNamed(context, otherProfilePageRoute,
+                                arguments: postsModel!.user!.id);
+                          }
+                        }
+                      }
+                    }
                   },
                   child: CircleAvatar(
                     radius: 15.0,
@@ -273,12 +291,23 @@ class PostsWeb extends StatelessWidget {
                     InkWell(
                       onTap: (() {
                         // Go to user page
-                        Navigator.pushNamed(context, otherProfilePageRoute,
-                            arguments: postsModel == null
-                                ? ''
-                                : postsModel!.user == null
-                                    ? ""
-                                    : postsModel!.user!.id);
+                        if (postsModel != null) {
+                          if (postsModel!.user != null) {
+                            if (postsModel!.user!.id != null) {
+                              if (UserData.user != null) {
+                                if (postsModel!.user!.id! ==
+                                    UserData.user!.userId) {
+                                  Navigator.pushNamed(
+                                      context, profilePageRoute);
+                                }
+                              } else {
+                                Navigator.pushNamed(
+                                    context, otherProfilePageRoute,
+                                    arguments: postsModel!.user!.id);
+                              }
+                            }
+                          }
+                        }
                       }),
                       child: Text(
                           "u/${postsModel == null ? '' : postsModel!.user == null ? "" : postsModel!.user!.username ?? ''} . ${getPostDate()}",
@@ -288,6 +317,9 @@ class PostsWeb extends StatelessWidget {
                 ),
               ],
             ),
+            responsive.isSmallSizedScreen()
+                ? moreButton(context)
+                : const SizedBox(width: 0),
           ],
         ),
       ),
@@ -389,7 +421,7 @@ class PostsWeb extends StatelessWidget {
     );
   }
 
-  Widget postBottomButtons() {
+  Widget postBottomButtons(context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
@@ -399,6 +431,7 @@ class PostsWeb extends StatelessWidget {
         responsive.isSmallSizedScreen()
             ? voteButtonsSmallScreen()
             : const SizedBox(width: 0),
+        const SizedBox(width: 10),
         // --------------------------------------------------
         // --------------COMMENTS BUTTON---------------------
         // --------------------------------------------------
@@ -419,7 +452,10 @@ class PostsWeb extends StatelessWidget {
         // --------------------------------------------------
         // -----------------MORE BUTTON---------------------
         // --------------------------------------------------
-        moreButton(),
+        responsive.isSmallSizedScreen()
+            ? const SizedBox(width: 0)
+            : moreButton(context),
+
         const SizedBox(width: 10),
       ]),
     );
@@ -469,7 +505,7 @@ class PostsWeb extends StatelessWidget {
             Text(
               "${postsModel == null ? 0 : postsModel!.votesCount ?? 0}",
               style: TextStyle(
-                  fontSize: 13,
+                  fontSize: 16,
                   color: postsModel == null
                       ? Colors.grey
                       : postsModel!.voteType == null
@@ -520,10 +556,9 @@ class PostsWeb extends StatelessWidget {
       child: Row(
         children: [
           const Icon(Icons.comment_outlined, color: Colors.grey),
-          const SizedBox(width: 5),
-          Text(
-              "${postsModel == null ? 0 : postsModel!.commentCount ?? 0} Comments",
-              style: const TextStyle(fontSize: 13)),
+          const SizedBox(width: 7),
+          Text("${postsModel == null ? 0 : postsModel!.commentCount ?? 0}",
+              style: const TextStyle(fontSize: 16)),
         ],
       ),
     );
@@ -555,13 +590,114 @@ class PostsWeb extends StatelessWidget {
     );
   }
 
-  Widget moreButton() {
+  Widget moreButton(context) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        // Open bottom sheet
+        _postBottomSheet(context);
+      },
       child: Row(children: const [
         Icon(Icons.more_horiz, color: Colors.grey),
         SizedBox(width: 5),
       ]),
+    );
+  }
+
+  /// Builds the UI of the bottom sheet shown when choosing gender.
+  void _postBottomSheet(context) {
+    showModalBottomSheet<void>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+      ),
+      builder: (_) {
+        return Container(
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+            color: Colors.grey.shade900,
+          ),
+          height: 500,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Card(
+                color: Colors.grey.shade900,
+                child: ListTile(
+                  title: const Text("Copy text"),
+                  leading: const Icon(Icons.copy),
+                  onTap: () {
+                    Navigator.pop(context);
+                    if (postsModel != null) {
+                      if (postsModel!.text != null) {
+                        Clipboard.setData(ClipboardData(
+                          text: postsModel!.text!,
+                        )).then((_) {
+                          debugPrint("Copied ${postsModel!.text!}");
+                          displayMsg(context, Colors.green,
+                              "Your copy is ready for pasta!");
+                        });
+                      }
+                    }
+                  },
+                ),
+              ),
+              Card(
+                color: Colors.grey.shade900,
+                child: ListTile(
+                  title: const Text("Spam"),
+                  leading: const Icon(Icons.report_problem_outlined),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+              Card(
+                color: Colors.grey.shade900,
+                child: ListTile(
+                  title: const Text("Block account"),
+                  leading: const Icon(Icons.block),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+              Card(
+                color: Colors.grey.shade900,
+                child: ListTile(
+                  title: const Text("Hide"),
+                  leading: const Icon(Icons.hide_source),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+              Card(
+                color: Colors.grey.shade900,
+                child: ListTile(
+                  title: const Text("Mute"),
+                  leading: const Icon(Icons.volume_off_outlined),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+              Card(
+                color: Colors.grey.shade900,
+                child: ListTile(
+                  title: const Text("Crosspost to community"),
+                  leading: const Icon(Icons.compare_arrows_sharp),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -651,5 +787,45 @@ class PostsWeb extends StatelessWidget {
                     )
                   : null,
     );
+  }
+
+  /// [context] : build context.
+  /// [color] : color of the error msg to be displayer e.g. ('red' : error , 'blue' : success ).
+  /// [title] : message to be displayed to the user.
+  void displayMsg(BuildContext context, Color color, String title) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      width: 400,
+      content: Container(
+          height: 50,
+          padding: const EdgeInsets.all(5),
+          decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              color: Colors.black,
+              borderRadius: const BorderRadius.all(Radius.circular(10))),
+          child: Row(
+            children: [
+              Container(
+                margin: const EdgeInsets.only(right: 10),
+                decoration: BoxDecoration(
+                    color: color,
+                    borderRadius: const BorderRadius.all(Radius.circular(10))),
+                width: 9,
+              ),
+              Logo(
+                Logos.reddit,
+                color: Colors.white,
+                size: 20,
+              ),
+              const SizedBox(width: 10),
+              Text(
+                title,
+                style: const TextStyle(fontSize: 16, color: Colors.white),
+              ),
+            ],
+          )),
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+    ));
   }
 }
