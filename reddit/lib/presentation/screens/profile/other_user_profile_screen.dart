@@ -449,9 +449,9 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
         ),
         Row(
           children: [
-            IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.file_upload_outlined, size: 30)),
+            // IconButton(
+            //     onPressed: () {},
+            //     icon: const Icon(Icons.file_upload_outlined, size: 30)),
             IconButton(
                 onPressed: () => _moreOptionsBottomSheet(buildcontext),
                 icon: const Icon(Icons.more_horiz, size: 30)),
