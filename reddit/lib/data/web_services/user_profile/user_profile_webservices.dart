@@ -24,9 +24,11 @@ class UserProfileWebServices {
   Future<dynamic> getUserInfo(String userId) async {
     try {
       Response response = await dio.get('user/$userId',
-          options: Options(
-            headers: {"Authorization": "Bearer  ${UserData.user!.token}"},
-          ));
+          options: UserData.isLoggedIn
+              ? Options(
+                  headers: {"Authorization": "Bearer  ${UserData.user!.token}"},
+                )
+              : null);
       print(response.statusCode);
       return response.data;
     } catch (e) {

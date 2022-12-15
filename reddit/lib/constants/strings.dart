@@ -2,9 +2,10 @@
 // --------------Backend-----------------
 //---------------------------------------
 // Backend URL
-const baseUrl = String.fromEnvironment('BASE_URL',
-    defaultValue: ''); //String.fromEnvironment('BASE_URL', defaultValue: '');
-const imagesUrl = String.fromEnvironment('MEDIA_URL', defaultValue: '');
+const baseUrl =
+    'https://swproject.demosfortest.com/api/'; //String.fromEnvironment('BASE_URL',defaultValue: '');
+const imagesUrl =
+    'http://static.swproject.demosfortest.com/'; //String.fromEnvironment('MEDIA_URL', defaultValue: '');
 const mockUrl = 'https://a3a539c4-1746-44d4-8e06-d579a1d30d53.mock.pstmn.io/';
 // Use mock server instead of our backend server
 const useMockServerForAllWebServices = false;

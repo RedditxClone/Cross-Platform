@@ -69,8 +69,7 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
                   ),
                   InkWell(
                       onTap: () => BlocProvider.of<SafetySettingsCubit>(context)
-                          .unBlockUser(
-                              safetySettings!, blocked[index].username),
+                          .unBlockUser(safetySettings!, blocked[index].userId),
                       child: const Text('Remove',
                           style: TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold))),

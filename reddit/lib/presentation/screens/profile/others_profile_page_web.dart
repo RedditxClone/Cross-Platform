@@ -6,6 +6,7 @@ import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/data/model/auth_model.dart';
+import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_Not_loggedin.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 import 'package:reddit/presentation/widgets/posts/posts_web.dart';
 
@@ -25,7 +26,6 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
   @override
   void initState() {
     super.initState();
-
     BlocProvider.of<UserProfileCubit>(context).getUserInfo(widget.userID);
   }
 
@@ -174,8 +174,9 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
   Widget _follow() {
     return ElevatedButton(
       onPressed: () {
-        BlocProvider.of<UserProfileCubit>(context).follow(
-            widget.userID); // TODO :  change this to the id of the other user
+        UserData.isLoggedIn
+            ? BlocProvider.of<UserProfileCubit>(context).follow(widget.userID)
+            : Navigator.pushNamed(context, loginPage);
       },
       style: const ButtonStyle(
         shape: MaterialStatePropertyAll(
@@ -224,7 +225,7 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
 
   Widget _buildProfileCard() {
     return Container(
-      height: 425,
+      height: UserData.isLoggedIn ? 425 : 370,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5), color: defaultSecondaryColor),
       margin: const EdgeInsets.only(bottom: 15),
@@ -376,23 +377,25 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
               ),
             ],
           ),
-          Container(
-            padding: const EdgeInsets.only(left: 5),
-            height: 60,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _moreOptions(
-                    'Send Message',
-                    () => Navigator.pushNamed(context, sendMessageRoute,
-                        arguments: otherUser.username)),
-                _moreOptions(
-                    'Block User',
-                    () => BlocProvider.of<UserProfileCubit>(context)
-                        .blockUser(otherUser.userId))
-              ],
-            ),
-          )
+          UserData.isLoggedIn
+              ? Container(
+                  padding: const EdgeInsets.only(left: 5),
+                  height: 60,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _moreOptions(
+                          'Send Message',
+                          () => Navigator.pushNamed(context, sendMessageRoute,
+                              arguments: otherUser.username)),
+                      _moreOptions(
+                          'Block User',
+                          () => BlocProvider.of<UserProfileCubit>(context)
+                              .blockUser(otherUser.userId))
+                    ],
+                  ),
+                )
+              : const SizedBox(width: 0)
         ],
       ),
     );
@@ -598,7 +601,9 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
               const Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
           automaticallyImplyLeading: false,
           backgroundColor: defaultAppbarBackgroundColor,
-          title: const AppBarWebLoggedIn(screen: 'u/user_name')),
+          title: UserData.isLoggedIn
+              ? const AppBarWebLoggedIn(screen: 'u/user_name')
+              : const AppBarWebNotLoggedIn(screen: 'u/user')),
       body: DefaultTabController(
         length: 3,
         child: Scaffold(

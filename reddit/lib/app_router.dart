@@ -6,7 +6,6 @@ import 'package:reddit/business_logic/cubit/posts/posts_my_profile_cubit.dart';
 import 'package:reddit/data/repository/posts/posts_repository.dart';
 import 'package:reddit/data/web_services/posts/posts_web_services.dart';
 import 'package:reddit/business_logic/cubit/user_profile/user_profile_cubit.dart';
-import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/data/repository/feed_setting_repository.dart';
 import 'package:reddit/data/repository/messages/messages_repository.dart';
 import 'package:reddit/data/repository/user_profile/user_profile_repository.dart';
