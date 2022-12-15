@@ -19,3 +19,8 @@ class UnVoted extends VoteState {
   VoteModel? votesCount;
   UnVoted(this.votesCount);
 }
+
+class VoteError extends VoteState {
+  int statusCode;
+  VoteError(this.statusCode);
+}
