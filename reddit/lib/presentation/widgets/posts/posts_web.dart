@@ -52,53 +52,77 @@ class PostsWeb extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     responsive = Responsive(context);
-    return Container(
-      // height: 600,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5), color: defaultSecondaryColor),
-      margin: const EdgeInsets.only(bottom: 13),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          responsive.isSmallSizedScreen()
-              // -------------------------------------------------------
-              // -------NO SIDE VOTE BUTTONS FOR SMALL SCREEN----------
-              // -------------------------------------------------------
-              ? const SizedBox(width: 0)
-              // -------------------------------------------------------
-              // -------LEFT SIDE VOTE BUTTONS IN LARGE SCREEN----------
-              // -------------------------------------------------------
-              : voteButtonsLargeScreen(),
-          Expanded(
-            flex: 11,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                // --------------------------------------------------
-                // -----USER PHOTO, SUBREDDIT, USER, TIME------------
-                // --------------------------------------------------
-                postInfo(context),
-                // --------------------------------------------------
-                // -------------------POST TITLE---------------------
-                // --------------------------------------------------
-                postTitle(),
-                // -------------------------------------------------
-                // -------------------POST TEXT---------------------
-                // -------------------------------------------------
-                postText(),
-                // --------------------------------------------------
-                // --------------POST PHOTOS, VIDEOS-----------------
-                // --------------------------------------------------
-                postMedia(),
-                mediaIndex(),
-                // --------------------------------------------------
-                // ---------------POST BOTTOM BUTTONS----------------
-                // --------------------------------------------------
-                postBottomButtons(context),
-              ],
+    return BlocListener<PostActionsCubit, PostActionsState>(
+      bloc: postActionsCubit,
+      listener: (context, state) {
+        if (state is Saved) {
+          displayMsg(context, Colors.green, "Saved successfully");
+        } else if (state is Unsaved) {
+          displayMsg(context, Colors.green, "Unsaved successfully");
+        } else if (state is Hidden) {
+          displayMsg(context, Colors.green, "Hidden successfully");
+        } else if (state is Unhidden) {
+          displayMsg(context, Colors.green, "Unhidden successfully");
+        } else if (state is Spammed) {
+          displayMsg(context, Colors.green, "Spammed successfully");
+        } else if (state is PostActionsError) {
+          if (state.statusCode == 403) {
+            displayMsg(context, Colors.red, "Please log in to continue");
+          } else {
+            displayMsg(
+                context, Colors.red, "Error, status code ${state.statusCode}");
+          }
+        }
+      },
+      child: Container(
+        // height: 600,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            color: defaultSecondaryColor),
+        margin: const EdgeInsets.only(bottom: 13),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            responsive.isSmallSizedScreen()
+                // -------------------------------------------------------
+                // -------NO SIDE VOTE BUTTONS FOR SMALL SCREEN----------
+                // -------------------------------------------------------
+                ? const SizedBox(width: 0)
+                // -------------------------------------------------------
+                // -------LEFT SIDE VOTE BUTTONS IN LARGE SCREEN----------
+                // -------------------------------------------------------
+                : voteButtonsLargeScreen(),
+            Expanded(
+              flex: 11,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  // --------------------------------------------------
+                  // -----USER PHOTO, SUBREDDIT, USER, TIME------------
+                  // --------------------------------------------------
+                  postInfo(context),
+                  // --------------------------------------------------
+                  // -------------------POST TITLE---------------------
+                  // --------------------------------------------------
+                  postTitle(),
+                  // -------------------------------------------------
+                  // -------------------POST TEXT---------------------
+                  // -------------------------------------------------
+                  postText(),
+                  // --------------------------------------------------
+                  // --------------POST PHOTOS, VIDEOS-----------------
+                  // --------------------------------------------------
+                  postMedia(),
+                  mediaIndex(),
+                  // --------------------------------------------------
+                  // ---------------POST BOTTOM BUTTONS----------------
+                  // --------------------------------------------------
+                  postBottomButtons(context),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -334,35 +358,7 @@ class PostsWeb extends StatelessWidget {
               ],
             ),
             responsive.isSmallSizedScreen()
-                ? BlocListener<PostActionsCubit, PostActionsState>(
-                    bloc: postActionsCubit,
-                    listener: (context, state) {
-                      if (state is Saved) {
-                        displayMsg(context, Colors.green, "Saved successfully");
-                      } else if (state is Unsaved) {
-                        displayMsg(
-                            context, Colors.green, "Unsaved successfully");
-                      } else if (state is Hidden) {
-                        displayMsg(
-                            context, Colors.green, "Hidden successfully");
-                      } else if (state is Unhidden) {
-                        displayMsg(
-                            context, Colors.green, "Unhidden successfully");
-                      } else if (state is Spammed) {
-                        displayMsg(
-                            context, Colors.green, "Spammed successfully");
-                      } else if (state is PostActionsError) {
-                        if (state.statusCode == 403) {
-                          displayMsg(
-                              context, Colors.red, "Please log in to continue");
-                        } else {
-                          displayMsg(context, Colors.red,
-                              "Error, status code ${state.statusCode}");
-                        }
-                      }
-                    },
-                    child: moreButton(context),
-                  )
+                ? moreButtonMobile(context)
                 : const SizedBox(width: 0),
           ],
         ),
@@ -486,7 +482,7 @@ class PostsWeb extends StatelessWidget {
         // --------------------------------------------------
         responsive.isSmallSizedScreen()
             ? const SizedBox(width: 0)
-            : shareButton(),
+            : shareButtonWeb(),
         const SizedBox(width: 10),
         // --------------------------------------------------
         // -----------------SAVE BUTTON---------------------
@@ -498,7 +494,7 @@ class PostsWeb extends StatelessWidget {
         // --------------------------------------------------
         responsive.isSmallSizedScreen()
             ? const SizedBox(width: 0)
-            : moreButton(context),
+            : postOptionsWeb(context),
 
         const SizedBox(width: 10),
       ]),
@@ -621,7 +617,7 @@ class PostsWeb extends StatelessWidget {
     );
   }
 
-  Widget shareButton() {
+  Widget shareButtonWeb() {
     return InkWell(
       onTap: () {},
       child: Row(
@@ -654,11 +650,23 @@ class PostsWeb extends StatelessWidget {
     );
   }
 
-  Widget moreButton(context) {
+  Widget moreButtonMobile(context) {
     return InkWell(
       onTap: () {
         // Open bottom sheet
         _postBottomSheet(context);
+      },
+      child: Row(children: const [
+        Icon(Icons.more_horiz, color: Colors.grey),
+        SizedBox(width: 5),
+      ]),
+    );
+  }
+
+  Widget moreButtonWeb() {
+    return InkWell(
+      onTap: () {
+        // Open bottom sheet
       },
       child: Row(children: const [
         Icon(Icons.more_horiz, color: Colors.grey),
@@ -860,6 +868,125 @@ class PostsWeb extends StatelessWidget {
                       },
                     )
                   : null,
+    );
+  }
+
+  Widget postOptionsWeb(context) {
+    List<PopupMenuEntry> optionsList = [
+      PopupMenuItem(
+        value: 0,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: const [
+            Icon(
+              Icons.copy,
+              size: 13,
+            ),
+            SizedBox(width: 5),
+            Text(
+              "Copy text",
+              style: TextStyle(fontSize: 12),
+            ),
+          ],
+        ),
+      ),
+      // const PopupMenuDivider(),
+      PopupMenuItem(
+        value: 1,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: const [
+            Icon(
+              Icons.report_problem_outlined,
+              size: 10,
+            ),
+            SizedBox(width: 5),
+            Text(
+              "Spam",
+              style: TextStyle(fontSize: 12),
+            ),
+          ],
+        ),
+      ),
+      PopupMenuItem(
+        value: 2,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: const [
+            Icon(
+              Icons.block,
+              size: 10,
+            ),
+            SizedBox(width: 5),
+            Text(
+              "Block account",
+              style: TextStyle(fontSize: 12),
+            ),
+          ],
+        ),
+      ),
+      PopupMenuItem(
+        value: 3,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: const [
+            Icon(
+              Icons.hide_source,
+              size: 10,
+            ),
+            SizedBox(width: 5),
+            Text(
+              "Hide",
+              style: TextStyle(fontSize: 12),
+            ),
+          ],
+        ),
+      ),
+    ];
+    return PopupMenuButton(
+      color: Colors.grey.shade900,
+      shape: ContinuousRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      padding: const EdgeInsets.all(0),
+      // offset: Offset.fromDirection(0, 150),
+      position: PopupMenuPosition.under,
+      itemBuilder: (_) => optionsList,
+      constraints: const BoxConstraints.expand(width: 130, height: 200),
+      onSelected: (value) {
+        switch (value) {
+          case 0:
+            if (postsModel != null) {
+              if (postsModel!.text != null) {
+                Clipboard.setData(ClipboardData(
+                  text: postsModel!.text!,
+                )).then((_) {
+                  debugPrint("Copied ${postsModel!.text!}");
+                  displayMsg(
+                      context, Colors.green, "Your copy is ready for pasta!");
+                });
+              }
+            }
+            break;
+          case 1:
+            if (postsModel != null) {
+              if (postsModel!.sId != null) {
+                postActionsCubit.spamPost(postsModel!.sId!);
+              }
+            }
+            break;
+          case 2:
+            break;
+          case 3:
+            if (postsModel != null) {
+              if (postsModel!.sId != null) {
+                postActionsCubit.hidePost(postsModel!.sId!);
+              }
+            }
+            break;
+          default:
+            break;
+        }
+      },
+      child: Icon(Icons.more_horiz, color: Colors.grey),
     );
   }
 
