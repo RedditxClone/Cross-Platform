@@ -426,51 +426,88 @@ class PostsWeb extends StatelessWidget {
   }
 
   Widget voteButtonsSmallScreen() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        IconButton(
-          onPressed: () {
-            //upvote with postID
-          },
-          icon: Icon(Icons.arrow_upward,
-              color: postsModel == null
-                  ? Colors.grey
-                  : postsModel!.voteType == null
+    return BlocBuilder<VoteCubit, VoteState>(
+      bloc: voteCubit,
+      builder: (context, state) {
+        if (state is UpVoted) {
+          postsModel!.voteType = "upvote";
+          postsModel!.votesCount = state.votesCount!.votesCount;
+        } else if (state is DownVoted) {
+          postsModel!.voteType = "downvote";
+          postsModel!.votesCount = state.votesCount!.votesCount;
+        } else if (state is UnVoted) {
+          postsModel!.voteType = null;
+          postsModel!.votesCount = state.votesCount!.votesCount;
+        }
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            IconButton(
+              onPressed: () {
+                // Upvote function
+                if (postsModel != null) {
+                  if (postsModel!.sId != null) {
+                    if (postsModel!.voteType == null) {
+                      voteCubit.upVote(postsModel!.sId!);
+                    } else if (postsModel!.voteType == "upvote") {
+                      voteCubit.unVote(postsModel!.sId!);
+                    } else if (postsModel!.voteType == "downvote") {
+                      voteCubit.upVote(postsModel!.sId!);
+                    }
+                  }
+                }
+              },
+              icon: Icon(Icons.arrow_upward,
+                  color: postsModel == null
                       ? Colors.grey
-                      : postsModel!.voteType! == "up"
-                          ? Colors.red
-                          : Colors.grey),
-        ),
-        Text(
-          "${postsModel == null ? 0 : postsModel!.votesCount ?? 0}",
-          style: TextStyle(
-              fontSize: 13,
-              color: postsModel == null
-                  ? Colors.grey
-                  : postsModel!.voteType == null
+                      : postsModel!.voteType == null
+                          ? Colors.grey
+                          : postsModel!.voteType! == "upvote"
+                              ? Colors.red
+                              : Colors.grey),
+            ),
+            Text(
+              "${postsModel == null ? 0 : postsModel!.votesCount ?? 0}",
+              style: TextStyle(
+                  fontSize: 13,
+                  color: postsModel == null
                       ? Colors.grey
-                      : postsModel!.voteType! == "up"
-                          ? Colors.red
-                          : postsModel!.voteType! == "down"
+                      : postsModel!.voteType == null
+                          ? Colors.grey
+                          : postsModel!.voteType! == "upvote"
+                              ? Colors.red
+                              : postsModel!.voteType! == "downvote"
+                                  ? Colors.blue
+                                  : Colors.grey),
+            ),
+            IconButton(
+              onPressed: () {
+                // Downvote function
+                if (postsModel != null) {
+                  if (postsModel!.sId != null) {
+                    if (postsModel!.voteType == null) {
+                      voteCubit.downVote(postsModel!.sId!);
+                    } else if (postsModel!.voteType == "downvote") {
+                      voteCubit.unVote(postsModel!.sId!);
+                    } else if (postsModel!.voteType == "upvote") {
+                      voteCubit.downVote(postsModel!.sId!);
+                    }
+                  }
+                }
+              },
+              icon: Icon(Icons.arrow_downward,
+                  color: postsModel == null
+                      ? Colors.grey
+                      : postsModel!.voteType == null
+                          ? Colors.grey
+                          : postsModel!.voteType! == "downvote"
                               ? Colors.blue
                               : Colors.grey),
-        ),
-        IconButton(
-          onPressed: () {
-            //downvote with postID
-          },
-          icon: Icon(Icons.arrow_downward,
-              color: postsModel == null
-                  ? Colors.grey
-                  : postsModel!.voteType == null
-                      ? Colors.grey
-                      : postsModel!.voteType! == "down"
-                          ? Colors.blue
-                          : Colors.grey),
-        ),
-        // const SizedBox(width: 5),
-      ],
+            ),
+            // const SizedBox(width: 5),
+          ],
+        );
+      },
     );
   }
 

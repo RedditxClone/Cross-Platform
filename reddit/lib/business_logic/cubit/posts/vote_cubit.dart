@@ -17,9 +17,7 @@ class VoteCubit extends Cubit<VoteState> {
   /// This function calls the function [voteRepository.upVote].
   void upVote(String id) {
     // To avoid state error when you leave the page
-    debugPrint("Calling from vote cubit before close");
     if (isClosed) return;
-    debugPrint("Calling from vote cubit");
     voteRepository.upVote(id).then((votes) {
       emit(UpVoted(votes));
       this.votes = votes;

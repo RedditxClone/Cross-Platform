@@ -23,7 +23,7 @@ class VoteWebServices {
           options: Options(
             headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
-      debugPrint("Up vote in web services ${response.data}");
+      // debugPrint("Up vote in web services ${response.data}");
       debugPrint("Up vote status code in web services ${response.statusCode}");
       return response.data;
     } catch (e) {
@@ -47,7 +47,7 @@ class VoteWebServices {
           options: Options(
             headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
-      debugPrint("Down vote in web services ${response.data}");
+      // debugPrint("Down vote in web services ${response.data}");
       debugPrint(
           "Down vote status code in web services ${response.statusCode}");
       return response.data;
@@ -73,7 +73,7 @@ class VoteWebServices {
           options: Options(
             headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
-      debugPrint("unvote in web services ${response.data}");
+      // debugPrint("unvote in web services ${response.data}");
       debugPrint("unVote status code in web services ${response.statusCode}");
       return response.data;
     } catch (e) {
