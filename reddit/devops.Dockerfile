@@ -6,7 +6,7 @@ COPY ./ /app
 
 RUN flutter doctor
 
-RUN flutter build web --dart-define=BASE_URL=${BASE_URL}
+RUN flutter build web --dart-define=BASE_URL=https://swproject.demosfortest.com/api/ --dart-define=MEDIA_URL=https://static.swproject.demosfortest.com/
 
 FROM nginx:latest
 
