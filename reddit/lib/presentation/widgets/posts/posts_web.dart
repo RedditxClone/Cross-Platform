@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reddit/business_logic/cubit/posts/media_index_cubit.dart';
+import 'package:reddit/business_logic/cubit/posts/vote_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/data/model/posts/posts_model.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:reddit/data/repository/posts/vote_repository.dart';
+import 'package:reddit/data/web_services/posts/vote_web_services.dart';
 
 class PostsWeb extends StatelessWidget {
   late Responsive responsive;
   CarouselController buttonCarouselController = CarouselController();
   late MediaIndexCubit mediaIndexCubit;
   late int _currentMediaIndex;
+  late VoteRepository voteRepository;
+  late VoteCubit voteCubit;
   final String _markdownData = """
  # Minimal Markdown Test
  ---
@@ -34,7 +39,9 @@ class PostsWeb extends StatelessWidget {
   PostsModel? postsModel;
   PostsWeb({this.postsModel, Key? key}) : super(key: key) {
     _currentMediaIndex = 0;
-    mediaIndexCubit = new MediaIndexCubit(_currentMediaIndex);
+    mediaIndexCubit = MediaIndexCubit(_currentMediaIndex);
+    voteRepository = VoteRepository(VoteWebServices());
+    voteCubit = VoteCubit(voteRepository);
   }
   @override
   Widget build(BuildContext context) {
@@ -133,51 +140,88 @@ class PostsWeb extends StatelessWidget {
   }
 
   Widget voteButtonsLargeScreen() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        // const SizedBox(height: 10),
-        IconButton(
-          icon: const Icon(Icons.arrow_upward),
-          color: postsModel == null
-              ? Colors.grey
-              : postsModel!.voteType == null
+    return BlocBuilder<VoteCubit, VoteState>(
+      bloc: voteCubit,
+      builder: (context, state) {
+        if (state is UpVoted) {
+          postsModel!.voteType = "upvote";
+          postsModel!.votesCount = state.votesCount!.votesCount;
+        } else if (state is DownVoted) {
+          postsModel!.voteType = "downvote";
+          postsModel!.votesCount = state.votesCount!.votesCount;
+        } else if (state is UnVoted) {
+          postsModel!.voteType = null;
+          postsModel!.votesCount = state.votesCount!.votesCount;
+        }
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            // const SizedBox(height: 10),
+            IconButton(
+              icon: const Icon(Icons.arrow_upward),
+              color: postsModel == null
                   ? Colors.grey
-                  : postsModel!.voteType! == "up"
-                      ? Colors.red
-                      : Colors.grey,
-          onPressed: () {
-            // Upvote function
-          },
-        ),
-        // const SizedBox(height: 10),
-        Text("${postsModel == null ? 0 : postsModel!.votesCount ?? 0}",
-            style: TextStyle(
-                fontSize: 13,
-                color: postsModel == null
-                    ? Colors.grey
-                    : postsModel!.voteType == null
+                  : postsModel!.voteType == null
+                      ? Colors.grey
+                      : postsModel!.voteType! == "upvote"
+                          ? Colors.red
+                          : Colors.grey,
+              onPressed: () {
+                // Upvote function
+                if (postsModel != null) {
+                  if (postsModel!.sId != null) {
+                    if (postsModel!.voteType == null) {
+                      voteCubit.upVote(postsModel!.sId!);
+                    } else if (postsModel!.voteType == "upvote") {
+                      voteCubit.unVote(postsModel!.sId!);
+                    } else if (postsModel!.voteType == "downvote") {
+                      voteCubit.upVote(postsModel!.sId!);
+                    }
+                  }
+                }
+              },
+            ),
+            // const SizedBox(height: 10),
+            Text("${postsModel == null ? 0 : postsModel!.votesCount ?? 0}",
+                style: TextStyle(
+                    fontSize: 13,
+                    color: postsModel == null
                         ? Colors.grey
-                        : postsModel!.voteType! == "up"
-                            ? Colors.red
-                            : postsModel!.voteType! == "down"
-                                ? Colors.blue
-                                : Colors.grey)),
-        // const SizedBox(height: 10),
-        IconButton(
-          icon: const Icon(Icons.arrow_downward),
-          color: postsModel == null
-              ? Colors.grey
-              : postsModel!.voteType == null
+                        : postsModel!.voteType == null
+                            ? Colors.grey
+                            : postsModel!.voteType! == "upvote"
+                                ? Colors.red
+                                : postsModel!.voteType! == "downvote"
+                                    ? Colors.blue
+                                    : Colors.grey)),
+            // const SizedBox(height: 10),
+            IconButton(
+              icon: const Icon(Icons.arrow_downward),
+              color: postsModel == null
                   ? Colors.grey
-                  : postsModel!.voteType! == "down"
-                      ? Colors.blue
-                      : Colors.grey,
-          onPressed: () {
-            // Downvote function
-          },
-        ),
-      ],
+                  : postsModel!.voteType == null
+                      ? Colors.grey
+                      : postsModel!.voteType! == "downvote"
+                          ? Colors.blue
+                          : Colors.grey,
+              onPressed: () {
+                // Downvote function
+                if (postsModel != null) {
+                  if (postsModel!.sId != null) {
+                    if (postsModel!.voteType == null) {
+                      voteCubit.downVote(postsModel!.sId!);
+                    } else if (postsModel!.voteType == "downvote") {
+                      voteCubit.unVote(postsModel!.sId!);
+                    } else if (postsModel!.voteType == "upvote") {
+                      voteCubit.downVote(postsModel!.sId!);
+                    }
+                  }
+                }
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -348,40 +392,36 @@ class PostsWeb extends StatelessWidget {
   Widget postBottomButtons() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Row(
-          mainAxisAlignment: responsive.isSmallSizedScreen()
-              ? MainAxisAlignment.center
-              : MainAxisAlignment.start,
-          children: [
-            // --------------------------------------------------
-            // ---------VOTE BUTTONS SMALL SCREEN----------------
-            // --------------------------------------------------
-            responsive.isSmallSizedScreen()
-                ? voteButtonsSmallScreen()
-                : const SizedBox(width: 0),
-            // --------------------------------------------------
-            // --------------COMMENTS BUTTON---------------------
-            // --------------------------------------------------
-            commentsButton(),
-            const SizedBox(width: 10),
-            // --------------------------------------------------
-            // -----------------SHARE BUTTON---------------------
-            // --------------------------------------------------
-            responsive.isSmallSizedScreen()
-                ? const SizedBox(width: 0)
-                : shareButton(),
-            const SizedBox(width: 10),
-            // --------------------------------------------------
-            // -----------------SAVE BUTTON---------------------
-            // --------------------------------------------------
-            saveButton(),
-            const SizedBox(width: 10),
-            // --------------------------------------------------
-            // -----------------MORE BUTTON---------------------
-            // --------------------------------------------------
-            moreButton(),
-            const SizedBox(width: 10),
-          ]),
+      child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+        // --------------------------------------------------
+        // ---------VOTE BUTTONS SMALL SCREEN----------------
+        // --------------------------------------------------
+        responsive.isSmallSizedScreen()
+            ? voteButtonsSmallScreen()
+            : const SizedBox(width: 0),
+        // --------------------------------------------------
+        // --------------COMMENTS BUTTON---------------------
+        // --------------------------------------------------
+        commentsButton(),
+        const SizedBox(width: 10),
+        // --------------------------------------------------
+        // -----------------SHARE BUTTON---------------------
+        // --------------------------------------------------
+        responsive.isSmallSizedScreen()
+            ? const SizedBox(width: 0)
+            : shareButton(),
+        const SizedBox(width: 10),
+        // --------------------------------------------------
+        // -----------------SAVE BUTTON---------------------
+        // --------------------------------------------------
+        saveButton(),
+        const SizedBox(width: 10),
+        // --------------------------------------------------
+        // -----------------MORE BUTTON---------------------
+        // --------------------------------------------------
+        moreButton(),
+        const SizedBox(width: 10),
+      ]),
     );
   }
 
