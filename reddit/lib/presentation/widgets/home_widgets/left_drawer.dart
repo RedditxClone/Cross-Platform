@@ -5,6 +5,7 @@ import 'package:reddit/business_logic/cubit/left_drawer/left_drawer_cubit.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/data/model/left_drawer/following_users_drawer_model.dart';
 import 'package:reddit/data/model/left_drawer/joined_subreddits_drawer_model.dart';
+import 'package:reddit/data/model/left_drawer/moderating_subreddits_left_drawer_model.dart';
 
 import '../../../data/model/auth_model.dart';
 import '../../../data/repository/left_drawer/left_drawer_repository.dart';
@@ -22,7 +23,7 @@ class _LeftDrawerState extends State<LeftDrawer> {
   late LeftDrawerRepository leftDrawerRepository =
       LeftDrawerRepository(LeftDrawerWebServices());
 
-  // List<LeftDrawerModel>? _moderating;
+  List<ModeratingSubredditsDrawerModel>? _moderating;
   List<JoinedSubredditsDrawerModel>? _yourCommunities;
   FollowingUsersDrawerModel? _following;
   // List<LeftDrawerModel>? _favorites;
@@ -126,38 +127,55 @@ class _LeftDrawerState extends State<LeftDrawer> {
               // ------------------------------------------------
               // ------------Get moderating communities----------
               // ------------------------------------------------
-              const ExpansionTile(
+              ExpansionTile(
                 initiallyExpanded: true,
                 textColor: Colors.white,
                 iconColor: Colors.white,
                 maintainState: true,
-                title: Text("Moderation"),
+                title: const Text("Moderating"),
                 // Children are the subreddits that you are currently moderating
                 children: [
-                  // ..._moderating!.map(
-                  //   (e) {
-                  //     return ListTile(
-                  //       onTap: () {},
-                  //       leading: CircleAvatar(
-                  //         radius: 15.0,
-                  //         backgroundImage: NetworkImage(e.image!),
-                  //         backgroundColor: Colors.transparent,
-                  //       ),
-                  //       title: Text("r/${e.name}"),
-                  //       trailing: e.favorite!
-                  //           ? IconButton(
-                  //               onPressed: () {
-                  //                 _removeFromFavorites(e);
-                  //               },
-                  //               icon: const Icon(Icons.star))
-                  //           : IconButton(
-                  //               onPressed: () {
-                  //                 _addToFavorites(e);
-                  //               },
-                  //               icon: const Icon(Icons.star_border)),
-                  //     );
-                  //   },
-                  // ).toList(),
+                  BlocBuilder<LeftDrawerCubit, LeftDrawerState>(
+                    builder: (context, state) {
+                      if (state is LeftDrawerDataLoaded) {
+                        _moderating = state.moderating;
+                        return Column(
+                          children: _moderating!.map(
+                            (e) {
+                              return ListTile(
+                                onTap: () {
+                                  Navigator.pushNamed(
+                                      context, subredditPageScreenRoute,
+                                      arguments: e.sId!);
+                                },
+                                leading: const Icon(Icons.groups_sharp),
+                                // Icon of subreddit doesn't exist in api
+                                // leading: CircleAvatar(
+                                //   radius: 15.0,
+                                //   backgroundImage:
+                                //       NetworkImage(imagesUrl + e.profilePhoto!),
+                                //   backgroundColor: Colors.transparent,
+                                // ),
+                                title: Text("r/${e.name}"),
+                                // trailing: e.favorite!
+                                //     ? IconButton(
+                                //         onPressed: () {
+                                //           _removeFromFavorites(e);
+                                //         },
+                                //         icon: const Icon(Icons.star))
+                                //     : IconButton(
+                                //         onPressed: () {
+                                //           _addToFavorites(e);
+                                //         },
+                                //         icon: const Icon(Icons.star_border)),
+                              );
+                            },
+                          ).toList(),
+                        );
+                      }
+                      return Container();
+                    },
+                  )
                 ],
               ),
               // --------------------------------------------
@@ -168,14 +186,13 @@ class _LeftDrawerState extends State<LeftDrawer> {
                 textColor: Colors.white,
                 iconColor: Colors.white,
                 maintainState: true,
-                title: Text("Your Communities"),
+                title: const Text("Your Communities"),
                 // Children are the subreddits that you are currently moderating
                 children: [
                   ListTile(
                     leading: const FaIcon(FontAwesomeIcons.plus),
                     title: const Text("Create a community"),
                     onTap: () {
-                      // TODO: got to create community page
                       Navigator.pushNamed(context, createCommunityScreenRoute);
                     },
                   ),
@@ -242,7 +259,7 @@ class _LeftDrawerState extends State<LeftDrawer> {
                                   Navigator.pushNamed(
                                       context, otherProfilePageRoute,
                                       arguments: e.sId!);
-                                }, // TODO : Navigate to user profile
+                                },
                                 leading: CircleAvatar(
                                   radius: 15.0,
                                   backgroundImage:
@@ -278,7 +295,6 @@ class _LeftDrawerState extends State<LeftDrawer> {
                 title: const Text("All"),
                 onTap: () {
                   // TODO: open a page where the user sees posts from all the communities
-                  // joint, moderating, and following accounts
                 },
               )
             ],

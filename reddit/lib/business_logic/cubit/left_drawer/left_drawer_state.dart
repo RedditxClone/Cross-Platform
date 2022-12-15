@@ -7,7 +7,7 @@ class LeftDrawerInitial extends LeftDrawerState {}
 
 /// Emitted when (moderatingCommunities [moderating], joined communities [yourCommunities], following users [following], favorites [favorites]) are loaded successfully].
 class LeftDrawerDataLoaded extends LeftDrawerState {
-  final List<FollowingUsersDrawerModel> moderating;
+  final List<ModeratingSubredditsDrawerModel> moderating;
   final List<JoinedSubredditsDrawerModel> yourCommunities;
   final FollowingUsersDrawerModel following;
   final List<FollowingUsersDrawerModel> favorites;

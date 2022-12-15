@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
 import 'package:reddit/data/model/left_drawer/following_users_drawer_model.dart';
 import 'package:reddit/data/model/left_drawer/joined_subreddits_drawer_model.dart';
+import 'package:reddit/data/model/left_drawer/moderating_subreddits_left_drawer_model.dart';
 
 import '../../../data/repository/left_drawer/left_drawer_repository.dart';
 
@@ -13,7 +14,7 @@ part 'left_drawer_state.dart';
 /// This class is responsible for getting - updating drawer data on mobile.
 class LeftDrawerCubit extends Cubit<LeftDrawerState> {
   final LeftDrawerRepository leftDrawerRepository;
-  // List<LeftDrawerModel>? moderatingCommunities;
+  List<ModeratingSubredditsDrawerModel>? moderatingCommunities;
   List<JoinedSubredditsDrawerModel>? yourCommunities;
   FollowingUsersDrawerModel? following;
   List<FollowingUsersDrawerModel> favorites = <FollowingUsersDrawerModel>[];
@@ -31,14 +32,14 @@ class LeftDrawerCubit extends Cubit<LeftDrawerState> {
     if (isClosed) return;
     // emit(moderatingCommunitiesLoading());
     FutureGroup futureGroup = FutureGroup();
-    // futureGroup.add(leftDrawerRepository.getModeratingCommunities());
+    futureGroup.add(leftDrawerRepository.getModeratingCommunities());
     futureGroup.add(leftDrawerRepository.getYourCommunities());
     futureGroup.add(leftDrawerRepository.getFollowingUsers());
     futureGroup.close();
     futureGroup.future.then((value) {
-      // moderatingCommunities = value[0];
-      yourCommunities = value[0];
-      following = value[1];
+      moderatingCommunities = value[0];
+      yourCommunities = value[1];
+      following = value[2];
       // favorites.clear();
       // for (var i = 0; i < yourCommunities!.length; i++) {
       //   if (yourCommunities![i].favorite!) {
@@ -56,7 +57,8 @@ class LeftDrawerCubit extends Cubit<LeftDrawerState> {
       //   }
       // }
       // debugPrint("$following");
-      emit(LeftDrawerDataLoaded([], yourCommunities!, following!, []));
+      emit(LeftDrawerDataLoaded(
+          moderatingCommunities!, yourCommunities!, following!, []));
     });
   }
 

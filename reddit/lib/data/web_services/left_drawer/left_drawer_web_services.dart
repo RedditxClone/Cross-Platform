@@ -4,18 +4,10 @@ import 'package:reddit/constants/strings.dart';
 import 'package:reddit/data/model/auth_model.dart';
 
 class LeftDrawerWebServices {
-  bool useMockServer = false;
-  // Mock URL For Mockoon
-  // String mockUrl = TargetPlatform.android == defaultTargetPlatform
-  //     ? "http://10.0.2.2:3001/"
-  //     : "http://127.0.0.1:3001/";
-  // Mock URL For Postman
-  String mockUrl =
-      "https://a8eda59d-d8f3-4ef2-9581-29e6473824d9.mock.pstmn.io/";
   late Dio dio;
   LeftDrawerWebServices() {
     BaseOptions options = BaseOptions(
-      baseUrl: useMockServer ? mockUrl : baseUrl,
+      baseUrl: baseUrl,
       receiveDataWhenStatusError: true,
       connectTimeout: 20 * 1000, //20 secs
       receiveTimeout: 20 * 1000,
@@ -24,37 +16,51 @@ class LeftDrawerWebServices {
   }
 
   /// `Returns` the communities that the user is currently moderating.
-  /// This function performs `GET` request to the endpoint `baseUrl/user/moderating_communities`.
+  /// This function performs `GET` request to the endpoint `baseUrl/subreddit/moderation/me`.
   Future<dynamic> getModeratingCommunities() async {
     try {
-      Response response = await dio.get('user/moderating_communities');
-      print(response.data);
+      Response response = await dio.get('subreddit/moderation/me',
+          options: Options(
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+          ));
+      debugPrint("${response.data}");
+      debugPrint(
+          "Get moderating communities, Status code is ${response.statusCode!}");
       return response.data;
     } catch (e) {
-      print(e);
-      return "Error in left drawer web services";
+      if (e is DioError) {
+        debugPrint(
+            "Error in get moderating communities, Status code ${e.response!.statusCode!}");
+        if (e.response!.statusCode == 403) {
+          debugPrint("Unauthorized");
+        }
+      } else {
+        debugPrint("$e");
+      }
+      return [];
     }
   }
 
   /// `Returns` the communities that the user is currently joined in.
-  /// This function performs `GET` request to the endpoint `baseUrl/user/joined_communities`.
+  /// This function performs `GET` request to the endpoint `baseUrl/subreddit/join/me`.
   Future<dynamic> getYourCommunities() async {
     try {
       Response response = await dio.get('/subreddit/join/me',
           options: Options(
             headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
-      // print(response.data);
+      // debugPrint("${response.data}");
       debugPrint(
           "Get joined communities, Status code is ${response.statusCode!}");
 
       return response.data;
     } catch (e) {
       if (e is DioError) {
+        debugPrint(
+            "Error in Get communities, Status code ${e.response!.statusCode!}");
         if (e.response!.statusCode == 403) {
-          print("Unauthorized");
+          debugPrint("Unauthorized");
         }
-        debugPrint("Get communities, Status code ${e.response!.statusCode!}");
       } else {
         debugPrint("$e");
       }
@@ -63,7 +69,7 @@ class LeftDrawerWebServices {
   }
 
   /// `Returns` the users that the user is currently following
-  /// This function performs `GET` request to the endpoint `baseUrl/user/following`.
+  /// This function performs `GET` request to the endpoint `baseUrl/user/me/following`.
   Future<dynamic> getFollowingUsers() async {
     try {
       Response response = await dio.get('user/me/following',
@@ -76,34 +82,15 @@ class LeftDrawerWebServices {
     } catch (e) {
       debugPrint("$e");
       if (e is DioError) {
-        if (e.response!.statusCode == 403) {
-          print("Unauthorized");
-        }
         debugPrint(
-            "Error in following, Status code ${e.response!.statusCode!}");
+            "Error in get following, Status code ${e.response!.statusCode!}");
+        if (e.response!.statusCode == 403) {
+          debugPrint("Unauthorized");
+        }
       } else {
         debugPrint("$e");
       }
-      // return [];
       return {};
-    }
-  }
-
-  Future<int> updateLeftDrawer(Map<String, dynamic> newAccSettings) async {
-    try {
-      Response response = await dio.patch(
-        'user/me/prefs',
-        data: newAccSettings,
-      );
-      if (response.statusCode == 200) {
-        print("Account settings updated successfully");
-      } else {
-        print("Failed to updateAccount settings");
-      }
-      return response.statusCode!;
-    } catch (e) {
-      print(e);
-      return 404;
     }
   }
 }
