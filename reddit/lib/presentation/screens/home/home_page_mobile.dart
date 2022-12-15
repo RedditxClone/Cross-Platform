@@ -101,12 +101,20 @@ class _HomePageState extends State<HomePage> {
                       debugPrint("user is nottttttttttttttttttttttttt null");
                       UserData.initUser(state.userDataJson);
                       debugPrint("user is ${UserData.isLogged()}");
+                      BlocProvider.of<LeftDrawerCubit>(context)
+                          .getLeftDrawerData();
+
                       return homePosts();
                     } else if (state is GetTheUserData &&
                         state.userDataJson != {}) {
                       UserData.initUser(state.userDataJson);
+                      BlocProvider.of<LeftDrawerCubit>(context)
+                          .getLeftDrawerData();
                       return homePosts();
                     } else if (state is SignedIn && state.userDataJson != {}) {
+                      BlocProvider.of<LeftDrawerCubit>(context)
+                          .getLeftDrawerData();
+
                       return homePosts();
                     }
                   } else if (state is NotLoggedIn) {
@@ -124,12 +132,21 @@ class _HomePageState extends State<HomePage> {
                       debugPrint("user is nottttttttttttttttttttttttt null");
                       UserData.initUser(state.userDataJson);
                       debugPrint("user is ${UserData.isLogged()}");
+                      BlocProvider.of<LeftDrawerCubit>(context)
+                          .getLeftDrawerData();
+
                       return popularPosts();
                     } else if (state is GetTheUserData &&
                         state.userDataJson != {}) {
                       UserData.initUser(state.userDataJson);
+                      BlocProvider.of<LeftDrawerCubit>(context)
+                          .getLeftDrawerData();
+
                       return popularPosts();
                     } else if (state is SignedIn && state.userDataJson != {}) {
+                      BlocProvider.of<LeftDrawerCubit>(context)
+                          .getLeftDrawerData();
+
                       return popularPosts();
                     }
                   } else if (state is NotLoggedIn) {
@@ -275,11 +292,7 @@ class _HomePageState extends State<HomePage> {
             bottomNavBarItem(
                 4, Icons.notifications, Icons.notifications_outlined),
           ]),
-      drawer: BlocProvider(
-        create: (context) =>
-            LeftDrawerCubit(LeftDrawerRepository(LeftDrawerWebServices())),
-        child: LeftDrawer(),
-      ),
+      drawer: LeftDrawer(),
       endDrawer: BlocProvider(
         create: (context) =>
             EndDrawerCubit(EndDrawerRepository(SettingsWebServices())),
