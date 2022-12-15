@@ -32,4 +32,12 @@ class UserProfileRepository {
     final statusCode = await userProfileWebServices.unfollow(userID);
     return statusCode;
   }
+
+  /// [username] : the username we want to block
+  ///
+  /// Returns status code 200 if success and 401 if an error occured
+  Future<dynamic> blockUser(String username) async {
+    final newVal = await userProfileWebServices.blockUser(username);
+    return newVal;
+  }
 }

@@ -18,8 +18,7 @@ import 'package:reddit/presentation/widgets/nav_bars/popup_menu_logged_in.dart';
 
 class AppBarWebLoggedIn extends StatefulWidget {
   final String screen;
-  const AppBarWebLoggedIn({Key? key, required this.screen})
-      : super(key: key);
+  const AppBarWebLoggedIn({Key? key, required this.screen}) : super(key: key);
 
   @override
   State<AppBarWebLoggedIn> createState() => _AppBarWebLoggedInState();
@@ -44,6 +43,9 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
         break;
       case 'Popular':
         Navigator.pushNamed(context, popularPageRoute);
+        break;
+      case 'Messages':
+        Navigator.pushNamed(context, sendMessageRoute, arguments: '');
         break;
       case 'Create Community':
         createCommunityDialog();

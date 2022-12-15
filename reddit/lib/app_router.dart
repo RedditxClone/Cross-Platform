@@ -1,16 +1,19 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:reddit/business_logic/cubit/messages/messages_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_home_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_my_profile_cubit.dart';
 import 'package:reddit/data/repository/posts/posts_repository.dart';
 import 'package:reddit/data/web_services/posts/posts_web_services.dart';
 import 'package:reddit/business_logic/cubit/user_profile/user_profile_cubit.dart';
-import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/data/repository/feed_setting_repository.dart';
+import 'package:reddit/data/repository/messages/messages_repository.dart';
 import 'package:reddit/data/repository/user_profile/user_profile_repository.dart';
 import 'package:reddit/data/web_services/feed_setting_web_services.dart';
+import 'package:reddit/data/web_services/messages/messages_web_services.dart';
 import 'package:reddit/presentation/screens/forget_username_web.dart';
 import 'package:reddit/data/web_services/user_profile/user_profile_webservices.dart';
+import 'package:reddit/presentation/screens/messages/send_message_web.dart';
 import 'package:reddit/presentation/screens/modtools/mobile/mod_list_screen.dart';
 import 'package:reddit/presentation/screens/modtools/web/approved_web.dart';
 import 'package:reddit/presentation/screens/modtools/web/edited_web.dart';
@@ -119,6 +122,9 @@ class AppRouter {
   late UserProfileWebServices userProfileWebServices;
   late UserProfileRepository userProfileRepository;
   late UserProfileCubit userProfileCubit;
+  late MessagesWebServices messagesWebServices;
+  late MessagesRepository messagesRepository;
+  late MessagesCubit messagesCubit;
 
   late PostsWebServices postsWebServices;
   late PostsRepository postsRepository;
@@ -156,6 +162,10 @@ class AppRouter {
     userProfileWebServices = UserProfileWebServices();
     userProfileRepository = UserProfileRepository(userProfileWebServices);
     userProfileCubit = UserProfileCubit(userProfileRepository);
+
+    messagesWebServices = MessagesWebServices();
+    messagesRepository = MessagesRepository(messagesWebServices);
+    messagesCubit = MessagesCubit(messagesRepository);
   }
   Route? generateRoute(RouteSettings settings) {
     final arguments = settings.arguments;
@@ -230,8 +240,15 @@ class AppRouter {
       case otherProfilePageRoute:
         final userID = settings.arguments as String;
         return MaterialPageRoute(
-          builder: (_) => BlocProvider(
-            create: (context) => userProfileCubit,
+          builder: (_) => MultiBlocProvider(
+            providers: [
+              BlocProvider.value(
+                value: userProfileCubit,
+              ),
+              BlocProvider(
+                create: (context) => messagesCubit,
+              ),
+            ],
             child: kIsWeb
                 ? OtherProfilePageWeb(userID: userID)
                 : OtherProfileScreen(userID: userID),
@@ -438,7 +455,10 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => CountryScreen(arguments));
       case manageBlockedAccountsRoute:
         return MaterialPageRoute(
-            builder: (_) => const ManageBlockedAccountsScreen());
+            builder: (_) => BlocProvider(
+                  create: (context) => safetySettingsCubit,
+                  child: const ManageBlockedAccountsScreen(),
+                ));
 
       // case safetySettingsRoute:
       //   return MaterialPageRoute(
@@ -451,6 +471,13 @@ class AppRouter {
             builder: (_) => BlocProvider(
                   create: (BuildContext context) => settingsCubit,
                   child: const ProfileSettingsScreen(),
+                ));
+      case sendMessageRoute:
+        String username = arguments as String;
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider(
+                  create: (BuildContext context) => messagesCubit,
+                  child: SendMessageWeb(username: username),
                 ));
 
       default:

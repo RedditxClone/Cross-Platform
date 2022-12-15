@@ -38,7 +38,7 @@ class SafetySettingsRepository {
   /// Returns [List] of the blocked users
   Future<List<dynamic>> getBlockedUsers() async {
     final newVal = await settingsWebServices.getBlockedUsers();
-    return newVal['blocked'];
+    return newVal;
   }
 
   /// [changed] : a [Map] that contains only the changed safety settings

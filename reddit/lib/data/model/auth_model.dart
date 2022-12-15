@@ -26,19 +26,19 @@ class User {
   User.fromJson(Map<String, dynamic> json) {
     userId = json['_id'];
     username = json['username'];
-    email = json['email'];
+    email = json['email'] ?? "";
     profilePic =
         json['profilePhoto'] == '' ? '' : imagesUrl + json['profilePhoto'];
     if (UserData.isLogged()) {
       token = PreferenceUtils.getString(SharedPrefKeys.token);
     } else {
-      token = json['token'];
+      token = json['token'] ?? "";
     }
-    type = json['authType'];
+    type = json['authType'] ?? "";
     // gender = json['gender'];
-    displayName = json['displayName'];
-    about = json['about'];
-    cakeDay = json['cakeDay'];
+    displayName = json['displayName'] ?? "";
+    about = json['about'] ?? "";
+    cakeDay = json['cakeDay'] ?? true;
   }
   Map<String, dynamic> toJson() {
     return {
