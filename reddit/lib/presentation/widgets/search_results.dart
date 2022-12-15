@@ -12,6 +12,7 @@ class SearchResultsListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (searchTerm == null) {
+      //lo m4 b3ml search 3la 7aga
       // return Center(
       //   child: Column(
       //     mainAxisSize: MainAxisSize.min,
@@ -32,17 +33,17 @@ class SearchResultsListView extends StatelessWidget {
 
     final fsb = FloatingSearchBar.of(context);
 
-    //   return ListView(
-    //     padding: EdgeInsets.only(
-    //         top: fsb!.widget.height + fsb.widget.margins!.vertical),
-    //     children: List.generate(
-    //       5,
-    //       (index) => ListTile(
-    //         title: Text(searchTerm ?? ""),
-    //         subtitle: Text(index.toString()),
-    //       ),
-    //     ),
-    //   );
-    return Container();
+      return ListView(
+        padding: EdgeInsets.only(
+            top: fsb!.widget.height + fsb.widget.margins!.vertical),
+        children: List.generate(
+          5,
+          (index) => ListTile(
+            title: Text(searchTerm ?? ""),
+            subtitle: Text(index.toString()),
+          ),
+        ),
+      );
+    
   }
 }

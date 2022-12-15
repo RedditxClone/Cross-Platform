@@ -16,12 +16,143 @@ class SearchRepo {
   /// This function calls the function [SearchWebService.getSuggestions] which makes the request to the server.
   /// Returns [List] that conatins the suggested users and subreddits.
   Future<List<List<Map<String, dynamic>>>> getSuggestions(String word) async {
-    var res = await searchWebService.getSuggestions(word);
+    Response res = await searchWebService.getSuggestions(word);
     if (res.statusCode == 200) {
-      return List<List<Map<String, dynamic>>>.from(res.data);
+      return List<List<Map<String, dynamic>>>.from(
+        res.data.map(
+          (x) => List<Map<String, dynamic>>.from(
+            x.map(
+              (x) => Map.from(x).map((k, v) => MapEntry<String, dynamic>(k, v)),
+            ),
+          ),
+        ),
+      );
     } else {
       return [];
     }
+    /*
+    response
+    [
+    [
+        {
+            "_id": "639b40ade14bed80ef988757",
+            "username": "1234",
+            "profilePhoto": "assets/profilePhotos/639b40ade14bed80ef988757.jpeg",
+            "coverPhoto": "",
+            "about": "",
+            "nsfw": false,
+            "allowFollow": true,
+            "cakeDay": true,
+            "userId": "639b40ade14bed80ef988757",
+            "followed": false
+        },
+        {
+            "_id": "638f974731186b7fd21bae53",
+            "username": "ahmed12345",
+            "profilePhoto": "",
+            "coverPhoto": "",
+            "about": "",
+            "nsfw": false,
+            "allowFollow": true,
+            "cakeDay": true,
+            "userId": "638f974731186b7fd21bae53",
+            "followed": false
+        },
+        {
+            "_id": "638f37de31186b7fd21ba6aa",
+            "username": "ahmed222",
+            "profilePhoto": "",
+            "coverPhoto": "",
+            "about": "",
+            "nsfw": false,
+            "allowFollow": true,
+            "cakeDay": true,
+            "userId": "638f37de31186b7fd21ba6aa",
+            "followed": false
+        },
+        {
+            "_id": "638f672331186b7fd21baddd",
+            "username": "amfamf",
+            "profilePhoto": "",
+            "coverPhoto": "",
+            "about": "",
+            "nsfw": false,
+            "allowFollow": true,
+            "cakeDay": true,
+            "userId": "638f672331186b7fd21baddd",
+            "followed": false
+        },
+        {
+            "_id": "638f377f31186b7fd21ba69f",
+            "username": "attention-lbc7hi4701qinc0b68g",
+            "profilePhoto": "",
+            "coverPhoto": "",
+            "about": "",
+            "nsfw": false,
+            "allowFollow": true,
+            "cakeDay": true,
+            "userId": "638f377f31186b7fd21ba69f",
+            "followed": false
+        }
+    ],
+    [
+        {
+            "_id": "639771faa875316ad8d9f3e4",
+            "name": "bemoireddit",
+            "over18": false,
+            "flairList": [],
+            "categories": [],
+            "users": 1,
+            "joined": false
+        },
+        {
+            "_id": "6399b53e3eb38f2c2fb08e14",
+            "name": "hamzawy",
+            "over18": false,
+            "flairList": [
+                {
+                    "text": "flair 1",
+                    "backgroundColor": "lime",
+                    "textColor": "black"
+                },
+                {
+                    "text": "flair 2",
+                    "backgroundColor": "red",
+                    "textColor": "black"
+                },
+                {
+                    "text": "flair 3",
+                    "backgroundColor": "blue",
+                    "textColor": "white"
+                }
+            ],
+            "categories": [],
+            "description": "This is a new Description",
+            "users": 2,
+            "joined": false
+        },
+        {
+            "_id": "639a9ce93eb38f2c2fb09b6f",
+            "name": "champions",
+            "over18": false,
+            "flairList": [],
+            "categories": [],
+            "users": 0,
+            "joined": false
+        },
+        {
+            "_id": "639b27bbef88b3df0463d04b",
+            "name": "bemoireddit2",
+            "over18": false,
+            "flairList": [],
+            "categories": [],
+            "createdDate": "2022-12-15T06:27:30.805Z",
+            "users": 0,
+            "joined": false
+        }
+    ]
+]
+     */
   }
 
   /// [word] : [String] The word to search for.

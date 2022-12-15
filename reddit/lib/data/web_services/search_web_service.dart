@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:reddit/helper/dio.dart';
 
+import '../model/auth_model.dart';
+
 class SearchWebService {
   /// [word] : [String] The word to search for.
   ///
@@ -11,7 +13,14 @@ class SearchWebService {
   Future getSuggestions(String word) async {
     try {
       var res =
-          await DioHelper.getData(url: 'search/general/?word=$word', query: {});
+          // await DioHelper.getData(url: 'search/general/?word=$word', query: {});
+          await DioHelper.getDataWithHeaders(
+        url: 'search/general/?word=$word',
+        query: {},
+        headers: {
+          "Authorization": "Bearer ${UserData.user!.token}",
+        },
+      );
       return res;
     } on DioError catch (e) {
       debugPrint("from getSuggestions $e");

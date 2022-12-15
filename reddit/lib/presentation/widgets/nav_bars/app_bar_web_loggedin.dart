@@ -34,14 +34,28 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
             ));
   }
 
+  late FocusNode searchFocusNode;
+
   @override
   void initState() {
     super.initState();
+    searchFocusNode = FocusNode();
+    searchFocusNode.addListener(_onFocusChangeSearch);
+  }
+
+  void _onFocusChangeSearch() {
+    if (searchFocusNode.hasFocus) {
+      searchFocusNode.unfocus();
+      Navigator.pushNamed(context, searchRouteWeb);
+    }
+    debugPrint("Focus on search: ${searchFocusNode.hasFocus}");
   }
 
   @override
   void dispose() {
     super.dispose();
+    searchFocusNode.dispose();
+    searchFocusNode.removeListener(_onFocusChangeSearch);
   }
 
   void routeToPage(val) {
@@ -227,6 +241,7 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
           width: 0.25 * MediaQuery.of(context).size.width,
           height: 40,
           child: TextField(
+            focusNode: searchFocusNode,
             textAlignVertical: TextAlignVertical.center,
             decoration: InputDecoration(
               border: OutlineInputBorder(

@@ -15,7 +15,11 @@ import 'package:reddit/presentation/screens/modtools/web/spam_web.dart';
 import 'package:reddit/presentation/screens/modtools/web/traffic_stats.dart';
 import 'package:reddit/presentation/screens/modtools/web/unmoderated.dart';
 import 'package:reddit/presentation/screens/profile/other_user_orfile_screen.dart';
+import 'package:reddit/presentation/screens/search_web.dart';
+import 'business_logic/cubit/cubit/search/cubit/search_cubit.dart';
 import 'business_logic/cubit/feed_settings_cubit.dart';
+import 'data/repository/search_repo.dart';
+import 'data/web_services/search_web_service.dart';
 import 'presentation/screens/feed_setting.dart';
 import 'package:reddit/presentation/screens/profile/others_profile_page_web.dart';
 import 'package:reddit/presentation/screens/profile/profile_page_web.dart';
@@ -112,7 +116,7 @@ class AppRouter {
   late UserProfileWebServices userProfileWebServices;
   late UserProfileRepository userProfileRepository;
   late UserProfileCubit userProfileCubit;
-
+  late SearchCubit searchCubit;
   AppRouter() {
     // initialise repository and cubit objects
     safetySettingsRepository =
@@ -141,6 +145,7 @@ class AppRouter {
     userProfileWebServices = UserProfileWebServices();
     userProfileRepository = UserProfileRepository(userProfileWebServices);
     userProfileCubit = UserProfileCubit(userProfileRepository);
+    searchCubit = SearchCubit(SearchRepo(SearchWebService()));
   }
   Route? generateRoute(RouteSettings settings) {
     final arguments = settings.arguments;
@@ -166,7 +171,7 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => BlocProvider.value(
             value: authCubit,
-            child: kIsWeb ? PopularWeb() : const Popular(),
+            child: kIsWeb ? const PopularWeb() : const Popular(),
           ),
         );
 
@@ -400,7 +405,12 @@ class AppRouter {
                   create: (BuildContext context) => settingsCubit,
                   child: const ProfileSettingsScreen(),
                 ));
-
+      case searchRouteWeb:
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider(
+                  create: (BuildContext context) => searchCubit,
+                  child: const SearchWeb(),
+                ));
       default:
         return null;
     }

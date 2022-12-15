@@ -1,33 +1,34 @@
+import 'package:reddit/data/model/search_models/search_communities_model.dart';
+
 import '../auth_model.dart';
 
 class SearchPostModel {
   String? _id;
   String? title;
   int? commentsCount;
-  int? upvotes;
-  Map<String, String>? subreddit;
-  // Map<String, String>? user;
+  int? votesCount;
+  SearchComminityModel? subreddit;
   User? user;
   List<String>? images;
-  String? text;
   DateTime? creationDate;
   DateTime? publishDate;
   Duration? durantion;
-
+  bool? nsfw;
+  bool? spoiler;
   SearchPostModel.fromJson(Map<String, dynamic> json) {
     _id = json['_id'];
     title = json['title'];
     commentsCount = json['commentCount'];
-    upvotes = json['upvotes'];
+    votesCount = json['votesCount'];
     subreddit = json['subreddit'];
     user = User.fromJson(json['user']);
+    subreddit = SearchComminityModel.fromJson(json['subreddit']);
     images = List<String>.from(json['images']);
-    text = json['text'];
     creationDate = DateTime.parse(json['createdDate']);
     publishDate = DateTime.parse(json['publishedDate']);
     durantion = DateTime.now()
         .difference(publishDate ?? creationDate ?? DateTime.now());
-    subreddit = json['subreddit'];
-    user = json['user'];
+    nsfw = json['nsfw'];
+    spoiler = json['spoiler'];
   }
 }
