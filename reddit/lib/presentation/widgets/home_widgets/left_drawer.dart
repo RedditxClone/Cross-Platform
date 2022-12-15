@@ -21,15 +21,16 @@ class _LeftDrawerState extends State<LeftDrawer> {
   late LeftDrawerRepository leftDrawerRepository =
       LeftDrawerRepository(LeftDrawerWebServices());
 
-  List<LeftDrawerModel>? _moderating;
-  List<LeftDrawerModel>? _yourCommunities;
-  List<LeftDrawerModel>? _following;
-  List<LeftDrawerModel>? _favorites;
+  // List<LeftDrawerModel>? _moderating;
+  // List<LeftDrawerModel>? _yourCommunities;
+  LeftDrawerModel? _following;
+  // List<LeftDrawerModel>? _favorites;
   @override
   void initState() {
     super.initState();
-    if (UserData.isLoggedIn) {
-      BlocProvider.of<LeftDrawerCubit>(context).getLeftDrawerData();
+    if (UserData.user != null) {
+      // getting left drawer data
+      // BlocProvider.of<LeftDrawerCubit>(context).getLeftDrawerData();
     }
   }
 
@@ -85,176 +86,184 @@ class _LeftDrawerState extends State<LeftDrawer> {
       child: SingleChildScrollView(
         child: SizedBox(
           width: double.infinity,
-          child: BlocBuilder<LeftDrawerCubit, LeftDrawerState>(
-            builder: (context, state) {
-              if (state is LeftDrawerDataLoaded) {
-                _moderating = state.moderating;
-                _yourCommunities = state.yourCommunities;
-                _following = state.following;
-                _favorites = state.favorites;
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _favorites!.isNotEmpty
-                        ? ExpansionTile(
-                            initiallyExpanded: true,
-                            textColor: Colors.white,
-                            iconColor: Colors.white,
-                            maintainState: true,
-                            title: const Text("Favorites"),
-                            // Children are the subreddits that you are currently moderating
-                            children: [
-                              ..._favorites!.map(
-                                (e) {
-                                  return ListTile(
-                                    onTap: () {},
-                                    leading: CircleAvatar(
-                                      radius: 15.0,
-                                      backgroundImage: NetworkImage(e.image!),
-                                      backgroundColor: Colors.transparent,
-                                    ),
-                                    title: Text("r/${e.name}"),
-                                    trailing: IconButton(
-                                        onPressed: () {
-                                          _removeFromFavorites(e);
-                                        },
-                                        icon: const Icon(Icons.star)),
-                                  );
-                                },
-                              ).toList(),
-                            ],
-                          )
-                        : const SizedBox(),
-                    ExpansionTile(
-                      initiallyExpanded: true,
-                      textColor: Colors.white,
-                      iconColor: Colors.white,
-                      maintainState: true,
-                      title: const Text("Moderation"),
-                      // Children are the subreddits that you are currently moderating
-                      children: [
-                        ..._moderating!.map(
-                          (e) {
-                            return ListTile(
-                              onTap: () {},
-                              leading: CircleAvatar(
-                                radius: 15.0,
-                                backgroundImage: NetworkImage(e.image!),
-                                backgroundColor: Colors.transparent,
-                              ),
-                              title: Text("r/${e.name}"),
-                              trailing: e.favorite!
-                                  ? IconButton(
-                                      onPressed: () {
-                                        _removeFromFavorites(e);
-                                      },
-                                      icon: const Icon(Icons.star))
-                                  : IconButton(
-                                      onPressed: () {
-                                        _addToFavorites(e);
-                                      },
-                                      icon: const Icon(Icons.star_border)),
-                            );
-                          },
-                        ).toList(),
-                      ],
-                    ),
-                    ExpansionTile(
-                      initiallyExpanded: true,
-                      textColor: Colors.white,
-                      iconColor: Colors.white,
-                      maintainState: true,
-                      title: const Text("Your Communities"),
-                      // Children are the subreddits that you are currently moderating
-                      children: [
-                        ListTile(
-                          leading: const FaIcon(FontAwesomeIcons.plus),
-                          title: const Text("Create a community"),
-                          onTap: () {
-                            // TODO: got to create community page
-                            Navigator.pushNamed(
-                                context, createCommunityScreenRoute);
-                          },
-                        ),
-                        ..._yourCommunities!.map(
-                          (e) {
-                            return ListTile(
-                              onTap: () {},
-                              leading: CircleAvatar(
-                                radius: 15.0,
-                                backgroundImage: NetworkImage(e.image!),
-                                backgroundColor: Colors.transparent,
-                              ),
-                              title: Text("r/${e.name}"),
-                              trailing: e.favorite!
-                                  ? IconButton(
-                                      onPressed: () {
-                                        _removeFromFavorites(e);
-                                      },
-                                      icon: const Icon(Icons.star))
-                                  : IconButton(
-                                      onPressed: () {
-                                        _addToFavorites(e);
-                                      },
-                                      icon: const Icon(Icons.star_border)),
-                            );
-                          },
-                        ).toList(),
-                      ],
-                    ),
-                    ExpansionTile(
-                      initiallyExpanded: true,
-                      textColor: Colors.white,
-                      iconColor: Colors.white,
-                      maintainState: true,
-                      title: const Text("Following"),
-                      // Children are the subreddits that you are currently moderating
-                      children: [
-                        ..._following!.map(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // --------------------------------------------
+              // ---------------Get favorites----------------
+              // --------------------------------------------
+              // _favorites!.isNotEmpty
+              //     ? ExpansionTile(
+              //         initiallyExpanded: true,
+              //         textColor: Colors.white,
+              //         iconColor: Colors.white,
+              //         maintainState: true,
+              //         title: const Text("Favorites"),
+              //         // Children are the subreddits that you are currently moderating
+              //         children: [
+              //           ..._favorites!.map(
+              //             (e) {
+              //               return ListTile(
+              //                 onTap: () {},
+              //                 leading: CircleAvatar(
+              //                   radius: 15.0,
+              //                   backgroundImage: NetworkImage(e.image!),
+              //                   backgroundColor: Colors.transparent,
+              //                 ),
+              //                 title: Text("r/${e.name}"),
+              //                 trailing: IconButton(
+              //                     onPressed: () {
+              //                       _removeFromFavorites(e);
+              //                     },
+              //                     icon: const Icon(Icons.star)),
+              //               );
+              //             },
+              //           ).toList(),
+              //         ],
+              //       )
+              //     : const SizedBox(),
+              // ------------------------------------------------
+              // ------------Get moderating communities----------
+              // ------------------------------------------------
+              const ExpansionTile(
+                initiallyExpanded: true,
+                textColor: Colors.white,
+                iconColor: Colors.white,
+                maintainState: true,
+                title: Text("Moderation"),
+                // Children are the subreddits that you are currently moderating
+                children: [
+                  // ..._moderating!.map(
+                  //   (e) {
+                  //     return ListTile(
+                  //       onTap: () {},
+                  //       leading: CircleAvatar(
+                  //         radius: 15.0,
+                  //         backgroundImage: NetworkImage(e.image!),
+                  //         backgroundColor: Colors.transparent,
+                  //       ),
+                  //       title: Text("r/${e.name}"),
+                  //       trailing: e.favorite!
+                  //           ? IconButton(
+                  //               onPressed: () {
+                  //                 _removeFromFavorites(e);
+                  //               },
+                  //               icon: const Icon(Icons.star))
+                  //           : IconButton(
+                  //               onPressed: () {
+                  //                 _addToFavorites(e);
+                  //               },
+                  //               icon: const Icon(Icons.star_border)),
+                  //     );
+                  //   },
+                  // ).toList(),
+                ],
+              ),
+              // --------------------------------------------
+              // ------------Get joined communities----------
+              // --------------------------------------------
+              const ExpansionTile(
+                initiallyExpanded: true,
+                textColor: Colors.white,
+                iconColor: Colors.white,
+                maintainState: true,
+                title: Text("Your Communities"),
+                // Children are the subreddits that you are currently moderating
+                children: [
+                  // ListTile(
+                  //   leading: const FaIcon(FontAwesomeIcons.plus),
+                  //   title: const Text("Create a community"),
+                  //   onTap: () {
+                  //     // TODO: got to create community page
+                  //     Navigator.pushNamed(
+                  //         context, createCommunityScreenRoute);
+                  //   },
+                  // ),
+                  // ..._yourCommunities!.map(
+                  //   (e) {
+                  //     return ListTile(
+                  //       onTap: () {},
+                  //       leading: CircleAvatar(
+                  //         radius: 15.0,
+                  //         backgroundImage: NetworkImage(e.image!),
+                  //         backgroundColor: Colors.transparent,
+                  //       ),
+                  //       title: Text("r/${e.name}"),
+                  //       trailing: e.favorite!
+                  //           ? IconButton(
+                  //               onPressed: () {
+                  //                 _removeFromFavorites(e);
+                  //               },
+                  //               icon: const Icon(Icons.star))
+                  //           : IconButton(
+                  //               onPressed: () {
+                  //                 _addToFavorites(e);
+                  //               },
+                  //               icon: const Icon(Icons.star_border)),
+                  //     );
+                  //   },
+                  // ).toList(),
+                ],
+              ),
+              ExpansionTile(
+                initiallyExpanded: true,
+                textColor: Colors.white,
+                iconColor: Colors.white,
+                maintainState: true,
+                title: const Text("Following"),
+                // Children are the subreddits that you are currently moderating
+                children: [
+                  BlocBuilder<LeftDrawerCubit, LeftDrawerState>(
+                    builder: (context, state) {
+                      if (state is LeftDrawerDataLoaded) {
+                        _following = state.following;
+                        return Column(
+                            children: _following!.data!.map(
                           (e) {
                             return ListTile(
                               onTap: () {
                                 Navigator.pushNamed(
                                     context, otherProfilePageRoute,
-                                    arguments: "638f9e7d31186b7fd21bae89");
+                                    arguments: e.sId!);
                               }, // TODO : Navigate to user profile
                               leading: CircleAvatar(
                                 radius: 15.0,
-                                backgroundImage: NetworkImage(e.image!),
+                                backgroundImage:
+                                    NetworkImage(imagesUrl + e.profilePhoto!),
                                 backgroundColor: Colors.transparent,
                               ),
-                              title: Text("r/${e.name}"),
-                              trailing: e.favorite!
-                                  ? IconButton(
-                                      onPressed: () {
-                                        _removeFromFavorites(e);
-                                      },
-                                      icon: const Icon(Icons.star))
-                                  : IconButton(
-                                      onPressed: () {
-                                        _addToFavorites(e);
-                                      },
-                                      icon: const Icon(Icons.star_border)),
+                              title: Text("r/${e.username}"),
+                              // trailing: e.favorite!
+                              //     ? IconButton(
+                              //         onPressed: () {
+                              //           _removeFromFavorites(e);
+                              //         },
+                              //         icon: const Icon(Icons.star))
+                              //     : IconButton(
+                              //         onPressed: () {
+                              //           _addToFavorites(e);
+                              //         },
+                              //         icon: const Icon(Icons.star_border)),
                             );
                           },
-                        ).toList(),
-                      ],
-                    ),
+                        ).toList());
+                      }
+                      return Container();
+                    },
+                  )
+                ],
+              ),
 
-                    // All button
-                    ListTile(
-                      leading: const Icon(Icons.stacked_bar_chart),
-                      title: const Text("All"),
-                      onTap: () {
-                        // TODO: open a page where the user sees posts from all the communities
-                        // joint, moderating, and following accounts
-                      },
-                    )
-                  ],
-                );
-              } else
-                return Container();
-            },
+              // All button
+              ListTile(
+                leading: const Icon(Icons.stacked_bar_chart),
+                title: const Text("All"),
+                onTap: () {
+                  // TODO: open a page where the user sees posts from all the communities
+                  // joint, moderating, and following accounts
+                },
+              )
+            ],
           ),
         ),
       ),
@@ -262,13 +271,13 @@ class _LeftDrawerState extends State<LeftDrawer> {
   }
 
   /// Add a subreddit or user to favorites
-  void _addToFavorites(LeftDrawerModel leftDrawerModel) {
-    BlocProvider.of<LeftDrawerCubit>(context).addToFavorites(leftDrawerModel);
-  }
+  // void _addToFavorites(LeftDrawerModel leftDrawerModel) {
+  //   BlocProvider.of<LeftDrawerCubit>(context).addToFavorites(leftDrawerModel);
+  // }
 
   /// Remove a subreddit or user from favorites
-  void _removeFromFavorites(LeftDrawerModel leftDrawerModel) {
-    BlocProvider.of<LeftDrawerCubit>(context)
-        .removeFromFavorites(leftDrawerModel);
-  }
+  // void _removeFromFavorites(LeftDrawerModel leftDrawerModel) {
+  //   BlocProvider.of<LeftDrawerCubit>(context)
+  //       .removeFromFavorites(leftDrawerModel);
+  // }
 }

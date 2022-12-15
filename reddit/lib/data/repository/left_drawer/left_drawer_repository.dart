@@ -33,11 +33,13 @@ class LeftDrawerRepository {
 
   /// Returns [List] of [LeftDrawerModel] object that contains the users you are currently following
   /// after getting it from [LeftDrawerWebServices] and mapping it to the model list.
-  Future<List<LeftDrawerModel>> getFollowingUsers() async {
+  Future<LeftDrawerModel> getFollowingUsers() async {
     final following = await leftDrawerWebServices.getFollowingUsers();
     print("Following from repo:");
     print("$following");
-    return List<LeftDrawerModel>.from(
-        jsonDecode(following).map((i) => LeftDrawerModel.fromJson(i)));
+    return LeftDrawerModel.fromJson(following);
+
+    // return List<LeftDrawerModel>.from(
+    //     jsonDecode(following).map((i) => LeftDrawerModel.fromJson(i)));
   }
 }

@@ -9,7 +9,7 @@ class LeftDrawerInitial extends LeftDrawerState {}
 class LeftDrawerDataLoaded extends LeftDrawerState {
   final List<LeftDrawerModel> moderating;
   final List<LeftDrawerModel> yourCommunities;
-  final List<LeftDrawerModel> following;
+  final LeftDrawerModel following;
   final List<LeftDrawerModel> favorites;
 
   LeftDrawerDataLoaded(
@@ -29,7 +29,7 @@ class YourCommunitiesLoaded extends LeftDrawerState {
 }
 
 class FollowingUsersLoaded extends LeftDrawerState {
-  final List<LeftDrawerModel> leftDrawerCommunityModel;
+  final LeftDrawerModel leftDrawerFollowingModel;
 
-  FollowingUsersLoaded(this.leftDrawerCommunityModel);
+  FollowingUsersLoaded(this.leftDrawerFollowingModel);
 }

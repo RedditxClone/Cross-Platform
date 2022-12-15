@@ -20,6 +20,9 @@ import 'package:reddit/presentation/screens/modtools/web/traffic_stats.dart';
 import 'package:reddit/presentation/screens/modtools/web/unmoderated.dart';
 import 'package:reddit/presentation/screens/profile/other_user_profile_screen.dart';
 import 'business_logic/cubit/feed_settings_cubit.dart';
+import 'business_logic/cubit/left_drawer/left_drawer_cubit.dart';
+import 'data/repository/left_drawer/left_drawer_repository.dart';
+import 'data/web_services/left_drawer/left_drawer_web_services.dart';
 import 'presentation/screens/feed_setting.dart';
 import 'package:reddit/presentation/screens/profile/others_profile_page_web.dart';
 import 'package:reddit/presentation/screens/profile/profile_page_web.dart';
@@ -177,7 +180,13 @@ class AppRouter {
                 create: (context) => postsHomeCubit,
               ),
             ],
-            child: kIsWeb ? HomePageWeb() : HomePage(),
+            child: kIsWeb
+                ? HomePageWeb()
+                : BlocProvider(
+                    create: (context) => LeftDrawerCubit(
+                        LeftDrawerRepository(LeftDrawerWebServices())),
+                    child: HomePage(),
+                  ),
           ),
         );
 

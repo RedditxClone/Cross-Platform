@@ -1,9 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:reddit/constants/strings.dart';
+import 'package:reddit/data/model/auth_model.dart';
 
 class LeftDrawerWebServices {
-  bool useMockServer = true;
+  bool useMockServer = false;
   // Mock URL For Mockoon
   // String mockUrl = TargetPlatform.android == defaultTargetPlatform
   //     ? "http://10.0.2.2:3001/"
@@ -52,11 +53,22 @@ class LeftDrawerWebServices {
   /// This function performs `GET` request to the endpoint `baseUrl/user/following`.
   Future<dynamic> getFollowingUsers() async {
     try {
-      Response response = await dio.get('user/following');
-      print(response.data);
+      Response response = await dio.get('user/me/following',
+          options: Options(
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+          ));
+      debugPrint("${response.data}");
       return response.data;
     } catch (e) {
-      print(e);
+      debugPrint("$e");
+      if (e is DioError) {
+        // if (e.response!.statusCode == 403) {
+        //   debugPrint("Wrong password");
+        // } else if (e.response!.statusCode == 401) {
+        //   debugPrint("Unauthorized");
+        // }
+        debugPrint(e.message);
+      }
       return "Error in left drawer web services";
     }
   }
