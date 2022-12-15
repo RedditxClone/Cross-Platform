@@ -233,8 +233,8 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => MultiBlocProvider(
             providers: [
-              BlocProvider(
-                create: (context) => userProfileCubit,
+              BlocProvider.value(
+                value: userProfileCubit,
               ),
               BlocProvider(
                 create: (context) => messagesCubit,
