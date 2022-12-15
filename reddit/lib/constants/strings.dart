@@ -2,8 +2,7 @@
 // --------------Backend-----------------
 //---------------------------------------
 // Backend URL
-const baseUrl = String.fromEnvironment('BASE_URL',
-    defaultValue: ''); //String.fromEnvironment('BASE_URL', defaultValue: '');
+const baseUrl = String.fromEnvironment('BASE_URL', defaultValue: '');
 const imagesUrl = String.fromEnvironment('MEDIA_URL', defaultValue: '');
 const mockUrl = 'https://a3a539c4-1746-44d4-8e06-d579a1d30d53.mock.pstmn.io/';
 // Use mock server instead of our backend server
@@ -91,3 +90,9 @@ const tafficRoute = '/taffic';
 const rulesRoute = '/rules';
 const unmoderatedRoute = '/unmod';
 const moderatorsRoute = '/mod';
+//---------------------------------------
+// ------------Message Route-------------
+//---------------------------------------
+const sendMessageRoute = '/message';
+const inboxRoute = '/inbox';
+const sentRoute = '/sent';

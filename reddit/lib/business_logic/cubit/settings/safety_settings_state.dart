@@ -25,3 +25,5 @@ class BlockListUpdated extends SafetySettingsState {
   final String name;
   BlockListUpdated(this.settings, this.name);
 }
+
+class ErrorOccured extends SafetySettingsState {}
