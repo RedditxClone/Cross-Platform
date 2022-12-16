@@ -106,7 +106,7 @@ class _ManageBlockedAccountsScreenState
           displayMsg(context, Colors.green,
               '${blockedUsers![index].username} unblocked');
           BlocProvider.of<SafetySettingsCubit>(context).unBlockUser(
-              UserData.safetySettings!, blockedUsers![index].username);
+              UserData.safetySettings!, blockedUsers![index].userId);
         },
         style: OutlinedButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 17),

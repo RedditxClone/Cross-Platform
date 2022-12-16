@@ -99,7 +99,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
           onPressed: () {
             UserData.isLoggedIn
                 ? BlocProvider.of<UserProfileCubit>(context)
-                    .follow(widget.userID)
+                    .follow(otherUser!.userId)
                 : Navigator.pushNamed(context, loginScreen);
           },
           style: ElevatedButton.styleFrom(
@@ -120,7 +120,8 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
       width: 126,
       child: OutlinedButton(
           onPressed: () {
-            BlocProvider.of<UserProfileCubit>(context).unfollow(widget.userID);
+            BlocProvider.of<UserProfileCubit>(context)
+                .unfollow(otherUser!.userId);
           },
           style: ElevatedButton.styleFrom(
             side: const BorderSide(width: 1.0, color: Colors.white),
@@ -166,12 +167,16 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const CircleAvatar(
-                      radius: 50,
-                      child: Icon(
-                        Icons.person,
-                        size: 50,
-                      )),
+                  otherUser!.profilePic == null || otherUser!.profilePic == ''
+                      ? const Icon(
+                          Icons.person,
+                          size: 50,
+                        )
+                      : CircleAvatar(
+                          radius: 50,
+                          backgroundImage: NetworkImage(
+                            otherUser!.profilePic!,
+                          )),
                   Row(
                     children: [
                       SizedBox(
@@ -253,8 +258,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
               ),
               ElevatedButton(
                 onPressed: () => BlocProvider.of<UserProfileCubit>(buildcontext)
-                    .blockUser(
-                        otherUser!.username), // TODO : CHANGE TO USERNAME
+                    .blockUser(otherUser!.userId), // TODO : CHANGE TO USERNAME
                 style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
                     padding: const EdgeInsets.symmetric(
@@ -360,7 +364,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                               color: Colors.white,
                             ),
                             SizedBox(width: 20),
-                            Text("Block accout",
+                            Text("Block account",
                                 style: TextStyle(
                                     fontSize: 20, color: Colors.white))
                           ],
@@ -573,7 +577,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                         ' ${otherUser!.username} was blocked');
                     Navigator.pop(context);
                     Navigator.pop(context);
-                    Navigator.pop(context);
+                    // Navigator.pop(context);
                   } else if (state is ErrorOccured) {
                     displayMsg(context, Colors.red, 'An error has occured');
                   }

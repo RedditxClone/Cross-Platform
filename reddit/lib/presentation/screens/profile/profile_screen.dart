@@ -64,17 +64,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  CircleAvatar(
-                      radius: 50,
-                      child: UserData.user!.profilePic == ''
-                          ? const Icon(
-                              Icons.person,
-                              size: 50,
-                            )
-                          : Image.network(
-                              UserData.user!.profilePic!,
-                              fit: BoxFit.cover,
-                            )),
+                  UserData.user!.profilePic == ''
+                      ? const Icon(
+                          Icons.person,
+                          size: 50,
+                        )
+                      : CircleAvatar(
+                          radius: 50,
+                          backgroundImage: NetworkImage(
+                            UserData.user!.profilePic!,
+                          )),
                   SizedBox(
                     width: 60,
                     child: OutlinedButton(
@@ -143,17 +142,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Row(
           children: [
             const SizedBox(width: 30),
-            CircleAvatar(
-                radius: 20,
-                child: UserData.user!.profilePic == ''
-                    ? const Icon(
-                        Icons.person,
-                        size: 20,
-                      )
-                    : Image.network(
-                        UserData.user!.profilePic!,
-                        fit: BoxFit.cover,
-                      )),
+            UserData.user!.profilePic == ''
+                ? const Icon(
+                    Icons.person,
+                    size: 20,
+                  )
+                : CircleAvatar(
+                    radius: 20,
+                    backgroundImage: NetworkImage(
+                      UserData.user!.profilePic!,
+                    )),
             const SizedBox(width: 10),
             Text(
               UserData.user!.displayName == ''

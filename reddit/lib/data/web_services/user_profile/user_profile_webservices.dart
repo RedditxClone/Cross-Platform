@@ -23,19 +23,25 @@ class UserProfileWebServices {
   /// `Returns` : [User] info
   Future<dynamic> getUserInfo(String userId) async {
     try {
+      print(userId);
       Response response = await dio.get('user/$userId',
           options: UserData.isLoggedIn
               ? Options(
-                  headers: {"Authorization": "Bearer  ${UserData.user!.token}"},
+                  headers: {"Authorization": "Bearer ${UserData.user!.token}"},
                 )
               : null);
-      print(response.statusCode);
+      print("Get user mustafaaaa ${response.statusCode}");
       return response.data;
     } catch (e) {
       if (e is DioError) {
-        print(e);
-        return "";
+        // print(e);
+        if (e is DioError) {
+          debugPrint("Status code is ${e.response!.data}");
+        } else {
+          debugPrint("$e");
+        }
       }
+      return "";
     }
   }
 
@@ -48,15 +54,19 @@ class UserProfileWebServices {
     try {
       Response response = await dio.post('user/$userId/follow',
           options: Options(
-            headers: {"Authorization": "Bearer  ${UserData.user!.token}"},
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
       print(response.statusCode);
       return response.statusCode;
     } catch (e) {
+      // print(e);
       if (e is DioError) {
-        print(e);
-        return "";
+        debugPrint("Status code is ${e.response!.data}");
+      } else {
+        debugPrint("$e");
       }
+
+      return "";
     }
   }
 
@@ -90,7 +100,7 @@ class UserProfileWebServices {
     try {
       Response response = await dio.post('user/$username/block',
           options: Options(
-            headers: {"Authorization": "Bearer  ${UserData.user!.token}"},
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
       debugPrint('status code : ${response.statusCode}');
       return response.statusCode;

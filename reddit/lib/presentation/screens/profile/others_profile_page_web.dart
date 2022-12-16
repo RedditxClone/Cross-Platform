@@ -34,7 +34,7 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
   /// [title] : message to be displayed to the user.
   void displayMsg(BuildContext context, Color color, String title) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      width: 400,
+      width: 450,
       content: Container(
           height: 50,
           padding: const EdgeInsets.all(5),
@@ -175,7 +175,8 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
     return ElevatedButton(
       onPressed: () {
         UserData.isLoggedIn
-            ? BlocProvider.of<UserProfileCubit>(context).follow(widget.userID)
+            ? BlocProvider.of<UserProfileCubit>(context)
+                .follow(otherUser.userId)
             : Navigator.pushNamed(context, loginPage);
       },
       style: const ButtonStyle(
@@ -210,7 +211,7 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
   Widget _unfollow() {
     return OutlinedButton(
       onPressed: () =>
-          BlocProvider.of<UserProfileCubit>(context).unfollow(widget.userID),
+          BlocProvider.of<UserProfileCubit>(context).unfollow(otherUser.userId),
       style: OutlinedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
           side: const BorderSide(width: 1, color: Colors.white),
@@ -241,13 +242,16 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
                 ],
               ),
               //---------------Other profile picture------------------
-              CircleAvatar(
-                  radius: 60,
-                  child:
-                      otherUser.profilePic == null || otherUser.profilePic == ''
-                          ? const Icon(Icons.person, size: 50)
-                          : Image.network(otherUser.profilePic!,
-                              fit: BoxFit.cover)),
+              otherUser.profilePic == null || otherUser.profilePic == ''
+                  ? const Icon(
+                      Icons.person,
+                      size: 50,
+                    )
+                  : CircleAvatar(
+                      radius: 60,
+                      backgroundImage: NetworkImage(
+                        otherUser.profilePic!,
+                      )),
             ],
           ),
           Text(
