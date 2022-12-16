@@ -3,14 +3,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:reddit/business_logic/cubit/user_profile/user_profile_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
+import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/data/model/auth_model.dart';
+import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_Not_loggedin.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 import 'package:reddit/presentation/widgets/posts/posts_web.dart';
 
 class OtherProfilePageWeb extends StatefulWidget {
-  late User otherUser;
-  OtherProfilePageWeb({required this.otherUser, super.key});
+  late String userID;
+  OtherProfilePageWeb({required this.userID, super.key});
 
   @override
   State<OtherProfilePageWeb> createState() => _OtherProfilePageWebState();
@@ -20,14 +22,19 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
   late Responsive _responsive;
   String sortBy = 'new';
   bool _isOverviewTab = true;
-  bool _isFollowed = false;
+  late User otherUser;
+  @override
+  void initState() {
+    super.initState();
+    BlocProvider.of<UserProfileCubit>(context).getUserInfo(widget.userID);
+  }
 
   /// [context] : build context.
   /// [color] : color of the error msg to be displayer e.g. ('red' : error , 'blue' : success ).
   /// [title] : message to be displayed to the user.
   void displayMsg(BuildContext context, Color color, String title) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      width: 400,
+      width: 450,
       content: Container(
           height: 50,
           padding: const EdgeInsets.all(5),
@@ -167,8 +174,10 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
   Widget _follow() {
     return ElevatedButton(
       onPressed: () {
-        BlocProvider.of<UserProfileCubit>(context).follow(
-            "6391e21409dfc46c3d93189d"); // TODO :  change this to the id of the other user
+        UserData.isLoggedIn
+            ? BlocProvider.of<UserProfileCubit>(context)
+                .follow(otherUser.userId)
+            : Navigator.pushNamed(context, loginPage);
       },
       style: const ButtonStyle(
         shape: MaterialStatePropertyAll(
@@ -201,8 +210,8 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
 
   Widget _unfollow() {
     return OutlinedButton(
-      onPressed: () => BlocProvider.of<UserProfileCubit>(context)
-          .unfollow("6391e21409dfc46c3d93189d"),
+      onPressed: () =>
+          BlocProvider.of<UserProfileCubit>(context).unfollow(otherUser.userId),
       style: OutlinedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
           side: const BorderSide(width: 1, color: Colors.white),
@@ -217,7 +226,7 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
 
   Widget _buildProfileCard() {
     return Container(
-      height: 400,
+      height: UserData.isLoggedIn ? 425 : 370,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5), color: defaultSecondaryColor),
       margin: const EdgeInsets.only(bottom: 15),
@@ -233,19 +242,25 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
                 ],
               ),
               //---------------Other profile picture------------------
-              CircleAvatar(
-                  radius: 60,
-                  child: widget.otherUser.profilePic == null ||
-                          widget.otherUser.profilePic == ''
-                      ? const Icon(Icons.person, size: 50)
-                      : Image.network(widget.otherUser.profilePic!,
-                          fit: BoxFit.cover)),
+              otherUser.profilePic == null || otherUser.profilePic == ''
+                  ? const Icon(
+                      Icons.person,
+                      size: 50,
+                    )
+                  : CircleAvatar(
+                      radius: 60,
+                      backgroundImage: NetworkImage(
+                        otherUser.profilePic!,
+                      )),
             ],
           ),
-          Text(widget.otherUser.displayName ?? "",
+          Text(
+              otherUser.displayName == ''
+                  ? otherUser.username
+                  : otherUser.displayName!,
               style:
                   const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
-          Text('u/${widget.otherUser.username} . 26m',
+          Text('u/${otherUser.username} . 26m',
               style: const TextStyle(fontSize: 12, color: Colors.grey)),
           const SizedBox(height: 20),
           //--------------------karma and cake day-------------
@@ -366,8 +381,50 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
               ),
             ],
           ),
+          UserData.isLoggedIn
+              ? Container(
+                  padding: const EdgeInsets.only(left: 5),
+                  height: UserData.isLoggedIn ? 60 : 35,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _moreOptions(
+                          'Send Message',
+                          () => UserData.isLoggedIn
+                              ? Navigator.pushNamed(context, sendMessageRoute,
+                                  arguments: otherUser.username)
+                              : Navigator.pushNamed(context, loginPage)),
+                      UserData.isLoggedIn
+                          ? _moreOptions(
+                              'Block User',
+                              () => BlocProvider.of<UserProfileCubit>(context)
+                                  .blockUser(otherUser.userId))
+                          : const SizedBox(width: 0, height: 0)
+                    ],
+                  ),
+                )
+              : const SizedBox(width: 0)
         ],
       ),
+    );
+  }
+
+  Widget _moreOptions(String title, Function func) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        TextButton(
+            onPressed: () {
+              func();
+            },
+            child: Text(
+              title,
+              style: const TextStyle(
+                  fontSize: 13,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold),
+            )),
+      ],
     );
   }
 
@@ -403,10 +460,10 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
                       child: Column(
                         children: [
                           _sortBy(),
-                          const PostsWeb(),
-                          const PostsWeb(),
-                          const PostsWeb(),
-                          const PostsWeb(),
+                          PostsWeb(),
+                          PostsWeb(),
+                          PostsWeb(),
+                          PostsWeb(),
                         ],
                       ),
                     ),
@@ -552,7 +609,9 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
               const Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
           automaticallyImplyLeading: false,
           backgroundColor: defaultAppbarBackgroundColor,
-          title: const AppBarWebLoggedIn(screen: 'u/user_name')),
+          title: UserData.isLoggedIn
+              ? const AppBarWebLoggedIn(screen: 'u/user_name')
+              : const AppBarWebNotLoggedIn(screen: 'u/user')),
       body: DefaultTabController(
         length: 3,
         child: Scaffold(
@@ -596,21 +655,40 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
           ),
           body: BlocListener<UserProfileCubit, UserProfileState>(
               listener: (context, state) {
-                if (state is FollowOtherUserSuccess) {
-                  displayMsg(context, Colors.blue,
-                      ' Successfully followed u/${widget.otherUser.username}');
-                } else if (state is FollowOtherUserNotSuccess) {
-                  displayMsg(context, Colors.red,
-                      'An error has occured. please try again later');
-                } else if (state is UnFollowOtherUserSuccess) {
-                  displayMsg(context, Colors.blue,
-                      ' Successfully unfollowed u/${widget.otherUser.username}');
-                } else if (state is UnFollowOtherUserNotSuccess) {
-                  displayMsg(context, Colors.red,
-                      'An error has occured. please try again later');
-                }
-              },
-              child: _buildBody()),
+            if (state is FollowOtherUserSuccess) {
+              displayMsg(context, Colors.blue,
+                  ' Successfully followed u/${otherUser.username}');
+            } else if (state is FollowOtherUserNotSuccess) {
+              displayMsg(context, Colors.red,
+                  'An error has occured. please try again later');
+            } else if (state is UnFollowOtherUserSuccess) {
+              displayMsg(context, Colors.blue,
+                  ' Successfully unfollowed u/${otherUser.username}');
+            } else if (state is UnFollowOtherUserNotSuccess) {
+              displayMsg(context, Colors.red,
+                  'An error has occured. please try again later');
+            } else if (state is UserBlocked) {
+              displayMsg(context, Colors.blue,
+                  ' ${otherUser.username} is now blocked');
+            } else if (state is ErrorOccured) {
+              displayMsg(context, Colors.red, 'An error has occured');
+            }
+          }, child: BlocBuilder<UserProfileCubit, UserProfileState>(
+            builder: (context, state) {
+              if (state is UserInfoAvailable) {
+                otherUser = state.userInfo;
+                return _buildBody();
+              } else if (state is FollowOtherUserSuccess ||
+                  state is FollowOtherUserNotSuccess ||
+                  state is UnFollowOtherUserSuccess ||
+                  state is UnFollowOtherUserNotSuccess ||
+                  state is UserBlocked ||
+                  state is ErrorOccured) {
+                return _buildBody();
+              }
+              return const Center(child: CircularProgressIndicator());
+            },
+          )),
         ),
       ),
     );

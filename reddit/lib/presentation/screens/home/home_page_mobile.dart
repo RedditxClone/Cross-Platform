@@ -2,6 +2,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reddit/business_logic/cubit/end_drawer/end_drawer_cubit.dart';
+import 'package:reddit/business_logic/cubit/posts/posts_home_cubit.dart';
 import 'package:reddit/data/repository/end_drawer/end_drawer_repository.dart';
 import 'package:reddit/data/repository/left_drawer/left_drawer_repository.dart';
 import 'package:reddit/data/web_services/left_drawer/left_drawer_web_services.dart';
@@ -17,6 +18,7 @@ import 'package:reddit/presentation/screens/test_home_screens/notifications.dart
 import 'package:reddit/presentation/widgets/home_widgets/end_drawer.dart';
 import 'package:reddit/presentation/widgets/home_widgets/left_drawer.dart';
 import 'package:reddit/presentation/widgets/posts/add_post.dart';
+import 'package:reddit/presentation/widgets/posts/posts_web.dart';
 
 import '../../../business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
 import '../../../business_logic/cubit/left_drawer/left_drawer_cubit.dart';
@@ -31,15 +33,19 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  _HomePageState();
-  int _selectedPageIndex = 0;
-  String _screen = 'Home';
+  late int _selectedPageIndex = 0;
+  late String _screen;
   IconData dropDownArrow = Icons.keyboard_arrow_down;
+
+  _HomePageState() {
+    _selectedPageIndex = 0;
+    _screen = 'Home';
+  }
   @override
   void initState() {
     super.initState();
     BlocProvider.of<AuthCubit>(context)
-        .getUserData(PreferenceUtils.getString(SharedPrefKeys.userId));
+        .getUserData(PreferenceUtils.getString(SharedPrefKeys.token));
   }
 
   Widget buildHomeAppBar() {
@@ -87,6 +93,7 @@ class _HomePageState extends State<HomePage> {
         return {
           'page': _screen == 'Home'
               ? BlocBuilder<AuthCubit, AuthState>(builder: (context, state) {
+                  BlocProvider.of<PostsHomeCubit>(context).getTimelinePosts();
                   if (state is Login ||
                       state is GetTheUserData ||
                       state is SignedIn) {
@@ -94,21 +101,60 @@ class _HomePageState extends State<HomePage> {
                       debugPrint("user is nottttttttttttttttttttttttt null");
                       UserData.initUser(state.userDataJson);
                       debugPrint("user is ${UserData.isLogged()}");
-                      return const Home();
+                      BlocProvider.of<LeftDrawerCubit>(context)
+                          .getLeftDrawerData();
+
+                      return homePosts();
                     } else if (state is GetTheUserData &&
                         state.userDataJson != {}) {
                       UserData.initUser(state.userDataJson);
-                      return const Home();
+                      BlocProvider.of<LeftDrawerCubit>(context)
+                          .getLeftDrawerData();
+                      return homePosts();
                     } else if (state is SignedIn && state.userDataJson != {}) {
-                      return const Home();
+                      BlocProvider.of<LeftDrawerCubit>(context)
+                          .getLeftDrawerData();
+
+                      return homePosts();
                     }
                   } else if (state is NotLoggedIn) {
-                    return const HomeNotLoggedIn();
+                    return homePosts();
                   }
                   return const Center(
                       child: CircularProgressIndicator.adaptive());
                 })
-              : const Popular(),
+              : BlocBuilder<AuthCubit, AuthState>(builder: (context, state) {
+                  BlocProvider.of<PostsHomeCubit>(context).getTimelinePosts();
+                  if (state is Login ||
+                      state is GetTheUserData ||
+                      state is SignedIn) {
+                    if (state is Login && state.userDataJson != {}) {
+                      debugPrint("user is nottttttttttttttttttttttttt null");
+                      UserData.initUser(state.userDataJson);
+                      debugPrint("user is ${UserData.isLogged()}");
+                      BlocProvider.of<LeftDrawerCubit>(context)
+                          .getLeftDrawerData();
+
+                      return popularPosts();
+                    } else if (state is GetTheUserData &&
+                        state.userDataJson != {}) {
+                      UserData.initUser(state.userDataJson);
+                      BlocProvider.of<LeftDrawerCubit>(context)
+                          .getLeftDrawerData();
+
+                      return popularPosts();
+                    } else if (state is SignedIn && state.userDataJson != {}) {
+                      BlocProvider.of<LeftDrawerCubit>(context)
+                          .getLeftDrawerData();
+
+                      return popularPosts();
+                    }
+                  } else if (state is NotLoggedIn) {
+                    return popularPosts();
+                  }
+                  return const Center(
+                      child: CircularProgressIndicator.adaptive());
+                }),
           'appbar_title': Container(
             decoration: BoxDecoration(
               color: const Color.fromRGBO(90, 90, 90, 100),
@@ -195,22 +241,19 @@ class _HomePageState extends State<HomePage> {
                   state is SignedIn ||
                   state is SignedInWithProfilePhoto) {
                 return IconButton(
-                    key: const Key('user-icon'),
-                    onPressed: () {
-                      Scaffold.of(context).openEndDrawer();
-                    },
-                    icon: CircleAvatar(
-                      child: UserData.profileSettings!.profile.isNotEmpty
-                          ? Image.network(
-                              UserData.profileSettings!.profile,
-                              fit: BoxFit.cover,
-                            )
-                          : const Icon(
-                              Icons.person,
-                              color: Colors.grey,
-                              size: 25,
-                            ),
-                    ));
+                  key: const Key('user-icon'),
+                  onPressed: () {
+                    Scaffold.of(context).openEndDrawer();
+                  },
+                  icon: UserData.profileSettings!.profile.isEmpty
+                      ? const Icon(
+                          Icons.person,
+                        )
+                      : CircleAvatar(
+                          backgroundImage: NetworkImage(
+                          UserData.user!.profilePic!,
+                        )),
+                );
               } else {
                 return IconButton(
                     key: const Key('user-icon'),
@@ -246,11 +289,7 @@ class _HomePageState extends State<HomePage> {
             bottomNavBarItem(
                 4, Icons.notifications, Icons.notifications_outlined),
           ]),
-      drawer: BlocProvider(
-        create: (context) =>
-            LeftDrawerCubit(LeftDrawerRepository(LeftDrawerWebServices())),
-        child: LeftDrawer(),
-      ),
+      drawer: LeftDrawer(),
       endDrawer: BlocProvider(
         create: (context) =>
             EndDrawerCubit(EndDrawerRepository(SettingsWebServices())),
@@ -259,6 +298,59 @@ class _HomePageState extends State<HomePage> {
           35,
         ),
       ),
+    );
+  }
+
+  Widget homePosts() {
+    return BlocBuilder<PostsHomeCubit, PostsHomeState>(
+      builder: (context, state) {
+        if (state is PostsLoaded) {
+          return ListView(children: [
+            ...state.posts!.map((e) => PostsWeb(postsModel: e)).toList()
+          ]);
+        }
+        return const Center(child: CircularProgressIndicator());
+      },
+    );
+  }
+
+  Widget popularPosts() {
+    double cardHeight = 100;
+    return BlocBuilder<PostsHomeCubit, PostsHomeState>(
+      builder: (context, state) {
+        if (state is PostsLoaded) {
+          return ListView(
+            children: [
+              Column(
+                children: [
+                  SizedBox(
+                    height: cardHeight,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: List.generate(
+                        10,
+                        (int index) {
+                          return Card(
+                            key: const Key('row-card'),
+                            color: Colors.blue,
+                            child: SizedBox(
+                              width: 150.0,
+                              height: cardHeight,
+                              child: Center(child: Text("$index")),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                  ...state.posts!.map((e) => PostsWeb(postsModel: e)).toList()
+                ],
+              ),
+            ],
+          );
+        }
+        return const Center(child: CircularProgressIndicator());
+      },
     );
   }
 }

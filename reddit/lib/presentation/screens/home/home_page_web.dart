@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:reddit/business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
+import 'package:reddit/business_logic/cubit/posts/posts_home_cubit.dart';
 import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/data/web_services/authorization/auth_web_service.dart';
@@ -28,7 +29,7 @@ class _HomePageWebState extends State<HomePageWeb> {
   void initState() {
     super.initState();
     BlocProvider.of<AuthCubit>(context)
-        .getUserData(PreferenceUtils.getString(SharedPrefKeys.userId));
+        .getUserData(PreferenceUtils.getString(SharedPrefKeys.token));
     authRepo = AuthRepo(AuthWebService());
   }
 
@@ -796,22 +797,32 @@ class _HomePageWebState extends State<HomePageWeb> {
             debugPrint("state is signed in");
             WidgetsBinding.instance
                 .addPostFrameCallback((_) => showDialogToChooseGender());
+            BlocProvider.of<PostsHomeCubit>(context).getTimelinePosts();
+
             return const HomeWeb();
           } else if (state is SignedInWithProfilePhoto) {
             debugPrint("state is SignedInWithProfilePhoto");
             UserData.profileSettings!.profile = state.imgUrl;
             debugPrint(
                 "user in the home page ${UserData.profileSettings!.profile}");
+            BlocProvider.of<PostsHomeCubit>(context).getTimelinePosts();
+
             return const HomeWeb();
           } else if (state is Login) {
+            BlocProvider.of<PostsHomeCubit>(context).getTimelinePosts();
+
             return const HomeWeb();
           } else if (state is GetTheUserData) {
             if (state.userDataJson != {}) {
               debugPrint("user is nottttttttttttttttttttttttt null");
               UserData.initUser(state.userDataJson);
+              BlocProvider.of<PostsHomeCubit>(context).getTimelinePosts();
+
               return const HomeWeb();
             }
           } else if (state is NotLoggedIn) {
+            BlocProvider.of<PostsHomeCubit>(context).getTimelinePosts();
+
             return const HomeWeb();
           }
           return const Center(

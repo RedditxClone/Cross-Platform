@@ -1,13 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:reddit/constants/strings.dart';
+import 'package:reddit/data/model/auth_model.dart';
 
 /// This class is responsible of performing safety settings requests to the REST API
 class SafetySettingsWebServices {
   late Dio dio;
   bool isMockerServer = useMockServerForAllWebServices;
-  String token =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzOGYxYWJkYjNiNWVkYjBhYThkNDZhYSIsImlhdCI6MTY3MDM1NjgyMywiZXhwIjoxNjcxMjIwODIzfQ.ipNuYQi1Lnq6Vz9crxrri6KRvvcZs-srd4D78aE7VF8';
+
   SafetySettingsWebServices() {
     BaseOptions options = BaseOptions(
       baseUrl: isMockerServer ? mockUrl : baseUrl,
@@ -27,7 +27,7 @@ class SafetySettingsWebServices {
     try {
       Response response = await dio.get('user/me/prefs',
           options: Options(
-            headers: {"Authorization": "Bearer $token"},
+            headers: {"Authorization": "Bearer  ${UserData.user!.token}"},
           ));
       debugPrint('status code : ${response.statusCode}');
       return response.data;
@@ -47,7 +47,7 @@ class SafetySettingsWebServices {
       Response response = await dio.patch('user/me/prefs',
           data: changed,
           options: Options(
-            headers: {"Authorization": "Bearer $token"},
+            headers: {"Authorization": "Bearer  ${UserData.user!.token}"},
           ));
       debugPrint('status code : ${response.statusCode}');
       return response.statusCode!;
@@ -67,7 +67,7 @@ class SafetySettingsWebServices {
       Response response = await dio.post('user/check-available-username',
           queryParameters: {'username': username},
           options: Options(
-            headers: {"Authorization": "Bearer $token"},
+            headers: {"Authorization": "Bearer  ${UserData.user!.token}"},
           ));
       debugPrint('status code : ${response.statusCode}');
       return response.statusCode;
@@ -85,10 +85,9 @@ class SafetySettingsWebServices {
   Future<dynamic> blockUser(String username) async {
     // TODO : by user id not by username
     try {
-      Response response = await dio.post('user/1/block',
-          data: {'username': username},
+      Response response = await dio.post('user/$username/block',
           options: Options(
-            headers: {"Authorization": "Bearer $token"},
+            headers: {"Authorization": "Bearer  ${UserData.user!.token}"},
           ));
       debugPrint('status code : ${response.statusCode}');
       return response.statusCode;
@@ -106,10 +105,9 @@ class SafetySettingsWebServices {
   Future<dynamic> unBlockUser(String username) async {
     // TODO : by user id not by username
     try {
-      Response response = await dio.post('user/1/unblock',
-          data: {'username': username},
+      Response response = await dio.post('user/$username/unblock',
           options: Options(
-            headers: {"Authorization": "Bearer $token"},
+            headers: {"Authorization": "Bearer  ${UserData.user!.token}"},
           ));
       debugPrint('status code : ${response.statusCode}');
       return response.statusCode;
@@ -126,9 +124,9 @@ class SafetySettingsWebServices {
     try {
       Response response = await dio.get('user/block',
           options: Options(
-            headers: {"Authorization": "Bearer $token"},
+            headers: {"Authorization": "Bearer  ${UserData.user!.token}"},
           ));
-      return {"blocked": []}; // TODO : return response.data when
+      return response.data;
     } catch (e) {
       return [];
     }

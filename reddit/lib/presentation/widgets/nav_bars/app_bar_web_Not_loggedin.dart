@@ -76,6 +76,26 @@ class _AppBarWebNotLoggedInState extends State<AppBarWebNotLoggedIn> {
             ),
           ),
         ),
+        // SizedBox(
+        //   width: 80,
+        //   child: InkWell(
+        //     onTap: () =>
+        //         Navigator.pushNamed(context, popularPageRoute, arguments: null),
+        //     hoverColor: Colors.transparent,
+        //     child: Row(
+        //       children: [
+        //         const Icon(Icons.arrow_circle_up_rounded, size: 25),
+        //         const SizedBox(width: 4),
+        //         MediaQuery.of(context).size.width > 1000
+        //             ? Text(
+        //                 widget.screen,
+        //                 style: const TextStyle(fontSize: 13),
+        //               )
+        //             : const SizedBox(width: 0)
+        //       ],
+        //     ),
+        //   ),
+        // ),
         SizedBox(
           width: 0.38 * MediaQuery.of(context).size.width,
           height: 40,

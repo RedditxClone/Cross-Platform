@@ -66,6 +66,9 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
       case 'Popular':
         Navigator.pushNamed(context, popularPageRoute);
         break;
+      case 'Messages':
+        Navigator.pushNamed(context, sendMessageRoute, arguments: '');
+        break;
       case 'Create Community':
         createCommunityDialog();
         break;

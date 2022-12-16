@@ -13,7 +13,7 @@ class QueuesWidget extends StatefulWidget {
 
 class _QueuesWidgetState extends State<QueuesWidget> {
   Widget queue() {
-    return const SizedBox(
+    return SizedBox(
       width: 700,
       child: PostsWeb(),
     );

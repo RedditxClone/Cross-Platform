@@ -21,8 +21,10 @@ class SettingsCubit extends Cubit<SettingsState> {
     if (isClosed) return;
     settingsRepository.getUserSettings().then((userSettings) {
       // get user profile settings
-      emit(SettingsAvailable(userSettings));
       settings = userSettings;
+      UserData.user!.displayName = settings!.displayName;
+      UserData.profileSettings = settings;
+      emit(SettingsAvailable(userSettings));
     });
   }
 
@@ -32,7 +34,7 @@ class SettingsCubit extends Cubit<SettingsState> {
   /// Emits sate SettingsChanged on successfully updating cover photo (on mobile).
   void changeCoverphoto(ProfileSettings settings, File img) {
     if (isClosed) return;
-    settingsRepository.updateImage('coverphoto', img).then((image) {
+    settingsRepository.updateImage('cover', img).then((image) {
       settings.cover = image;
       debugPrint(image);
       UserData.profileSettings!.cover = settings.cover = image;
@@ -48,7 +50,7 @@ class SettingsCubit extends Cubit<SettingsState> {
   /// This function calls the function [SettingsRepository.updateImageWeb] that updates any photo on web.
   void changeCoverphotoWeb(ProfileSettings settings, Uint8List fileAsBytes) {
     if (isClosed) return;
-    settingsRepository.updateImageWeb('coverphoto', fileAsBytes).then((image) {
+    settingsRepository.updateImageWeb('cover', fileAsBytes).then((image) {
       UserData.profileSettings!.cover = settings.cover = image;
       debugPrint(image);
       emit(SettingsChanged(settings));
@@ -63,7 +65,7 @@ class SettingsCubit extends Cubit<SettingsState> {
   /// This function calls the function [SettingsRepository.updateImage] that updates any photo on mobile.
   void changeProfilephoto(ProfileSettings settings, File img) {
     if (isClosed) return;
-    settingsRepository.updateImage('profilephoto', img).then((image) {
+    settingsRepository.updateImage('profile', img).then((image) {
       settings.profile = image;
       debugPrint(image);
       UserData.user!.profilePic = image;
@@ -79,9 +81,7 @@ class SettingsCubit extends Cubit<SettingsState> {
   /// This function calls the function [SettingsRepository.updateImageWeb] that updates any photo on web.
   void changeProfilephotoWeb(ProfileSettings settings, Uint8List fileAsBytes) {
     if (isClosed) return;
-    settingsRepository
-        .updateImageWeb('profilephoto', fileAsBytes)
-        .then((image) {
+    settingsRepository.updateImageWeb('profile', fileAsBytes).then((image) {
       settings.profile = image;
       UserData.user!.profilePic = image;
       debugPrint(image);
@@ -98,9 +98,25 @@ class SettingsCubit extends Cubit<SettingsState> {
   void updateSettings(ProfileSettings settings, Map changed) {
     if (isClosed) return;
     settingsRepository.updatePrefs(changed).then((val) {
-      UserData.user!.displayName = settings.displayName;
-      debugPrint("settings updated : $val");
-      emit(SettingsChanged(settings));
+      print(val);
+      if (val == 200) {
+        settings.displayName =
+            changed['displayName'] != null && changed['displayName'] != ''
+                ? changed['displayName']
+                : settings.displayName;
+        settings.about = changed['about'] != null && changed['about'] != ''
+            ? changed['about']
+            : settings.about;
+        settings.activeInCommunitiesVisibility =
+            changed['activeInCommunitiesVisibility'] ??
+                settings.activeInCommunitiesVisibility;
+        settings.contentVisibility =
+            changed['contentVisibility'] ?? settings.contentVisibility;
+        UserData.user!.displayName = settings.displayName;
+        debugPrint("settings updated : $val");
+        UserData.profileSettings = settings;
+        emit(SettingsChanged(settings));
+      }
     });
   }
 }

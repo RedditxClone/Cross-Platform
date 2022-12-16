@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/data/repository/user_profile/user_profile_repository.dart';
 
 part 'user_profile_state.dart';
@@ -7,6 +8,21 @@ part 'user_profile_state.dart';
 class UserProfileCubit extends Cubit<UserProfileState> {
   final UserProfileRepository userProfileRepository;
   UserProfileCubit(this.userProfileRepository) : super(UserProfileInitial());
+
+  late User userInfo;
+
+  /// [userID] : The ID of the user we are inside his profile
+  ///
+  /// Emits sate [UserInfoAvailable] on getting user info
+  ///
+  void getUserInfo(String userID) {
+    if (isClosed) return;
+    userProfileRepository.getUserInfo(userID).then((value) {
+      userInfo = value;
+      print(value);
+      emit(UserInfoAvailable(userInfo));
+    });
+  }
 
   /// [userID] : The ID of the user to be followed
   ///
@@ -34,6 +50,20 @@ class UserProfileCubit extends Cubit<UserProfileState> {
         emit(UnFollowOtherUserSuccess());
       } else {
         emit(UnFollowOtherUserNotSuccess());
+      }
+    });
+  }
+
+  /// [username] : Username of the user to be blocked.
+  ///
+  /// Emits sate [UserBlocked] on blocking a user (if existed) and [ErrorOccured] if not found or if and error occured.
+  void blockUser(String username) async {
+    if (isClosed) return;
+    userProfileRepository.blockUser(username).then((statuscode) {
+      if (statuscode == 201) {
+        emit(UserBlocked());
+      } else {
+        emit(ErrorOccured());
       }
     });
   }

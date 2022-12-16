@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:reddit/business_logic/cubit/posts/posts_my_profile_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
@@ -15,6 +17,13 @@ class ProfilePageWeb extends StatefulWidget {
 }
 
 class _ProfilePageWebState extends State<ProfilePageWeb> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    BlocProvider.of<PostsMyProfileCubit>(context).getMyProfilePosts();
+  }
+
   late Responsive _responsive;
   String _outlineButtonLabel = 'Joined';
   String sortBy = 'new';
@@ -202,17 +211,17 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                CircleAvatar(
-                    radius: 60,
-                    child: UserData.user!.profilePic == null ||
-                            UserData.user!.profilePic == ''
-                        ? const Icon(
-                            // TODO : display profile picture here
-                            Icons.person,
-                            size: 50,
-                          )
-                        : Image.network(UserData.user!.profilePic!,
-                            fit: BoxFit.cover)),
+                UserData.user!.profilePic == null ||
+                        UserData.user!.profilePic == ''
+                    ? const Icon(
+                        Icons.person,
+                        size: 50,
+                      )
+                    : CircleAvatar(
+                        radius: 60,
+                        backgroundImage: NetworkImage(
+                          UserData.user!.profilePic!,
+                        )),
                 const SizedBox(width: 60),
                 Column(
                   children: [
@@ -241,7 +250,10 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
             ),
           ],
         ),
-        Text(UserData.user!.displayName ?? "",
+        Text(
+            UserData.user!.displayName == ''
+                ? UserData.user!.username
+                : UserData.user!.displayName!,
             style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
         Text('u/${UserData.user!.username} . 1m',
             style: const TextStyle(fontSize: 12, color: Colors.grey)),
@@ -506,14 +518,18 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
                     child: Container(
                       padding: const EdgeInsets.all(15),
                       width: 10,
-                      child: Column(
-                        children: [
-                          _sortBy(),
-                          const PostsWeb(),
-                          const PostsWeb(),
-                          const PostsWeb(),
-                          const PostsWeb(),
-                        ],
+                      child:
+                          BlocBuilder<PostsMyProfileCubit, PostsMyProfileState>(
+                        builder: (context, state) {
+                          if (state is PostsLoaded) {
+                            return Column(children: [
+                              ...state.posts!
+                                  .map((e) => PostsWeb(postsModel: e))
+                                  .toList()
+                            ]);
+                          }
+                          return Container();
+                        },
                       ),
                     ),
                   ),

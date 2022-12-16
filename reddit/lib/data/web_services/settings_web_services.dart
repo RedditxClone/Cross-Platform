@@ -51,9 +51,8 @@ class SettingsWebServices {
   Future<dynamic> updateImage(File file, String key) async {
     try {
       String fileName = file.path.split('/').last;
-      FormData formData = FormData.fromMap({
-        "file": await MultipartFile.fromFile(file.path, filename: fileName)
-      });
+      FormData formData = FormData.fromMap(
+          {"file": await MultipartFile.fromFile(file.path, filename: 'photo')});
       Response response = await dio.patch('user/me/$key',
           data: formData,
           options: Options(
@@ -79,7 +78,7 @@ class SettingsWebServices {
     try {
       FormData formData = FormData.fromMap({
         "file": MultipartFile.fromBytes(fileAsBytes,
-            contentType: MediaType('application', 'json'), filename: key)
+            contentType: MediaType('application', 'json'), filename: 'photo')
       });
       Response response = await dio.patch('user/me/$key',
           data: formData,

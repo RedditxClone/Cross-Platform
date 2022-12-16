@@ -9,6 +9,8 @@ import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_Not_loggedin.da
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 import 'package:reddit/presentation/widgets/posts/posts_web.dart';
 
+import '../../../business_logic/cubit/posts/posts_home_cubit.dart';
+
 class PopularWeb extends StatefulWidget {
   const PopularWeb({Key? key}) : super(key: key);
 
@@ -23,6 +25,7 @@ class _PopularWebState extends State<PopularWeb> {
   @override
   void initState() {
     super.initState();
+    BlocProvider.of<PostsHomeCubit>(context).getTimelinePosts();
     isLoggedIn = UserData.user != null;
   }
 
@@ -205,10 +208,20 @@ class _PopularWebState extends State<PopularWeb> {
                                             margin: const EdgeInsets.only(
                                                 bottom: 15),
                                           ),
-                                          const PostsWeb(),
-                                          const PostsWeb(),
-                                          const PostsWeb(),
-                                          const PostsWeb(),
+                                          BlocBuilder<PostsHomeCubit,
+                                              PostsHomeState>(
+                                            builder: (context, state) {
+                                              if (state is PostsLoaded) {
+                                                return Column(children: [
+                                                  ...state.posts!
+                                                      .map((e) => PostsWeb(
+                                                          postsModel: e))
+                                                      .toList()
+                                                ]);
+                                              }
+                                              return Container();
+                                            },
+                                          ),
                                         ],
                                       ),
                                     ),

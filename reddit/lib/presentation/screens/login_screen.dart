@@ -476,12 +476,12 @@ class _LoginMobileState extends State<LoginMobile> {
     return Scaffold(
       appBar: AppBar(
         leading: BackButton(
-          onPressed: () {
-            Navigator.of(context).pushReplacementNamed(
-              homePageRoute,
-            );
-          },
-        ),
+            // onPressed: () {
+            //   Navigator.of(context).pushReplacementNamed(
+            //     homePageRoute,
+            //   );
+            // },
+            ),
         centerTitle: true,
         title: CircleAvatar(
           backgroundColor: Colors.red,

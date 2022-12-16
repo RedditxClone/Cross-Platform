@@ -1,25 +1,37 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:reddit/business_logic/cubit/messages/messages_cubit.dart';
+import 'package:reddit/business_logic/cubit/posts/posts_home_cubit.dart';
+import 'package:reddit/business_logic/cubit/posts/posts_my_profile_cubit.dart';
+import 'package:reddit/data/repository/posts/posts_repository.dart';
+import 'package:reddit/data/web_services/posts/posts_web_services.dart';
 import 'package:reddit/business_logic/cubit/user_profile/user_profile_cubit.dart';
-import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/data/repository/feed_setting_repository.dart';
+import 'package:reddit/data/repository/messages/messages_repository.dart';
 import 'package:reddit/data/repository/user_profile/user_profile_repository.dart';
 import 'package:reddit/data/web_services/feed_setting_web_services.dart';
+import 'package:reddit/data/web_services/messages/messages_web_services.dart';
 import 'package:reddit/presentation/screens/forget_username_web.dart';
 import 'package:reddit/data/web_services/user_profile/user_profile_webservices.dart';
+import 'package:reddit/presentation/screens/messages/send_message_web.dart';
 import 'package:reddit/presentation/screens/modtools/mobile/mod_list_screen.dart';
 import 'package:reddit/presentation/screens/modtools/web/approved_web.dart';
-import 'package:reddit/presentation/screens/modtools/web/edited_Web.dart';
+import 'package:reddit/presentation/screens/modtools/web/edited_web.dart';
 import 'package:reddit/presentation/screens/modtools/web/modqueue_web.dart';
 import 'package:reddit/presentation/screens/modtools/web/spam_web.dart';
 import 'package:reddit/presentation/screens/modtools/web/traffic_stats.dart';
 import 'package:reddit/presentation/screens/modtools/web/unmoderated.dart';
-import 'package:reddit/presentation/screens/profile/other_user_orfile_screen.dart';
+// import 'package:reddit/presentation/screens/profile/other_user_orfile_screen.dart';
 import 'package:reddit/presentation/screens/search_web.dart';
 import 'business_logic/cubit/cubit/search/cubit/search_cubit.dart';
 import 'business_logic/cubit/feed_settings_cubit.dart';
 import 'data/repository/search_repo.dart';
 import 'data/web_services/search_web_service.dart';
+import 'package:reddit/presentation/screens/profile/other_user_profile_screen.dart';
+import 'business_logic/cubit/feed_settings_cubit.dart';
+import 'business_logic/cubit/left_drawer/left_drawer_cubit.dart';
+import 'data/repository/left_drawer/left_drawer_repository.dart';
+import 'data/web_services/left_drawer/left_drawer_web_services.dart';
 import 'presentation/screens/feed_setting.dart';
 import 'package:reddit/presentation/screens/profile/others_profile_page_web.dart';
 import 'package:reddit/presentation/screens/profile/profile_page_web.dart';
@@ -117,6 +129,14 @@ class AppRouter {
   late UserProfileRepository userProfileRepository;
   late UserProfileCubit userProfileCubit;
   late SearchCubit searchCubit;
+  late MessagesWebServices messagesWebServices;
+  late MessagesRepository messagesRepository;
+  late MessagesCubit messagesCubit;
+
+  late PostsWebServices postsWebServices;
+  late PostsRepository postsRepository;
+  late PostsHomeCubit postsHomeCubit;
+  late PostsMyProfileCubit postsMyProfileCubit;
   AppRouter() {
     // initialise repository and cubit objects
     safetySettingsRepository =
@@ -142,10 +162,18 @@ class AppRouter {
     communityRepository = CreateCommunityRepository(communityWebServices);
     createCommunityCubit = CreateCommunityCubit(communityRepository);
 
+    postsWebServices = PostsWebServices();
+    postsRepository = PostsRepository(postsWebServices);
+    postsHomeCubit = PostsHomeCubit(postsRepository);
+    postsMyProfileCubit = PostsMyProfileCubit(postsRepository);
     userProfileWebServices = UserProfileWebServices();
     userProfileRepository = UserProfileRepository(userProfileWebServices);
     userProfileCubit = UserProfileCubit(userProfileRepository);
     searchCubit = SearchCubit(SearchRepo(SearchWebService()));
+
+    messagesWebServices = MessagesWebServices();
+    messagesRepository = MessagesRepository(messagesWebServices);
+    messagesCubit = MessagesCubit(messagesRepository);
   }
   Route? generateRoute(RouteSettings settings) {
     final arguments = settings.arguments;
@@ -161,33 +189,78 @@ class AppRouter {
 
       case homePageRoute:
         return MaterialPageRoute(
-          builder: (_) => BlocProvider(
-            create: (context) => authCubit,
-            child: kIsWeb ? const HomePageWeb() : HomePage(),
+          builder: (_) => MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: ((context) => authCubit),
+              ),
+              BlocProvider(
+                create: (context) => postsHomeCubit,
+              ),
+            ],
+            child: kIsWeb
+                ? HomePageWeb()
+                : BlocProvider(
+                    create: (context) => LeftDrawerCubit(
+                        LeftDrawerRepository(LeftDrawerWebServices())),
+                    child: HomePage(),
+                  ),
           ),
         );
 
       case popularPageRoute:
         return MaterialPageRoute(
-          builder: (_) => BlocProvider.value(
-            value: authCubit,
-            child: kIsWeb ? const PopularWeb() : const Popular(),
-          ),
-        );
+            builder: (_) => MultiBlocProvider(
+                  providers: [
+                    BlocProvider(
+                      create: (context) => postsHomeCubit,
+                    ),
+                    BlocProvider.value(
+                      value: authCubit,
+                    ),
+                  ],
+                  child: PopularWeb(),
+                  // child: kIsWeb ? const PopularWeb() : const Popular(),
+                ));
 
       case profilePageRoute:
         return MaterialPageRoute(
-            builder: (_) =>
-                kIsWeb ? const ProfilePageWeb() : const ProfileScreen());
+            builder: (_) => kIsWeb
+                ? MultiBlocProvider(
+                    providers: [
+                      BlocProvider(
+                        create: (context) => postsMyProfileCubit,
+                      ),
+                    ],
+                    child: const ProfilePageWeb(),
+                  )
+                : MultiBlocProvider(
+                    providers: [
+                      BlocProvider.value(
+                        value: settingsCubit,
+                      ),
+                      BlocProvider(
+                        create: (context) => postsMyProfileCubit,
+                      ),
+                    ],
+                    child: const ProfileScreen(),
+                  ));
 
       case otherProfilePageRoute:
-        final otherUser = settings.arguments as User;
+        final userID = settings.arguments as String;
         return MaterialPageRoute(
-          builder: (_) => BlocProvider(
-            create: (context) => userProfileCubit,
+          builder: (_) => MultiBlocProvider(
+            providers: [
+              BlocProvider.value(
+                value: userProfileCubit,
+              ),
+              BlocProvider(
+                create: (context) => messagesCubit,
+              ),
+            ],
             child: kIsWeb
-                ? OtherProfilePageWeb(otherUser: otherUser)
-                : OtherProfileScreen(otherUser: otherUser),
+                ? OtherProfilePageWeb(userID: userID)
+                : OtherProfileScreen(userID: userID),
           ),
         );
 
@@ -391,7 +464,10 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => CountryScreen(arguments));
       case manageBlockedAccountsRoute:
         return MaterialPageRoute(
-            builder: (_) => const ManageBlockedAccountsScreen());
+            builder: (_) => BlocProvider(
+                  create: (context) => safetySettingsCubit,
+                  child: const ManageBlockedAccountsScreen(),
+                ));
 
       // case safetySettingsRoute:
       //   return MaterialPageRoute(
@@ -411,6 +487,14 @@ class AppRouter {
                   create: (BuildContext context) => searchCubit,
                   child: const SearchWeb(),
                 ));
+      case sendMessageRoute:
+        String username = arguments as String;
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider(
+                  create: (BuildContext context) => messagesCubit,
+                  child: SendMessageWeb(username: username),
+                ));
+
       default:
         return null;
     }

@@ -1,9 +1,17 @@
+import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/data/web_services/user_profile/user_profile_webservices.dart';
 
 class UserProfileRepository {
   final UserProfileWebServices userProfileWebServices;
 
   UserProfileRepository(this.userProfileWebServices);
+
+  /// [userId] : the id of user to get his info
+  /// `Returns` [statusCode] of the request:
+  Future<dynamic> getUserInfo(String userID) async {
+    final userInfo = await userProfileWebServices.getUserInfo(userID);
+    return User.fromJson(userInfo);
+  }
 
   /// [userId] : the id of user to be followed
   /// `Returns` [statusCode] of the request:
@@ -23,5 +31,13 @@ class UserProfileRepository {
   Future<dynamic> unfollow(String userID) async {
     final statusCode = await userProfileWebServices.unfollow(userID);
     return statusCode;
+  }
+
+  /// [username] : the username we want to block
+  ///
+  /// Returns status code 200 if success and 401 if an error occured
+  Future<dynamic> blockUser(String username) async {
+    final newVal = await userProfileWebServices.blockUser(username);
+    return newVal;
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reddit/constants/strings.dart';
 import 'package:reddit/data/model/safety_user_settings.dart';
 import 'package:reddit/data/model/user_settings.dart';
 import '../../helper/utils/shared_keys.dart';
@@ -21,21 +22,23 @@ class User {
   late String? displayName;
   late Map<String, dynamic>? interests;
   late bool? cakeDay;
+  late String? about;
   User.fromJson(Map<String, dynamic> json) {
     userId = json['_id'];
     username = json['username'];
-    email = json['email'];
-    profilePic = json['profilePhoto'];
+    email = json['email'] ?? "";
+    profilePic =
+        json['profilePhoto'] == '' ? '' : imagesUrl + json['profilePhoto'];
     if (UserData.isLogged()) {
       token = PreferenceUtils.getString(SharedPrefKeys.token);
     } else {
-      token = json['token'];
+      token = json['token'] ?? "";
     }
-    type = json['authType'];
+    type = json['authType'] ?? "";
     // gender = json['gender'];
-    displayName = json['displayName'];
-    // about = json['about'];
-    cakeDay = json['cakeDay'];
+    displayName = json['displayName'] ?? "";
+    about = json['about'] ?? "";
+    cakeDay = json['cakeDay'] ?? true;
   }
   Map<String, dynamic> toJson() {
     return {
@@ -47,7 +50,7 @@ class User {
       '_id': userId,
       // 'gender': gender,
       'displayName': displayName,
-      // 'about': about,
+      'about': about,
       'cakeDay': cakeDay,
     };
   }
