@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:intl/intl.dart';
 import 'package:reddit/business_logic/cubit/user_profile/user_profile_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/strings.dart';
@@ -243,9 +244,12 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
               ),
               //---------------Other profile picture------------------
               otherUser.profilePic == null || otherUser.profilePic == ''
-                  ? const Icon(
-                      Icons.person,
-                      size: 50,
+                  ? const CircleAvatar(
+                      radius: 50,
+                      child: Icon(
+                        Icons.person,
+                        size: 50,
+                      ),
                     )
                   : CircleAvatar(
                       radius: 60,
@@ -303,15 +307,18 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
                             fontSize: 13, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 5),
                     Row(
-                      children: const [
-                        Icon(
+                      children: [
+                        const Icon(
                           Icons.cake,
                           color: Colors.blue,
                           size: 10,
                         ),
-                        SizedBox(width: 5),
-                        Text('September 4, 2018', // TODO : add cake day here
-                            style: TextStyle(fontSize: 10, color: Colors.grey)),
+                        const SizedBox(width: 5),
+                        Text('',
+                            // DateFormat('DD MM YYYY')
+                            //     .format(DateTime.parse(otherUser.createdAt!)),
+                            style: const TextStyle(
+                                fontSize: 10, color: Colors.grey)),
                       ],
                     )
                   ],
@@ -336,7 +343,7 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
                         } else if (state is UnFollowOtherUserSuccess) {
                           return _follow();
                         }
-                        return _follow();
+                        return otherUser.isFollowed! ? _unfollow() : _follow();
                       },
                     )),
               ),

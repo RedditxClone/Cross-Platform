@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:intl/intl.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_my_profile_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/strings.dart';
@@ -213,9 +214,12 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
               children: [
                 UserData.user!.profilePic == null ||
                         UserData.user!.profilePic == ''
-                    ? const Icon(
-                        Icons.person,
-                        size: 50,
+                    ? const CircleAvatar(
+                        radius: 50,
+                        child: Icon(
+                          Icons.person,
+                          size: 50,
+                        ),
                       )
                     : CircleAvatar(
                         radius: 60,
@@ -331,7 +335,7 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
                       : MediaQuery.of(context).size.width < 1030 &&
                               MediaQuery.of(context).size.width >= 1000
                           ? 80
-                          : 100),
+                          : 80),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -340,15 +344,18 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
                           TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 5),
                   Row(
-                    children: const [
-                      Icon(
+                    children: [
+                      const Icon(
                         Icons.cake,
                         color: Colors.blue,
                         size: 10,
                       ),
-                      SizedBox(width: 5),
-                      Text('October 4, 2022', // TODO : add cake day here
-                          style: TextStyle(fontSize: 10, color: Colors.grey)),
+                      const SizedBox(width: 5),
+                      Text(
+                          DateFormat.yMMMMd('en_US').format(
+                              DateTime.parse(UserData.user!.createdAt!)),
+                          style: const TextStyle(
+                              fontSize: 10, color: Colors.grey)),
                     ],
                   )
                 ],

@@ -49,6 +49,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
       switch (dest) {
         case 'cover':
           // imgCover = imageTemp;
+          print(imageTemp);
           BlocProvider.of<SettingsCubit>(context)
               .changeCoverphoto(profileSettings!, imageTemp);
           break;

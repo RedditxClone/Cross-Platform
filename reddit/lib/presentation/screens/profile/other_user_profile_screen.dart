@@ -152,11 +152,15 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
       children: [
         // cover photo
         Container(
-            decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [Colors.redAccent, Colors.black]))),
+          decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.redAccent, Colors.black])),
+          child: otherUser!.coverPhoto != ""
+              ? Image.network(UserData.profileSettings!.cover)
+              : null,
+        ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
@@ -203,7 +207,9 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                           } else if (state is UnFollowOtherUserSuccess) {
                             return _follow();
                           }
-                          return _follow();
+                          return otherUser!.isFollowed!
+                              ? _unfollow()
+                              : _follow();
                         },
                       ),
                       const SizedBox(width: 10),

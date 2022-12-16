@@ -1,5 +1,3 @@
-import 'package:flutter/cupertino.dart';
-
 import '../../model/posts/posts_model.dart';
 import '../../web_services/posts/posts_web_services.dart';
 

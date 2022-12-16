@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_my_profile_cubit.dart';
 import 'package:reddit/business_logic/cubit/settings/settings_cubit.dart';
 import 'package:reddit/constants/strings.dart';
@@ -48,11 +49,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
       children: [
         // cover photo
         Container(
-            decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [Colors.redAccent, Colors.black]))),
+          decoration: BoxDecoration(
+              gradient: UserData.profileSettings!.cover != ""
+                  ? const LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [Colors.redAccent, Colors.black])
+                  : null),
+          child: UserData.profileSettings!.cover != ""
+              ? Image.network(UserData.profileSettings!.cover)
+              : null,
+        ),
         // add social links
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -101,7 +108,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 30)),
               const SizedBox(height: 10),
-              Text('u/${UserData.user!.username} . 1 karma . 41d . 3 Oct 2022',
+              Text(
+                  'u/${UserData.user!.username} . 1 karma . 41d .  ${DateFormat('dd MMM yyyy').format(DateTime.parse(UserData.user!.createdAt!))}',
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 13)),
               const SizedBox(height: 5),
@@ -162,9 +170,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         Row(
           children: [
-            IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.file_upload_outlined, size: 30)),
+            // IconButton(
+            //     onPressed: () {},
+            //     icon: const Icon(Icons.file_upload_outlined, size: 30)),
             IconButton(
                 onPressed: () {}, icon: const Icon(Icons.more_horiz, size: 30)),
           ],
