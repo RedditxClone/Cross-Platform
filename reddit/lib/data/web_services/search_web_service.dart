@@ -52,7 +52,7 @@ class SearchWebService {
   Future searchPosts(String word, int sort, int time) async {
     try {
       var res = await DioHelper.getData(
-          url: 'search/posts/?word=$word&sort=$sort', query: {});
+          url: 'search/posts/?word=$word&sort=$sort&time=$time', query: {});
       debugPrint("from searchPosts ${res.statusCode}");
       return res;
     } on DioError catch (e) {
