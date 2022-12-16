@@ -279,37 +279,59 @@ class PostsWeb extends StatelessWidget {
             Row(
               children: [
                 InkWell(
-                  onTap: () {
-                    // Go to user page
-                    if (postsModel != null) {
-                      if (postsModel!.user != null) {
-                        if (postsModel!.user!.id != null) {
-                          if (UserData.user != null) {
-                            if (postsModel!.user!.id! ==
-                                UserData.user!.userId) {
-                              Navigator.pushNamed(context, profilePageRoute);
+                    onTap: () {
+                      // Go to user page
+                      if (postsModel != null) {
+                        if (postsModel!.user != null) {
+                          if (postsModel!.user!.id != null) {
+                            if (UserData.user != null) {
+                              if (postsModel!.user!.id! ==
+                                  UserData.user!.userId) {
+                                Navigator.pushNamed(context, profilePageRoute);
+                              } else {
+                                Navigator.pushNamed(
+                                    context, otherProfilePageRoute,
+                                    arguments: postsModel!.user!.username);
+                              }
+                            } else {
+                              Navigator.pushNamed(
+                                  context, otherProfilePageRoute,
+                                  arguments: postsModel!.user!.username);
                             }
-                          } else {
-                            Navigator.pushNamed(context, otherProfilePageRoute,
-                                arguments: postsModel!.user!.id);
                           }
                         }
                       }
-                    }
-                  },
-                  child: CircleAvatar(
-                    radius: 15.0,
-                    backgroundImage: postsModel == null
-                        ? null
+                    },
+                    child: postsModel == null
+                        ? const CircleAvatar(
+                            radius: 15.0,
+                            backgroundColor: Colors.transparent,
+                            child: Icon(Icons.person),
+                          )
                         : postsModel!.user == null
-                            ? null
+                            ? const CircleAvatar(
+                                radius: 15.0,
+                                backgroundColor: Colors.transparent,
+                                child: Icon(Icons.person),
+                              )
                             : postsModel!.user!.photo != null
-                                ? NetworkImage(
-                                    imagesUrl + postsModel!.user!.photo!)
-                                : null,
-                    backgroundColor: Colors.transparent,
-                  ),
-                ),
+                                ? postsModel!.user!.photo! != ""
+                                    ? CircleAvatar(
+                                        radius: 15.0,
+                                        backgroundImage: NetworkImage(
+                                            imagesUrl +
+                                                postsModel!.user!.photo!),
+                                        backgroundColor: Colors.transparent,
+                                      )
+                                    : const CircleAvatar(
+                                        radius: 15.0,
+                                        backgroundColor: Colors.transparent,
+                                        child: Icon(Icons.person),
+                                      )
+                                : const CircleAvatar(
+                                    radius: 15.0,
+                                    backgroundColor: Colors.transparent,
+                                    child: Icon(Icons.person))),
                 const SizedBox(width: 10),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -326,7 +348,7 @@ class PostsWeb extends StatelessWidget {
                       }),
                       child: Text(
                           "r/${postsModel == null ? '' : postsModel!.subreddit == null ? '' : postsModel!.subreddit!.name ?? ''}",
-                          style: const TextStyle(fontSize: 13)),
+                          style: const TextStyle(fontSize: 14)),
                     ),
                     InkWell(
                       onTap: (() {
@@ -339,6 +361,10 @@ class PostsWeb extends StatelessWidget {
                                     UserData.user!.userId) {
                                   Navigator.pushNamed(
                                       context, profilePageRoute);
+                                } else {
+                                  Navigator.pushNamed(
+                                      context, otherProfilePageRoute,
+                                      arguments: postsModel!.user!.username);
                                 }
                               } else {
                                 Navigator.pushNamed(
@@ -351,7 +377,7 @@ class PostsWeb extends StatelessWidget {
                       }),
                       child: Text(
                           "u/${postsModel == null ? '' : postsModel!.user == null ? "" : postsModel!.user!.username ?? ''} . ${getPostDate()}",
-                          style: const TextStyle(fontSize: 13)),
+                          style: const TextStyle(fontSize: 14)),
                     ),
                   ],
                 ),
@@ -756,16 +782,16 @@ class PostsWeb extends StatelessWidget {
                   },
                 ),
               ),
-              Card(
-                color: Colors.grey.shade900,
-                child: ListTile(
-                  title: const Text("Mute"),
-                  leading: const Icon(Icons.volume_off_outlined),
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                ),
-              ),
+              // Card(
+              //   color: Colors.grey.shade900,
+              //   child: ListTile(
+              //     title: const Text("Mute"),
+              //     leading: const Icon(Icons.volume_off_outlined),
+              //     onTap: () {
+              //       Navigator.pop(context);
+              //     },
+              //   ),
+              // ),
               Card(
                 color: Colors.grey.shade900,
                 child: ListTile(
