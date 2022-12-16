@@ -343,7 +343,7 @@ class PostsWeb extends StatelessWidget {
                               } else {
                                 Navigator.pushNamed(
                                     context, otherProfilePageRoute,
-                                    arguments: postsModel!.user!.id);
+                                    arguments: postsModel!.user!.username);
                               }
                             }
                           }

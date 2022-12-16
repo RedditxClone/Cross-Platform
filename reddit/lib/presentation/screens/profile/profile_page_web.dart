@@ -211,17 +211,17 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                CircleAvatar(
-                    radius: 60,
-                    child: UserData.user!.profilePic == null ||
-                            UserData.user!.profilePic == ''
-                        ? const Icon(
-                            // TODO : display profile picture here
-                            Icons.person,
-                            size: 50,
-                          )
-                        : Image.network(UserData.user!.profilePic!,
-                            fit: BoxFit.cover)),
+                UserData.user!.profilePic == null ||
+                        UserData.user!.profilePic == ''
+                    ? const Icon(
+                        Icons.person,
+                        size: 50,
+                      )
+                    : CircleAvatar(
+                        radius: 60,
+                        backgroundImage: NetworkImage(
+                          UserData.user!.profilePic!,
+                        )),
                 const SizedBox(width: 60),
                 Column(
                   children: [
