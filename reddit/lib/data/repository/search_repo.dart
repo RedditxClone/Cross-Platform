@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 
 import '../model/auth_model.dart';
 import '../model/search_models/search_comments_model.dart';
@@ -170,15 +171,19 @@ class SearchRepo {
   }
 
   /// [word] : [String] The word to search for.
+  /// [sort] : [int] The sort type.
   ///
   /// This function makes the request to the server to get the posts for the word we search for.
   /// This function calls the function [SearchWebService.searchPosts] which makes the request to the server.
   /// Returns [List] that conatins the posts.
-  Future<List<SearchPostModel>> searchPosts(String word) async {
-    Response res = await searchWebService.searchPosts(word);
+  Future<List<SearchPostModel>> searchPosts(String word, int sort) async {
+    Response res = await searchWebService.searchPosts(word, sort);
     if (res.statusCode == 200) {
-      return List<SearchPostModel>.from(
-          res.data.map((x) => SearchPostModel.fromJson(x)));
+      return List<SearchPostModel>.from(res.data.map(
+        (x) {
+          return SearchPostModel.fromJson(x as Map<String, dynamic>);
+        },
+      ));
     } else {
       return [];
     }

@@ -817,12 +817,10 @@ class _HomePageWebState extends State<HomePageWeb> {
               debugPrint("user is nottttttttttttttttttttttttt null");
               UserData.initUser(state.userDataJson);
               BlocProvider.of<PostsHomeCubit>(context).getTimelinePosts();
-
               return const HomeWeb();
             }
           } else if (state is NotLoggedIn) {
             BlocProvider.of<PostsHomeCubit>(context).getTimelinePosts();
-
             return const HomeWeb();
           }
           return const Center(

@@ -2,8 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:reddit/helper/dio.dart';
 
-import '../model/auth_model.dart';
-
 class SearchWebService {
   /// [word] : [String] The word to search for.
   ///
@@ -13,14 +11,14 @@ class SearchWebService {
   Future getSuggestions(String word) async {
     try {
       var res =
-          // await DioHelper.getData(url: 'search/general/?word=$word', query: {});
-          await DioHelper.getDataWithHeaders(
-        url: 'search/general/?word=$word',
-        query: {},
-        headers: {
-          "Authorization": "Bearer ${UserData.user!.token}",
-        },
-      );
+          await DioHelper.getData(url: 'search/general/?word=$word', query: {});
+      //     await DioHelper.getDataWithHeaders(
+      //   url: 'search/general/?word=$word',
+      //   query: {},
+      //   headers: {
+      //     "Authorization": "Bearer ${UserData.user!.token}",
+      //   },
+      // );
       return res;
     } on DioError catch (e) {
       debugPrint("from getSuggestions $e");
@@ -45,14 +43,16 @@ class SearchWebService {
   }
 
   /// [word] : [String] The word to search for.
+  /// [sort] : [int] The sort type.
   ///
   /// This function makes the request to the server to get the posts for the word we search for.
   /// This function calls the function [DioHelper.getData] which makes the request to the server.
   /// Returns the response from the server.
-  Future searchPosts(String word) async {
+  Future searchPosts(String word, int sort) async {
     try {
-      var res =
-          await DioHelper.getData(url: 'search/posts/?word=$word', query: {});
+      var res = await DioHelper.getData(
+          url: 'search/posts/?word=$word&sort=$sort', query: {});
+          debugPrint("from searchPosts ${res.statusCode}");
       return res;
     } on DioError catch (e) {
       debugPrint("from searchPosts $e");

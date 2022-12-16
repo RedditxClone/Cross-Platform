@@ -139,18 +139,18 @@ class AuthCubit extends Cubit<AuthState> {
     });
   }
 
-  /// [userId] : [String] which is The id of the user.
+  /// [token] : [String] which is The id of the user.
   ///
   /// This function makes the request to get the user data with the user Id.
   /// This function calls the function [AuthRepo.getUserData] which makes the request to the server.
   /// This function emits state [GetTheUserData] after the user login.
-  void getUserData(String userId) {
+  void getUserData(String token) {
     if (isClosed) return;
     bool flag = UserData.isLogged();
     debugPrint("is logged in $flag");
     if (flag) {
       debugPrint("user is logged in");
-      authRepo.getUserData(userId).then((value) {
+      authRepo.getUserData(token).then((value) {
         emit(GetTheUserData(value));
       });
     } else {
