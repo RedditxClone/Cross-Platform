@@ -28,11 +28,14 @@ class PostActionsWebServices {
       return response.statusCode;
     } catch (e) {
       if (e is DioError) {
-        debugPrint("Error in save, status code ${e.response!.statusCode!}");
-        if (e.response!.statusCode == 403) {
-          debugPrint("Unauthorized");
+        if (e.response != null) {
+          debugPrint("Error in save, status code ${e.response!.statusCode!}");
+          if (e.response!.statusCode == 403) {
+            debugPrint("Unauthorized");
+          }
+          return e.response!.statusCode!;
         }
-        return e.response!.statusCode!;
+        debugPrint("$e");
       } else {
         debugPrint("$e");
       }
@@ -53,11 +56,14 @@ class PostActionsWebServices {
       return response.statusCode;
     } catch (e) {
       if (e is DioError) {
-        debugPrint("Error in unsave, status code ${e.response!.statusCode!}");
-        if (e.response!.statusCode == 403) {
-          debugPrint("Unauthorized");
+        if (e.response != null) {
+          debugPrint("Error in unsave, status code ${e.response!.statusCode!}");
+          if (e.response!.statusCode == 403) {
+            debugPrint("Unauthorized");
+          }
+          return e.response!.statusCode!;
         }
-        return e.response!.statusCode!;
+        debugPrint("$e");
       } else {
         debugPrint("$e");
       }
@@ -78,11 +84,14 @@ class PostActionsWebServices {
       return response.statusCode;
     } catch (e) {
       if (e is DioError) {
-        debugPrint("Error in Spam, status code ${e.response!.statusCode!}");
-        if (e.response!.statusCode == 403) {
-          debugPrint("Unauthorized");
+        if (e.response != null) {
+          debugPrint("Error in Spam, status code ${e.response!.statusCode!}");
+          if (e.response!.statusCode == 403) {
+            debugPrint("Unauthorized");
+          }
+          return e.response!.statusCode!;
         }
-        return e.response!.statusCode!;
+        debugPrint("$e");
       } else {
         debugPrint("$e");
       }
@@ -103,11 +112,14 @@ class PostActionsWebServices {
       return response.statusCode;
     } catch (e) {
       if (e is DioError) {
-        debugPrint("Error in hide, status code ${e.response!.statusCode!}");
-        if (e.response!.statusCode == 403) {
-          debugPrint("Unauthorized");
+        if (e.response != null) {
+          debugPrint("Error in hide, status code ${e.response!.statusCode!}");
+          if (e.response!.statusCode == 403) {
+            debugPrint("Unauthorized");
+            return e.response!.statusCode!;
+          }
         }
-        return e.response!.statusCode!;
+        debugPrint("$e");
       } else {
         debugPrint("$e");
       }
