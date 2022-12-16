@@ -29,7 +29,7 @@ class _HomePageWebState extends State<HomePageWeb> {
   void initState() {
     super.initState();
     BlocProvider.of<AuthCubit>(context)
-        .getUserData(PreferenceUtils.getString(SharedPrefKeys.userId));
+        .getUserData(PreferenceUtils.getString(SharedPrefKeys.token));
     authRepo = AuthRepo(AuthWebService());
   }
 

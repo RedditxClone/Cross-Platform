@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:reddit/constants/strings.dart';
+import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/helper/dio.dart';
 
 class AuthWebService {
@@ -248,10 +249,12 @@ class AuthWebService {
   /// Returns the response data from the server.
   Future getUserData(String userId) async {
     try {
-      var res = await DioHelper.getData(
-        url: 'user/$userId',
-        query: {},
-      );
+      var res = await DioHelper.getDataWithHeaders(
+          url: 'user/me',
+          query: {},
+          headers: {
+            "Authorization": "Bearer $userId",
+          });
       return res;
     } on DioError catch (e) {
       debugPrint("from dio $e");

@@ -234,7 +234,7 @@ class PostsWeb extends StatelessWidget {
                                 ? ''
                                 : postsModel!.user == null
                                     ? ""
-                                    : postsModel!.user!.id);
+                                    : postsModel!.user!.username);
                       }),
                       child: Text(
                           "u/${postsModel == null ? '' : postsModel!.user == null ? "" : postsModel!.user!.username ?? ''} . ${getPostDate()}",
