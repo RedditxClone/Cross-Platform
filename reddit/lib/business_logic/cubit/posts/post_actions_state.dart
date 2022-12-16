@@ -9,9 +9,9 @@ class Saved extends PostActionsState {}
 
 class Unsaved extends PostActionsState {}
 
-class Hidden extends PostActionsState {}
+class PostHidden extends PostActionsState {}
 
-class Unhidden extends PostActionsState {}
+class PostUnhidden extends PostActionsState {}
 
 class Spammed extends PostActionsState {}
 

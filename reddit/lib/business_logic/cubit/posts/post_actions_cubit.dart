@@ -51,7 +51,7 @@ class PostActionsCubit extends Cubit<PostActionsState> {
   }
 
   /// This function emits:
-  /// state [Hidden] when the post is saved successfully.
+  /// state [PostHidden] when the post is saved successfully.
   /// This function calls the function [PostActionsRepository.hidePost].
   void hidePost(String id) {
     // To avoid state error when you leave the page
@@ -61,7 +61,7 @@ class PostActionsCubit extends Cubit<PostActionsState> {
     } else {
       postActionsRepository.hidePost(id).then((statusCode) {
         if (statusCode == 201) {
-          emit(Hidden());
+          emit(PostHidden());
         } else {
           emit(PostActionsError(statusCode));
         }
@@ -80,7 +80,7 @@ class PostActionsCubit extends Cubit<PostActionsState> {
     } else {
       postActionsRepository.unhidePost(id).then((statusCode) {
         if (statusCode == 201) {
-          emit(Unhidden());
+          emit(PostUnhidden());
         } else {
           emit(PostActionsError(statusCode));
         }

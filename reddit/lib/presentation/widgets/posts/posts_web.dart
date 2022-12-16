@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:reddit/business_logic/cubit/posts/media_index_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/post_actions_cubit.dart';
+import 'package:reddit/business_logic/cubit/posts/remove_post_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/vote_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/strings.dart';
@@ -23,6 +24,7 @@ class PostsWeb extends StatelessWidget {
   late VoteCubit voteCubit;
   late PostActionsRepository postActionsRepository;
   late PostActionsCubit postActionsCubit;
+  late RemovePostCubit removePostCubit;
   final String _markdownData = """
  # Minimal Markdown Test
  ---
@@ -48,32 +50,63 @@ class PostsWeb extends StatelessWidget {
     postActionsRepository = PostActionsRepository(PostActionsWebServices());
     voteCubit = VoteCubit(postActionsRepository);
     postActionsCubit = PostActionsCubit(postActionsRepository);
+    removePostCubit = RemovePostCubit(postActionsRepository);
   }
   @override
   Widget build(BuildContext context) {
     responsive = Responsive(context);
-    return BlocListener<PostActionsCubit, PostActionsState>(
-      bloc: postActionsCubit,
-      listener: (context, state) {
-        if (state is Saved) {
-          displayMsg(context, Colors.green, "Saved successfully");
-        } else if (state is Unsaved) {
-          displayMsg(context, Colors.green, "Unsaved successfully");
-        } else if (state is Hidden) {
-          displayMsg(context, Colors.green, "Hidden successfully");
-        } else if (state is Unhidden) {
-          displayMsg(context, Colors.green, "Unhidden successfully");
-        } else if (state is Spammed) {
-          displayMsg(context, Colors.green, "Spammed successfully");
-        } else if (state is PostActionsError) {
-          if (state.statusCode == 403) {
-            displayMsg(context, Colors.red, "Please log in to continue");
-          } else {
-            displayMsg(
-                context, Colors.red, "Error, status code ${state.statusCode}");
-          }
-        }
-      },
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<PostActionsCubit, PostActionsState>(
+          bloc: postActionsCubit,
+          listener: (context, state) {
+            if (state is Saved) {
+              displayMsg(context, Colors.green, "Saved successfully");
+            } else if (state is Unsaved) {
+              displayMsg(context, Colors.green, "Unsaved successfully");
+            } else if (state is Spammed) {
+              displayMsg(context, Colors.green, "Spammed successfully");
+            } else if (state is PostActionsError) {
+              if (state.statusCode == 403) {
+                displayMsg(context, Colors.red, "Please log in to continue");
+              } else {
+                displayMsg(context, Colors.red,
+                    "Error, status code //${state.statusCode}");
+              }
+            }
+          },
+        ),
+        BlocListener<RemovePostCubit, RemovePostState>(
+          bloc: removePostCubit,
+          listener: (context, state) {
+            if (state is Hidden) {
+              displayMsg(context, Colors.green, "The post is hidden!");
+            } else if (state is Unhidden) {
+              displayMsg(context, Colors.green, "Unhidden successfully");
+            } else if (state is RemovePostError) {
+              if (state.statusCode == 403) {
+                displayMsg(context, Colors.red, "Please log in to continue");
+              } else {
+                displayMsg(context, Colors.red,
+                    "Error, status code //${state.statusCode}");
+              }
+            }
+          },
+        ),
+        BlocListener<VoteCubit, VoteState>(
+          bloc: voteCubit,
+          listener: (context, state) {
+            if (state is VoteError) {
+              if (state.statusCode == 403) {
+                displayMsg(context, Colors.red, "Please log in to continue");
+              } else {
+                displayMsg(context, Colors.red,
+                    "Error, status code ${state.statusCode}");
+              }
+            }
+          },
+        ),
+      ],
       child: Container(
         // height: 600,
         decoration: BoxDecoration(
@@ -170,101 +203,88 @@ class PostsWeb extends StatelessWidget {
   }
 
   Widget voteButtonsLargeScreen() {
-    return BlocListener<VoteCubit, VoteState>(
+    return BlocBuilder<VoteCubit, VoteState>(
       bloc: voteCubit,
-      listener: (context, state) {
-        if (state is VoteError) {
-          if (state.statusCode == 403) {
-            displayMsg(context, Colors.red, "Please log in to continue");
-          } else {
-            displayMsg(
-                context, Colors.red, "Error, status code ${state.statusCode}");
-          }
+      builder: (context, state) {
+        if (state is UpVoted) {
+          postsModel!.voteType = "upvote";
+          postsModel!.votesCount = state.votesCount!.votesCount;
+        } else if (state is DownVoted) {
+          postsModel!.voteType = "downvote";
+          postsModel!.votesCount = state.votesCount!.votesCount;
+        } else if (state is UnVoted) {
+          postsModel!.voteType = null;
+          postsModel!.votesCount = state.votesCount!.votesCount;
         }
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            // const SizedBox(height: 10),
+            IconButton(
+              icon: const Icon(Icons.arrow_upward),
+              color: postsModel == null
+                  ? Colors.grey
+                  : postsModel!.voteType == null
+                      ? Colors.grey
+                      : postsModel!.voteType! == "upvote"
+                          ? Colors.red
+                          : Colors.grey,
+              onPressed: () {
+                // Upvote function
+                if (postsModel != null) {
+                  if (postsModel!.sId != null) {
+                    if (postsModel!.voteType == null) {
+                      voteCubit.upVote(postsModel!.sId!);
+                    } else if (postsModel!.voteType == "upvote") {
+                      voteCubit.unVote(postsModel!.sId!);
+                    } else if (postsModel!.voteType == "downvote") {
+                      voteCubit.upVote(postsModel!.sId!);
+                    }
+                  }
+                }
+              },
+            ),
+            // const SizedBox(height: 10),
+            Text("${postsModel == null ? 0 : postsModel!.votesCount ?? 0}",
+                style: TextStyle(
+                    fontSize: 13,
+                    color: postsModel == null
+                        ? Colors.grey
+                        : postsModel!.voteType == null
+                            ? Colors.grey
+                            : postsModel!.voteType! == "upvote"
+                                ? Colors.red
+                                : postsModel!.voteType! == "downvote"
+                                    ? Colors.blue
+                                    : Colors.grey)),
+            // const SizedBox(height: 10),
+            IconButton(
+              icon: const Icon(Icons.arrow_downward),
+              color: postsModel == null
+                  ? Colors.grey
+                  : postsModel!.voteType == null
+                      ? Colors.grey
+                      : postsModel!.voteType! == "downvote"
+                          ? Colors.blue
+                          : Colors.grey,
+              onPressed: () {
+                // Downvote function
+                if (postsModel != null) {
+                  if (postsModel!.sId != null) {
+                    if (postsModel!.voteType == null) {
+                      voteCubit.downVote(postsModel!.sId!);
+                    } else if (postsModel!.voteType == "downvote") {
+                      voteCubit.unVote(postsModel!.sId!);
+                    } else if (postsModel!.voteType == "upvote") {
+                      voteCubit.downVote(postsModel!.sId!);
+                    }
+                  }
+                }
+              },
+            ),
+          ],
+        );
       },
-      child: BlocBuilder<VoteCubit, VoteState>(
-        bloc: voteCubit,
-        builder: (context, state) {
-          if (state is UpVoted) {
-            postsModel!.voteType = "upvote";
-            postsModel!.votesCount = state.votesCount!.votesCount;
-          } else if (state is DownVoted) {
-            postsModel!.voteType = "downvote";
-            postsModel!.votesCount = state.votesCount!.votesCount;
-          } else if (state is UnVoted) {
-            postsModel!.voteType = null;
-            postsModel!.votesCount = state.votesCount!.votesCount;
-          }
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              // const SizedBox(height: 10),
-              IconButton(
-                icon: const Icon(Icons.arrow_upward),
-                color: postsModel == null
-                    ? Colors.grey
-                    : postsModel!.voteType == null
-                        ? Colors.grey
-                        : postsModel!.voteType! == "upvote"
-                            ? Colors.red
-                            : Colors.grey,
-                onPressed: () {
-                  // Upvote function
-                  if (postsModel != null) {
-                    if (postsModel!.sId != null) {
-                      if (postsModel!.voteType == null) {
-                        voteCubit.upVote(postsModel!.sId!);
-                      } else if (postsModel!.voteType == "upvote") {
-                        voteCubit.unVote(postsModel!.sId!);
-                      } else if (postsModel!.voteType == "downvote") {
-                        voteCubit.upVote(postsModel!.sId!);
-                      }
-                    }
-                  }
-                },
-              ),
-              // const SizedBox(height: 10),
-              Text("${postsModel == null ? 0 : postsModel!.votesCount ?? 0}",
-                  style: TextStyle(
-                      fontSize: 13,
-                      color: postsModel == null
-                          ? Colors.grey
-                          : postsModel!.voteType == null
-                              ? Colors.grey
-                              : postsModel!.voteType! == "upvote"
-                                  ? Colors.red
-                                  : postsModel!.voteType! == "downvote"
-                                      ? Colors.blue
-                                      : Colors.grey)),
-              // const SizedBox(height: 10),
-              IconButton(
-                icon: const Icon(Icons.arrow_downward),
-                color: postsModel == null
-                    ? Colors.grey
-                    : postsModel!.voteType == null
-                        ? Colors.grey
-                        : postsModel!.voteType! == "downvote"
-                            ? Colors.blue
-                            : Colors.grey,
-                onPressed: () {
-                  // Downvote function
-                  if (postsModel != null) {
-                    if (postsModel!.sId != null) {
-                      if (postsModel!.voteType == null) {
-                        voteCubit.downVote(postsModel!.sId!);
-                      } else if (postsModel!.voteType == "downvote") {
-                        voteCubit.unVote(postsModel!.sId!);
-                      } else if (postsModel!.voteType == "upvote") {
-                        voteCubit.downVote(postsModel!.sId!);
-                      }
-                    }
-                  }
-                },
-              ),
-            ],
-          );
-        },
-      ),
     );
   }
 
@@ -528,101 +548,88 @@ class PostsWeb extends StatelessWidget {
   }
 
   Widget voteButtonsSmallScreen() {
-    return BlocListener<VoteCubit, VoteState>(
+    return BlocBuilder<VoteCubit, VoteState>(
       bloc: voteCubit,
-      listener: (context, state) {
-        if (state is VoteError) {
-          if (state.statusCode == 403) {
-            displayMsg(context, Colors.red, "Please log in to continue");
-          } else {
-            displayMsg(
-                context, Colors.red, "Error, status code ${state.statusCode}");
-          }
+      builder: (context, state) {
+        if (state is UpVoted) {
+          postsModel!.voteType = "upvote";
+          postsModel!.votesCount = state.votesCount!.votesCount;
+        } else if (state is DownVoted) {
+          postsModel!.voteType = "downvote";
+          postsModel!.votesCount = state.votesCount!.votesCount;
+        } else if (state is UnVoted) {
+          postsModel!.voteType = null;
+          postsModel!.votesCount = state.votesCount!.votesCount;
         }
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            IconButton(
+              onPressed: () {
+                // Upvote function
+                if (postsModel != null) {
+                  if (postsModel!.sId != null) {
+                    if (postsModel!.voteType == null) {
+                      voteCubit.upVote(postsModel!.sId!);
+                    } else if (postsModel!.voteType == "upvote") {
+                      voteCubit.unVote(postsModel!.sId!);
+                    } else if (postsModel!.voteType == "downvote") {
+                      voteCubit.upVote(postsModel!.sId!);
+                    }
+                  }
+                }
+              },
+              icon: Icon(Icons.arrow_upward,
+                  color: postsModel == null
+                      ? Colors.grey
+                      : postsModel!.voteType == null
+                          ? Colors.grey
+                          : postsModel!.voteType! == "upvote"
+                              ? Colors.red
+                              : Colors.grey),
+            ),
+            Text(
+              "${postsModel == null ? 0 : postsModel!.votesCount ?? 0}",
+              style: TextStyle(
+                  fontSize: 16,
+                  color: postsModel == null
+                      ? Colors.grey
+                      : postsModel!.voteType == null
+                          ? Colors.grey
+                          : postsModel!.voteType! == "upvote"
+                              ? Colors.red
+                              : postsModel!.voteType! == "downvote"
+                                  ? Colors.blue
+                                  : Colors.grey),
+            ),
+            IconButton(
+              onPressed: () {
+                // Downvote function
+                if (postsModel != null) {
+                  if (postsModel!.sId != null) {
+                    if (postsModel!.voteType == null) {
+                      voteCubit.downVote(postsModel!.sId!);
+                    } else if (postsModel!.voteType == "downvote") {
+                      voteCubit.unVote(postsModel!.sId!);
+                    } else if (postsModel!.voteType == "upvote") {
+                      voteCubit.downVote(postsModel!.sId!);
+                    }
+                  }
+                }
+              },
+              icon: Icon(Icons.arrow_downward,
+                  color: postsModel == null
+                      ? Colors.grey
+                      : postsModel!.voteType == null
+                          ? Colors.grey
+                          : postsModel!.voteType! == "downvote"
+                              ? Colors.blue
+                              : Colors.grey),
+            ),
+            // const SizedBox(width: 5),
+          ],
+        );
       },
-      child: BlocBuilder<VoteCubit, VoteState>(
-        bloc: voteCubit,
-        builder: (context, state) {
-          if (state is UpVoted) {
-            postsModel!.voteType = "upvote";
-            postsModel!.votesCount = state.votesCount!.votesCount;
-          } else if (state is DownVoted) {
-            postsModel!.voteType = "downvote";
-            postsModel!.votesCount = state.votesCount!.votesCount;
-          } else if (state is UnVoted) {
-            postsModel!.voteType = null;
-            postsModel!.votesCount = state.votesCount!.votesCount;
-          }
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              IconButton(
-                onPressed: () {
-                  // Upvote function
-                  if (postsModel != null) {
-                    if (postsModel!.sId != null) {
-                      if (postsModel!.voteType == null) {
-                        voteCubit.upVote(postsModel!.sId!);
-                      } else if (postsModel!.voteType == "upvote") {
-                        voteCubit.unVote(postsModel!.sId!);
-                      } else if (postsModel!.voteType == "downvote") {
-                        voteCubit.upVote(postsModel!.sId!);
-                      }
-                    }
-                  }
-                },
-                icon: Icon(Icons.arrow_upward,
-                    color: postsModel == null
-                        ? Colors.grey
-                        : postsModel!.voteType == null
-                            ? Colors.grey
-                            : postsModel!.voteType! == "upvote"
-                                ? Colors.red
-                                : Colors.grey),
-              ),
-              Text(
-                "${postsModel == null ? 0 : postsModel!.votesCount ?? 0}",
-                style: TextStyle(
-                    fontSize: 16,
-                    color: postsModel == null
-                        ? Colors.grey
-                        : postsModel!.voteType == null
-                            ? Colors.grey
-                            : postsModel!.voteType! == "upvote"
-                                ? Colors.red
-                                : postsModel!.voteType! == "downvote"
-                                    ? Colors.blue
-                                    : Colors.grey),
-              ),
-              IconButton(
-                onPressed: () {
-                  // Downvote function
-                  if (postsModel != null) {
-                    if (postsModel!.sId != null) {
-                      if (postsModel!.voteType == null) {
-                        voteCubit.downVote(postsModel!.sId!);
-                      } else if (postsModel!.voteType == "downvote") {
-                        voteCubit.unVote(postsModel!.sId!);
-                      } else if (postsModel!.voteType == "upvote") {
-                        voteCubit.downVote(postsModel!.sId!);
-                      }
-                    }
-                  }
-                },
-                icon: Icon(Icons.arrow_downward,
-                    color: postsModel == null
-                        ? Colors.grey
-                        : postsModel!.voteType == null
-                            ? Colors.grey
-                            : postsModel!.voteType! == "downvote"
-                                ? Colors.blue
-                                : Colors.grey),
-              ),
-              // const SizedBox(width: 5),
-            ],
-          );
-        },
-      ),
     );
   }
 
@@ -776,7 +783,7 @@ class PostsWeb extends StatelessWidget {
                     Navigator.pop(context);
                     if (postsModel != null) {
                       if (postsModel!.sId != null) {
-                        postActionsCubit.hidePost(postsModel!.sId!);
+                        removePostCubit.hidePost(postsModel!.sId!);
                       }
                     }
                   },
@@ -802,6 +809,26 @@ class PostsWeb extends StatelessWidget {
                   },
                 ),
               ),
+              UserData.user != null
+                  ? postsModel != null
+                      ? postsModel!.user != null
+                          ? postsModel!.user!.id != null
+                              ? postsModel!.user!.id == UserData.user!.userId
+                                  ? Card(
+                                      color: Colors.grey.shade900,
+                                      child: ListTile(
+                                        title: const Text("Delete post"),
+                                        leading: const Icon(Icons.delete),
+                                        onTap: () {
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                    )
+                                  : Container()
+                              : Container()
+                          : Container()
+                      : Container()
+                  : Container(),
             ],
           ),
         );
@@ -1004,7 +1031,7 @@ class PostsWeb extends StatelessWidget {
           case 3:
             if (postsModel != null) {
               if (postsModel!.sId != null) {
-                postActionsCubit.hidePost(postsModel!.sId!);
+                removePostCubit.hidePost(postsModel!.sId!);
               }
             }
             break;
