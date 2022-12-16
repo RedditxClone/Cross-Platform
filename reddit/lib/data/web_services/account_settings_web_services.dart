@@ -32,18 +32,21 @@ class AccountSettingsWebServices {
           options: Options(
             headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
-      print(response.data);
+      debugPrint("${response.data}");
       return response.data;
     } catch (e) {
       if (e is DioError) {
-        if (e.response!.statusCode == 403) {
-          print("Wrong password");
-        } else if (e.response!.statusCode == 401) {
-          print("Unauthorized");
+        if (e.response != null) {
+          if (e.response!.statusCode == 403) {
+            debugPrint("Wrong password");
+          } else if (e.response!.statusCode == 401) {
+            debugPrint("Unauthorized");
+          }
         }
+        debugPrint("$e");
       }
-      print(e);
-      return "";
+      debugPrint("$e");
+      return {};
     }
   }
 
@@ -81,22 +84,59 @@ class AccountSettingsWebServices {
             headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
       if (response.statusCode == 200) {
-        print("Password changed successfully");
+        debugPrint("Password changed successfully");
       } else if (response.statusCode == 403) {
-        print("Wrong password");
+        debugPrint("Wrong password");
       } else if (response.statusCode == 401) {
-        print("Unauthorized");
+        debugPrint("Unauthorized");
       }
       return response.statusCode!;
     } catch (e) {
-      print(e);
+      debugPrint("$e");
       if (e is DioError) {
-        if (e.response!.statusCode == 403) {
-          print("Wrong password");
-        } else if (e.response!.statusCode == 401) {
-          print("Unauthorized");
+        if (e.response != null) {
+          if (e.response!.statusCode == 403) {
+            debugPrint("Wrong password");
+          } else if (e.response!.statusCode == 401) {
+            debugPrint("Unauthorized");
+          }
+          return e.response!.statusCode!;
         }
-        return e.response!.statusCode!;
+        return 404;
+      }
+      return 404;
+    }
+  }
+
+  /// [changePasswordMap] : a [Map] that contains changed password
+  /// Returns status code `200` if request is successfull or `401` if Unauthorized or `403` if Wrong password
+  /// This function Performs `PATCH` request to the endpoint `baseUrl/auth/change_password`.
+  Future<int> deleteAccount() async {
+    try {
+      Response response = await dio.delete('user/me',
+          options: Options(
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+          ));
+      if (response.statusCode == 200) {
+        debugPrint("Password changed successfully");
+      } else if (response.statusCode == 403) {
+        debugPrint("Wrong password");
+      } else if (response.statusCode == 401) {
+        debugPrint("Unauthorized");
+      }
+      return response.statusCode!;
+    } catch (e) {
+      debugPrint("$e");
+      if (e is DioError) {
+        if (e.response != null) {
+          if (e.response!.statusCode == 403) {
+            debugPrint("Wrong password");
+          } else if (e.response!.statusCode == 401) {
+            debugPrint("Unauthorized");
+          }
+          return e.response!.statusCode!;
+        }
+        return 404;
       }
       return 404;
     }

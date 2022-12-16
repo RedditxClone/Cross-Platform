@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reddit/business_logic/cubit/cubit/account_settings_cubit.dart';
 import 'package:reddit/business_logic/cubit/cubit/change_password_cubit.dart';
+import 'package:reddit/business_logic/cubit/cubit/delete_account_cubit.dart';
 import 'package:reddit/business_logic/cubit/email_settings_cubit.dart';
 import 'package:reddit/business_logic/cubit/feed_settings_cubit.dart';
 import 'package:reddit/business_logic/cubit/settings/safety_settings_cubit.dart';
@@ -123,6 +124,11 @@ class _SettingTabUiState extends State<SettingTabUi> {
                                   ),
                                   BlocProvider(
                                     create: (context) => ChangePasswordCubit(
+                                        AccountSettingsRepository(
+                                            AccountSettingsWebServices())),
+                                  ),
+                                  BlocProvider(
+                                    create: (context) => DeleteAccountCubit(
                                         AccountSettingsRepository(
                                             AccountSettingsWebServices())),
                                   ),

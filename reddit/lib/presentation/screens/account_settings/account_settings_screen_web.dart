@@ -1,8 +1,12 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:reddit/business_logic/cubit/cubit/change_password_cubit.dart';
+import 'package:reddit/business_logic/cubit/cubit/delete_account_cubit.dart';
+import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
+import 'package:reddit/data/model/auth_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../business_logic/cubit/cubit/account_settings_cubit.dart';
@@ -70,15 +74,32 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<ChangePasswordCubit, ChangePasswordState>(
-      listener: (context, state) {
-        if (state is PasswordUpdatedSuccessfully) {
-          displayMsg(context, Colors.white, Colors.green,
-              "Password updated successfully");
-        } else if (state is WrongPassword) {
-          displayMsg(context, Colors.white, Colors.green, "Wrong password");
-        }
-      },
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<ChangePasswordCubit, ChangePasswordState>(
+          listener: (context, state) {
+            if (state is PasswordUpdatedSuccessfully) {
+              displayMsg(
+                  context, Colors.green, "Password updated successfully");
+            } else if (state is WrongPassword) {
+              displayMsg(context, Colors.green, "Wrong password");
+            }
+          },
+        ),
+        BlocListener<DeleteAccountCubit, DeleteAccountState>(
+          listener: (context, state) {
+            if (state is AccountDeleted) {
+              displayMsg(context, Colors.green, "Account deleted");
+              UserData.logout();
+              debugPrint("Logging out after account delete");
+              Navigator.pushReplacementNamed(context, popularPageRoute);
+            } else if (state is AccountDeleteError) {
+              displayMsg(
+                  context, Colors.green, "Error in delete ${state.statusCode}");
+            }
+          },
+        ),
+      ],
       child: BlocBuilder<AccountSettingsCubit, AccountSettingsState>(
         builder: (context, state) {
           if (state is AccountSettingsLoaded) {
@@ -536,7 +557,10 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
               children: [
                 TextButton.icon(
                   // TODO: delete account function
-                  onPressed: () {},
+                  onPressed: () {
+                    BlocProvider.of<DeleteAccountCubit>(context)
+                        .deleteAccount();
+                  },
                   label: const Text(
                     "DELETE ACCOUNT",
                     style: TextStyle(color: Colors.red),
@@ -738,7 +762,6 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
         _updatePasswordNewPasswordController.text.length < 8) {
       displayMsg(
         context,
-        Colors.white,
         Colors.red,
         "Sorry, your password must be at least 8 characters long. Try that again.",
       );
@@ -748,19 +771,18 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
         _updatePasswordConfirmNewPasswordController.text.isNotEmpty &&
         _updatePasswordNewPasswordController.text !=
             _updatePasswordConfirmNewPasswordController.text) {
-      displayMsg(context, Colors.white, Colors.red,
+      displayMsg(context, Colors.red,
           "Oops, your password don't match. Try that again");
       // Not all fields are filled, display warning
     } else {
-      displayMsg(context, Colors.white, Colors.red,
-          "Oops, you forgot to fill everything out.");
+      displayMsg(
+          context, Colors.red, "Oops, you forgot to fill everything out.");
     }
   }
 
-  void displayMsg(
-      BuildContext context, Color textColor, Color leftBarColor, String title) {
+  void displayMsg(BuildContext context, Color color, String title) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      width: 500,
+      width: 400,
       content: Container(
           height: 50,
           padding: const EdgeInsets.all(5),
@@ -773,31 +795,25 @@ class _AccountSettingsScreenWebState extends State<AccountSettingsScreenWeb> {
               Container(
                 margin: const EdgeInsets.only(right: 10),
                 decoration: BoxDecoration(
-                    color: leftBarColor,
+                    color: color,
                     borderRadius: const BorderRadius.all(Radius.circular(10))),
                 width: 9,
               ),
-              // Logo(
-              //   Logos.reddit,
-              //   color: Colors.white,
-              //   size: 20,
-              // ),
+              Logo(
+                Logos.reddit,
+                color: Colors.white,
+                size: 20,
+              ),
               const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  children: [
-                    Text(
-                      title,
-                      style: TextStyle(fontSize: 16, color: textColor),
-                    ),
-                  ],
-                ),
+              Text(
+                title,
+                style: const TextStyle(fontSize: 16, color: Colors.white),
               ),
             ],
           )),
       behavior: SnackBarBehavior.floating,
       backgroundColor: Colors.transparent,
-      elevation: 3,
+      elevation: 0,
     ));
   }
 }
