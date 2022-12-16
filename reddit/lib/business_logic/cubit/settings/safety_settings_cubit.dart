@@ -1,5 +1,7 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
+import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/data/model/safety_user_settings.dart';
 import 'package:reddit/data/repository/safety_settings_repository.dart';
 
@@ -20,8 +22,11 @@ class SafetySettingsCubit extends Cubit<SafetySettingsState> {
       // get user safety settings
       settingsRepository.getBlockedUsers().then((blockedList) {
         // get user's blocked list
-        userSettings.blocked = blockedList;
+        userSettings.blocked.clear();
+        userSettings.blocked
+            .addAll(blockedList.map((e) => User.fromJson(e['blocked'])));
         settings = userSettings;
+        debugPrint(settings!.blocked.first.username);
         emit(SafetySettingsAvailable(userSettings));
       });
     });
@@ -49,9 +54,19 @@ class SafetySettingsCubit extends Cubit<SafetySettingsState> {
   /// then if exist it calls the function [SafetySettingsRepository.blockUser] to block this user.
   void blockUser(SafetySettings settings, String username) async {
     if (isClosed) return;
-    settingsRepository.blockUser(username).then((val) {
-      settings.blocked.add(username); // append to the list
-      emit(BlockListUpdated(settings, username));
+    settingsRepository.blockUser(username).then((statuscode) {
+      this.settings = settings;
+      if (statuscode == 201) {
+        settingsRepository.getBlockedUsers().then((blockedList) {
+          settings.blocked.clear();
+          settings.blocked
+              .addAll(blockedList.map((e) => User.fromJson(e['blocked'])));
+          debugPrint(settings.blocked.first.username);
+          emit(BlockListUpdated(settings, username));
+        });
+      } else {
+        emit(ErrorOccured());
+      }
     });
   }
 
@@ -63,9 +78,19 @@ class SafetySettingsCubit extends Cubit<SafetySettingsState> {
   /// This function calls the function [SafetySettingsRepository.unBlockUser] to update the safety settings.
   void unBlockUser(SafetySettings settings, String username) {
     if (isClosed) return;
-    settingsRepository.unBlockUser(username).then((value) {
-      settings.blocked.remove(username); // remove from list
-      emit(BlockListUpdated(settings, username));
+    settingsRepository.unBlockUser(username).then((statuscode) {
+      this.settings = settings;
+      if (statuscode == 201) {
+        settingsRepository.getBlockedUsers().then((blockedList) {
+          settings.blocked.clear();
+          settings.blocked
+              .addAll(blockedList.map((e) => User.fromJson(e['blocked'])));
+
+          emit(BlockListUpdated(settings, username));
+        });
+      } else {
+        emit(ErrorOccured());
+      }
     });
   }
 }

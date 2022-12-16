@@ -53,4 +53,18 @@ class UserProfileCubit extends Cubit<UserProfileState> {
       }
     });
   }
+
+  /// [username] : Username of the user to be blocked.
+  ///
+  /// Emits sate [UserBlocked] on blocking a user (if existed) and [ErrorOccured] if not found or if and error occured.
+  void blockUser(String username) async {
+    if (isClosed) return;
+    userProfileRepository.blockUser(username).then((statuscode) {
+      if (statuscode == 201) {
+        emit(UserBlocked());
+      } else {
+        emit(ErrorOccured());
+      }
+    });
+  }
 }

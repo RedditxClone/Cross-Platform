@@ -33,7 +33,7 @@ class PostsWebServices {
               options: Options(
                 headers: {"Authorization": "Bearer ${UserData.user!.token}"},
               ));
-      debugPrint("Timeline posts in web services ${response.data}");
+      // debugPrint("Timeline posts in web services ${response.data}");
       debugPrint(
           "Timeline posts status code in web services ${response.statusCode}");
       return response.data;
@@ -58,7 +58,7 @@ class PostsWebServices {
           options: Options(
             headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
-      debugPrint("posts in web services ${response.data}");
+      // debugPrint("posts in web services ${response.data}");
       debugPrint("posts status code in web services ${response.statusCode}");
       return response.data;
     } catch (e) {

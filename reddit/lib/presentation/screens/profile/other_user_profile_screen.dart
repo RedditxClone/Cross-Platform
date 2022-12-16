@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:reddit/business_logic/cubit/messages/messages_cubit.dart';
 import 'package:reddit/business_logic/cubit/user_profile/user_profile_cubit.dart';
 import 'package:reddit/constants/strings.dart';
+import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/presentation/widgets/posts/posts.dart';
 
@@ -16,11 +18,20 @@ class OtherProfileScreen extends StatefulWidget {
 
 class _OtherProfileScreenState extends State<OtherProfileScreen> {
   User? otherUser;
+  TextEditingController subjectController = TextEditingController();
+
+  TextEditingController messageController = TextEditingController();
   @override
   void initState() {
     super.initState();
     print(widget.userID);
     BlocProvider.of<UserProfileCubit>(context).getUserInfo(widget.userID);
+  }
+
+  @override
+  void dispose() {
+    otherUser = null;
+    super.dispose();
   }
 
   /// [context] : build context.
@@ -86,7 +97,10 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
       width: 80,
       child: OutlinedButton(
           onPressed: () {
-            BlocProvider.of<UserProfileCubit>(context).follow(widget.userID);
+            UserData.isLoggedIn
+                ? BlocProvider.of<UserProfileCubit>(context)
+                    .follow(otherUser!.userId)
+                : Navigator.pushNamed(context, loginScreen);
           },
           style: ElevatedButton.styleFrom(
             side: const BorderSide(width: 1.0, color: Colors.white),
@@ -106,8 +120,8 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
       width: 126,
       child: OutlinedButton(
           onPressed: () {
-            BlocProvider.of<UserProfileCubit>(context).unfollow(widget
-                .userID); // TODO :  change this to the id of the other user
+            BlocProvider.of<UserProfileCubit>(context)
+                .unfollow(otherUser!.userId);
           },
           style: ElevatedButton.styleFrom(
             side: const BorderSide(width: 1.0, color: Colors.white),
@@ -153,12 +167,16 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const CircleAvatar(
-                      radius: 50,
-                      child: Icon(
-                        Icons.person,
-                        size: 50,
-                      )),
+                  otherUser!.profilePic == null || otherUser!.profilePic == ''
+                      ? const Icon(
+                          Icons.person,
+                          size: 50,
+                        )
+                      : CircleAvatar(
+                          radius: 50,
+                          backgroundImage: NetworkImage(
+                            otherUser!.profilePic!,
+                          )),
                   Row(
                     children: [
                       SizedBox(
@@ -189,23 +207,6 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                         },
                       ),
                       const SizedBox(width: 10),
-                      SizedBox(
-                        width: 70,
-                        child: OutlinedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              side: const BorderSide(
-                                  width: 1.0, color: Colors.white),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(32.0),
-                              ),
-                            ),
-                            child: const Text(
-                              'Invite',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 15),
-                            )),
-                      ),
                     ],
                   ),
                 ],
@@ -233,6 +234,181 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
     );
   }
 
+  void _showBlockDialog(buildcontext) {
+    showDialog(
+        context: context,
+        builder: (_) {
+          return AlertDialog(
+            title: const Text("Are you sure?"),
+            content:
+                const Text("Your won't see posts or comments from this user."),
+            actions: [
+              ElevatedButton(
+                onPressed: () => Navigator.pop(context),
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: defaultThirdColor,
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 10, horizontal: 20),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25))),
+                child: const Text(
+                  "CANCEL",
+                  style: TextStyle(color: Colors.grey, fontSize: 13),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () => BlocProvider.of<UserProfileCubit>(buildcontext)
+                    .blockUser(otherUser!.userId), // TODO : CHANGE TO USERNAME
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 10, horizontal: 20),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25))),
+                child: const Text(
+                  "BLOCK",
+                  style: TextStyle(color: Colors.white, fontSize: 13),
+                ),
+              )
+            ],
+          );
+        });
+  }
+
+  void _sendMessageBottomSheet(BuildContext buildcontext) {
+    showModalBottomSheet(
+        isScrollControlled: true,
+        enableDrag: false,
+        context: buildcontext,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(25.0),
+          ),
+        ),
+        builder: (_) {
+          return FractionallySizedBox(
+            heightFactor: 0.9,
+            child: Scaffold(
+              appBar: AppBar(
+                leading: CloseButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                actions: [
+                  TextButton(
+                      onPressed: () {
+                        BlocProvider.of<MessagesCubit>(buildcontext)
+                            .sendMessage(subjectController.text,
+                                messageController.text, otherUser!.username);
+                      },
+                      child: const Text('Send', style: TextStyle(fontSize: 20)))
+                ],
+              ),
+              body: Container(
+                height: MediaQuery.of(context).size.height - 50,
+                padding: const EdgeInsets.fromLTRB(10, 20, 10, 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'u/ ${otherUser!.username}',
+                      style: const TextStyle(fontSize: 18),
+                    ),
+                    const SizedBox(height: 5),
+                    const Divider(thickness: 1, color: Colors.grey),
+                    const SizedBox(height: 5),
+                    TextField(
+                      controller: subjectController,
+                      decoration: const InputDecoration(
+                        labelText: 'Subject',
+                        border: InputBorder.none,
+                      ),
+                    ),
+                    const Divider(thickness: 1, color: Colors.grey),
+                    TextField(
+                        controller: messageController,
+                        decoration: const InputDecoration(
+                          labelText: 'Message',
+                          border: InputBorder.none,
+                        )),
+                    const Divider(thickness: 1, color: Colors.grey),
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
+  }
+
+  void _moreOptionsBottomSheet(BuildContext buildcontext) {
+    showModalBottomSheet(
+        context: buildcontext,
+        builder: (_) {
+          return Container(
+            height: UserData.isLoggedIn ? 170 : 120,
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              children: [
+                UserData.isLoggedIn
+                    ? TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          _showBlockDialog(buildcontext);
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: const [
+                            Icon(
+                              Icons.person_off_outlined,
+                              color: Colors.white,
+                            ),
+                            SizedBox(width: 20),
+                            Text("Block account",
+                                style: TextStyle(
+                                    fontSize: 20, color: Colors.white))
+                          ],
+                        ))
+                    : const SizedBox(width: 0, height: 0),
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      UserData.isLoggedIn
+                          ? _sendMessageBottomSheet(buildcontext)
+                          : Navigator.pushNamed(context, loginScreen);
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: const [
+                        Icon(
+                          Icons.mail_outline,
+                          color: Colors.white,
+                        ),
+                        SizedBox(width: 20),
+                        Text("Send a message",
+                            style: TextStyle(fontSize: 20, color: Colors.white))
+                      ],
+                    )),
+                ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.grey,
+                      backgroundColor: const Color.fromRGBO(90, 90, 90, 100),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0)),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        "Close",
+                        style: TextStyle(fontSize: 15, color: Colors.grey),
+                      ),
+                    )),
+              ],
+            ),
+          );
+        });
+  }
+
   Widget tabBar() {
     return Scaffold(
         appBar: AppBar(
@@ -252,7 +428,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
     ));
   }
 
-  Widget _upperAppBar() {
+  Widget _upperAppBar(buildcontext) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -270,16 +446,18 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
               otherUser!.displayName == ''
                   ? otherUser!.username
                   : otherUser!.displayName!,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),
         Row(
           children: [
+            // IconButton(
+            //     onPressed: () {},
+            //     icon: const Icon(Icons.file_upload_outlined, size: 30)),
             IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.file_upload_outlined, size: 30)),
-            IconButton(
-                onPressed: () {}, icon: const Icon(Icons.more_horiz, size: 30)),
+                onPressed: () => _moreOptionsBottomSheet(buildcontext),
+                icon: const Icon(Icons.more_horiz, size: 30)),
           ],
         ),
       ],
@@ -313,11 +491,11 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
     );
   }
 
-  Widget _buildAppBar() {
+  Widget _buildAppBar(buildcontext) {
     return SliverAppBar(
       stretch: true,
       expandedHeight: 320,
-      title: _upperAppBar(),
+      title: _upperAppBar(buildcontext),
       elevation: 0,
       flexibleSpace: FlexibleSpaceBar(
         background: _appBarContent(),
@@ -341,59 +519,86 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: DefaultTabController(
-      initialIndex: 0,
-      length: 3,
-      child: NestedScrollView(
-        headerSliverBuilder: (_, bool innerBoxIsScrolled) {
-          return [
-            BlocBuilder<UserProfileCubit, UserProfileState>(
-              builder: (context, state) {
-                if (state is UserInfoAvailable) {
-                  otherUser = state.userInfo;
-                  return _buildAppBar();
-                }
-                if (state is FollowOtherUserSuccess ||
-                    state is FollowOtherUserNotSuccess ||
-                    state is UnFollowOtherUserSuccess ||
-                    state is UnFollowOtherUserNotSuccess) {
-                  return _buildAppBar();
-                }
-                return const SliverAppBar();
-              },
-            ),
-          ];
-        },
-        body: BlocListener<UserProfileCubit, UserProfileState>(
-            listener: (context, state) {
-          if (state is FollowOtherUserSuccess) {
-            displayMsg(
-                context, Colors.green, ' Followed u/${otherUser!.username}');
-          } else if (state is FollowOtherUserNotSuccess) {
-            displayMsg(context, Colors.red,
-                'An error has occured. please try again later');
-          } else if (state is UnFollowOtherUserSuccess) {
-            displayMsg(
-                context, Colors.green, ' Unfollowed u/${otherUser!.username}');
-          } else if (state is UnFollowOtherUserNotSuccess) {
-            displayMsg(context, Colors.red,
-                'An error has occured. please try again later');
-          }
-        }, child: BlocBuilder<UserProfileCubit, UserProfileState>(
-          builder: (context, state) {
-            if (state is UserInfoAvailable) {
-              otherUser = state.userInfo;
-              return _buildBody();
-            } else if (state is FollowOtherUserSuccess ||
-                state is FollowOtherUserNotSuccess ||
-                state is UnFollowOtherUserSuccess ||
-                state is UnFollowOtherUserNotSuccess) {
-              return _buildBody();
-            }
-            return const Center(child: CircularProgressIndicator());
-          },
-        )),
+      body: DefaultTabController(
+        initialIndex: 0,
+        length: 3,
+        child: NestedScrollView(
+            headerSliverBuilder: (_, bool innerBoxIsScrolled) {
+              return [
+                BlocBuilder<UserProfileCubit, UserProfileState>(
+                  builder: (context, state) {
+                    if (state is UserInfoAvailable) {
+                      otherUser = state.userInfo;
+                      return _buildAppBar(context);
+                    }
+                    if (state is FollowOtherUserSuccess ||
+                        state is FollowOtherUserNotSuccess ||
+                        state is UnFollowOtherUserSuccess ||
+                        state is UnFollowOtherUserNotSuccess) {
+                      return _buildAppBar(context);
+                    }
+                    return const SliverAppBar();
+                  },
+                ),
+              ];
+            },
+            body: MultiBlocListener(
+              listeners: [
+                BlocListener<MessagesCubit, MessagesState>(
+                    listener: (context, state) {
+                  if (state is MessageSent) {
+                    Navigator.pop(context);
+                    displayMsg(
+                        context, Colors.green, ' Message is sent successfully');
+                  } else if (state is EmptySubject) {
+                    displayMsg(context, Colors.red, 'Please enter a subject');
+                  } else if (state is EmptyBody) {
+                    displayMsg(context, Colors.red, 'Please enter a message');
+                  } else {
+                    displayMsg(context, Colors.red, 'An error has occured');
+                  }
+                }),
+                BlocListener<UserProfileCubit, UserProfileState>(
+                    listener: (context, state) {
+                  if (state is FollowOtherUserSuccess) {
+                    displayMsg(context, Colors.green,
+                        ' Followed u/${otherUser!.username}!');
+                  } else if (state is FollowOtherUserNotSuccess) {
+                    displayMsg(context, Colors.red,
+                        'An error has occured. please try again later');
+                  } else if (state is UnFollowOtherUserSuccess) {
+                    displayMsg(context, Colors.green,
+                        ' Unfollowed u/${otherUser!.username}!');
+                  } else if (state is UnFollowOtherUserNotSuccess) {
+                    displayMsg(context, Colors.red,
+                        'An error has occured. please try again later');
+                  } else if (state is UserBlocked) {
+                    displayMsg(context, Colors.blue,
+                        ' ${otherUser!.username} was blocked');
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                    // Navigator.pop(context);
+                  } else if (state is ErrorOccured) {
+                    displayMsg(context, Colors.red, 'An error has occured');
+                  }
+                })
+              ],
+              child: BlocBuilder<UserProfileCubit, UserProfileState>(
+                builder: (context, state) {
+                  if (state is UserInfoAvailable) {
+                    otherUser = state.userInfo;
+                    return _buildBody();
+                  } else if (state is FollowOtherUserSuccess ||
+                      state is FollowOtherUserNotSuccess ||
+                      state is UnFollowOtherUserSuccess ||
+                      state is UnFollowOtherUserNotSuccess) {
+                    return _buildBody();
+                  }
+                  return const Center(child: CircularProgressIndicator());
+                },
+              ),
+            )),
       ),
-    ));
+    );
   }
 }

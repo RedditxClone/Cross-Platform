@@ -45,7 +45,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     BlocProvider.of<AuthCubit>(context)
-        .getUserData(PreferenceUtils.getString(SharedPrefKeys.userId));
+        .getUserData(PreferenceUtils.getString(SharedPrefKeys.token));
   }
 
   Widget buildHomeAppBar() {
@@ -101,12 +101,20 @@ class _HomePageState extends State<HomePage> {
                       debugPrint("user is nottttttttttttttttttttttttt null");
                       UserData.initUser(state.userDataJson);
                       debugPrint("user is ${UserData.isLogged()}");
+                      BlocProvider.of<LeftDrawerCubit>(context)
+                          .getLeftDrawerData();
+
                       return homePosts();
                     } else if (state is GetTheUserData &&
                         state.userDataJson != {}) {
                       UserData.initUser(state.userDataJson);
+                      BlocProvider.of<LeftDrawerCubit>(context)
+                          .getLeftDrawerData();
                       return homePosts();
                     } else if (state is SignedIn && state.userDataJson != {}) {
+                      BlocProvider.of<LeftDrawerCubit>(context)
+                          .getLeftDrawerData();
+
                       return homePosts();
                     }
                   } else if (state is NotLoggedIn) {
@@ -124,12 +132,21 @@ class _HomePageState extends State<HomePage> {
                       debugPrint("user is nottttttttttttttttttttttttt null");
                       UserData.initUser(state.userDataJson);
                       debugPrint("user is ${UserData.isLogged()}");
+                      BlocProvider.of<LeftDrawerCubit>(context)
+                          .getLeftDrawerData();
+
                       return popularPosts();
                     } else if (state is GetTheUserData &&
                         state.userDataJson != {}) {
                       UserData.initUser(state.userDataJson);
+                      BlocProvider.of<LeftDrawerCubit>(context)
+                          .getLeftDrawerData();
+
                       return popularPosts();
                     } else if (state is SignedIn && state.userDataJson != {}) {
+                      BlocProvider.of<LeftDrawerCubit>(context)
+                          .getLeftDrawerData();
+
                       return popularPosts();
                     }
                   } else if (state is NotLoggedIn) {
@@ -224,22 +241,19 @@ class _HomePageState extends State<HomePage> {
                   state is SignedIn ||
                   state is SignedInWithProfilePhoto) {
                 return IconButton(
-                    key: const Key('user-icon'),
-                    onPressed: () {
-                      Scaffold.of(context).openEndDrawer();
-                    },
-                    icon: CircleAvatar(
-                      child: UserData.profileSettings!.profile.isNotEmpty
-                          ? Image.network(
-                              UserData.profileSettings!.profile,
-                              fit: BoxFit.cover,
-                            )
-                          : const Icon(
-                              Icons.person,
-                              color: Colors.grey,
-                              size: 25,
-                            ),
-                    ));
+                  key: const Key('user-icon'),
+                  onPressed: () {
+                    Scaffold.of(context).openEndDrawer();
+                  },
+                  icon: UserData.profileSettings!.profile.isEmpty
+                      ? const Icon(
+                          Icons.person,
+                        )
+                      : CircleAvatar(
+                          backgroundImage: NetworkImage(
+                          UserData.user!.profilePic!,
+                        )),
+                );
               } else {
                 return IconButton(
                     key: const Key('user-icon'),
@@ -275,11 +289,7 @@ class _HomePageState extends State<HomePage> {
             bottomNavBarItem(
                 4, Icons.notifications, Icons.notifications_outlined),
           ]),
-      drawer: BlocProvider(
-        create: (context) =>
-            LeftDrawerCubit(LeftDrawerRepository(LeftDrawerWebServices())),
-        child: LeftDrawer(),
-      ),
+      drawer: LeftDrawer(),
       endDrawer: BlocProvider(
         create: (context) =>
             EndDrawerCubit(EndDrawerRepository(SettingsWebServices())),
