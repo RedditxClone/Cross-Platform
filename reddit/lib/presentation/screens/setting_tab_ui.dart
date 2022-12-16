@@ -38,6 +38,11 @@ class SettingTabUi extends StatefulWidget {
 class _SettingTabUiState extends State<SettingTabUi> {
   late Responsive responsive;
   late int index;
+  late AccountSettingsRepository accountSettingsRepository;
+  _SettingTabUiState() {
+    accountSettingsRepository =
+        AccountSettingsRepository(AccountSettingsWebServices());
+  }
   @override
   Widget build(BuildContext context) {
     responsive = Responsive(context);
@@ -119,18 +124,15 @@ class _SettingTabUiState extends State<SettingTabUi> {
                                 providers: [
                                   BlocProvider(
                                     create: (context) => AccountSettingsCubit(
-                                        AccountSettingsRepository(
-                                            AccountSettingsWebServices())),
+                                        accountSettingsRepository),
                                   ),
                                   BlocProvider(
                                     create: (context) => ChangePasswordCubit(
-                                        AccountSettingsRepository(
-                                            AccountSettingsWebServices())),
+                                        accountSettingsRepository),
                                   ),
                                   BlocProvider(
                                     create: (context) => DeleteAccountCubit(
-                                        AccountSettingsRepository(
-                                            AccountSettingsWebServices())),
+                                        accountSettingsRepository),
                                   ),
                                 ],
                                 child: const AccountSettingsScreenWeb(),
