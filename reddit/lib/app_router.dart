@@ -432,11 +432,11 @@ class AppRouter {
           builder: (_) => isMobile
               ? MultiBlocProvider(
                   providers: [
-                    BlocProvider(
-                      create: (context) => accountSettingsCubit,
+                    BlocProvider.value(
+                      value: accountSettingsCubit,
                     ),
-                    BlocProvider(
-                      create: (context) => deleteAccountCubit,
+                    BlocProvider.value(
+                      value: deleteAccountCubit,
                     ),
                   ],
                   child: AccountSettingsScreen(arguments),
