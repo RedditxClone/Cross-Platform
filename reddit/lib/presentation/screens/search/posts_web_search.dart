@@ -158,6 +158,8 @@ class _PostsWebSearchState extends State<PostsWebSearch> {
   ];
   String sortOption = "Sort by";
   String sortTime = "Time";
+  int sortIndex = 0;
+  int timeIndex = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -185,8 +187,9 @@ class _PostsWebSearchState extends State<PostsWebSearch> {
                     } else if (value == 4) {
                       sortOption = "Most Comments";
                     }
+                    sortIndex = value as int;
                     BlocProvider.of<SearchCubit>(context)
-                        .searchPosts(searchTerm ?? "", value as int);
+                        .searchPosts(searchTerm ?? "", sortIndex, timeIndex);
                   },
                   child: Container(
                     padding: const EdgeInsets.all(10),
@@ -225,8 +228,9 @@ class _PostsWebSearchState extends State<PostsWebSearch> {
                     } else if (value == 5) {
                       sortTime = "Past Hour";
                     }
+                    timeIndex = value as int;
                     BlocProvider.of<SearchCubit>(context)
-                        .searchPosts(searchTerm ?? "", value as int);
+                        .searchPosts(searchTerm ?? "", sortIndex, timeIndex);
                   },
                   child: Container(
                     padding: const EdgeInsets.all(10),

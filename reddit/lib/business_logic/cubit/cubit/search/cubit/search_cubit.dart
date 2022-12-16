@@ -38,12 +38,13 @@ class SearchCubit extends Cubit<SearchState> {
 
   /// [word] : [String] The word to search for.
   /// [sort] : [int] The sort type.
+  /// [time] : [int] The time type.
   ///
   /// This function makes the request to the server to get the posts for the word we search for.
   /// This function calls the function [SearchRepo.searchPosts] which makes the request to the server.
   /// It emits the state [GetSearchPosts] which contains the posts.
-  void searchPosts(String word, int sort) {
-    searchRepo.searchPosts(word, sort).then((value) {
+  void searchPosts(String word, int sort,int time) {
+    searchRepo.searchPosts(word, sort,time).then((value) {
       emit(GetSearchPosts(value));
     });
   }

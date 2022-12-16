@@ -44,15 +44,16 @@ class SearchWebService {
 
   /// [word] : [String] The word to search for.
   /// [sort] : [int] The sort type.
+  /// [time] : [int] The time type.
   ///
   /// This function makes the request to the server to get the posts for the word we search for.
   /// This function calls the function [DioHelper.getData] which makes the request to the server.
   /// Returns the response from the server.
-  Future searchPosts(String word, int sort) async {
+  Future searchPosts(String word, int sort, int time) async {
     try {
       var res = await DioHelper.getData(
           url: 'search/posts/?word=$word&sort=$sort', query: {});
-          debugPrint("from searchPosts ${res.statusCode}");
+      debugPrint("from searchPosts ${res.statusCode}");
       return res;
     } on DioError catch (e) {
       debugPrint("from searchPosts $e");

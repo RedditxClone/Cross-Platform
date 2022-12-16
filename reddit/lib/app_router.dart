@@ -23,7 +23,6 @@ import 'package:reddit/presentation/screens/modtools/web/traffic_stats.dart';
 import 'package:reddit/presentation/screens/modtools/web/unmoderated.dart';
 // import 'package:reddit/presentation/screens/profile/other_user_orfile_screen.dart';
 import 'package:reddit/presentation/screens/search/search_web.dart';
-import 'business_logic/cubit/cubit/search/cubit/cubit/search_suggestions_cubit.dart';
 import 'business_logic/cubit/cubit/search/cubit/search_cubit.dart';
 import 'business_logic/cubit/feed_settings_cubit.dart';
 import 'data/repository/search_repo.dart';
@@ -129,7 +128,6 @@ class AppRouter {
   late UserProfileRepository userProfileRepository;
   late UserProfileCubit userProfileCubit;
   late SearchCubit searchCubit;
-  late SearchSuggestionsCubit searchSuggestionsCubit;
   late MessagesWebServices messagesWebServices;
   late MessagesRepository messagesRepository;
   late MessagesCubit messagesCubit;
@@ -171,8 +169,7 @@ class AppRouter {
     userProfileRepository = UserProfileRepository(userProfileWebServices);
     userProfileCubit = UserProfileCubit(userProfileRepository);
     searchCubit = SearchCubit(SearchRepo(SearchWebService()));
-    searchSuggestionsCubit =
-        SearchSuggestionsCubit(SearchRepo(SearchWebService()));
+
     messagesWebServices = MessagesWebServices();
     messagesRepository = MessagesRepository(messagesWebServices);
     messagesCubit = MessagesCubit(messagesRepository);
@@ -490,7 +487,6 @@ class AppRouter {
                     BlocProvider(
                       create: (context) => searchCubit,
                     ),
-                    BlocProvider(create: (context) => searchSuggestionsCubit),
                   ],
                   child: const SearchWeb(),
                 ));
