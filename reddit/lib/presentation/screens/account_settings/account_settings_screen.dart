@@ -1,9 +1,12 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:reddit/business_logic/cubit/cubit/account_settings_cubit.dart';
+import 'package:reddit/business_logic/cubit/cubit/delete_account_cubit.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/data/model/account_settings_model.dart';
+import 'package:reddit/data/model/auth_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../constants/country_names.dart';
 
@@ -55,45 +58,90 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
 
   /// Build UI of account settings screen using BlocBuilder
   Widget buildAccountSettingsBloc() {
-    return BlocBuilder<AccountSettingsCubit, AccountSettingsState>(
-      builder: (context, state) {
-        if (state is AccountSettingsLoaded) {
-          accountSettings = state.accSettings;
-          _isMan = accountSettings!.gender == "male"
-              ? 0
-              : accountSettings!.gender == ""
-                  ? 2
-                  : 1;
-          // Get country name from country code returned from server
-          for (var map in countryNamesMap) {
-            if (map["code"] == accountSettings!.countryCode) {
-              _country = map["name"]!;
-            }
-          }
-          return Container(
-            color: Colors.black,
-            child: ListView(
-              children: [
-                _basicSettingsWidget(context),
-                // _connectedAccountsSettingsWidget(),
-                _blockingAndPermissionsSettingsWidget(),
-              ],
-            ),
-          );
-        } else if (state is AccountSettingsLoading) {
-          return const Center(
-            child: CircularProgressIndicator(
-              color: Colors.yellow,
-            ),
-          );
-        } else {
-          return const Center(
-            child: CircularProgressIndicator(
-              color: Colors.yellow,
-            ),
-          );
+    return BlocListener<DeleteAccountCubit, DeleteAccountState>(
+      listener: (context, state) {
+        if (state is AccountDeleted) {
+          displayMsg(context, Colors.green, "Account deleted");
+          UserData.logout();
+          debugPrint("Logging out after account delete");
+          Navigator.of(context).pushReplacementNamed(homePageRoute);
+        } else if (state is AccountDeleteError) {
+          displayMsg(
+              context, Colors.green, "Error in delete ${state.statusCode}");
         }
       },
+      child: BlocBuilder<AccountSettingsCubit, AccountSettingsState>(
+        builder: (context, state) {
+          if (state is AccountSettingsLoaded) {
+            accountSettings = state.accSettings;
+            _isMan = accountSettings!.gender == "male"
+                ? 0
+                : accountSettings!.gender == ""
+                    ? 2
+                    : 1;
+            // Get country name from country code returned from server
+            for (var map in countryNamesMap) {
+              if (map["code"] == accountSettings!.countryCode) {
+                _country = map["name"]!;
+              }
+            }
+            return Container(
+              color: Colors.black,
+              child: ListView(
+                children: [
+                  _basicSettingsWidget(context),
+                  // _connectedAccountsSettingsWidget(),
+                  _blockingAndPermissionsSettingsWidget(),
+                  _supportWidget(context)
+                ],
+              ),
+            );
+          } else if (state is AccountSettingsLoading) {
+            return const Center(
+              child: CircularProgressIndicator(
+                color: Colors.yellow,
+              ),
+            );
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(
+                color: Colors.yellow,
+              ),
+            );
+          }
+        },
+      ),
+    );
+  }
+
+  Widget _supportWidget(context) {
+    return Container(
+      color: Colors.grey.shade900,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: double.infinity,
+            padding:
+                const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
+            color: Colors.black,
+            child: Text(
+              "SUPPORT",
+              style: TextStyle(
+                color: Colors.grey.shade300,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          _deleteButton(
+            "Delete Account",
+            Icons.waving_hand_outlined,
+            () {
+              BlocProvider.of<DeleteAccountCubit>(context).deleteAccount();
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -272,6 +320,42 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: const [
                 Icon(Icons.arrow_forward),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Builds the UI of a button with title, subtitle, prefix icon and a customized on press function
+  Widget _deleteButton(title, prefixIcon, onPressedFunc) {
+    return TextButton(
+      onPressed: onPressedFunc,
+      style:
+          ButtonStyle(foregroundColor: MaterialStateProperty.all(Colors.white)),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 1,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(prefixIcon),
+              ],
+            ),
+          ),
+          Expanded(
+            flex: 10,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                      color: Colors.red, fontWeight: FontWeight.bold),
+                )
               ],
             ),
           ),
@@ -612,5 +696,42 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
         );
       },
     );
+  }
+
+  void displayMsg(BuildContext context, Color color, String title) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      width: 400,
+      content: Container(
+          height: 50,
+          padding: const EdgeInsets.all(5),
+          decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              color: Colors.black,
+              borderRadius: const BorderRadius.all(Radius.circular(10))),
+          child: Row(
+            children: [
+              Container(
+                margin: const EdgeInsets.only(right: 10),
+                decoration: BoxDecoration(
+                    color: color,
+                    borderRadius: const BorderRadius.all(Radius.circular(10))),
+                width: 9,
+              ),
+              Logo(
+                Logos.reddit,
+                color: Colors.white,
+                size: 20,
+              ),
+              const SizedBox(width: 10),
+              Text(
+                title,
+                style: const TextStyle(fontSize: 16, color: Colors.white),
+              ),
+            ],
+          )),
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+    ));
   }
 }
