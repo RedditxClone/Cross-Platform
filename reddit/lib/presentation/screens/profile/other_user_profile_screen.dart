@@ -99,7 +99,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
           onPressed: () {
             UserData.isLoggedIn
                 ? BlocProvider.of<UserProfileCubit>(context)
-                    .follow(otherUser!.userId)
+                    .follow(otherUser!.userId??"")
                 : Navigator.pushNamed(context, loginScreen);
           },
           style: ElevatedButton.styleFrom(
@@ -121,7 +121,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
       child: OutlinedButton(
           onPressed: () {
             BlocProvider.of<UserProfileCubit>(context)
-                .unfollow(otherUser!.userId);
+                .unfollow(otherUser!.userId??"");
           },
           style: ElevatedButton.styleFrom(
             side: const BorderSide(width: 1.0, color: Colors.white),
@@ -214,7 +214,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
               const SizedBox(height: 20),
               Text(
                   otherUser!.displayName == ''
-                      ? otherUser!.username
+                      ? otherUser!.username??""
                       : otherUser!.displayName!,
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 30)),
@@ -258,7 +258,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
               ),
               ElevatedButton(
                 onPressed: () => BlocProvider.of<UserProfileCubit>(buildcontext)
-                    .blockUser(otherUser!.userId), // TODO : CHANGE TO USERNAME
+                    .blockUser(otherUser!.userId??""), // TODO : CHANGE TO USERNAME
                 style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
                     padding: const EdgeInsets.symmetric(
@@ -300,7 +300,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                       onPressed: () {
                         BlocProvider.of<MessagesCubit>(buildcontext)
                             .sendMessage(subjectController.text,
-                                messageController.text, otherUser!.username);
+                                messageController.text, otherUser!.username??"");
                       },
                       child: const Text('Send', style: TextStyle(fontSize: 20)))
                 ],
@@ -444,7 +444,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
             const SizedBox(width: 10),
             Text(
               otherUser!.displayName == ''
-                  ? otherUser!.username
+                  ? otherUser!.username??""
                   : otherUser!.displayName!,
               overflow: TextOverflow.ellipsis,
             ),

@@ -28,7 +28,6 @@ import 'business_logic/cubit/feed_settings_cubit.dart';
 import 'data/repository/search_repo.dart';
 import 'data/web_services/search_web_service.dart';
 import 'package:reddit/presentation/screens/profile/other_user_profile_screen.dart';
-import 'business_logic/cubit/feed_settings_cubit.dart';
 import 'business_logic/cubit/left_drawer/left_drawer_cubit.dart';
 import 'data/repository/left_drawer/left_drawer_repository.dart';
 import 'data/web_services/left_drawer/left_drawer_web_services.dart';
@@ -199,7 +198,7 @@ class AppRouter {
               ),
             ],
             child: kIsWeb
-                ? HomePageWeb()
+                ? const HomePageWeb()
                 : BlocProvider(
                     create: (context) => LeftDrawerCubit(
                         LeftDrawerRepository(LeftDrawerWebServices())),

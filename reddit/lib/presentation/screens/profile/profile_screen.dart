@@ -96,7 +96,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 20),
               Text(
                   UserData.user!.displayName == ''
-                      ? UserData.user!.username
+                      ? UserData.user!.username??""
                       : UserData.user!.displayName!,
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 30)),
@@ -155,7 +155,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(width: 10),
             Text(
               UserData.user!.displayName == ''
-                  ? UserData.user!.username
+                  ? UserData.user!.username??''
                   : UserData.user!.displayName!,
             ),
           ],

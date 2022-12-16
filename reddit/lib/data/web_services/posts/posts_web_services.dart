@@ -18,7 +18,7 @@ class PostsWebServices {
       receiveTimeout: 20 * 1000,
     );
     dio = Dio(options);
-    token = UserData.user == null ? "" : UserData.user!.token;
+    token = UserData.user == null ? "" : UserData.user!.token??"";
   }
 
   /// `Returns` home page posts.

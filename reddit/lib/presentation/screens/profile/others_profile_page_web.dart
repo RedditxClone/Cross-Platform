@@ -176,7 +176,7 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
       onPressed: () {
         UserData.isLoggedIn
             ? BlocProvider.of<UserProfileCubit>(context)
-                .follow(otherUser.userId)
+                .follow(otherUser.userId??"")
             : Navigator.pushNamed(context, loginPage);
       },
       style: const ButtonStyle(
@@ -211,7 +211,7 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
   Widget _unfollow() {
     return OutlinedButton(
       onPressed: () =>
-          BlocProvider.of<UserProfileCubit>(context).unfollow(otherUser.userId),
+          BlocProvider.of<UserProfileCubit>(context).unfollow(otherUser.userId??""),
       style: OutlinedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
           side: const BorderSide(width: 1, color: Colors.white),
@@ -256,7 +256,7 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
           ),
           Text(
               otherUser.displayName == ''
-                  ? otherUser.username
+                  ? otherUser.username??""
                   : otherUser.displayName!,
               style:
                   const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
@@ -398,7 +398,7 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
                           ? _moreOptions(
                               'Block User',
                               () => BlocProvider.of<UserProfileCubit>(context)
-                                  .blockUser(otherUser.userId))
+                                  .blockUser(otherUser.userId??""))
                           : const SizedBox(width: 0, height: 0)
                     ],
                   ),
