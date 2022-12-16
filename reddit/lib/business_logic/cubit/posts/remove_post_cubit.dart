@@ -29,6 +29,25 @@ class RemovePostCubit extends Cubit<RemovePostState> {
   }
 
   /// This function emits:
+  /// state [Deleted] when the post is saved successfully.
+  /// This function calls the function [PostActionsRepository.deletePost].
+  void deletePost(String id) {
+    // To avoid state error when you leave the page
+    if (isClosed) return;
+    if (UserData.user == null) {
+      emit(RemovePostError(403));
+    } else {
+      postActionsRepository.deletePost(id).then((statusCode) {
+        if (statusCode == 200) {
+          emit(Deleted());
+        } else {
+          emit(RemovePostError(statusCode));
+        }
+      });
+    }
+  }
+
+  /// This function emits:
   /// state [Unaved] when the post is saved successfully.
   /// This function calls the function [PostActionsRepository.unhidePost].
   void unhidePost(String id) {

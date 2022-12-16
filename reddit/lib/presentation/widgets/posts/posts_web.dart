@@ -80,12 +80,18 @@ class PostsWeb extends StatelessWidget {
           bloc: removePostCubit,
           listener: (context, state) {
             if (state is Hidden) {
-              displayMsg(context, Colors.green, "The post is hidden!");
+              displayRemovePostMsg(
+                  context, Colors.green, "Post hidden successfully.", "Undo",
+                  () {
+                removePostCubit.unhidePost(postsModel!.sId!);
+              });
             } else if (state is Unhidden) {
-              displayMsg(context, Colors.green, "Unhidden successfully");
+              displayMsg(context, Colors.green, "Post unhidden successfully.");
+            } else if (state is Deleted) {
+              displayMsg(context, Colors.green, "Post deleted successfully.");
             } else if (state is RemovePostError) {
               if (state.statusCode == 403) {
-                displayMsg(context, Colors.red, "Please log in to continue");
+                displayMsg(context, Colors.red, "Please log in to continue.");
               } else {
                 displayMsg(context, Colors.red,
                     "Error, status code //${state.statusCode}");
@@ -107,55 +113,65 @@ class PostsWeb extends StatelessWidget {
           },
         ),
       ],
-      child: Container(
-        // height: 600,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5),
-            color: defaultSecondaryColor),
-        margin: const EdgeInsets.only(bottom: 13),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            responsive.isSmallSizedScreen()
-                // -------------------------------------------------------
-                // -------NO SIDE VOTE BUTTONS FOR SMALL SCREEN----------
-                // -------------------------------------------------------
-                ? const SizedBox(width: 0)
-                // -------------------------------------------------------
-                // -------LEFT SIDE VOTE BUTTONS IN LARGE SCREEN----------
-                // -------------------------------------------------------
-                : voteButtonsLargeScreen(),
-            Expanded(
-              flex: 11,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  // --------------------------------------------------
-                  // -----USER PHOTO, SUBREDDIT, USER, TIME------------
-                  // --------------------------------------------------
-                  postInfo(context),
-                  // --------------------------------------------------
-                  // -------------------POST TITLE---------------------
-                  // --------------------------------------------------
-                  postTitle(),
-                  // -------------------------------------------------
-                  // -------------------POST TEXT---------------------
-                  // -------------------------------------------------
-                  postText(),
-                  // --------------------------------------------------
-                  // --------------POST PHOTOS, VIDEOS-----------------
-                  // --------------------------------------------------
-                  postMedia(),
-                  mediaIndex(),
-                  // --------------------------------------------------
-                  // ---------------POST BOTTOM BUTTONS----------------
-                  // --------------------------------------------------
-                  postBottomButtons(context),
-                ],
-              ),
+      child: BlocBuilder<RemovePostCubit, RemovePostState>(
+        bloc: removePostCubit,
+        builder: (context, state) {
+          if (state is Hidden) {
+            return Container();
+          } else if (state is Deleted) {
+            return Container();
+          }
+          return Container(
+            // height: 600,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                color: defaultSecondaryColor),
+            margin: const EdgeInsets.only(bottom: 13),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                responsive.isSmallSizedScreen()
+                    // -------------------------------------------------------
+                    // -------NO SIDE VOTE BUTTONS FOR SMALL SCREEN----------
+                    // -------------------------------------------------------
+                    ? const SizedBox(width: 0)
+                    // -------------------------------------------------------
+                    // -------LEFT SIDE VOTE BUTTONS IN LARGE SCREEN----------
+                    // -------------------------------------------------------
+                    : voteButtonsLargeScreen(),
+                Expanded(
+                  flex: 11,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      // --------------------------------------------------
+                      // -----USER PHOTO, SUBREDDIT, USER, TIME------------
+                      // --------------------------------------------------
+                      postInfo(context),
+                      // --------------------------------------------------
+                      // -------------------POST TITLE---------------------
+                      // --------------------------------------------------
+                      postTitle(),
+                      // -------------------------------------------------
+                      // -------------------POST TEXT---------------------
+                      // -------------------------------------------------
+                      postText(),
+                      // --------------------------------------------------
+                      // --------------POST PHOTOS, VIDEOS-----------------
+                      // --------------------------------------------------
+                      postMedia(),
+                      mediaIndex(),
+                      // --------------------------------------------------
+                      // ---------------POST BOTTOM BUTTONS----------------
+                      // --------------------------------------------------
+                      postBottomButtons(context),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
@@ -821,6 +837,8 @@ class PostsWeb extends StatelessWidget {
                                         leading: const Icon(Icons.delete),
                                         onTap: () {
                                           Navigator.pop(context);
+                                          removePostCubit
+                                              .deletePost(postsModel!.sId!);
                                         },
                                       ),
                                     )
@@ -995,6 +1013,48 @@ class PostsWeb extends StatelessWidget {
           ],
         ),
       ),
+      UserData.user != null
+          ? postsModel != null
+              ? postsModel!.user != null
+                  ? postsModel!.user!.id != null
+                      ? postsModel!.user!.id == UserData.user!.userId
+                          ? PopupMenuItem(
+                              value: 4,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: const [
+                                  Icon(
+                                    Icons.delete,
+                                    size: 10,
+                                  ),
+                                  SizedBox(width: 5),
+                                  Text(
+                                    "Delete",
+                                    style: TextStyle(fontSize: 12),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : const PopupMenuItem(
+                              child: null,
+                              enabled: false,
+                            )
+                      : const PopupMenuItem(
+                          child: null,
+                          enabled: false,
+                        )
+                  : const PopupMenuItem(
+                      child: null,
+                      enabled: false,
+                    )
+              : const PopupMenuItem(
+                  child: null,
+                  enabled: false,
+                )
+          : const PopupMenuItem(
+              child: null,
+              enabled: false,
+            ),
     ];
     return PopupMenuButton(
       color: Colors.grey.shade900,
@@ -1003,7 +1063,7 @@ class PostsWeb extends StatelessWidget {
       // offset: Offset.fromDirection(0, 150),
       position: PopupMenuPosition.under,
       itemBuilder: (_) => optionsList,
-      constraints: const BoxConstraints.expand(width: 130, height: 200),
+      constraints: const BoxConstraints.expand(width: 130, height: 240),
       onSelected: (value) {
         switch (value) {
           case 0:
@@ -1035,11 +1095,18 @@ class PostsWeb extends StatelessWidget {
               }
             }
             break;
+          case 4:
+            if (postsModel != null) {
+              if (postsModel!.sId != null) {
+                removePostCubit.deletePost(postsModel!.sId!);
+              }
+            }
+            break;
           default:
             break;
         }
       },
-      child: Icon(Icons.more_horiz, color: Colors.grey),
+      child: const Icon(Icons.more_horiz, color: Colors.grey),
     );
   }
 
@@ -1047,9 +1114,54 @@ class PostsWeb extends StatelessWidget {
   /// [color] : color of the error msg to be displayer e.g. ('red' : error , 'blue' : success ).
   /// [title] : message to be displayed to the user.
   void displayMsg(BuildContext context, Color color, String title) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      width: 400,
-      content: Container(
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        width: 400,
+        content: Container(
+            height: 50,
+            padding: const EdgeInsets.all(5),
+            decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey),
+                color: Colors.black,
+                borderRadius: const BorderRadius.all(Radius.circular(10))),
+            child: Row(
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(right: 10),
+                  decoration: BoxDecoration(
+                      color: color,
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(10))),
+                  width: 9,
+                ),
+                Logo(
+                  Logos.reddit,
+                  color: Colors.white,
+                  size: 20,
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  title,
+                  style: const TextStyle(fontSize: 16, color: Colors.white),
+                ),
+              ],
+            )),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+    );
+  }
+
+  /// [context] : build context.
+  /// [color] : color of the error msg to be displayer e.g. ('red' : error , 'blue' : success ).
+  /// [title] : message to be displayed to the user.
+  void displayRemovePostMsg(
+      BuildContext context, Color color, String title, buttonName, buttonFunc) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        width: 400,
+        content: Container(
           height: 50,
           padding: const EdgeInsets.all(5),
           decoration: BoxDecoration(
@@ -1057,29 +1169,42 @@ class PostsWeb extends StatelessWidget {
               color: Colors.black,
               borderRadius: const BorderRadius.all(Radius.circular(10))),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                margin: const EdgeInsets.only(right: 10),
-                decoration: BoxDecoration(
-                    color: color,
-                    borderRadius: const BorderRadius.all(Radius.circular(10))),
-                width: 9,
+              Row(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(right: 10),
+                    decoration: BoxDecoration(
+                        color: color,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10))),
+                    width: 9,
+                  ),
+                  Logo(
+                    Logos.reddit,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    title,
+                    style: const TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                ],
               ),
-              Logo(
-                Logos.reddit,
-                color: Colors.white,
-                size: 20,
-              ),
-              const SizedBox(width: 10),
-              Text(
-                title,
-                style: const TextStyle(fontSize: 16, color: Colors.white),
-              ),
+              Row(
+                children: [
+                  TextButton(onPressed: buttonFunc, child: Text(buttonName))
+                ],
+              )
             ],
-          )),
-      behavior: SnackBarBehavior.floating,
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-    ));
+          ),
+        ),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+    );
   }
 }

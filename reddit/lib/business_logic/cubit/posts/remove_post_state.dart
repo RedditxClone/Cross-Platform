@@ -7,6 +7,8 @@ class RemovePostInitial extends RemovePostState {}
 
 class Hidden extends RemovePostState {}
 
+class Deleted extends RemovePostState {}
+
 class Unhidden extends RemovePostState {}
 
 class RemovePostError extends RemovePostState {

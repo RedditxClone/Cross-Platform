@@ -24,6 +24,12 @@ class PostActionsRepository {
   }
 
   /// Returns Status Code of the response
+  Future<int> deletePost(String id) async {
+    final statusCode = await postActionsWebServices.deletePost(id);
+    return statusCode;
+  }
+
+  /// Returns Status Code of the response
   Future<int> unhidePost(String id) async {
     final statusCode = await postActionsWebServices.unhidePost(id);
     return statusCode;

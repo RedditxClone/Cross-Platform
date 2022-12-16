@@ -37,11 +37,14 @@ class PostsWebServices {
       return response.data;
     } catch (e) {
       if (e is DioError) {
-        debugPrint(
-            "Error in timeline posts, status code ${e.response!.statusCode!}");
-        if (e.response!.statusCode == 403) {
-          debugPrint("Unauthorized");
+        if (e.response != null) {
+          debugPrint(
+              "Error in timeline posts, status code ${e.response!.statusCode!}");
+          if (e.response!.statusCode == 403) {
+            debugPrint("Unauthorized");
+          }
         }
+        debugPrint("$e");
       } else {
         debugPrint("$e");
       }
@@ -67,6 +70,7 @@ class PostsWebServices {
         if (e.response!.statusCode == 403) {
           debugPrint("Unauthorized");
         }
+        debugPrint("$e");
       } else {
         debugPrint("$e");
       }
