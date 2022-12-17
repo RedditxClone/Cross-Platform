@@ -28,7 +28,7 @@ class _UserManagementState extends State<UserManagement> {
 
   Widget emptyUserManagement(context) {
     return Container(
-        height: 300,
+        height: 200,
         width: MediaQuery.of(context).size.width - 320,
         color: defaultSecondaryColor,
         child: Center(
@@ -37,7 +37,7 @@ class _UserManagementState extends State<UserManagement> {
             children: const [
               Icon(Icons.speaker_notes_off_outlined, color: Colors.grey),
               SizedBox(height: 30),
-              Text('No muted users in r/redditx_',
+              Text('No approved users in r/redditx_',
                   style: TextStyle(fontSize: 17, color: Colors.grey)),
             ],
           ),
@@ -157,6 +157,9 @@ class _UserManagementState extends State<UserManagement> {
             builder: (context, state) {
               if (state is ApprovedListAvailable) {
                 approvedUsers = state.approved;
+                if (approvedUsers!.isEmpty) {
+                  return emptyUserManagement(context);
+                }
                 return ListView.builder(
                     itemCount: approvedUsers!.length,
                     itemBuilder: (context, index) {
@@ -174,6 +177,9 @@ class _UserManagementState extends State<UserManagement> {
               }
               if (state is RemovedFromApprovedUsers) {
                 approvedUsers = state.approved;
+                if (approvedUsers!.isEmpty) {
+                  return emptyUserManagement(context);
+                }
                 return ListView.builder(
                     itemCount: approvedUsers!.length,
                     itemBuilder: (context, index) {
