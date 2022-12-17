@@ -48,18 +48,21 @@ class SettingsWebServices {
   ///
   /// This function Performs patch request to the endpoint `baseUrl/user/me/`[key] to update an image and get the
   /// from the new path the API.
-  Future<dynamic> updateImage(File file, String key) async {
+  Future<dynamic> updateImage(String filepath, String key) async {
     try {
-      String fileName = file.path.split('/').last;
-      print(fileName);
+      print("file name : " + filepath);
       FormData formData = FormData.fromMap(
-          {"photo": await MultipartFile.fromFile(fileName, filename: 'photo')});
+          {"photo": await MultipartFile.fromFile(filepath, filename: 'photo')});
       Response response = await dio.post('user/me/$key',
           data: formData,
           options: Options(
             headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
-      debugPrint(response.data);
+      debugPrint("update picture status code " +
+          response.statusCode.toString() +
+          " new image link : " +
+          response.data['${key}Photo']);
+
       return response.data;
     } catch (e) {
       if (e is DioError) {
@@ -94,7 +97,10 @@ class SettingsWebServices {
           options: Options(
             headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
-      debugPrint(response.statusCode.toString());
+      debugPrint("update picture status code " +
+          response.statusCode.toString() +
+          " new image link : " +
+          response.data['${key}Photo']);
       return response.data;
     } catch (e) {
       debugPrint(e.toString());

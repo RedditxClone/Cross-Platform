@@ -13,7 +13,7 @@ class EndDrawerCubit extends Cubit<EndDrawerState> {
   /// [img] : The new profile photo as a File
   /// Emits sate [EndDrawerProfilePictureChanged] on successfully updating profile photo (on mobile)
   /// This function calls the function [EndDrawerRepository.updateImage] that prepares the PATCH request
-  void changeProfilephoto(File img) {
+  void changeProfilephoto(String img) {
     endDrawerRepository.updateImage('profilephoto', img).then((image) {
       emit(EndDrawerProfilePictureChanged(image));
     });

@@ -241,7 +241,8 @@ class EndDrawer extends StatelessWidget {
                     FontAwesomeIcons.cakeCandles,
                     color: Colors.blue,
                   ),
-                  title: Text("$_redditAge d"),
+                  title: Text(
+                      "${DateTime.now().difference(DateTime.parse(UserData.user!.createdAt!)).inDays + 1} d"),
                   subtitle: const Text("Reddit age"),
                 ),
               ),
@@ -463,7 +464,7 @@ class EndDrawer extends StatelessWidget {
       imgProfile = imageTemp;
       // BlocProvider.of<AuthCubit>(context).changeProfilephotoMob(imageTemp);
 
-      BlocProvider.of<EndDrawerCubit>(context).changeProfilephoto(imageTemp);
+      BlocProvider.of<EndDrawerCubit>(context).changeProfilephoto(image.path);
     } on PlatformException catch (e) {
       displayMsg(context, Colors.red, 'Error', 'Could not load image');
     }

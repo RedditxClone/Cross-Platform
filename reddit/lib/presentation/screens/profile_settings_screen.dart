@@ -44,19 +44,18 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
 
       final image = await ImagePicker().pickImage(source: src);
       if (image == null) return;
-      final imageTemp = File(image.path);
+      // final imageTemp = File(image.path);
 
       switch (dest) {
         case 'cover':
           // imgCover = imageTemp;
-          print(imageTemp);
+          print(image.path);
           BlocProvider.of<SettingsCubit>(context)
-              .changeCoverphoto(profileSettings!, imageTemp);
+              .changeCoverphoto(profileSettings!, image.path);
           break;
         case 'profile':
-          imgProfile = imageTemp;
           BlocProvider.of<SettingsCubit>(context)
-              .changeProfilephoto(profileSettings!, imageTemp);
+              .changeProfilephoto(profileSettings!, image.path);
 
           break;
         default:

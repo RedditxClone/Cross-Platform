@@ -21,7 +21,7 @@ class SettingsRepository {
   /// Returns the path of the updated image or null if and error occured
   ///
   /// This function calls the function [SettingsWebServices.updateImage] that updates any photo on mobile.
-  Future<dynamic> updateImage(String key, File val) async {
+  Future<dynamic> updateImage(String key, String val) async {
     final newVal = await settingsWebServices.updateImage(val, key);
     debugPrint(imagesUrl + newVal['${key}Photo']);
     return imagesUrl + newVal['${key}Photo'];

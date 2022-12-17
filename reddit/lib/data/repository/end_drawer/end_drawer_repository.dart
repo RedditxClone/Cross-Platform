@@ -10,7 +10,7 @@ class EndDrawerRepository {
   /// [val] : The new photo as a [File].
   /// Returns the path of the updated image or null if and error occured
   /// This function calls the function [SettingsWebServices.updateImage] that updates any photo on mobile.
-  Future<dynamic> updateImage(String key, File val) async {
+  Future<dynamic> updateImage(String key, String val) async {
     final newVal = await settingsWebServices.updateImage(val, key);
     print(newVal);
     return jsonDecode(newVal)[key];

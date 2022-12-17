@@ -129,7 +129,7 @@ class ChooseProfileImgAndroidState extends State<ChooseProfileImgAndroid> {
       final image = await ImagePicker().pickImage(source: src);
       if (image == null) return;
       final imageTemp = File(image.path);
-      BlocProvider.of<AuthCubit>(context).changeProfilephotoMob(imageTemp);
+      BlocProvider.of<AuthCubit>(context).changeProfilephotoMob(image.path);
     } on PlatformException catch (e) {
       debugPrint(e.toString());
       displayMsg(context, Colors.red, 'Error', 'Could not load image');
