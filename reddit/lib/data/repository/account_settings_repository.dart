@@ -36,4 +36,12 @@ class AccountSettingsRepository {
     Map<String, dynamic> jsonMap = changePasswordModel.toJson();
     return await accountSettingsWebServices.changePassword(jsonMap);
   }
+
+  /// Calls web services [AccountSettingsWebServices.deleteAccount] to make the DELETE request.
+  /// Returns [int] value the status code of the DELETE request:
+  /// `200` : Account deleted successfully
+  /// `401` : Unauthorized
+  Future<int> deleteAccount() async {
+    return await accountSettingsWebServices.deleteAccount();
+  }
 }

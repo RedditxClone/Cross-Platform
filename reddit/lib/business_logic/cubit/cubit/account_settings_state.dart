@@ -14,9 +14,3 @@ class AccountSettingsLoaded extends AccountSettingsState {
 
   AccountSettingsLoaded(this.accSettings);
 }
-
-/// User entered a wrong password old password when changing his password.
-class WrongPassword extends AccountSettingsState {}
-
-/// Password is updated successfully
-class PasswordUpdatedSuccessfully extends AccountSettingsState {}

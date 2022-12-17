@@ -152,7 +152,11 @@ class EndDrawer extends StatelessWidget {
         Navigator.of(context).pushNamed(accountSettingsRoute, arguments: {
           "username": UserData.user!.username,
           "email": UserData.user!.email,
-          "gender": UserData.accountSettings!.gender == 'male', //_isMan
+          "gender": UserData.accountSettings!.gender == 'male'
+              ? 1
+              : UserData.accountSettings!.gender == ''
+                  ? 2
+                  : 0, //_isMan
         });
       },
     );
