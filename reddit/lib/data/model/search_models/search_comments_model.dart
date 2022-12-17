@@ -16,9 +16,9 @@ class SearchCommentsModel {
   SearchCommentsModel.fromJson(Map<String, dynamic> json) {
     _id = json['_id'];
     text = json['text'];
-    upvotes = json['upvotes'];
+    upvotes = json['votesCount'];
     creationDate = DateTime.parse(json['createdDate']);
-    user = User.fromJson(json['user']);
+    user = User.fromJson(json['postOwner']);
     subreddit = SearchComminityModel.fromJson(json['subreddit']);
     post = SearchPostModel.fromJson(json['post']);
     durantion = DateTime.now().difference(creationDate ?? DateTime.now());

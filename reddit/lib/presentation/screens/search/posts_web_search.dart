@@ -162,6 +162,16 @@ class _PostsWebSearchState extends State<PostsWebSearch> {
   String sortTime = "Time";
   int sortIndex = 0;
   int timeIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    if (searchTerm != null && searchTerm!.isNotEmpty) {
+      BlocProvider.of<SearchCubit>(context)
+          .searchPosts(searchTerm ?? "", sortIndex, timeIndex);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -277,118 +287,119 @@ class _PostsWebSearchState extends State<PostsWebSearch> {
             return ListView.builder(
               itemCount: state.posts.length,
               itemBuilder: (context, index) {
-                return Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: textFeildColor,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    margin: const EdgeInsets.all(10),
-                    child: ListTile(
-                      mouseCursor: SystemMouseCursors.click,
-                      title: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Wrap(
-                            direction: Axis.vertical,
-                            children: [
-                              Wrap(
-                                direction: Axis.vertical,
-                                spacing: 10,
-                                children: [
-                                  Wrap(
-                                    spacing: 10,
-                                    children: [
-                                      TextButton.icon(
-                                        style: TextButton.styleFrom(
-                                          padding: const EdgeInsets.all(0),
-                                          backgroundColor: Colors.transparent,
-                                          foregroundColor: Colors.transparent,
-                                        ),
-                                        icon: CircleAvatar(
-                                          backgroundColor: Colors.red,
-                                          radius: 10,
-                                          child: Logo(
-                                            Logos.reddit,
-                                            color: Colors.white,
-                                            size: 15,
-                                          ),
-                                        ),
-                                        label: Text(
-                                          "r/${state.posts[index].subreddit!.name ?? ""}",
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        onPressed: () {
-                                          //navigate to subreddit page
-                                        },
+                return Container(
+                  decoration: BoxDecoration(
+                    color: textFeildColor,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  margin: const EdgeInsets.all(10),
+                  child: ListTile(
+                    onTap: () {
+                      //navigate to post page
+                    },
+                    mouseCursor: SystemMouseCursors.click,
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Wrap(
+                          direction: Axis.vertical,
+                          children: [
+                            Wrap(
+                              direction: Axis.vertical,
+                              spacing: 10,
+                              children: [
+                                Wrap(
+                                  spacing: 10,
+                                  children: [
+                                    TextButton.icon(
+                                      style: TextButton.styleFrom(
+                                        padding: const EdgeInsets.all(0),
+                                        backgroundColor: Colors.transparent,
+                                        foregroundColor: Colors.transparent,
                                       ),
-                                      TextButton(
-                                        style: TextButton.styleFrom(
-                                          padding: const EdgeInsets.all(0),
-                                          backgroundColor: Colors.transparent,
-                                          foregroundColor: Colors.transparent,
+                                      icon: CircleAvatar(
+                                        backgroundColor: Colors.red,
+                                        radius: 10,
+                                        child: Logo(
+                                          Logos.reddit,
+                                          color: Colors.white,
+                                          size: 15,
                                         ),
-                                        child: Text(
-                                          "Posted by u/${state.posts[index].user!.username ?? ""} ${state.posts[index].postedFrom} ago",
-                                          style: const TextStyle(
-                                            color: Colors.grey,
-                                          ),
-                                        ),
-                                        onPressed: () {
-                                          //navigate to the profile user page
-                                        },
                                       ),
-                                    ],
-                                  ),
-                                  Wrap(
-                                    children: [
-                                      Text(
-                                        state.posts[index].title ?? "",
+                                      label: Text(
+                                        "r/${state.posts[index].subreddit!.name ?? ""}",
                                         style: const TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                    ],
-                                  )
-                                ],
-                              ),
-                              Wrap(
-                                spacing: 10,
-                                children: [
-                                  Text(
-                                    "${state.posts[index].votesCount} upvotes",
-                                    style: const TextStyle(
-                                      color: Colors.grey,
+                                      onPressed: () {
+                                        //navigate to subreddit page
+                                      },
                                     ),
-                                  ),
-                                  Text(
-                                    "${state.posts[index].commentsCount} comments",
-                                    style: const TextStyle(
-                                      color: Colors.grey,
+                                    TextButton(
+                                      style: TextButton.styleFrom(
+                                        padding: const EdgeInsets.all(0),
+                                        backgroundColor: Colors.transparent,
+                                        foregroundColor: Colors.transparent,
+                                      ),
+                                      child: Text(
+                                        "Posted by u/${state.posts[index].user!.username ?? ""} ${state.posts[index].postedFrom} ago",
+                                        style: const TextStyle(
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        //navigate to the profile user page
+                                      },
                                     ),
+                                  ],
+                                ),
+                                Wrap(
+                                  children: [
+                                    Text(
+                                      state.posts[index].title ?? "",
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
+                            Wrap(
+                              spacing: 10,
+                              children: [
+                                Text(
+                                  "${state.posts[index].votesCount} upvotes",
+                                  style: const TextStyle(
+                                    color: Colors.grey,
                                   ),
-                                ],
-                              )
-                            ],
-                          ),
-                          Container(
-                            child: state.posts[index].images!.isEmpty
-                                ? null
-                                : Image.network(
-                                    // imagesUrl+state.posts[index].images![0],
-                                    'https://i.redd.it/n0gyalhf192a1.jpg',
-                                    height: 200,
-                                    width: 200,
-                                    fit: BoxFit.fill,
+                                ),
+                                Text(
+                                  "${state.posts[index].commentsCount} comments",
+                                  style: const TextStyle(
+                                    color: Colors.grey,
                                   ),
-                          )
-                        ],
-                      ),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                        Container(
+                          child: state.posts[index].images!.isEmpty
+                              ? null
+                              : Image.network(
+                                  // imagesUrl+state.posts[index].images![0],
+                                  'https://i.redd.it/n0gyalhf192a1.jpg',
+                                  height: 200,
+                                  width: 200,
+                                  fit: BoxFit.fill,
+                                ),
+                        )
+                      ],
                     ),
                   ),
                 );

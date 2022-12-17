@@ -89,7 +89,7 @@ class _SearchTabsState extends State<SearchTabs> {
                         ),
                         Tab(
                           child: Text(
-                            "Commetns",
+                            "Comments",
                             style: tabTitleStyle,
                           ),
                         ),

@@ -374,20 +374,21 @@ class _SearchWebState extends State<SearchWeb> {
             }
             _searchBarController.close();
           },
-          body: FloatingSearchBarScrollNotifier(
-            child: SearchTabs(
-              searchTerm: selectedTerm,
-            ),
+          // body: FloatingSearchBarScrollNotifier(
+          //   child: SearchTabs(
+          //     searchTerm: selectedTerm,
+          //   ),
+          // ),
+          body: BlocBuilder<SearchCubit, SearchState>(
+            builder: (context, state) {
+              debugPrint("build the search page");
+              return FloatingSearchBarScrollNotifier(
+                child: SearchTabs(
+                  searchTerm: selectedTerm,
+                ),
+              );
+            },
           ),
-          // body:
-          //     BlocBuilder<SearchCubit, SearchState>(builder: (context, state) {
-          //   debugPrint("build the search page");
-          //   return FloatingSearchBarScrollNotifier(
-          //     child: SearchTabs(
-          //       searchTerm: selectedTerm,
-          //     ),
-          //   );
-          // }),
         ),
       ),
     );

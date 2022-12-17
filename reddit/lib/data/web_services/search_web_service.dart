@@ -86,6 +86,7 @@ class SearchWebService {
     try {
       var res = await DioHelper.getData(
           url: 'search/comments/?word=$word', query: {});
+      debugPrint("from searchComments ${res.statusCode}");
       return res;
     } on DioError catch (e) {
       debugPrint("from searchComments $e");
