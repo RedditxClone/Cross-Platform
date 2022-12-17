@@ -10,9 +10,8 @@ class ModtoolsCubit extends Cubit<ModtoolsState> {
   List<User> approvedUsers = [];
   ModtoolsCubit(this.repository) : super(ModtoolsInitial());
 
-  /// This function emits state SettingsAvailable on initState of the profile settings screens.
-  ///
-  /// This function calls the function [SettingsRepository.getUserSettings] to get all user's profile settings.
+  /// [subredditID] is the id of subreddit to which we get the approved list
+  /// This function emits state [ApprovedListAvailable] on initState of the `UserManagement` widget.
   void getApprovedUsers(String subredditID) {
     if (isClosed) return;
     repository.getAprroved(subredditID).then((aprrovedList) {
@@ -23,9 +22,9 @@ class ModtoolsCubit extends Cubit<ModtoolsState> {
     });
   }
 
-  /// This function emits state SettingsAvailable on initState of the profile settings screens.
-  ///
-  /// This function calls the function [SettingsRepository.getUserSettings] to get all user's profile settings.
+  /// [subredditID] is the id of subreddit to insert an approved user
+  /// [username] is the username of the user to be inserted in the approved list
+  /// This function emits state [AddedToApprovedUsers] adding a new user to the approved list.
   void addApprovedUser(String subredditID, String username) {
     if (isClosed) return;
     repository.addApprovedUser(subredditID, username).then((statusCode) {
@@ -37,9 +36,9 @@ class ModtoolsCubit extends Cubit<ModtoolsState> {
     });
   }
 
-  /// This function emits state SettingsAvailable on initState of the profile settings screens.
-  ///
-  /// This function calls the function [SettingsRepository.getUserSettings] to get all user's profile settings.
+  /// [subredditID] is the id of subreddit to remove an approved user
+  /// [username] is the username of the user to be removed from the approved list
+  /// This function emits state [RemovedFromApprovedUsers] removing a user from the approved list.
   void removeApprovedUser(String subredditID, String username) {
     if (isClosed) return;
     repository.removeApprovedUser(subredditID, username).then((statusCode) {
