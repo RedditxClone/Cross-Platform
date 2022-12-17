@@ -177,8 +177,9 @@ class SearchRepo {
   /// This function makes the request to the server to get the posts for the word we search for.
   /// This function calls the function [SearchWebService.searchPosts] which makes the request to the server.
   /// Returns [List] that conatins the posts.
-  Future<List<SearchPostModel>> searchPosts(String word, int sort,int time) async {
-    Response res = await searchWebService.searchPosts(word, sort,time);
+  Future<List<SearchPostModel>> searchPosts(
+      String word, int sort, int time) async {
+    Response res = await searchWebService.searchPosts(word, sort, time);
     if (res.statusCode == 200) {
       return List<SearchPostModel>.from(res.data.map(
         (x) {
@@ -199,7 +200,8 @@ class SearchRepo {
     Response res = await searchWebService.searchCommunities(word);
     if (res.statusCode == 200) {
       return List<SearchComminityModel>.from(
-          res.data.map((x) => SearchComminityModel.fromJson(x)));
+        res.data.map((x) => SearchComminityModel.fromJson(x)),
+      );
     } else {
       return [];
     }

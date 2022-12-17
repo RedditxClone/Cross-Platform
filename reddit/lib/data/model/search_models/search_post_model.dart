@@ -14,6 +14,7 @@ class SearchPostModel {
   DateTime? creationDate;
   DateTime? publishDate;
   Duration? durantion;
+  String? postedFrom;
   bool? nsfw;
   bool? spoiler;
   SearchPostModel.fromJson(Map<String, dynamic> json) {
@@ -30,6 +31,15 @@ class SearchPostModel {
         DateTime.parse(json['publishedDate'] ?? DateTime.now().toString());
     durantion = DateTime.now()
         .difference(publishDate ?? creationDate ?? DateTime.now());
+    if (durantion!.inDays > 0) {
+      postedFrom ="${durantion!.inDays} days";
+    } else if (durantion!.inHours > 0) {
+      postedFrom ="${durantion!.inHours} hours";
+    } else if (durantion!.inMinutes > 0) {
+      postedFrom ="${durantion!.inMinutes} minutes";
+    } else {
+      postedFrom = "${durantion!.inSeconds} seconds";
+    }
     nsfw = json['nsfw'] ?? false;
     spoiler = json['spoiler'] ?? false;
     debugPrint("postID $_id");

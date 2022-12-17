@@ -20,6 +20,7 @@ class _SearchWebState extends State<SearchWeb> {
   static const historyLength = 5; //max number of search history items
   late List<String>
       _searchHistory; //we wiil user this list reversed so the last item will be the first item in the list
+  late List<String> _searchHistoryId;
   late FloatingSearchBarController _searchBarController;
   String? selectedTerm;
   String? currentQuery;
@@ -29,6 +30,8 @@ class _SearchWebState extends State<SearchWeb> {
     _searchBarController = FloatingSearchBarController();
     _searchHistory =
         PreferenceUtils.getStringList(SharedPrefKeys.searchHistoryList) ?? [];
+    _searchHistoryId =
+        PreferenceUtils.getStringList(SharedPrefKeys.searchHistoryListId) ?? [];
   }
 
   void _onFocusChangeSearch(bool isFocused) {
@@ -41,30 +44,37 @@ class _SearchWebState extends State<SearchWeb> {
     _searchBarController.dispose();
   }
 
-  Future<void> addSearchTerm(String newTerm) async {
+  Future<void> addSearchTerm(String newTerm, String id) async {
     if (_searchHistory.contains(newTerm)) {
       putSearchTermFirst(newTerm);
-      return;
     } else {
       //not contain
       _searchHistory.add(newTerm);
+      _searchHistoryId.add(id);
       if (_searchHistory.length > historyLength) {
         _searchHistory.removeAt(0);
+        _searchHistoryId.removeAt(0);
       }
     }
     await PreferenceUtils.setStringList(
         SharedPrefKeys.searchHistoryList, _searchHistory);
+    await PreferenceUtils.setStringList(
+        SharedPrefKeys.searchHistoryListId, _searchHistoryId);
   }
 
-  Future<void> deleteSearchTerm(String term) async {
+  Future<String> deleteSearchTerm(String term) async {
+    String id = _searchHistoryId.removeAt(_searchHistory.indexOf(term));
     _searchHistory.remove(term);
     await PreferenceUtils.setStringList(
         SharedPrefKeys.searchHistoryList, _searchHistory);
+    await PreferenceUtils.setStringList(
+        SharedPrefKeys.searchHistoryListId, _searchHistoryId);
+    return id;
   }
 
-  void putSearchTermFirst(String term) {
-    deleteSearchTerm(term);
-    addSearchTerm(term);
+  Future<void> putSearchTermFirst(String term) async {
+    String id = await deleteSearchTerm(term);
+    addSearchTerm(term, id);
   }
 
   DateTime? lastGetSuggetionTime;
@@ -76,18 +86,18 @@ class _SearchWebState extends State<SearchWeb> {
         child: FloatingSearchBar(
           width: MediaQuery.of(context).size.width * 0.7,
           onQueryChanged: (query) {
-            Future.delayed(const Duration(milliseconds: 500), () {
-              if (_searchBarController.query.isNotEmpty &&
-                  (lastGetSuggetionTime == null
-                      ? true
-                      : DateTime.now().difference(lastGetSuggetionTime!) >
-                          const Duration(milliseconds: 500))) {
-                BlocProvider.of<SearchCubit>(context)
-                    .getSuggestions(_searchBarController.query);
-                lastGetSuggetionTime = DateTime.now();
-                debugPrint("lastGetSuggetionTime: $lastGetSuggetionTime");
-              }
-            });
+            // Future.delayed(const Duration(milliseconds: 500), () {
+            // });
+            if (_searchBarController.query.isNotEmpty &&
+                (lastGetSuggetionTime == null
+                    ? true
+                    : DateTime.now().difference(lastGetSuggetionTime!) >
+                        const Duration(milliseconds: 1000))) {
+              BlocProvider.of<SearchCubit>(context)
+                  .getSuggestions(_searchBarController.query);
+              lastGetSuggetionTime = DateTime.now();
+              debugPrint("lastGetSuggetionTime: $lastGetSuggetionTime");
+            }
             setState(() {
               currentQuery = query;
             });
@@ -136,6 +146,7 @@ class _SearchWebState extends State<SearchWeb> {
           ],
           builder: (context, transition) {
             debugPrint(_searchHistory.toString());
+            debugPrint(_searchHistoryId.toString());
             return ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: Material(
@@ -188,25 +199,27 @@ class _SearchWebState extends State<SearchWeb> {
                                 trailing: IconButton(
                                   icon: const Icon(Icons.clear),
                                   onPressed: () {
-                                    setState(() {
-                                      deleteSearchTerm(term);
+                                    deleteSearchTerm(term).then((value) {
+                                      setState(() {});
                                     });
                                   },
                                 ),
                                 onTap: () {
-                                  setState(() {
-                                    putSearchTermFirst(term);
-                                    selectedTerm = term;
-                                    BlocProvider.of<SearchCubit>(context)
-                                        .searchPosts(selectedTerm ?? "", 0);
-                                    BlocProvider.of<SearchCubit>(context)
-                                        .searchPeople(selectedTerm ?? "");
-                                    BlocProvider.of<SearchCubit>(context)
-                                        .searchComments(selectedTerm ?? "");
-                                    BlocProvider.of<SearchCubit>(context)
-                                        .searchCommunities(selectedTerm ?? "");
+                                  putSearchTermFirst(term).then((value) {
+                                    setState(() {
+                                      selectedTerm = term;
+                                    });
+                                    if (_searchHistoryId[
+                                            _searchHistory.indexOf(term)] ==
+                                        '') {
+                                      BlocProvider.of<SearchCubit>(context)
+                                          .searchPosts(
+                                              selectedTerm ?? "", 0, 0);
+                                    } else {
+                                      //TODO: if the id isn't an empty string navigate to the page of the user or the subreddit
+                                    }
+                                    _searchBarController.close();
                                   });
-                                  _searchBarController.close();
                                 },
                               ),
                             )
@@ -257,24 +270,11 @@ class _SearchWebState extends State<SearchWeb> {
                                               onTap: () {
                                                 //navigate to the subreddits page we can pass the ID and name of it and all the data needed
                                                 setState(() {
-                                                  selectedTerm = term["name"];
+                                                  selectedTerm =
+                                                      "r/${term["name"]}";
                                                 });
-                                                BlocProvider.of<SearchCubit>(
-                                                        context)
-                                                    .searchPosts(
-                                                        selectedTerm ?? "", 0);
-                                                BlocProvider.of<SearchCubit>(
-                                                        context)
-                                                    .searchPeople(
-                                                        selectedTerm ?? "");
-                                                BlocProvider.of<SearchCubit>(
-                                                        context)
-                                                    .searchComments(
-                                                        selectedTerm ?? "");
-                                                BlocProvider.of<SearchCubit>(
-                                                        context)
-                                                    .searchCommunities(
-                                                        selectedTerm ?? "");
+                                                addSearchTerm(
+                                                    selectedTerm!, term["_id"]);
                                                 _searchBarController.close();
                                               },
                                             ),
@@ -331,24 +331,10 @@ class _SearchWebState extends State<SearchWeb> {
                                                 //navigate to the user page we can pass the ID and name of it and all the data needed
                                                 setState(() {
                                                   selectedTerm =
-                                                      term["username"];
+                                                      "u/${term["username"]}";
+                                                  addSearchTerm(selectedTerm!,
+                                                      term["_id"]);
                                                 });
-                                                BlocProvider.of<SearchCubit>(
-                                                        context)
-                                                    .searchPosts(
-                                                        selectedTerm ?? "", 0);
-                                                BlocProvider.of<SearchCubit>(
-                                                        context)
-                                                    .searchPeople(
-                                                        selectedTerm ?? "");
-                                                BlocProvider.of<SearchCubit>(
-                                                        context)
-                                                    .searchComments(
-                                                        selectedTerm ?? "");
-                                                BlocProvider.of<SearchCubit>(
-                                                        context)
-                                                    .searchCommunities(
-                                                        selectedTerm ?? "");
                                                 _searchBarController.close();
                                               },
                                             ),
@@ -381,27 +367,27 @@ class _SearchWebState extends State<SearchWeb> {
               debugPrint("go for search");
               setState(() {
                 selectedTerm = query;
-                addSearchTerm(query);
+                addSearchTerm(query, "");
               });
               BlocProvider.of<SearchCubit>(context)
-                  .searchPosts(selectedTerm ?? "", 0);
-              BlocProvider.of<SearchCubit>(context)
-                  .searchPeople(selectedTerm ?? "");
-              BlocProvider.of<SearchCubit>(context)
-                  .searchComments(selectedTerm ?? "");
-              BlocProvider.of<SearchCubit>(context)
-                  .searchCommunities(selectedTerm ?? "");
+                  .searchPosts(selectedTerm ?? "", 0, 0);
             }
             _searchBarController.close();
           },
-          body:
-              BlocBuilder<SearchCubit, SearchState>(builder: (context, state) {
-            return FloatingSearchBarScrollNotifier(
-              child: SearchTabs(
-                searchTerm: selectedTerm,
-              ),
-            );
-          }),
+          body: FloatingSearchBarScrollNotifier(
+            child: SearchTabs(
+              searchTerm: selectedTerm,
+            ),
+          ),
+          // body:
+          //     BlocBuilder<SearchCubit, SearchState>(builder: (context, state) {
+          //   debugPrint("build the search page");
+          //   return FloatingSearchBarScrollNotifier(
+          //     child: SearchTabs(
+          //       searchTerm: selectedTerm,
+          //     ),
+          //   );
+          // }),
         ),
       ),
     );

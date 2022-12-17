@@ -54,7 +54,8 @@ class _SearchTabsState extends State<SearchTabs> {
               child: Container(
                 margin: EdgeInsets.only(
                     top: responsive.isSmallSizedScreen() ? 0 : 20),
-                height: 1400,
+                height: MediaQuery.of(context).size.height * 1.2,
+                // height: 1400,
                 color: Colors.transparent,
                 child: Scaffold(
                   backgroundColor: Colors.transparent,
