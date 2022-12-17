@@ -462,8 +462,8 @@ class AppRouter {
       case changePasswordRoute:
         return MaterialPageRoute(builder: (context) {
           Map<String, dynamic> argMap = arguments as Map<String, dynamic>;
-          return BlocProvider(
-            create: (context) => changePasswordCubit,
+          return BlocProvider.value(
+            value: changePasswordCubit,
             child: ChangePasswordScreen(arguments),
           );
         });
