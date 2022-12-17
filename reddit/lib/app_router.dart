@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:reddit/business_logic/cubit/cubit/change_password_cubit.dart';
+import 'package:reddit/business_logic/cubit/cubit/delete_account_cubit.dart';
 import 'package:reddit/business_logic/cubit/messages/messages_cubit.dart';
 import 'package:reddit/business_logic/cubit/modtools/modtools_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_home_cubit.dart';
@@ -104,6 +106,8 @@ class AppRouter {
 
   late AccountSettingsRepository accountSettingsRepository;
   late AccountSettingsCubit accountSettingsCubit;
+  late ChangePasswordCubit changePasswordCubit;
+  late DeleteAccountCubit deleteAccountCubit;
   late SafetySettingsRepository safetySettingsRepository;
   late SafetySettingsCubit safetySettingsCubit;
   late SettingsRepository settingsRepository;
@@ -150,6 +154,8 @@ class AppRouter {
     accountSettingsRepository =
         AccountSettingsRepository(AccountSettingsWebServices());
     accountSettingsCubit = AccountSettingsCubit(accountSettingsRepository);
+    changePasswordCubit = ChangePasswordCubit(accountSettingsRepository);
+    deleteAccountCubit = DeleteAccountCubit(accountSettingsRepository);
     authRepo = AuthRepo(AuthWebService());
     authCubit = AuthCubit(authRepo, settingsRepository);
     subredditWebServices = SubredditWebServices();
@@ -435,12 +441,26 @@ class AppRouter {
       case accountSettingsRoute:
         return MaterialPageRoute(
           builder: (_) => isMobile
-              ? BlocProvider(
-                  create: (context) => accountSettingsCubit,
+              ? MultiBlocProvider(
+                  providers: [
+                    BlocProvider.value(
+                      value: accountSettingsCubit,
+                    ),
+                    BlocProvider.value(
+                      value: deleteAccountCubit,
+                    ),
+                  ],
                   child: AccountSettingsScreen(arguments),
                 )
-              : BlocProvider(
-                  create: (context) => accountSettingsCubit,
+              : MultiBlocProvider(
+                  providers: [
+                    BlocProvider(
+                      create: (context) => accountSettingsCubit,
+                    ),
+                    BlocProvider(
+                      create: (context) => changePasswordCubit,
+                    ),
+                  ],
                   child: const AccountSettingsScreenWeb(),
                 ),
         );
@@ -454,8 +474,7 @@ class AppRouter {
         return MaterialPageRoute(builder: (context) {
           Map<String, dynamic> argMap = arguments as Map<String, dynamic>;
           return BlocProvider.value(
-            value: BlocProvider.of<AccountSettingsCubit>(
-                argMap["context"] as BuildContext),
+            value: changePasswordCubit,
             child: ChangePasswordScreen(arguments),
           );
         });

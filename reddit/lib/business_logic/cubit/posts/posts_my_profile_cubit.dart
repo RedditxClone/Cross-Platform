@@ -13,16 +13,13 @@ class PostsMyProfileCubit extends Cubit<PostsMyProfileState> {
 
   /// This function emits:
   /// state [PostsLoading] to indicate that data is loading from the server.
-  /// state [PostsLoaded] when account settings is loaded successfully.
-  /// This function is called inside the initState of the account settings screens.
-  /// This function calls the function [AccountSettingsRepository.getAccountSettings] to get the user's account settings.
+  /// state [PostsLoaded] when posts are loaded successfully.
+  /// This function calls the function [PostsRepository.getMyProfilePosts] to get the user's profile posts.
   void getMyProfilePosts() {
-    // To avoid state error when you leave the settings page
+    // To avoid state error when you leave the page
     if (isClosed) return;
     emit(PostsLoading());
     postsRepository.getMyProfilePosts().then((posts) {
-      // start the state existing in characters_state
-      // here you sent characters list to characters loaded state
       emit(PostsLoaded(posts));
       this.posts = posts;
     });

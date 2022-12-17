@@ -6,7 +6,6 @@ import 'package:reddit/data/model/auth_model.dart';
 class PostsWebServices {
   bool useMockServer = false;
   // Mock URL For Postman
-  late String token;
   String mockUrl =
       "https://a8eda59d-d8f3-4ef2-9581-29e6473824d9.mock.pstmn.io/";
   late Dio dio;
@@ -18,7 +17,6 @@ class PostsWebServices {
       receiveTimeout: 20 * 1000,
     );
     dio = Dio(options);
-    token = UserData.user == null ? "" : UserData.user!.token;
   }
 
   /// `Returns` home page posts.
@@ -39,10 +37,14 @@ class PostsWebServices {
       return response.data;
     } catch (e) {
       if (e is DioError) {
-        if (e.response!.statusCode == 403) {
-          print("Unauthorized");
+        if (e.response != null) {
+          debugPrint(
+              "Error in timeline posts, status code ${e.response!.statusCode!}");
+          if (e.response!.statusCode == 403) {
+            debugPrint("Unauthorized");
+          }
         }
-        debugPrint("Status code is ${e.response!.statusCode!}");
+        debugPrint("$e");
       } else {
         debugPrint("$e");
       }
@@ -63,10 +65,12 @@ class PostsWebServices {
       return response.data;
     } catch (e) {
       if (e is DioError) {
+        debugPrint(
+            "Error in profile posts, status code ${e.response!.statusCode!}");
         if (e.response!.statusCode == 403) {
-          print("Unauthorized");
+          debugPrint("Unauthorized");
         }
-        debugPrint("Status code is ${e.response!.statusCode!}");
+        debugPrint("$e");
       } else {
         debugPrint("$e");
       }
