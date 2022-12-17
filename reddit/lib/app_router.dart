@@ -1,9 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:reddit/business_logic/cubit/messages/messages_cubit.dart';
+import 'package:reddit/business_logic/cubit/modtools/modtools_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_home_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_my_profile_cubit.dart';
+import 'package:reddit/data/repository/modtools/modtools_repository.dart';
 import 'package:reddit/data/repository/posts/posts_repository.dart';
+import 'package:reddit/data/web_services/modtools/modtools_webservices.dart';
 import 'package:reddit/data/web_services/posts/posts_web_services.dart';
 import 'package:reddit/business_logic/cubit/user_profile/user_profile_cubit.dart';
 import 'package:reddit/data/repository/feed_setting_repository.dart';
@@ -126,6 +129,10 @@ class AppRouter {
   late MessagesRepository messagesRepository;
   late MessagesCubit messagesCubit;
 
+  late ModToolsWebServices modtoolsWebServices;
+  late ModToolsRepository modtoolsRepository;
+  late ModtoolsCubit modtoolsCubit;
+
   late PostsWebServices postsWebServices;
   late PostsRepository postsRepository;
   late PostsHomeCubit postsHomeCubit;
@@ -166,6 +173,10 @@ class AppRouter {
     messagesWebServices = MessagesWebServices();
     messagesRepository = MessagesRepository(messagesWebServices);
     messagesCubit = MessagesCubit(messagesRepository);
+
+    modtoolsWebServices = ModToolsWebServices();
+    modtoolsRepository = ModToolsRepository(modtoolsWebServices);
+    modtoolsCubit = ModtoolsCubit(modtoolsRepository);
   }
   Route? generateRoute(RouteSettings settings) {
     final arguments = settings.arguments;
@@ -287,7 +298,7 @@ class AppRouter {
       case approvedRoute:
         return MaterialPageRoute(
             builder: (_) => BlocProvider.value(
-                value: subredditPageCubit,
+                value: modtoolsCubit,
                 child: kIsWeb ? const ApprovedWeb() : null));
 
       case editedRoute:

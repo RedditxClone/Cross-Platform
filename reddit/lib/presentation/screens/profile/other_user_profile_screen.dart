@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:intl/intl.dart';
 import 'package:reddit/business_logic/cubit/messages/messages_cubit.dart';
 import 'package:reddit/business_logic/cubit/user_profile/user_profile_cubit.dart';
 import 'package:reddit/constants/strings.dart';
@@ -172,9 +173,12 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   otherUser!.profilePic == null || otherUser!.profilePic == ''
-                      ? const Icon(
-                          Icons.person,
-                          size: 50,
+                      ? const CircleAvatar(
+                          radius: 50,
+                          child: Icon(
+                            Icons.person,
+                            size: 50,
+                          ),
                         )
                       : CircleAvatar(
                           radius: 50,
@@ -225,7 +229,8 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 30)),
               const SizedBox(height: 10),
-              Text('u/${otherUser!.username} . 1 karma . 3 Oct 2022',
+              Text(
+                  'u/${otherUser!.username} . 1 karma . ${DateFormat('dd MMM yyyy').format(DateTime.parse(UserData.user!.createdAt! == "" ? "2022-12-17T16:58:07.872Z" : UserData.user!.createdAt!))}',
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 13)),
               const SizedBox(height: 5),

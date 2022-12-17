@@ -33,7 +33,9 @@ class User {
     email = json['email'] ?? "";
     profilePic =
         json['profilePhoto'] == '' ? '' : imagesUrl + json['profilePhoto'];
-    coverPhoto = json['coverPhoto'] == '' ? '' : imagesUrl + json['coverPhoto'];
+    coverPhoto = json['coverPhoto'] == null || json['coverPhoto'] == ''
+        ? ''
+        : imagesUrl + json['coverPhoto'];
     if (UserData.isLogged()) {
       token = PreferenceUtils.getString(SharedPrefKeys.token);
     } else {

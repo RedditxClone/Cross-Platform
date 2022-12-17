@@ -151,9 +151,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: [
             const SizedBox(width: 30),
             UserData.user!.profilePic == ''
-                ? const Icon(
-                    Icons.person,
-                    size: 20,
+                ? const CircleAvatar(
+                    radius: 20,
+                    child: Icon(
+                      Icons.person,
+                      size: 50,
+                    ),
                   )
                 : CircleAvatar(
                     radius: 20,
