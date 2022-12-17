@@ -5,6 +5,7 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:reddit/business_logic/cubit/posts/media_index_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/post_actions_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/remove_post_cubit.dart';
+import 'package:reddit/business_logic/cubit/posts/save_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/vote_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/strings.dart';
@@ -25,6 +26,7 @@ class PostsWeb extends StatelessWidget {
   late PostActionsRepository postActionsRepository;
   late PostActionsCubit postActionsCubit;
   late RemovePostCubit removePostCubit;
+  late SaveCubit saveCubit;
   final String _markdownData = """
  # Minimal Markdown Test
  ---
@@ -51,6 +53,7 @@ class PostsWeb extends StatelessWidget {
     voteCubit = VoteCubit(postActionsRepository);
     postActionsCubit = PostActionsCubit(postActionsRepository);
     removePostCubit = RemovePostCubit(postActionsRepository);
+    saveCubit = SaveCubit(postActionsRepository);
   }
   @override
   Widget build(BuildContext context) {
@@ -60,18 +63,14 @@ class PostsWeb extends StatelessWidget {
         BlocListener<PostActionsCubit, PostActionsState>(
           bloc: postActionsCubit,
           listener: (context, state) {
-            if (state is Saved) {
-              displayMsg(context, Colors.green, "Saved successfully");
-            } else if (state is Unsaved) {
-              displayMsg(context, Colors.green, "Unsaved successfully");
-            } else if (state is Spammed) {
-              displayMsg(context, Colors.green, "Spammed successfully");
+            if (state is Spammed) {
+              displayMsg(context, Colors.green, "Post spammed!");
             } else if (state is PostActionsError) {
               if (state.statusCode == 403) {
                 displayMsg(context, Colors.red, "Please log in to continue");
               } else {
                 displayMsg(context, Colors.red,
-                    "Error, status code //${state.statusCode}");
+                    "Error, status code ${state.statusCode}");
               }
             }
           },
@@ -94,7 +93,7 @@ class PostsWeb extends StatelessWidget {
                 displayMsg(context, Colors.red, "Please log in to continue.");
               } else {
                 displayMsg(context, Colors.red,
-                    "Error, status code //${state.statusCode}");
+                    "Error, status code ${state.statusCode}");
               }
             }
           },
@@ -112,6 +111,16 @@ class PostsWeb extends StatelessWidget {
             }
           },
         ),
+        BlocListener<SaveCubit, SaveState>(
+          bloc: saveCubit,
+          listener: (context, state) {
+            if (state is Saved) {
+              displayMsg(context, Colors.green, "Post saved!");
+            } else if (state is Unsaved) {
+              displayMsg(context, Colors.green, "Post unsaved!");
+            }
+          },
+        )
       ],
       child: BlocBuilder<RemovePostCubit, RemovePostState>(
         bloc: removePostCubit,
@@ -549,7 +558,24 @@ class PostsWeb extends StatelessWidget {
         // --------------------------------------------------
         // -----------------SAVE BUTTON---------------------
         // --------------------------------------------------
-        saveButton(),
+        BlocBuilder<SaveCubit, SaveState>(
+          bloc: saveCubit,
+          builder: (context, state) {
+            if (state is Saved) {
+              postsModel!.isSaved = true;
+            } else if (state is Unsaved) {
+              postsModel!.isSaved = false;
+            }
+            if (postsModel != null) {
+              if (postsModel!.isSaved != null) {
+                if (postsModel!.isSaved! == true) {
+                  return unsaveButton();
+                }
+              }
+            }
+            return saveButton();
+          },
+        ),
         const SizedBox(width: 10),
         // --------------------------------------------------
         // -----------------MORE BUTTON---------------------
@@ -685,7 +711,7 @@ class PostsWeb extends StatelessWidget {
         // Save post function
         if (postsModel != null) {
           if (postsModel!.sId != null) {
-            postActionsCubit.savePost(postsModel!.sId!);
+            saveCubit.savePost(postsModel!.sId!);
           }
         }
       },
@@ -694,6 +720,26 @@ class PostsWeb extends StatelessWidget {
           Icon(Icons.turned_in_not, color: Colors.grey),
           SizedBox(width: 5),
           Text("Save", style: TextStyle(fontSize: 13)),
+        ],
+      ),
+    );
+  }
+
+  Widget unsaveButton() {
+    return InkWell(
+      onTap: () {
+        // Save post function
+        if (postsModel != null) {
+          if (postsModel!.sId != null) {
+            saveCubit.unsavePost(postsModel!.sId!);
+          }
+        }
+      },
+      child: Row(
+        children: const [
+          Icon(Icons.turned_in_outlined, color: Colors.grey),
+          SizedBox(width: 5),
+          Text("Unsave", style: TextStyle(fontSize: 13)),
         ],
       ),
     );

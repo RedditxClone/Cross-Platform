@@ -11,46 +11,6 @@ class PostActionsCubit extends Cubit<PostActionsState> {
   PostActionsCubit(this.postActionsRepository) : super(PostActionsInitial());
 
   /// This function emits:
-  /// state [Saved] when the post is saved successfully.
-  /// This function calls the function [PostActionsRepository.savePost].
-  void savePost(String id) {
-    // To avoid state error when you leave the page
-    if (isClosed) return;
-    if (UserData.user == null) {
-      emit(PostActionsError(403));
-    } else {
-      postActionsRepository.savePost(id).then((statusCode) {
-        debugPrint("Save in cubit");
-        debugPrint("$statusCode");
-        if (statusCode == 201) {
-          emit(Saved());
-        } else {
-          emit(PostActionsError(statusCode));
-        }
-      });
-    }
-  }
-
-  /// This function emits:
-  /// state [Unsaved] when the post is saved successfully.
-  /// This function calls the function [PostActionsRepository.unsavePost].
-  void unsavePost(String id) {
-    // To avoid state error when you leave the page
-    if (isClosed) return;
-    if (UserData.user == null) {
-      emit(PostActionsError(403));
-    } else {
-      postActionsRepository.unsavePost(id).then((statusCode) {
-        if (statusCode == 201) {
-          emit(Unsaved());
-        } else {
-          emit(PostActionsError(statusCode));
-        }
-      });
-    }
-  }
-
-  /// This function emits:
   /// state [PostHidden] when the post is saved successfully.
   /// This function calls the function [PostActionsRepository.hidePost].
   void hidePost(String id) {
