@@ -19,6 +19,7 @@ import 'package:reddit/data/web_services/messages/messages_web_services.dart';
 import 'package:reddit/presentation/screens/forget_username_web.dart';
 import 'package:reddit/data/web_services/user_profile/user_profile_webservices.dart';
 import 'package:reddit/presentation/screens/messages/send_message_web.dart';
+import 'package:reddit/presentation/screens/modtools/mobile/approved_users.dart';
 import 'package:reddit/presentation/screens/modtools/mobile/mod_list_screen.dart';
 import 'package:reddit/presentation/screens/modtools/web/approved_web.dart';
 import 'package:reddit/presentation/screens/modtools/web/edited_web.dart';
@@ -304,7 +305,9 @@ class AppRouter {
         return MaterialPageRoute(
             builder: (_) => BlocProvider.value(
                 value: modtoolsCubit,
-                child: kIsWeb ? const ApprovedWeb() : null));
+                child: kIsWeb
+                    ? const ApprovedWeb()
+                    : const ApprovedUsersScreen()));
 
       case editedRoute:
         return MaterialPageRoute(

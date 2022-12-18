@@ -27,6 +27,7 @@ class User {
   late bool? isBlocked;
   late Map<String, dynamic> interests;
   late bool cakeDay;
+  late String date;
   User.fromJson(Map<String, dynamic> json) {
     userId = json['_id'];
     username = json['username'];
@@ -44,6 +45,7 @@ class User {
     type = json['authType'] ?? "";
     // gender = json['gender'];
     displayName = json['displayName'] ?? "";
+    date = json['date'] ?? "";
     about = json['about'] ?? "";
     cakeDay = json['cakeDay'] ?? true;
     isFollowed = json['isFollowed'] ?? false;
