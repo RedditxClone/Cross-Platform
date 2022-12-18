@@ -21,59 +21,17 @@ class CommentWidget extends StatelessWidget {
   late VoteCubit voteCubit;
   CommentWidget({this.commentsModel, super.key}) {
     postActionsRepository = PostActionsRepository(PostActionsWebServices());
-
     voteCubit = VoteCubit(postActionsRepository);
-    if (commentsModel == null) {
-      commentsModel = Comments.fromJson(
-        {
-          "_id": "639e196db56932b9f814b21f",
-          "text": "string",
-          "votesCount": 0,
-          "parentId": "639a277d3eb38f2c2fb096a9",
-          "spammedBy": "null",
-          "spammedAt": "null",
-          "postId": "639a277d3eb38f2c2fb096a9",
-          "user": {
-            "id": "638f9b2231186b7fd21bae78",
-            "photo": "assets/profilePhotos/638f9b2231186b7fd21bae78.jpeg",
-            "username": "bemoi1",
-            "isFollowed": false,
-            "cakeDay": true
-          },
-          "voteType": "null",
-          "children": [
-            {
-              "_id": "639e286602ae224054a52e07",
-              "text": "string2",
-              "votesCount": 0,
-              "parentId": "639e196db56932b9f814b21f",
-              "spammedBy": "null",
-              "spammedAt": "null",
-              "postId": "639a277d3eb38f2c2fb096a9",
-              "user": {
-                "id": "638f9b2231186b7fd21bae78",
-                "photo": "assets/profilePhotos/638f9b2231186b7fd21bae78.jpeg",
-                "username": "bemoi1",
-                "isFollowed": false,
-                "cakeDay": true
-              },
-              "voteType": "null",
-              "children": []
-            }
-          ]
-        },
-      );
-    }
   }
   @override
   Widget build(BuildContext context) {
     responsive = Responsive(context);
-
+    if (commentsModel == null) {
+      return Container();
+    }
     return Container(
       // height: 200,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5), color: defaultSecondaryColor),
-      margin: const EdgeInsets.only(bottom: 13),
+      // width: 200,
       child: Column(
         children: [
           commentInfo(context),
@@ -323,7 +281,7 @@ class CommentWidget extends StatelessWidget {
       children: [
         Expanded(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
             child: MarkdownBody(
               data: commentsModel == null ? "" : commentsModel!.text ?? "",
               selectable: true,

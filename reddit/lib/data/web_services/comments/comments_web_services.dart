@@ -7,7 +7,7 @@ class CommentsWebServices {
   late Dio dio;
   CommentsWebServices() {
     BaseOptions options = BaseOptions(
-      baseUrl: baseUrl,
+      baseUrl: "https://a8eda59d-d8f3-4ef2-9581-29e6473824d9.mock.pstmn.io/",
       receiveDataWhenStatusError: true,
       connectTimeout: 20 * 1000, //20 secs
       receiveTimeout: 20 * 1000,
@@ -22,8 +22,8 @@ class CommentsWebServices {
       // Get random posts if the user is not signed in (Without token)
       // Get joined communities posts if the user is signed in (With token)
       Response response = UserData.user == null
-          ? await dio.get('thing/$id/with-children')
-          : await dio.get('thing/$id/with-children',
+          ? await dio.get('thing/id/with-children')
+          : await dio.get('thing/id/with-children',
               options: Options(
                 headers: {"Authorization": "Bearer ${UserData.user!.token}"},
               ));
