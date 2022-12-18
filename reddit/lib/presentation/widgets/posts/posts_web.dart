@@ -22,6 +22,7 @@ class PostsWeb extends StatelessWidget {
   CarouselController buttonCarouselController = CarouselController();
   late MediaIndexCubit mediaIndexCubit;
   late int _currentMediaIndex;
+  bool? insidePostPage;
   late VoteCubit voteCubit;
   late PostActionsRepository postActionsRepository;
   late PostActionsCubit postActionsCubit;
@@ -46,7 +47,7 @@ class PostsWeb extends StatelessWidget {
  ornare, in ullamcorper magna congue.
  """;
   PostsModel? postsModel;
-  PostsWeb({this.postsModel, Key? key}) : super(key: key) {
+  PostsWeb({this.postsModel, this.insidePostPage, Key? key}) : super(key: key) {
     _currentMediaIndex = 0;
     mediaIndexCubit = MediaIndexCubit(_currentMediaIndex);
     postActionsRepository = PostActionsRepository(PostActionsWebServices());
@@ -164,7 +165,18 @@ class PostsWeb extends StatelessWidget {
                       // -------------------------------------------------
                       // -------------------POST TEXT---------------------
                       // -------------------------------------------------
-                      postText(),
+                      InkWell(
+                        onTap: () {
+                          if (insidePostPage != null) {
+                            if (insidePostPage == true) {
+                              return;
+                            }
+                          }
+                          Navigator.of(context).pushNamed(postPageRoute,
+                              arguments: {"post": postsModel});
+                        },
+                        child: postText(),
+                      ),
                       // --------------------------------------------------
                       // --------------POST PHOTOS, VIDEOS-----------------
                       // --------------------------------------------------

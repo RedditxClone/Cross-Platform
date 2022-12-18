@@ -96,3 +96,7 @@ const moderatorsRoute = '/mod';
 const sendMessageRoute = '/message';
 const inboxRoute = '/inbox';
 const sentRoute = '/sent';
+//---------------------------------------
+// ----------Post Page Route-------------
+//---------------------------------------
+const postPageRoute = "/post_page";

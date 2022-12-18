@@ -1,11 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:reddit/business_logic/cubit/comments/comments_cubit.dart';
 import 'package:reddit/business_logic/cubit/cubit/change_password_cubit.dart';
 import 'package:reddit/business_logic/cubit/cubit/delete_account_cubit.dart';
 import 'package:reddit/business_logic/cubit/messages/messages_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_home_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_my_profile_cubit.dart';
+import 'package:reddit/data/model/comments/comment_model.dart';
+import 'package:reddit/data/repository/comments/comments_repository.dart';
 import 'package:reddit/data/repository/posts/posts_repository.dart';
+import 'package:reddit/data/web_services/comments/comments_web_services.dart';
 import 'package:reddit/data/web_services/posts/posts_web_services.dart';
 import 'package:reddit/business_logic/cubit/user_profile/user_profile_cubit.dart';
 import 'package:reddit/data/repository/feed_setting_repository.dart';
@@ -23,6 +27,7 @@ import 'package:reddit/presentation/screens/modtools/web/modqueue_web.dart';
 import 'package:reddit/presentation/screens/modtools/web/spam_web.dart';
 import 'package:reddit/presentation/screens/modtools/web/traffic_stats.dart';
 import 'package:reddit/presentation/screens/modtools/web/unmoderated.dart';
+import 'package:reddit/presentation/screens/post/post_page.dart';
 import 'package:reddit/presentation/screens/profile/other_user_profile_screen.dart';
 import 'business_logic/cubit/feed_settings_cubit.dart';
 import 'business_logic/cubit/left_drawer/left_drawer_cubit.dart';
@@ -134,6 +139,8 @@ class AppRouter {
   late PostsRepository postsRepository;
   late PostsHomeCubit postsHomeCubit;
   late PostsMyProfileCubit postsMyProfileCubit;
+  late CommentsRepository commentsRepository;
+  late CommentsCubit commentsCubit;
   AppRouter() {
     // initialise repository and cubit objects
     safetySettingsRepository =
@@ -165,6 +172,8 @@ class AppRouter {
     postsRepository = PostsRepository(postsWebServices);
     postsHomeCubit = PostsHomeCubit(postsRepository);
     postsMyProfileCubit = PostsMyProfileCubit(postsRepository);
+    commentsRepository = CommentsRepository(CommentsWebServices());
+    commentsCubit = CommentsCubit(commentsRepository);
     userProfileWebServices = UserProfileWebServices();
     userProfileRepository = UserProfileRepository(userProfileWebServices);
     userProfileCubit = UserProfileCubit(userProfileRepository);
@@ -465,6 +474,14 @@ class AppRouter {
           return BlocProvider.value(
             value: changePasswordCubit,
             child: ChangePasswordScreen(arguments),
+          );
+        });
+      case postPageRoute:
+        return MaterialPageRoute(builder: (context) {
+          Map<String, dynamic> argMap = arguments as Map<String, dynamic>;
+          return BlocProvider.value(
+            value: commentsCubit,
+            child: PostPage(arguments: arguments),
           );
         });
       case manageNotificationsRoute:
