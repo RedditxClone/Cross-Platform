@@ -283,22 +283,21 @@ class AppRouter {
       case modlistRoute:
         return MaterialPageRoute(
             builder: (_) => BlocProvider.value(
-                value: subredditPageCubit, child: const ModListScreen()));
+                value: modtoolsCubit, child: const ModListScreen()));
 
       case modqueueRoute:
         return MaterialPageRoute(
             builder: (_) => BlocProvider.value(
-                value: subredditPageCubit, child: const ModQueueWeb()));
+                value: modtoolsCubit, child: const ModQueueWeb()));
 
       case spamRoute:
         return MaterialPageRoute(
             builder: (_) => BlocProvider.value(
-                value: subredditPageCubit,
-                child: kIsWeb ? const SpamWeb() : null));
+                value: modtoolsCubit, child: kIsWeb ? const SpamWeb() : null));
       case unmoderatedRoute:
         return MaterialPageRoute(
             builder: (_) => BlocProvider.value(
-                value: subredditPageCubit,
+                value: modtoolsCubit,
                 child: kIsWeb ? const UnmoderatedWeb() : null));
 
       case approvedRoute:
@@ -310,7 +309,7 @@ class AppRouter {
       case editedRoute:
         return MaterialPageRoute(
             builder: (_) => BlocProvider.value(
-                value: subredditPageCubit,
+                value: modtoolsCubit,
                 child: kIsWeb ? const EditedWeb() : null));
 
       case tafficRoute:

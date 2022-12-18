@@ -19,3 +19,20 @@ class RemovedFromApprovedUsers extends ModtoolsState {
   List<User> approved;
   RemovedFromApprovedUsers(this.approved);
 }
+
+class EditedPostsReady extends ModtoolsState {
+  List<PostsModel> posts;
+  EditedPostsReady(this.posts);
+}
+
+class SpammedPostsReady extends ModtoolsState {
+  List<PostsModel> posts;
+  SpammedPostsReady(this.posts);
+}
+
+class UnmoderatedPostsReady extends ModtoolsState {
+  List<PostsModel> posts;
+  UnmoderatedPostsReady(this.posts);
+}
+
+class Loading extends ModtoolsState {}

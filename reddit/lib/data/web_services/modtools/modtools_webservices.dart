@@ -19,6 +19,96 @@ class ModToolsWebServices {
     dio = Dio(options);
   }
 
+  /// [subredditId] is the id of subreddit to get the edited posts
+  /// `Returns` edited posts to the modtools of the subreddit.
+  /// This function performs `GET` request to the endpoint ``.
+  Future<dynamic> getEditedPosts(String subredditId) async {
+    try {
+      // Get random posts if the user is not signed in (Without token)
+      // Get joined communities posts if the user is signed in (With token)
+      Response response = await dio.get('subreddit/$subredditId/edited',
+          options: Options(
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+          ));
+      debugPrint(
+          "subreddit edited posts status code in web services ${response.statusCode}");
+      return response.data;
+    } catch (e) {
+      if (e is DioError) {
+        if (e.response != null) {
+          debugPrint(
+              "Error in subreddit edited posts, status code ${e.response!.statusCode!}");
+          if (e.response!.statusCode == 403) {
+            debugPrint("Unauthorized");
+          }
+        }
+      } else {
+        debugPrint("$e");
+      }
+      return [];
+    }
+  }
+
+  /// [subredditId] is the id of subreddit to get the spammed posts
+  /// `Returns` spammed posts to the modtools of the subreddit.
+  /// This function performs `GET` request to the endpoint ``.
+  Future<dynamic> getSpammedPosts(String subredditId) async {
+    try {
+      // Get random posts if the user is not signed in (Without token)
+      // Get joined communities posts if the user is signed in (With token)
+      Response response = await dio.get('subreddit/$subredditId/spammed',
+          options: Options(
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+          ));
+      debugPrint(
+          "subreddit spammed posts status code in web services ${response.statusCode}");
+      return response.data;
+    } catch (e) {
+      if (e is DioError) {
+        if (e.response != null) {
+          debugPrint(
+              "Error in subreddit spammed posts, status code ${e.response!.statusCode!}");
+          if (e.response!.statusCode == 403) {
+            debugPrint("Unauthorized");
+          }
+        }
+      } else {
+        debugPrint("$e");
+      }
+      return [];
+    }
+  }
+
+  /// [subredditId] is the id of subreddit to get the unmoderated posts
+  /// `Returns` unmoderated posts to the modtools of the subreddit.
+  /// This function performs `GET` request to the endpoint ``.
+  Future<dynamic> getUnmoderatedPosts(String subredditId) async {
+    try {
+      // Get random posts if the user is not signed in (Without token)
+      // Get joined communities posts if the user is signed in (With token)
+      Response response = await dio.get('subreddit/$subredditId/unmoderated',
+          options: Options(
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+          ));
+      debugPrint(
+          "subreddit unmoderated posts status code in web services ${response.statusCode}");
+      return response.data;
+    } catch (e) {
+      if (e is DioError) {
+        if (e.response != null) {
+          debugPrint(
+              "Error in subreddit unmoderated posts, status code ${e.response!.statusCode!}");
+          if (e.response!.statusCode == 403) {
+            debugPrint("Unauthorized");
+          }
+        }
+      } else {
+        debugPrint("$e");
+      }
+      return [];
+    }
+  }
+
   /// [subredditID] is the id of subreddit to which we get the approved list
   /// Returns approved users in modtools as [List] of `Map<String,dynamic>`
   Future<dynamic> getApproved(String subredditID) async {
