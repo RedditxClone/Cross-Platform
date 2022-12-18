@@ -87,6 +87,7 @@ const modqueueRoute = '/modqueue';
 const spamRoute = '/spam';
 const editedRoute = '/edited';
 const approvedRoute = '/approved';
+const addApprovedRoute = '/addApprovedRoute';
 const communitySettingsRoute = '/communitysettings';
 const tafficRoute = '/taffic';
 const rulesRoute = '/rules';

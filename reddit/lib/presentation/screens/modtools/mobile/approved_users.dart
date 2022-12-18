@@ -24,49 +24,57 @@ class _ApprovedUsersScreenState extends State<ApprovedUsersScreen> {
   }
 
   Widget listviewItem(context, index) {
-    return InkWell(
+    return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+      InkWell(
         onTap: () => Navigator.pushNamed(context, otherProfilePageRoute,
             arguments: approvedUsers![index].username),
         child: Row(children: [
-          Row(children: [
-            approvedUsers![index].profilePic == null ||
-                    approvedUsers![index].profilePic == ''
-                ? const CircleAvatar(
-                    radius: 17,
-                    backgroundColor: Colors.grey,
-                    child: Icon(Icons.person))
-                : CircleAvatar(
-                    radius: 17,
-                    backgroundImage:
-                        NetworkImage(approvedUsers![index].profilePic!)),
-            const SizedBox(width: 10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('u/${approvedUsers![index].username}'),
-                const Text(
-                  '2 mo ago',
-                  style: TextStyle(color: Colors.grey, fontSize: 12),
-                ),
-              ],
-            ),
-          ]),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.more_horiz))
-        ]));
+          approvedUsers![index].profilePic == null ||
+                  approvedUsers![index].profilePic == ''
+              ? const CircleAvatar(
+                  radius: 17,
+                  backgroundColor: Colors.grey,
+                  child: Icon(Icons.person))
+              : CircleAvatar(
+                  radius: 17,
+                  backgroundImage:
+                      NetworkImage(approvedUsers![index].profilePic!)),
+          const SizedBox(width: 10),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('u/${approvedUsers![index].username}'),
+              const Text(
+                '2 mo ago',
+                style: TextStyle(color: Colors.grey, fontSize: 12),
+              ),
+            ],
+          ),
+        ]),
+      ),
+      IconButton(onPressed: () {}, icon: const Icon(Icons.more_horiz))
+    ]);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          backgroundColor: defaultSecondaryColor,
-          leading: const BackButton(),
-          centerTitle: true,
-          title: const Text('Aproved Users')),
+        backgroundColor: defaultSecondaryColor,
+        leading: const BackButton(),
+        centerTitle: true,
+        title: const Text('Aproved Users'),
+        actions: [
+          IconButton(
+              onPressed: () => Navigator.pushNamed(context, addApprovedRoute),
+              icon: const Icon(Icons.add))
+        ],
+      ),
       body: BlocBuilder<ModtoolsCubit, ModtoolsState>(
         builder: (context, state) {
           if (state is ApprovedListAvailable) {
             approvedUsers = state.approved;
+            print(approvedUsers!.length);
             if (approvedUsers!.isEmpty) {
               // return emptyUserManagement(context);
             }

@@ -52,7 +52,6 @@ class ModtoolsCubit extends Cubit<ModtoolsState> {
     if (isClosed) return;
     emit(Loading());
     repository.getAprroved(subredditID).then((aprrovedList) {
-      // get user profile settings
       approvedUsers.clear();
       approvedUsers.addAll(aprrovedList.map((user) => User.fromJson(user)));
       emit(ApprovedListAvailable(approvedUsers));
