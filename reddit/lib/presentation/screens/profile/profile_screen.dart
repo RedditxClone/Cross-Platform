@@ -50,14 +50,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
         // cover photo
         Container(
           decoration: BoxDecoration(
-              gradient: UserData.profileSettings!.cover != ""
+              gradient: UserData.user!.coverPhoto == ""
                   ? const LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [Colors.redAccent, Colors.black])
                   : null),
-          child: UserData.profileSettings!.cover != ""
-              ? Image.network(UserData.profileSettings!.cover)
+          child: UserData.user!.coverPhoto != ""
+              ? Image.network(UserData.user!.coverPhoto)
               : null,
         ),
         // add social links

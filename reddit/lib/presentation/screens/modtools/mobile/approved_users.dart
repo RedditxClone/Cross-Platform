@@ -227,6 +227,8 @@ class _ApprovedUsersScreenState extends State<ApprovedUsersScreen> {
   }
 
   Widget listviewItem(context, index) {
+    Duration date =
+        DateTime.now().difference(DateTime.parse(approvedUsers![index].date));
     return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
       InkWell(
         onTap: () => Navigator.pushNamed(context, otherProfilePageRoute,
@@ -247,9 +249,13 @@ class _ApprovedUsersScreenState extends State<ApprovedUsersScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('u/${approvedUsers![index].username}'),
-              const Text(
-                '2 mo ago',
-                style: TextStyle(color: Colors.grey, fontSize: 12),
+              Text(
+                date.inHours > 24
+                    ? '${date.inDays} days ago'
+                    : date.inMinutes > 60
+                        ? '${date.inHours} hours ago'
+                        : '${date.inMinutes + 1} mins ago',
+                style: const TextStyle(color: Colors.grey, fontSize: 12),
               ),
             ],
           ),
