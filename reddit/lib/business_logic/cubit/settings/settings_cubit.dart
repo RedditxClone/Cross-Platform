@@ -32,12 +32,13 @@ class SettingsCubit extends Cubit<SettingsState> {
   /// [img] : The new cover photo as a File.
   ///
   /// Emits sate SettingsChanged on successfully updating cover photo (on mobile).
-  void changeCoverphoto(ProfileSettings settings, File img) {
+  void changeCoverphoto(ProfileSettings settings, String img) {
     if (isClosed) return;
     settingsRepository.updateImage('cover', img).then((image) {
       settings.cover = image;
       debugPrint(image);
-      UserData.profileSettings!.cover = settings.cover = image;
+      UserData.profileSettings!.cover =
+          UserData.user!.coverPhoto = settings.cover = image;
       emit(SettingsChanged(settings));
     });
   }
@@ -51,8 +52,9 @@ class SettingsCubit extends Cubit<SettingsState> {
   void changeCoverphotoWeb(ProfileSettings settings, Uint8List fileAsBytes) {
     if (isClosed) return;
     settingsRepository.updateImageWeb('cover', fileAsBytes).then((image) {
-      UserData.profileSettings!.cover = settings.cover = image;
-      debugPrint(image);
+      UserData.profileSettings!.cover =
+          UserData.user!.coverPhoto = settings.cover = image;
+      debugPrint(UserData.user!.coverPhoto);
       emit(SettingsChanged(settings));
     });
   }
@@ -63,12 +65,15 @@ class SettingsCubit extends Cubit<SettingsState> {
   /// Emits sate SettingsChanged on successfully updating profile photo (on mobile).
   ///
   /// This function calls the function [SettingsRepository.updateImage] that updates any photo on mobile.
-  void changeProfilephoto(ProfileSettings settings, File img) {
+  void changeProfilephoto(ProfileSettings settings, String img) {
+    print('before isClosed change profile pic');
     if (isClosed) return;
+    print('after isClosed change profile pic');
     settingsRepository.updateImage('profile', img).then((image) {
-      settings.profile = image;
-      debugPrint(image);
-      UserData.user!.profilePic = image;
+      UserData.profileSettings!.profile =
+          UserData.user!.profilePic = settings.profile = image;
+
+      debugPrint(UserData.user!.profilePic);
       emit(SettingsChanged(settings));
     });
   }

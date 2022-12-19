@@ -19,8 +19,8 @@ class LeftDrawerRepository {
       getModeratingCommunities() async {
     final moderatingCommunities =
         await leftDrawerWebServices.getModeratingCommunities();
-    debugPrint("Moderating Communities from repo:");
-    debugPrint("$moderatingCommunities");
+    // debugPrint("Moderating Communities from repo:");
+    // debugPrint("$moderatingCommunities");
     return List<ModeratingSubredditsDrawerModel>.from(moderatingCommunities
         .map((i) => ModeratingSubredditsDrawerModel.fromJson(i)));
   }

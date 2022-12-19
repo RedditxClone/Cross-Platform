@@ -86,6 +86,7 @@ const modqueueRoute = '/modqueue';
 const spamRoute = '/spam';
 const editedRoute = '/edited';
 const approvedRoute = '/approved';
+const addApprovedRoute = '/addApprovedRoute';
 const communitySettingsRoute = '/communitysettings';
 const tafficRoute = '/taffic';
 const rulesRoute = '/rules';
@@ -97,3 +98,7 @@ const moderatorsRoute = '/mod';
 const sendMessageRoute = '/message';
 const inboxRoute = '/inbox';
 const sentRoute = '/sent';
+//---------------------------------------
+// ----------Post Page Route-------------
+//---------------------------------------
+const postPageRoute = "/post_page";

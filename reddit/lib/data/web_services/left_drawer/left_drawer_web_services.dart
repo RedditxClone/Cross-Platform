@@ -23,7 +23,7 @@ class LeftDrawerWebServices {
           options: Options(
             headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
-      debugPrint("${response.data}");
+      // debugPrint("${response.data}");
       debugPrint(
           "Get moderating communities, Status code is ${response.statusCode!}");
       return response.data;
@@ -82,11 +82,14 @@ class LeftDrawerWebServices {
     } catch (e) {
       debugPrint("$e");
       if (e is DioError) {
-        debugPrint(
-            "Error in get following, Status code ${e.response!.statusCode!}");
-        if (e.response!.statusCode == 403) {
-          debugPrint("Unauthorized");
+        if (e.response != null) {
+          debugPrint(
+              "Error in get following, Status code ${e.response!.statusCode!}");
+          if (e.response!.statusCode == 403) {
+            debugPrint("Unauthorized");
+          }
         }
+        debugPrint("$e");
       } else {
         debugPrint("$e");
       }

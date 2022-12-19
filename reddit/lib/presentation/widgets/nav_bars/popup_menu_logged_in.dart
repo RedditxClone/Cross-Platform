@@ -40,7 +40,7 @@ class PopupMenuLoggedIn extends StatelessWidget {
             SizedBox(width: 5),
             Text(
               'My Stuff',
-              style: TextStyle(fontSize: 17),
+              style: TextStyle(fontSize: 14),
             )
           ])),
       PopupMenuItem(
@@ -148,7 +148,7 @@ class PopupMenuLoggedIn extends StatelessWidget {
           ])),
     ];
     return PopupMenuButton(
-      color: defaultSecondaryColor,
+      color: const Color.fromRGBO(30, 30, 30, 1),
       key: const Key('popup-menu'),
       padding: const EdgeInsets.all(0.4),
       offset: Offset.fromDirection(0, 150),

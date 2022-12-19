@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:intl/intl.dart';
 import 'package:reddit/business_logic/cubit/user_profile/user_profile_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/strings.dart';
@@ -22,7 +23,7 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
   late Responsive _responsive;
   String sortBy = 'new';
   bool _isOverviewTab = true;
-  late User otherUser;
+  User? otherUser;
   @override
   void initState() {
     super.initState();
@@ -176,7 +177,7 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
       onPressed: () {
         UserData.isLoggedIn
             ? BlocProvider.of<UserProfileCubit>(context)
-                .follow(otherUser.userId??"")
+                .follow(otherUser!.userId??"")
             : Navigator.pushNamed(context, loginPage);
       },
       style: const ButtonStyle(
@@ -210,8 +211,8 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
 
   Widget _unfollow() {
     return OutlinedButton(
-      onPressed: () =>
-          BlocProvider.of<UserProfileCubit>(context).unfollow(otherUser.userId??""),
+      onPressed: () => BlocProvider.of<UserProfileCubit>(context)
+          .unfollow(otherUser!.userId??""),
       style: OutlinedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
           side: const BorderSide(width: 1, color: Colors.white),
@@ -242,25 +243,28 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
                 ],
               ),
               //---------------Other profile picture------------------
-              otherUser.profilePic == null || otherUser.profilePic == ''
-                  ? const Icon(
-                      Icons.person,
-                      size: 50,
+              otherUser!.profilePic == null || otherUser!.profilePic == ''
+                  ? const CircleAvatar(
+                      radius: 60,
+                      child: Icon(
+                        Icons.person,
+                        size: 50,
+                      ),
                     )
                   : CircleAvatar(
                       radius: 60,
                       backgroundImage: NetworkImage(
-                        otherUser.profilePic!,
+                        otherUser!.profilePic!,
                       )),
             ],
           ),
           Text(
-              otherUser.displayName == ''
-                  ? otherUser.username??""
-                  : otherUser.displayName!,
+              otherUser!.displayName == ''
+                  ? otherUser!.username??""
+                  : otherUser!.displayName??"",
               style:
                   const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
-          Text('u/${otherUser.username} . 26m',
+          Text('u/${otherUser!.username} . 26m',
               style: const TextStyle(fontSize: 12, color: Colors.grey)),
           const SizedBox(height: 20),
           //--------------------karma and cake day-------------
@@ -303,15 +307,20 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
                             fontSize: 13, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 5),
                     Row(
-                      children: const [
-                        Icon(
+                      children: [
+                        const Icon(
                           Icons.cake,
                           color: Colors.blue,
                           size: 10,
                         ),
-                        SizedBox(width: 5),
-                        Text('September 4, 2018', // TODO : add cake day here
-                            style: TextStyle(fontSize: 10, color: Colors.grey)),
+                        const SizedBox(width: 5),
+                        Text(
+                            DateFormat('dd MM yyyy').format(DateTime.parse(
+                                otherUser!.createdAt! == ""
+                                    ? "2022-12-17T16:58:07.872Z"
+                                    : otherUser!.createdAt!)),
+                            style: const TextStyle(
+                                fontSize: 10, color: Colors.grey)),
                       ],
                     )
                   ],
@@ -336,7 +345,7 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
                         } else if (state is UnFollowOtherUserSuccess) {
                           return _follow();
                         }
-                        return _follow();
+                        return otherUser!.isFollowed! ? _unfollow() : _follow();
                       },
                     )),
               ),
@@ -392,13 +401,13 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
                           'Send Message',
                           () => UserData.isLoggedIn
                               ? Navigator.pushNamed(context, sendMessageRoute,
-                                  arguments: otherUser.username)
+                                  arguments: otherUser!.username)
                               : Navigator.pushNamed(context, loginPage)),
                       UserData.isLoggedIn
                           ? _moreOptions(
                               'Block User',
                               () => BlocProvider.of<UserProfileCubit>(context)
-                                  .blockUser(otherUser.userId??""))
+                                  .blockUser(otherUser!.userId??""))
                           : const SizedBox(width: 0, height: 0)
                     ],
                   ),
@@ -657,19 +666,19 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
               listener: (context, state) {
             if (state is FollowOtherUserSuccess) {
               displayMsg(context, Colors.blue,
-                  ' Successfully followed u/${otherUser.username}');
+                  ' Successfully followed u/${otherUser!.username}');
             } else if (state is FollowOtherUserNotSuccess) {
               displayMsg(context, Colors.red,
                   'An error has occured. please try again later');
             } else if (state is UnFollowOtherUserSuccess) {
               displayMsg(context, Colors.blue,
-                  ' Successfully unfollowed u/${otherUser.username}');
+                  ' Successfully unfollowed u/${otherUser!.username}');
             } else if (state is UnFollowOtherUserNotSuccess) {
               displayMsg(context, Colors.red,
                   'An error has occured. please try again later');
             } else if (state is UserBlocked) {
               displayMsg(context, Colors.blue,
-                  ' ${otherUser.username} is now blocked');
+                  ' ${otherUser!.username} is now blocked');
             } else if (state is ErrorOccured) {
               displayMsg(context, Colors.red, 'An error has occured');
             }

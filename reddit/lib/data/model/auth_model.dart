@@ -25,6 +25,11 @@ class User {
   String? about;
   bool? allowFollow;
   bool? followed;
+  late String coverPhoto;
+  late String? createdAt;
+  late bool? isFollowed;
+  late bool? isBlocked;
+  late String date;
   User.fromJson(Map<String, dynamic> json) {
     debugPrint("user id is: ${json['_id']}");
     debugPrint("user username is: ${json['username']}");
@@ -36,10 +41,11 @@ class User {
     userId = json['_id'] ?? "";
     username = json['username'] ?? "";
     email = json['email'] ?? "";
-    // profilePic = (json['profilePhoto'] == '')
-    //     ? ''
-    //     : imagesUrl + json['profilePhoto'];
-    profilePic = json['profilePhoto'] ?? '';
+    profilePic =
+        json['profilePhoto'] == '' ? '' : imagesUrl + json['profilePhoto'];
+    coverPhoto = json['coverPhoto'] == null || json['coverPhoto'] == ''
+        ? ''
+        : imagesUrl + json['coverPhoto'];
     if (UserData.isLogged()) {
       token = PreferenceUtils.getString(SharedPrefKeys.token);
     } else {
@@ -48,10 +54,14 @@ class User {
     type = json['authType'] ?? "";
     // gender = json['gender'];
     displayName = json['displayName'] ?? "";
+    date = json['date'] ?? "";
     about = json['about'] ?? "";
     cakeDay = json['cakeDay'] ?? true;
     allowFollow = json['allowFollow'] ?? true;
     followed = json['followed'] ?? false;
+    isFollowed = json['isFollowed'] ?? false;
+    isBlocked = json['isBlocked'] ?? false;
+    createdAt = json['createdAt'] ?? "";
   }
   Map<String, dynamic> toJson() {
     return {

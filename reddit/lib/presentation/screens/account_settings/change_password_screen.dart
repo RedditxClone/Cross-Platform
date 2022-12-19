@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reddit/business_logic/cubit/cubit/account_settings_cubit.dart';
+import 'package:reddit/business_logic/cubit/cubit/change_password_cubit.dart';
 import 'package:reddit/data/model/change_password_model.dart';
 
 /// Builds the UI of the Change Password screen inside Account settings on Android.
@@ -32,7 +33,7 @@ class ChangePasswordScreen extends StatelessWidget {
           )
         ],
       ),
-      body: BlocListener<AccountSettingsCubit, AccountSettingsState>(
+      body: BlocListener<ChangePasswordCubit, ChangePasswordState>(
         listener: (context, state) {
           if (state is PasswordUpdatedSuccessfully) {
             displayMsg(context, Colors.white, Colors.green,
@@ -56,7 +57,8 @@ class ChangePasswordScreen extends StatelessWidget {
         _newPasswordController.text.length >= 8 &&
         _currentPasswordController.text.isNotEmpty &&
         _newPasswordController.text.isNotEmpty) {
-      BlocProvider.of<AccountSettingsCubit>(context).changePassword(
+      debugPrint("Sending request");
+      BlocProvider.of<ChangePasswordCubit>(context).changePassword(
         ChangePasswordModel(
           oldPassword: _currentPasswordController.text,
           newPassword: _newPasswordController.text,

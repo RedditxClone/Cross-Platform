@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/constants/strings.dart';
-import 'package:reddit/constants/theme_colors.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PopupMenuNotLoggedIn extends StatelessWidget {
@@ -44,7 +43,7 @@ class PopupMenuNotLoggedIn extends StatelessWidget {
           )),
     ];
     return PopupMenuButton(
-      color: defaultSecondaryColor,
+      color: const Color.fromRGBO(30, 30, 30, 1),
       shape: ContinuousRectangleBorder(borderRadius: BorderRadius.circular(10)),
       padding: const EdgeInsets.all(0),
       offset: Offset.fromDirection(0, 150),
