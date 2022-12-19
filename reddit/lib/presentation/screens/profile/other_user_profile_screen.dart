@@ -229,10 +229,10 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 30)),
               const SizedBox(height: 10),
-              Text(
-                  'u/${otherUser!.username} . 1 karma . ${DateFormat('dd MMM yyyy').format(DateTime.parse(UserData.user!.createdAt! == "" ? "2022-12-17T16:58:07.872Z" : UserData.user!.createdAt!))}',
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 13)),
+              // Text(
+              //     'u/${otherUser!.username} . 1 karma . ${DateFormat('dd MMM yyyy').format(DateTime.parse(UserData.user!.createdAt! == "" ? "2022-12-17T16:58:07.872Z" : UserData.user!.createdAt!))}',
+              //     style: const TextStyle(
+              //         fontWeight: FontWeight.bold, fontSize: 13)),
               const SizedBox(height: 5),
               Text(otherUser!.about!,
                   style: const TextStyle(
