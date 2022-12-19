@@ -159,7 +159,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                   end: Alignment.bottomCenter,
                   colors: [Colors.redAccent, Colors.black])),
           child: otherUser!.coverPhoto != ""
-              ? Image.network(UserData.profileSettings!.cover)
+              ? Image.network(otherUser!.coverPhoto)
               : null,
         ),
         Padding(
@@ -312,6 +312,9 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                         BlocProvider.of<MessagesCubit>(buildcontext)
                             .sendMessage(subjectController.text,
                                 messageController.text, otherUser!.username);
+
+                        Navigator.pop(context);
+                        Navigator.pop(context);
                       },
                       child: const Text('Send', style: TextStyle(fontSize: 20)))
                 ],
@@ -446,12 +449,19 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
         Row(
           children: [
             const SizedBox(width: 30),
-            const CircleAvatar(
-                radius: 20,
-                child: Icon(
-                  Icons.person,
-                  size: 20,
-                )),
+            otherUser!.profilePic == null || otherUser!.profilePic == ''
+                ? const CircleAvatar(
+                    radius: 20,
+                    child: Icon(
+                      Icons.person,
+                      size: 20,
+                    ),
+                  )
+                : CircleAvatar(
+                    radius: 20,
+                    backgroundImage: NetworkImage(
+                      otherUser!.profilePic!,
+                    )),
             const SizedBox(width: 10),
             Text(
               otherUser!.displayName == ''
@@ -558,7 +568,10 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                 BlocListener<MessagesCubit, MessagesState>(
                     listener: (context, state) {
                   if (state is MessageSent) {
-                    Navigator.pop(context);
+                    subjectController.text = '';
+                    messageController.text = '';
+                    Navigator.pushNamed(context, otherProfilePageRoute,
+                        arguments: otherUser!.userId);
                     displayMsg(
                         context, Colors.green, ' Message is sent successfully');
                   } else if (state is EmptySubject) {

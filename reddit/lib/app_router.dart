@@ -261,12 +261,8 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => MultiBlocProvider(
             providers: [
-              BlocProvider.value(
-                value: userProfileCubit,
-              ),
-              BlocProvider(
-                create: (context) => messagesCubit,
-              ),
+              BlocProvider.value(value: userProfileCubit),
+              BlocProvider.value(value: messagesCubit),
             ],
             child: kIsWeb
                 ? OtherProfilePageWeb(userID: userID)
@@ -306,13 +302,17 @@ class AppRouter {
         return MaterialPageRoute(
             builder: (_) => BlocProvider.value(
                 value: modtoolsCubit, child: AddApprovedUserScreen()));
+
       case approvedRoute:
         return MaterialPageRoute(
-            builder: (_) => BlocProvider.value(
-                value: modtoolsCubit,
-                child: kIsWeb
-                    ? const ApprovedWeb()
-                    : const ApprovedUsersScreen()));
+            builder: (_) => MultiBlocProvider(
+                    providers: [
+                      BlocProvider.value(value: modtoolsCubit),
+                      BlocProvider.value(value: messagesCubit),
+                    ],
+                    child: kIsWeb
+                        ? const ApprovedWeb()
+                        : const ApprovedUsersScreen()));
 
       case editedRoute:
         return MaterialPageRoute(

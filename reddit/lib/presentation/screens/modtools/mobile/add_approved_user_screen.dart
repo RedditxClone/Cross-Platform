@@ -17,9 +17,9 @@ class AddApprovedUserScreen extends StatelessWidget {
           actions: [
             TextButton(
                 onPressed: () {
-                  Navigator.pop(context);
                   BlocProvider.of<ModtoolsCubit>(context).addApprovedUser(
                       '639b27bbef88b3df0463d04b', usernameController.text);
+                  Navigator.pop(context);
                   usernameController.text = '';
                 },
                 child: const Text('ADD',
