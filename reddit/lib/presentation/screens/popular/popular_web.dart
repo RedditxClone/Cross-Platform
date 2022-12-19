@@ -226,7 +226,7 @@ class _PopularWebState extends State<PopularWeb> {
 
   Widget _rightCard() {
     return Container(
-      height: 360,
+      height: 367,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
           color: defaultSecondaryColor.withOpacity(0.85)),

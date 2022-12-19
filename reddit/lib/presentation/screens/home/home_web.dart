@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reddit/business_logic/cubit/create_community_cubit.dart';
 import 'package:reddit/business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_home_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/data/model/auth_model.dart';
+import 'package:reddit/data/repository/create_community_repository.dart';
+import 'package:reddit/data/web_services/create_community_web_services.dart';
+import 'package:reddit/presentation/screens/create_community_screen.dart';
 import 'package:reddit/presentation/widgets/home_widgets/left_list_not_logged_in.dart';
 import 'package:reddit/presentation/widgets/posts/posts_web.dart';
 
@@ -191,14 +195,26 @@ class _HomeWebState extends State<HomeWeb> {
     );
   }
 
+  void createCommunityDialog() {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => BlocProvider(
+              create: (context) => CreateCommunityCubit(
+                  CreateCommunityRepository(CreateCommunityWebServices())),
+              child: const CreateCommunityScreen(),
+            ));
+  }
+
   Widget _createCommunity() {
     return Container(
       width: double.infinity,
       height: 54,
       padding: const EdgeInsets.all(10),
       child: OutlinedButton(
-        onPressed: () =>
-            Navigator.of(context).pushNamed(createCommunityScreenRoute),
+        onPressed: () => UserData.isLoggedIn
+            ? createCommunityDialog()
+            : Navigator.pushNamed(context, loginPage),
         style: OutlinedButton.styleFrom(
             // padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
             side: const BorderSide(width: 1, color: Colors.white),
@@ -214,7 +230,7 @@ class _HomeWebState extends State<HomeWeb> {
 
   Widget _rightCard() {
     return Container(
-      height: 285,
+      height: UserData.isLoggedIn ? 305 : 285,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
           color: defaultSecondaryColor.withOpacity(0.85)),
