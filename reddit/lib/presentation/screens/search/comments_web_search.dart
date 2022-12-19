@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:reddit/business_logic/cubit/cubit/search/cubit/search_comments_cubit.dart';
 
 import '../../../business_logic/cubit/cubit/search/cubit/search_cubit.dart';
 import '../../../constants/colors.dart';
@@ -21,19 +22,10 @@ class _CommentsWebSearchState extends State<CommentsWebSearch> {
   _CommentsWebSearchState(this.searchTerm);
 
   @override
-  void initState() {
-    super.initState();
-    if (searchTerm != null && searchTerm!.isNotEmpty) {
-      BlocProvider.of<SearchCubit>(context).searchComments(searchTerm ?? "");
-      debugPrint("Search Term: $searchTerm");
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     debugPrint("comments build");
     return Scaffold(
-      body: BlocBuilder<SearchCubit, SearchState>(
+      body: BlocBuilder<SearchCommentsCubit, SearchCommentsState>(
         builder: (context, state) {
           if (state is GetSearchComments) {
             return ListView.builder(
@@ -90,7 +82,7 @@ class _CommentsWebSearchState extends State<CommentsWebSearch> {
                                     foregroundColor: Colors.transparent,
                                   ),
                                   child: Text(
-                                    "Posted by u/${state.comments[index].user!.username ?? ""} ${state.comments[index].post!.postedFrom ?? ""} ago",
+                                    "Posted by u/${state.comments[index].postOwner!.username ?? ""} ${state.comments[index].post!.postedFrom ?? ""} ago",
                                     style: const TextStyle(
                                       color: Colors.grey,
                                     ),
@@ -101,16 +93,13 @@ class _CommentsWebSearchState extends State<CommentsWebSearch> {
                                 ),
                               ],
                             ),
-                            Wrap(
-                              children: [
-                                Text(
-                                  state.comments[index].post!.title ?? "",
-                                  style: const TextStyle(
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ],
-                            )
+                            Text(
+                              state.comments[index].post!.title ?? "",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ],
                         ),
                         Wrap(
@@ -133,15 +122,66 @@ class _CommentsWebSearchState extends State<CommentsWebSearch> {
                       ],
                     ),
                     onTap: () {
-                      //navigate to the comment page
+                      //navigate to the post page
                     },
+                    subtitle: ListTile(
+                      style: ListTileStyle.list,
+                      mouseCursor: SystemMouseCursors.click,
+                      title: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 18, 35, 45),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Wrap(
+                          direction: Axis.vertical,
+                          spacing: 10,
+                          children: [
+                            Wrap(
+                              spacing: 5,
+                              children: [
+                                Text(
+                                  state.comments[index].user!.username ?? "",
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                Text(
+                                  state.comments[index].commentFrom ?? "",
+                                  style: const TextStyle(
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Text(
+                              state.comments[index].text ?? "",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                              ),
+                            ),
+                            Text(
+                              "${state.comments[index].upvotes ?? 0} upvotes",
+                              style: const TextStyle(
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      onTap: () {
+                        //navigate to the comment
+                      },
+                    ),
                   ),
                 );
               },
             );
           }
-          return const Center(
-            child: CircularProgressIndicator.adaptive(),
+          return const Text(
+            "Start Serching ...",
+            style: TextStyle(color: Colors.white, fontSize: 20),
           );
         },
       ),

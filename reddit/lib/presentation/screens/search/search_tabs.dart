@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:material_floating_search_bar/material_floating_search_bar.dart';
+import 'package:reddit/business_logic/cubit/cubit/search/cubit/search_comments_cubit.dart';
 import 'package:reddit/business_logic/cubit/cubit/search/cubit/search_cubit.dart';
-import 'package:reddit/data/repository/search_repo.dart';
-import 'package:reddit/data/web_services/search_web_service.dart';
+import 'package:reddit/business_logic/cubit/cubit/search/cubit/search_posts_cubit.dart';
 import 'package:reddit/presentation/screens/search/comments_web_search.dart';
 import 'package:reddit/presentation/screens/search/communities_web_search.dart';
 import 'package:reddit/presentation/screens/search/people_web_search.dart';
 import 'package:reddit/presentation/screens/search/posts_web_search.dart';
-
+import '../../../business_logic/cubit/cubit/search/cubit/search_communities_cubit.dart';
+import '../../../business_logic/cubit/cubit/search/cubit/search_people_cubit.dart';
 import '../../../constants/responsive.dart';
-import '../../../constants/theme_colors.dart';
 
 class SearchTabs extends StatefulWidget {
   const SearchTabs({super.key, required this.searchTerm});
@@ -49,6 +48,7 @@ class _SearchTabsState extends State<SearchTabs> {
           Expanded(
             flex: 6,
             child: DefaultTabController(
+              initialIndex: 0,
               length: 4,
               animationDuration: Duration.zero,
               child: Container(
@@ -115,34 +115,27 @@ class _SearchTabsState extends State<SearchTabs> {
                         child: TabBarView(
                           children: <Widget>[
                             BlocProvider.value(
-                              value: BlocProvider.of<SearchCubit>(context),
+                              value: BlocProvider.of<SearchPostsCubit>(context),
                               child: const PostsWebSearch(),
                             ),
                             BlocProvider.value(
-                              value: BlocProvider.of<SearchCubit>(context),
+                              value:
+                                  BlocProvider.of<SearchCommentsCubit>(context),
                               child: const CommentsWebSearch(),
                             ),
                             BlocProvider.value(
-                              value: BlocProvider.of<SearchCubit>(context),
+                              value: BlocProvider.of<SearchCommunitiesCubit>(
+                                  context),
                               child: const CommunitiesWebSearch(),
                             ),
                             BlocProvider.value(
-                              value: BlocProvider.of<SearchCubit>(context),
+                              value:
+                                  BlocProvider.of<SearchPeopleCubit>(context),
                               child: const PeopleWebSearch(),
                             ),
                           ],
                         ),
                       ),
-                      // Expanded(
-                      //   flex: responsive.isSmallSizedScreen()
-                      //       ? 0
-                      //       : responsive.isMediumSizedScreen()
-                      //           ? 1
-                      //           : responsive.isLargeSizedScreen()
-                      //               ? 2
-                      //               : 3,
-                      //   child: const SizedBox(width: 1),
-                      // ),
                     ],
                   ),
                 ),

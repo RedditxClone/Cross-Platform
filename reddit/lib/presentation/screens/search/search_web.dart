@@ -1,11 +1,16 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
+import 'package:reddit/business_logic/cubit/cubit/search/cubit/search_communities_cubit.dart';
+import 'package:reddit/business_logic/cubit/cubit/search/cubit/search_people_cubit.dart';
 import 'package:reddit/constants/colors.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/presentation/screens/search/search_tabs.dart';
+import '../../../business_logic/cubit/cubit/search/cubit/search_comments_cubit.dart';
 import '../../../business_logic/cubit/cubit/search/cubit/search_cubit.dart';
+import '../../../business_logic/cubit/cubit/search/cubit/search_posts_cubit.dart';
 import '../../../helper/utils/shared_keys.dart';
 import '../../../helper/utils/shared_pref.dart';
 
@@ -116,30 +121,40 @@ class _SearchWebState extends State<SearchWeb> {
             style: const TextStyle(fontSize: 15),
           ),
           leadingActions: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50),
-                color: textFeildColor,
-              ),
-              child: InkWell(
-                onTap: () =>
-                    Navigator.pushReplacementNamed(context, homePageRoute),
-                hoverColor: Colors.transparent,
-                child: Row(
-                  children: [
-                    CircleAvatar(
+            kIsWeb
+                ? Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(50),
+                      color: textFeildColor,
+                    ),
+                    child: InkWell(
+                      onTap: () => Navigator.pushReplacementNamed(
+                          context, homePageRoute),
+                      hoverColor: Colors.transparent,
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                              backgroundColor: Colors.red,
+                              child: Logo(Logos.reddit,
+                                  color: Colors.white, size: 30)),
+                          const SizedBox(width: 10),
+                          MediaQuery.of(context).size.width < 940
+                              ? const SizedBox(width: 0)
+                              : const Text('reddit'),
+                        ],
+                      ),
+                    ),
+                  )
+                : InkWell(
+                    onTap: () =>
+                        Navigator.pushReplacementNamed(context, homePageRoute),
+                    hoverColor: Colors.transparent,
+                    child: CircleAvatar(
                         backgroundColor: Colors.red,
                         child:
                             Logo(Logos.reddit, color: Colors.white, size: 30)),
-                    const SizedBox(width: 10),
-                    MediaQuery.of(context).size.width < 940
-                        ? const SizedBox(width: 0)
-                        : const Text('reddit'),
-                  ],
-                ),
-              ),
-            ),
+                  ),
           ],
           actions: [
             FloatingSearchBarAction.searchToClear(),
@@ -212,11 +227,28 @@ class _SearchWebState extends State<SearchWeb> {
                                     if (_searchHistoryId[
                                             _searchHistory.indexOf(term)] ==
                                         '') {
-                                      BlocProvider.of<SearchCubit>(context)
+                                      BlocProvider.of<SearchPostsCubit>(context)
                                           .searchPosts(
                                               selectedTerm ?? "", 0, 0);
+                                      BlocProvider.of<SearchCommentsCubit>(
+                                              context)
+                                          .searchComments(selectedTerm ?? "");
+                                      BlocProvider.of<SearchCommunitiesCubit>(
+                                              context)
+                                          .searchCommunities(
+                                              selectedTerm ?? "");
+                                      BlocProvider.of<SearchPeopleCubit>(
+                                              context)
+                                          .searchPeople(selectedTerm ?? "");
                                     } else {
                                       //TODO: if the id isn't an empty string navigate to the page of the user or the subreddit
+                                      if (selectedTerm?[0] == 'u') {
+                                        //user
+
+                                      } else if (selectedTerm?[0] == 'r') {
+                                        //subreddit
+
+                                      }
                                     }
                                     _searchBarController.close();
                                   });
@@ -369,26 +401,32 @@ class _SearchWebState extends State<SearchWeb> {
                 selectedTerm = query;
                 addSearchTerm(query, "");
               });
-              BlocProvider.of<SearchCubit>(context)
+              BlocProvider.of<SearchPostsCubit>(context)
                   .searchPosts(selectedTerm ?? "", 0, 0);
+              BlocProvider.of<SearchCommentsCubit>(context)
+                  .searchComments(selectedTerm ?? "");
+              BlocProvider.of<SearchCommunitiesCubit>(context)
+                  .searchCommunities(selectedTerm ?? "");
+              BlocProvider.of<SearchPeopleCubit>(context)
+                  .searchPeople(selectedTerm ?? "");
             }
             _searchBarController.close();
           },
-          // body: FloatingSearchBarScrollNotifier(
-          //   child: SearchTabs(
-          //     searchTerm: selectedTerm,
-          //   ),
-          // ),
-          body: BlocBuilder<SearchCubit, SearchState>(
-            builder: (context, state) {
-              debugPrint("build the search page");
-              return FloatingSearchBarScrollNotifier(
-                child: SearchTabs(
-                  searchTerm: selectedTerm,
-                ),
-              );
-            },
+          body: FloatingSearchBarScrollNotifier(
+            child: SearchTabs(
+              searchTerm: selectedTerm,
+            ),
           ),
+          // body: BlocBuilder<SearchCubit, SearchState>(
+          //   builder: (context, state) {
+          //     debugPrint("build the search page");
+          //     return FloatingSearchBarScrollNotifier(
+          //       child: SearchTabs(
+          //         searchTerm: selectedTerm,
+          //       ),
+          //     );
+          //   },
+          // ),
         ),
       ),
     );

@@ -3,6 +3,7 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:reddit/business_logic/cubit/cubit/search/cubit/search_posts_cubit.dart';
 import 'package:reddit/constants/colors.dart';
 import 'package:reddit/constants/strings.dart';
 
@@ -167,7 +168,7 @@ class _PostsWebSearchState extends State<PostsWebSearch> {
   void initState() {
     super.initState();
     if (searchTerm != null && searchTerm!.isNotEmpty) {
-      BlocProvider.of<SearchCubit>(context)
+      BlocProvider.of<SearchPostsCubit>(context)
           .searchPosts(searchTerm ?? "", sortIndex, timeIndex);
     }
   }
@@ -204,7 +205,7 @@ class _PostsWebSearchState extends State<PostsWebSearch> {
                           sortOption = "Most Comments";
                         }
                         sortIndex = value as int;
-                        BlocProvider.of<SearchCubit>(context).searchPosts(
+                        BlocProvider.of<SearchPostsCubit>(context).searchPosts(
                             searchTerm ?? "", sortIndex, timeIndex);
                       },
                       child: Container(
@@ -249,7 +250,7 @@ class _PostsWebSearchState extends State<PostsWebSearch> {
                           sortTime = "Past Hour";
                         }
                         timeIndex = value as int;
-                        BlocProvider.of<SearchCubit>(context).searchPosts(
+                        BlocProvider.of<SearchPostsCubit>(context).searchPosts(
                             searchTerm ?? "", sortIndex, timeIndex);
                       },
                       child: Container(
@@ -281,7 +282,7 @@ class _PostsWebSearchState extends State<PostsWebSearch> {
           },
         ),
       ),
-      body: BlocBuilder<SearchCubit, SearchState>(
+      body: BlocBuilder<SearchPostsCubit, SearchPostsState>(
         builder: (context, state) {
           if (state is GetSearchPosts) {
             return ListView.builder(
@@ -392,8 +393,8 @@ class _PostsWebSearchState extends State<PostsWebSearch> {
                           child: state.posts[index].images!.isEmpty
                               ? null
                               : Image.network(
-                                  // imagesUrl+state.posts[index].images![0],
-                                  'https://i.redd.it/n0gyalhf192a1.jpg',
+                                  imagesUrl+state.posts[index].images![0],
+                                  // 'https://i.redd.it/n0gyalhf192a1.jpg',
                                   height: 200,
                                   width: 200,
                                   fit: BoxFit.fill,
@@ -406,8 +407,9 @@ class _PostsWebSearchState extends State<PostsWebSearch> {
               },
             );
           }
-          return const Center(
-            child: CircularProgressIndicator.adaptive(),
+          return  const Text(
+            "Start Serching ...",
+            style: TextStyle(color: Colors.white, fontSize: 20),
           );
         },
       ),

@@ -215,10 +215,71 @@ class SearchRepo {
   Future<List<SearchCommentsModel>> searchComments(String word) async {
     Response res = await searchWebService.searchComments(word);
     if (res.statusCode == 200) {
+      debugPrint("res.data: ${res.data}");
       return List<SearchCommentsModel>.from(
           res.data.map((x) => SearchCommentsModel.fromJson(x)));
     } else {
       return [];
+    }
+  }
+
+  /// [subredditId] : [String] The id of the subreddit.
+  ///
+  /// This function makes the request to the server to join the subreddit.
+  /// This function calls the function [SearchWebService.joinSubreddit] which makes the request to the server.
+  /// Returns [bool] that indicates if the user joined the subreddit or not.
+  Future<bool> joinSubreddit(String subredditId) async {
+    Response res = await searchWebService.joinSubreddit(subredditId);
+    if (res.statusCode == 201) {
+      return true;
+    } else {
+      debugPrint(res.statusCode.toString());
+      return false;
+    }
+  }
+
+  /// [subredditId] : [String] The id of the subreddit.
+  ///
+  /// This function makes the request to the server to leave the subreddit.
+  /// This function calls the function [SearchWebService.leaveSubreddit] which makes the request to the server.
+  /// Returns [bool] that indicates if the user left the subreddit or not.
+  Future<bool> leaveSubreddit(String subredditId) async {
+    Response res = await searchWebService.leaveSubreddit(subredditId);
+    if (res.statusCode == 201) {
+      return true;
+    } else {
+      debugPrint(res.statusCode.toString());
+      return false;
+    }
+  }
+
+  /// [userId] : the id of user to be followed
+  /// 
+  /// This function makes the request to the server to follow the user.
+  /// This function calls the function [SearchWebService.follow] which makes the request to the server.
+  /// Returns [bool] that indicates if the user followed the user or not.
+  Future<bool> follow(String userId) async {
+    Response res = await searchWebService.follow(userId);
+    if (res.statusCode == 201) {
+      return true;
+    } else {
+      debugPrint(res.statusCode.toString());
+      return false;
+    }
+  }
+
+  /// [userId] : the id of user to be unfollowed
+  /// 
+  /// This function makes the request to the server to unfollow the user.
+  /// This function calls the function [SearchWebService.unfollow] which makes the request to the server.
+  /// Returns [bool] that indicates if the user unfollowed the user or not.
+  Future<bool> unfollow(String userId) async {
+    Response res = await searchWebService.unfollow(userId);
+    if (res.statusCode == 201) {
+      return true;
+    } else {
+      debugPrint(res.statusCode.toString());
+      return false;
     }
   }
 }

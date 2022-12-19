@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:reddit/business_logic/cubit/cubit/search/cubit/search_comments_cubit.dart';
+import 'package:reddit/business_logic/cubit/cubit/search/cubit/search_communities_cubit.dart';
 import 'package:reddit/business_logic/cubit/messages/messages_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_home_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_my_profile_cubit.dart';
@@ -24,6 +26,8 @@ import 'package:reddit/presentation/screens/modtools/web/unmoderated.dart';
 // import 'package:reddit/presentation/screens/profile/other_user_orfile_screen.dart';
 import 'package:reddit/presentation/screens/search/search_web.dart';
 import 'business_logic/cubit/cubit/search/cubit/search_cubit.dart';
+import 'business_logic/cubit/cubit/search/cubit/search_people_cubit.dart';
+import 'business_logic/cubit/cubit/search/cubit/search_posts_cubit.dart';
 import 'business_logic/cubit/feed_settings_cubit.dart';
 import 'data/repository/search_repo.dart';
 import 'data/web_services/search_web_service.dart';
@@ -127,7 +131,13 @@ class AppRouter {
   late UserProfileWebServices userProfileWebServices;
   late UserProfileRepository userProfileRepository;
   late UserProfileCubit userProfileCubit;
+
   late SearchCubit searchCubit;
+  late SearchPostsCubit searchPostsCubit;
+  late SearchCommentsCubit searchCommentsCubit;
+  late SearchCommunitiesCubit searchCommunitiesCubit;
+  late SearchPeopleCubit searchUsersCubit;
+
   late MessagesWebServices messagesWebServices;
   late MessagesRepository messagesRepository;
   late MessagesCubit messagesCubit;
@@ -169,6 +179,11 @@ class AppRouter {
     userProfileRepository = UserProfileRepository(userProfileWebServices);
     userProfileCubit = UserProfileCubit(userProfileRepository);
     searchCubit = SearchCubit(SearchRepo(SearchWebService()));
+    searchPostsCubit = SearchPostsCubit(SearchRepo(SearchWebService()));
+    searchCommentsCubit = SearchCommentsCubit(SearchRepo(SearchWebService()));
+    searchCommunitiesCubit =
+        SearchCommunitiesCubit(SearchRepo(SearchWebService()));
+    searchUsersCubit = SearchPeopleCubit(SearchRepo(SearchWebService()));
 
     messagesWebServices = MessagesWebServices();
     messagesRepository = MessagesRepository(messagesWebServices);
@@ -486,6 +501,18 @@ class AppRouter {
                   providers: [
                     BlocProvider(
                       create: (context) => searchCubit,
+                    ),
+                    BlocProvider(
+                      create: (context) => searchPostsCubit,
+                    ),
+                    BlocProvider(
+                      create: (context) => searchCommentsCubit,
+                    ),
+                    BlocProvider(
+                      create: (context) => searchUsersCubit,
+                    ),
+                    BlocProvider(
+                      create: (context) => searchCommunitiesCubit,
                     ),
                   ],
                   child: const SearchWeb(),
