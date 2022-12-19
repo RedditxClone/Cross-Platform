@@ -77,17 +77,16 @@ class AuthCubit extends Cubit<AuthState> {
   /// This function calls the function [AuthRepo.updateImageWeb] which makes the request to the server.
   void changeProfilephotoWeb(Uint8List fileAsBytes) {
     if (isClosed) return;
-    authRepo
-        .updateImageWeb('profilephoto', fileAsBytes, UserData.user!.token)
-        .then((image) {
+    authRepo.updateImageWeb('profile', fileAsBytes).then((image) {
       debugPrint("image from cubit: $image");
       emit(SignedInWithProfilePhoto(image));
     });
   }
 
-  void changeProfilephotoMob(File img) {
+  void changeProfilephotoMob(String img) {
     if (isClosed) return;
-    settingsRepository.updateImage('profilephoto', img).then((image) {
+    settingsRepository.updateImage('profile', img).then((image) {
+      UserData.user!.profilePic = UserData.profileSettings!.profile = image;
       emit(ChooseProfileImageLoginChanged(image));
     });
   }

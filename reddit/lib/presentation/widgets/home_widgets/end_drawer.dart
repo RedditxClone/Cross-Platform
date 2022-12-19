@@ -172,7 +172,16 @@ class EndDrawer extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ListTile(
-                leading: const Icon(Icons.person),
+                leading: UserData.user!.profilePic == null ||
+                        UserData.user!.profilePic == ''
+                    ? const CircleAvatar(
+                        radius: 17,
+                        backgroundColor: Colors.grey,
+                        child: Icon(Icons.person))
+                    : CircleAvatar(
+                        radius: 17,
+                        backgroundImage:
+                            NetworkImage(UserData.user!.profilePic!)),
                 title: const Text("My profile"),
                 onTap: () => Navigator.of(context).pushNamed(profilePageRoute),
               ),
@@ -245,7 +254,8 @@ class EndDrawer extends StatelessWidget {
                     FontAwesomeIcons.cakeCandles,
                     color: Colors.blue,
                   ),
-                  title: Text("$_redditAge d"),
+                  title: Text(
+                      "${DateTime.now().difference(DateTime.parse(UserData.user!.createdAt!)).inDays} d"),
                   subtitle: const Text("Reddit age"),
                 ),
               ),
@@ -467,7 +477,7 @@ class EndDrawer extends StatelessWidget {
       imgProfile = imageTemp;
       // BlocProvider.of<AuthCubit>(context).changeProfilephotoMob(imageTemp);
 
-      BlocProvider.of<EndDrawerCubit>(context).changeProfilephoto(imageTemp);
+      BlocProvider.of<EndDrawerCubit>(context).changeProfilephoto(image.path);
     } on PlatformException catch (e) {
       displayMsg(context, Colors.red, 'Error', 'Could not load image');
     }

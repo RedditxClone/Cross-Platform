@@ -65,25 +65,8 @@ class _HomePageWebState extends State<HomePageWeb> {
         Navigator.of(context).pop();
         showDialogToChooseProfilePicture();
       } else {
-        SnackBar(
-          content: Row(
-            children: const [
-              Icon(
-                Icons.error,
-                color: Colors.red,
-              ),
-              SizedBox(
-                width: 10,
-              ),
-              Text(
-                'Error in storing your data please try again',
-                style: TextStyle(
-                  color: Colors.red,
-                ),
-              ),
-            ],
-          ),
-        );
+        displayMsg(
+            context, Colors.red, 'Error in storing your data please try again');
       }
     });
     debugPrint("interests added");
@@ -95,52 +78,12 @@ class _HomePageWebState extends State<HomePageWeb> {
     authRepo.genderInSignup(gender, UserData.user!.token).then((updated) {
       if (updated) {
         debugPrint("success gender");
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: const [
-                Icon(
-                  Icons.reddit,
-                  color: Colors.green,
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                Text(
-                  'Data add successfully',
-                  style: TextStyle(
-                    color: Colors.black,
-                    backgroundColor: Colors.white,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
+        displayMsg(context, Colors.blue, ' Logged in successfully');
         Navigator.of(context).pop();
         showDialogToChooseInterests();
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: const [
-                Icon(
-                  Icons.error,
-                  color: Colors.red,
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                Text(
-                  'Error in storing your data please try again',
-                  style: TextStyle(
-                    color: Colors.red,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
+        displayMsg(context, Colors.red,
+            ' Error in storing your data please try again');
       }
     });
   }
@@ -159,7 +102,7 @@ class _HomePageWebState extends State<HomePageWeb> {
             data: ThemeData.light(),
             child: AlertDialog(
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(40),
+                borderRadius: BorderRadius.circular(20),
               ),
               icon: const Icon(
                 Icons.reddit,
@@ -330,7 +273,7 @@ class _HomePageWebState extends State<HomePageWeb> {
             data: ThemeData.light(),
             child: AlertDialog(
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(40),
+                borderRadius: BorderRadius.circular(20),
               ),
               icon: AppBar(
                 elevation: 0,
@@ -454,7 +397,7 @@ class _HomePageWebState extends State<HomePageWeb> {
                               shape: MaterialStatePropertyAll(
                                 RoundedRectangleBorder(
                                   borderRadius: BorderRadius.all(
-                                    Radius.circular(25),
+                                    Radius.circular(30),
                                   ),
                                 ),
                               ),
@@ -520,7 +463,7 @@ class _HomePageWebState extends State<HomePageWeb> {
       imgCover = await imagePicker.readAsBytes();
       // BlocProvider.of<AuthCubit>(context)
       //     .changeProfilephotoWeb(UserData.user, imgCover!);
-      authRepo.updateImageWeb('profilephoto', imgCover!, UserData.user!.token);
+      authRepo.updateImageWeb('profile', imgCover!);
       displayMsg(context, Colors.blue, 'Changes Saved');
     } on PlatformException catch (e) {
       debugPrint("Error in pickImageWeb: ${e.toString()}");
@@ -538,7 +481,7 @@ class _HomePageWebState extends State<HomePageWeb> {
             data: ThemeData.light(),
             child: AlertDialog(
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(40),
+                borderRadius: BorderRadius.circular(20),
               ),
               icon: AppBar(
                 elevation: 0,
@@ -620,7 +563,9 @@ class _HomePageWebState extends State<HomePageWeb> {
                             shape: BoxShape.circle,
                           ),
                           child: imgCover != null
-                              ? ClipOval(
+                              ? CircleAvatar(
+                                  radius: 250,
+                                  backgroundImage: MemoryImage(imgCover!),
                                   child: InkWell(
                                     onTap: () {
                                       pickImageWeb(ImageSource.gallery)
@@ -636,42 +581,29 @@ class _HomePageWebState extends State<HomePageWeb> {
                                         }
                                       });
                                     },
-                                    child: Image.memory(
-                                      imgCover!,
-                                      fit: BoxFit.fill,
-                                    ),
                                   ),
                                 )
-                              : ElevatedButton(
-                                  onPressed: () {
-                                    pickImageWeb(ImageSource.gallery)
-                                        .then((value) {
-                                      if (value) {
-                                        setState(() {
-                                          BlocProvider.of<AuthCubit>(context)
-                                              .changeProfilephotoWeb(imgCover!);
-                                          displayMsg(context, Colors.blue,
-                                              'Changes Saved');
-                                        });
-                                      }
-                                    });
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(80.0),
-                                    ),
-                                  ),
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 20, horizontal: 5),
-                                    child: const Icon(
-                                      Icons.person,
-                                      size: 40,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ),
+                              : CircleAvatar(
+                                  backgroundColor: Colors.grey,
+                                  radius: 250,
+                                  child: InkWell(
+                                    onTap: () {
+                                      pickImageWeb(ImageSource.gallery)
+                                          .then((value) {
+                                        if (value) {
+                                          setState(() {
+                                            BlocProvider.of<AuthCubit>(context)
+                                                .changeProfilephotoWeb(
+                                                    imgCover!);
+                                            displayMsg(context, Colors.blue,
+                                                'Changes Saved');
+                                          });
+                                        }
+                                      });
+                                    },
+                                    child: const Icon(Icons.person,
+                                        size: 150, color: Colors.black),
+                                  )),
                         ),
                       ],
                     ),
