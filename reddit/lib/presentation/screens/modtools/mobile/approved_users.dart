@@ -145,7 +145,10 @@ class _ApprovedUsersScreenState extends State<ApprovedUsersScreen> {
             child: Column(
               children: [
                 TextButton(
-                    onPressed: () => _sendMessageBottomSheet(ctx, index),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      _sendMessageBottomSheet(ctx, index);
+                    },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -277,7 +280,8 @@ class _ApprovedUsersScreenState extends State<ApprovedUsersScreen> {
           if (state is MessageSent) {
             subjectController.text = '';
             messageController.text = '';
-            Navigator.pushNamed(context, approvedRoute);
+            Navigator.pop(context);
+            Navigator.pushReplacementNamed(context, approvedRoute);
             displayMsg(context, Colors.green, 'Message sent successfully');
           } else if (state is EmptySubject) {
             displayMsg(context, Colors.red, 'Please enter a subject');
