@@ -59,14 +59,8 @@ Link to reported content: https://www.reddit.com/r/redditx_/comments/y1e2vt
 This is an automated message; responses will not be received by Reddit admins.
 ''';
 
-  Widget createAllMassageContainer(
-      String massageId,
-      String userId,
-      String massageTitle,
-      String userName,
-      String time,
-      String massageBody,
-      Color c) {
+  Widget createAllMassageContainer(String massageId, String massageTitle,
+      String userName, String time, String massageBody, Color c) {
     return Container(
       color: const Color.fromARGB(0, 0, 0, 0),
       child: SingleChildScrollView(
@@ -265,14 +259,8 @@ This is an automated message; responses will not be received by Reddit admins.
     );
   }
 
-  Widget createSentMassageContainer(
-      String massageId,
-      String userId,
-      String massageTitle,
-      String userName,
-      String time,
-      String massageBody,
-      Color c) {
+  Widget createSentMassageContainer(String massageId, String massageTitle,
+      String userName, String time, String massageBody, Color c) {
     return Container(
       color: const Color.fromARGB(0, 0, 0, 0),
       child: SingleChildScrollView(
@@ -465,14 +453,12 @@ This is an automated message; responses will not be received by Reddit admins.
               child: Column(children: <Widget>[
                 createAllMassageContainer(
                     '1',
-                    '1',
                     'In_The_Name_Of_Allah',
                     'OmarKh2001',
                     '2 months',
                     text1,
                     const Color.fromARGB(255, 27, 26, 26)),
                 createAllMassageContainer(
-                    '2',
                     '2',
                     'In the name of God, the Most Gracious, the Most Merciful, God, there is no god but God',
                     'OKAM2001',
@@ -488,14 +474,12 @@ This is an automated message; responses will not be received by Reddit admins.
               child: Column(children: <Widget>[
                 createSentMassageContainer(
                     '1',
-                    '1',
                     'In_The_Name_Of_Allah',
                     'OmarKh2001',
                     '2 months',
                     text1,
                     const Color.fromARGB(255, 27, 26, 26)),
                 createSentMassageContainer(
-                    '2',
                     '2',
                     'In the name of God, the Most Gracious, the Most Merciful, God, there is no god but God',
                     'OKAM2001',
