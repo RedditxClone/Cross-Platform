@@ -41,9 +41,15 @@ class CommentWidget extends StatelessWidget {
     if (commentsModel == null) {
       return Container();
     }
-    return Container(
-      // height: 200,
-      // width: 200,
+    return BlocListener<AddCommentCubit, AddCommentState>(
+      bloc: addCommentCubit,
+      listener: (context, state) {
+        if (state is CommentAdded) {
+          displayMsg(context, Colors.green, "Reply added!");
+          BlocProvider.of<CommentsCubit>(context)
+              .getThingComments(commentsModel!.postId!);
+        }
+      },
       child: Column(
         children: [
           commentInfo(context),
@@ -343,8 +349,6 @@ class CommentWidget extends StatelessWidget {
                             "text": _addCommentController.text,
                           }));
                           Navigator.pop(context);
-                          BlocProvider.of<CommentsCubit>(parentContext)
-                              .getThingComments(commentsModel!.postId!);
                         },
                         child: const Text(
                           "Reply",

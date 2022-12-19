@@ -133,7 +133,17 @@ class PostsWeb extends StatelessWidget {
               displayMsg(context, Colors.green, "Post unsaved!");
             }
           },
-        )
+        ),
+        BlocListener<AddCommentCubit, AddCommentState>(
+          bloc: addCommentCubit,
+          listener: (context, state) {
+            if (state is CommentAdded) {
+              displayMsg(context, Colors.green, "Comment added!");
+              BlocProvider.of<CommentsCubit>(context)
+                  .getThingComments(postsModel!.sId!);
+            }
+          },
+        ),
       ],
       child: BlocBuilder<RemovePostCubit, RemovePostState>(
         bloc: removePostCubit,
@@ -795,8 +805,6 @@ class PostsWeb extends StatelessWidget {
                             "text": _addCommentController.text,
                           }));
                           Navigator.pop(context);
-                          BlocProvider.of<CommentsCubit>(parentContext)
-                              .getThingComments(postsModel!.sId!);
                         },
                         child: const Text(
                           "Reply",
