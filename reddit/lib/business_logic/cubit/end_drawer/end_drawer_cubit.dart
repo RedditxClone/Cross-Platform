@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/data/repository/end_drawer/end_drawer_repository.dart';
 
 part 'end_drawer_state.dart';
@@ -14,7 +15,8 @@ class EndDrawerCubit extends Cubit<EndDrawerState> {
   /// Emits sate [EndDrawerProfilePictureChanged] on successfully updating profile photo (on mobile)
   /// This function calls the function [EndDrawerRepository.updateImage] that prepares the PATCH request
   void changeProfilephoto(String img) {
-    endDrawerRepository.updateImage('profilephoto', img).then((image) {
+    endDrawerRepository.updateImage('profile', img).then((image) {
+      UserData.profileSettings!.profile = UserData.user!.profilePic = image;
       emit(EndDrawerProfilePictureChanged(image));
     });
   }

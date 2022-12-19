@@ -212,14 +212,12 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                   child: (UserData.user!.profilePic! != '')
                       ? ClipOval(
                           child: InkWell(
-                            onTap: () => chooseProfilePhotoBottomSheet(context),
-                            child: Image.network(
-                              UserData.user!.profilePic!,
-                              width: 80,
-                              height: 80,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
+                              onTap: () =>
+                                  chooseProfilePhotoBottomSheet(context),
+                              child: CircleAvatar(
+                                  radius: 40,
+                                  backgroundImage: NetworkImage(
+                                      UserData.user!.profilePic!))),
                         )
                       : ElevatedButton(
                           onPressed: () =>
@@ -379,13 +377,14 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                   print(changed);
                   BlocProvider.of<SettingsCubit>(context)
                       .updateSettings(profileSettings!, changed);
-                  // Navigator.pop(context);
                 }
+                Navigator.pop(context);
               },
               child: const Text('Save', style: TextStyle(fontSize: 20)))
         ],
       ),
-      body: BlocBuilder<SettingsCubit, SettingsState>(builder: (_, state) {
+      body:
+          BlocBuilder<SettingsCubit, SettingsState>(builder: (context, state) {
         if (state is SettingsAvailable) {
           profileSettings = state.settings;
           displayName = TextEditingController();
@@ -399,6 +398,8 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
         } else if (state is SettingsChanged) {
           print(
               'state changed, the new image is : ${UserData.user!.profilePic}');
+          UserData.user!.profilePic = state.settings.profile;
+          UserData.user!.coverPhoto = state.settings.cover;
           profileSettings = state.settings;
           displayName = TextEditingController();
           about = TextEditingController();

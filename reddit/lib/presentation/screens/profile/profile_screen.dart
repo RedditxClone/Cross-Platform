@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_my_profile_cubit.dart';
 import 'package:reddit/business_logic/cubit/settings/settings_cubit.dart';
@@ -22,6 +24,152 @@ class _ProfileScreenState extends State<ProfileScreen> {
     // TODO: implement initState
     super.initState();
     BlocProvider.of<PostsMyProfileCubit>(context).getMyProfilePosts();
+  }
+
+  /// [src] : source of the image can be(camera or gallery).
+  /// [dest] : destionation of the image can be 'cover' to change the cover photo or 'profile' to change the profile photo.
+  ///
+  /// calls the `changeCoverphoto` or `changeProfilephoto` methods inside [SettingsCubit] that Emits sate SettingsChanged on successfully updating photo.
+  ///
+  /// This function might throw an exception if the user does not allow the app to access the gallery or camera and an error message will be displayed.
+  Future pickImage(ImageSource src, String dest) async {
+    try {
+      Navigator.pop(context);
+
+      final image = await ImagePicker().pickImage(source: src);
+      if (image == null) return;
+      switch (dest) {
+        case 'cover':
+          BlocProvider.of<SettingsCubit>(context)
+              .changeCoverphoto(UserData.profileSettings!, image.path);
+          break;
+        case 'profile':
+          BlocProvider.of<SettingsCubit>(context)
+              .changeProfilephoto(UserData.profileSettings!, image.path);
+
+          break;
+        default:
+          break;
+      }
+    } on PlatformException catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  void chooseProfilePhotoBottomSheet(BuildContext ctx) {
+    showModalBottomSheet(
+        context: ctx,
+        builder: (_) {
+          return Container(
+            height: 170,
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              children: [
+                TextButton(
+                    onPressed: () => pickImage(ImageSource.camera, 'profile'),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: const [
+                        Icon(
+                          Icons.camera_alt_outlined,
+                          color: Colors.white,
+                        ),
+                        SizedBox(width: 20),
+                        Text("Camera",
+                            style: TextStyle(fontSize: 20, color: Colors.white))
+                      ],
+                    )),
+                TextButton(
+                    onPressed: () => pickImage(ImageSource.gallery, 'profile'),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: const [
+                        Icon(
+                          Icons.photo_library_outlined,
+                          color: Colors.white,
+                        ),
+                        SizedBox(width: 20),
+                        Text("Library",
+                            style: TextStyle(fontSize: 20, color: Colors.white))
+                      ],
+                    )),
+                ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.grey,
+                      backgroundColor: const Color.fromRGBO(90, 90, 90, 100),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0)),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        "Close",
+                        style: TextStyle(fontSize: 15, color: Colors.grey),
+                      ),
+                    )),
+              ],
+            ),
+          );
+        });
+  }
+
+  void chooseCoverPhotoBottomSheet(BuildContext ctx) {
+    showModalBottomSheet(
+        context: ctx,
+        builder: (_) {
+          return Container(
+            height: 170,
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              children: [
+                TextButton(
+                    onPressed: () => pickImage(ImageSource.camera, 'cover'),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: const [
+                        Icon(
+                          Icons.camera_alt_outlined,
+                          color: Colors.white,
+                        ),
+                        SizedBox(width: 20),
+                        Text("Camera",
+                            style: TextStyle(fontSize: 20, color: Colors.white))
+                      ],
+                    )),
+                TextButton(
+                    onPressed: () {
+                      pickImage(ImageSource.gallery, 'cover');
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: const [
+                        Icon(
+                          Icons.photo_library_outlined,
+                          color: Colors.white,
+                        ),
+                        SizedBox(width: 20),
+                        Text("Library",
+                            style: TextStyle(fontSize: 20, color: Colors.white))
+                      ],
+                    )),
+                ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.grey,
+                      backgroundColor: const Color.fromRGBO(90, 90, 90, 100),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0)),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        "Close",
+                        style: TextStyle(fontSize: 15, color: Colors.grey),
+                      ),
+                    )),
+              ],
+            ),
+          );
+        });
   }
 
   Widget _empty() {
@@ -48,17 +196,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
       alignment: Alignment.bottomLeft,
       children: [
         // cover photo
-        Container(
-          decoration: BoxDecoration(
-              gradient: UserData.user!.coverPhoto == ""
-                  ? const LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [Colors.redAccent, Colors.black])
-                  : null),
-          child: UserData.user!.coverPhoto != ""
-              ? Image.network(UserData.user!.coverPhoto)
-              : null,
+        InkWell(
+          onTap: () => chooseCoverPhotoBottomSheet(context),
+          child: Container(
+            decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Colors.redAccent, Colors.black])),
+            child: UserData.user!.coverPhoto != ""
+                ? BlocBuilder<SettingsCubit, SettingsState>(
+                    builder: (context, state) {
+                      if (state is SettingsChanged) {
+                        UserData.user!.coverPhoto = state.settings.cover;
+                        return Image.network(UserData.user!.coverPhoto,
+                            fit: BoxFit.cover);
+                      }
+                      return Image.network(UserData.user!.coverPhoto,
+                          fit: BoxFit.cover);
+                    },
+                  )
+                : null,
+          ),
         ),
         // add social links
         Padding(
@@ -71,16 +230,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  UserData.user!.profilePic == ''
-                      ? const Icon(
-                          Icons.person,
-                          size: 50,
-                        )
-                      : CircleAvatar(
-                          radius: 50,
-                          backgroundImage: NetworkImage(
-                            UserData.user!.profilePic!,
-                          )),
+                  InkWell(
+                    onTap: () => chooseProfilePhotoBottomSheet(context),
+                    child: UserData.user!.profilePic == ''
+                        ? const Icon(
+                            Icons.person,
+                            size: 50,
+                          )
+                        : BlocBuilder<SettingsCubit, SettingsState>(
+                            builder: (context, state) {
+                              if (state is SettingsChanged) {
+                                UserData.user!.profilePic =
+                                    state.settings.profile;
+                                return CircleAvatar(
+                                    radius: 50,
+                                    backgroundImage: NetworkImage(
+                                      UserData.user!.profilePic!,
+                                    ));
+                              }
+                              return CircleAvatar(
+                                  radius: 50,
+                                  backgroundImage: NetworkImage(
+                                    UserData.user!.profilePic!,
+                                  ));
+                            },
+                          ),
+                  ),
                   SizedBox(
                     width: 60,
                     child: OutlinedButton(
@@ -189,11 +364,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: BlocBuilder<PostsMyProfileCubit, PostsMyProfileState>(
         builder: (context, state) {
           if (state is PostsLoaded) {
+            if (state.posts!.isEmpty) {
+              return Padding(
+                padding: const EdgeInsets.only(top: 100),
+                child: _empty(),
+              );
+            }
             return Column(children: [
               ...state.posts!.map((e) => PostsWeb(postsModel: e)).toList()
             ]);
           }
-          return Container();
+          return Padding(
+            padding: const EdgeInsets.only(top: 100),
+            child: _empty(),
+          );
         },
       ),
     );

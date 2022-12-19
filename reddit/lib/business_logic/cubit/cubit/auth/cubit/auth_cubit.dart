@@ -87,7 +87,8 @@ class AuthCubit extends Cubit<AuthState> {
 
   void changeProfilephotoMob(String img) {
     if (isClosed) return;
-    settingsRepository.updateImage('profilephoto', img).then((image) {
+    settingsRepository.updateImage('profile', img).then((image) {
+      UserData.user!.profilePic = UserData.profileSettings!.profile = image;
       emit(ChooseProfileImageLoginChanged(image));
     });
   }

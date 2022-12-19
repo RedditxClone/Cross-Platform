@@ -264,6 +264,7 @@ class AppRouter {
           builder: (_) => MultiBlocProvider(
             providers: [
               BlocProvider.value(value: userProfileCubit),
+              BlocProvider.value(value: settingsCubit),
               BlocProvider.value(value: messagesCubit_profile),
             ],
             child: kIsWeb

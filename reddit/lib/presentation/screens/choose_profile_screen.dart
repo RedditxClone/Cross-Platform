@@ -214,15 +214,10 @@ class ChooseProfileImgAndroidState extends State<ChooseProfileImgAndroid> {
                       builder: (context, state) {
                     if (state is ChooseProfileImageLoginChanged) {
                       UserData.profileSettings!.profile = state.url;
-                      return ClipOval(
-                        child: InkWell(
-                          onTap: () => chooseProfilePhotoBottomSheet(context),
-                          child: Image.network(
-                            UserData.profileSettings!.profile,
-                            fit: BoxFit.fill,
-                          ),
-                        ),
-                      );
+                      return CircleAvatar(
+                          radius: 120,
+                          backgroundImage:
+                              NetworkImage(UserData.profileSettings!.profile));
                     } else {
                       return ElevatedButton(
                           onPressed: () =>
@@ -238,7 +233,7 @@ class ChooseProfileImgAndroidState extends State<ChooseProfileImgAndroid> {
                                 vertical: 20, horizontal: 5),
                             child: const Icon(
                               Icons.person,
-                              size: 40,
+                              size: 120,
                               color: Colors.black,
                             ),
                           ));
@@ -254,7 +249,7 @@ class ChooseProfileImgAndroidState extends State<ChooseProfileImgAndroid> {
               color: Theme.of(context).scaffoldBackgroundColor,
               child: ElevatedButton(
                 onPressed: () {
-                  if (UserData.profileSettings!.profile != '') {
+                  if (UserData.user!.profilePic != '') {
                     Navigator.of(context).pushReplacementNamed(
                       homePageRoute,
                     );
