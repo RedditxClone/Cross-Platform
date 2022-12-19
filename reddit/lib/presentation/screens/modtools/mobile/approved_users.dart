@@ -254,7 +254,9 @@ class _ApprovedUsersScreenState extends State<ApprovedUsersScreen> {
                     ? '${date.inDays} days ago'
                     : date.inMinutes > 60
                         ? '${date.inHours} hours ago'
-                        : '${date.inMinutes + 1} mins ago',
+                        : date.inSeconds > 60
+                            ? '${date.inMinutes} mins ago'
+                            : '${date.inSeconds + 1} secs ago',
                 style: const TextStyle(color: Colors.grey, fontSize: 12),
               ),
             ],
