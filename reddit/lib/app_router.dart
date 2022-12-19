@@ -81,7 +81,7 @@ import 'package:reddit/presentation/screens/login_screen.dart';
 import 'package:reddit/presentation/screens/signup_page.dart';
 import 'package:reddit/presentation/screens/signup_page2.dart';
 import 'package:reddit/presentation/screens/signup_screen.dart';
-import 'package:reddit/presentation/screens/all_inbox_screen.dart';
+import 'package:reddit/presentation/screens/message_screen.dart';
 
 class AppRouter {
   // platform
@@ -451,8 +451,8 @@ class AppRouter {
       //---------------------------------------------------------------------------
       //------------------------------InboxScreens---------------------------------
       //---------------------------------------------------------------------------
-      case allInboxRoute:
-        return MaterialPageRoute(builder: (_) => const AllInboxScreen());
+      case messageScreenRoute:
+        return MaterialPageRoute(builder: (_) => const MessageScreen());
       //---------------------------------------------------------------------------
       default:
         return null;

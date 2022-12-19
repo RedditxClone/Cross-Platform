@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class AllInboxScreen extends StatefulWidget {
-  const AllInboxScreen({super.key});
+class MessageScreen extends StatefulWidget {
+  const MessageScreen({super.key});
 
   @override
-  State<AllInboxScreen> createState() => _AllInboxScreenState();
+  State<MessageScreen> createState() => _MessageScreenState();
 }
 
-class _AllInboxScreenState extends State<AllInboxScreen> {
+class _MessageScreenState extends State<MessageScreen> {
   String text1 =
       '''Thanks for submitting a report to Reddit. Your report and the related content have been processed through our anti-abuse systems for review. It has been determined that the reported content does not violate Reddit’s Content Policy.
 
