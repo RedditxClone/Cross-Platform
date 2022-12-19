@@ -7,7 +7,8 @@ import 'package:reddit/presentation/widgets/comments/recursive_comment_with_chil
 
 class CommentsWithChildrenInit extends StatelessWidget {
   Comments? commentsModel;
-  CommentsWithChildrenInit({this.commentsModel, super.key});
+  String? subredditID;
+  CommentsWithChildrenInit({this.commentsModel, this.subredditID, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +16,10 @@ class CommentsWithChildrenInit extends StatelessWidget {
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5), color: defaultSecondaryColor),
       margin: const EdgeInsets.only(bottom: 13),
-      child: RecursiveCommentWithChildren(commentsModel: commentsModel),
+      child: RecursiveCommentWithChildren(
+        commentsModel: commentsModel,
+        subredditID: subredditID,
+      ),
     );
   }
 }

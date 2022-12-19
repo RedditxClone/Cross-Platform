@@ -8,7 +8,9 @@ import 'package:reddit/presentation/widgets/comments/comment_widget.dart';
 
 class RecursiveCommentWithChildren extends StatelessWidget {
   Comments? commentsModel;
-  RecursiveCommentWithChildren({this.commentsModel, super.key});
+  String? subredditID;
+  RecursiveCommentWithChildren(
+      {this.commentsModel, this.subredditID, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +27,7 @@ class RecursiveCommentWithChildren extends StatelessWidget {
               Expanded(
                 child: CommentWidget(
                   commentsModel: commentsModel,
+                  subredditID: subredditID,
                 ),
               ),
             ],
@@ -48,7 +51,9 @@ class RecursiveCommentWithChildren extends StatelessWidget {
                                           color: Colors.grey.shade600,
                                           width: 1))),
                               child: RecursiveCommentWithChildren(
-                                  commentsModel: e),
+                                commentsModel: e,
+                                subredditID: subredditID,
+                              ),
                             ),
                           )
                         ],

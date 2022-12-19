@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:reddit/business_logic/cubit/comments/add_comment_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/media_index_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/post_actions_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/remove_post_cubit.dart';
@@ -11,10 +12,14 @@ import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/data/model/auth_model.dart';
+import 'package:reddit/data/model/comments/comment_submit.dart';
+import 'package:reddit/data/model/post_model.dart';
 import 'package:reddit/data/model/posts/posts_model.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:reddit/data/repository/comments/comments_repository.dart';
 import 'package:reddit/data/repository/posts/post_actions_repository.dart';
+import 'package:reddit/data/web_services/comments/comments_web_services.dart';
 import 'package:reddit/data/web_services/posts/post_actions_web_services.dart';
 
 class PostsWeb extends StatelessWidget {
@@ -28,6 +33,9 @@ class PostsWeb extends StatelessWidget {
   late PostActionsCubit postActionsCubit;
   late RemovePostCubit removePostCubit;
   late SaveCubit saveCubit;
+  late CommentsRepository commentsRepository;
+  late AddCommentCubit addCommentCubit;
+  late TextEditingController _addCommentController;
   final String _markdownData = """
  # Minimal Markdown Test
  ---
@@ -55,6 +63,9 @@ class PostsWeb extends StatelessWidget {
     postActionsCubit = PostActionsCubit(postActionsRepository);
     removePostCubit = RemovePostCubit(postActionsRepository);
     saveCubit = SaveCubit(postActionsRepository);
+    commentsRepository = CommentsRepository(CommentsWebServices());
+    addCommentCubit = AddCommentCubit(commentsRepository);
+    _addCommentController = TextEditingController();
   }
   @override
   Widget build(BuildContext context) {
@@ -173,7 +184,10 @@ class PostsWeb extends StatelessWidget {
                             }
                           }
                           Navigator.of(context).pushNamed(postPageRoute,
-                              arguments: {"post": postsModel});
+                              arguments: {
+                                "post": postsModel,
+                                "subredditID": postsModel!.subreddit!.id
+                              });
                         },
                         child: postText(),
                       ),
@@ -696,11 +710,14 @@ class PostsWeb extends StatelessWidget {
         if (insidePostPage != null) {
           if (insidePostPage == true) {
             // Add a comment function
+            _addCommentBottomSheet(context);
             return;
           }
         }
-        Navigator.of(context)
-            .pushNamed(postPageRoute, arguments: {"post": postsModel});
+        Navigator.of(context).pushNamed(postPageRoute, arguments: {
+          "post": postsModel,
+          "subredditID": postsModel!.subreddit!.id
+        });
       },
       child: Row(
         children: [
@@ -710,6 +727,88 @@ class PostsWeb extends StatelessWidget {
               style: const TextStyle(fontSize: 16)),
         ],
       ),
+    );
+  }
+
+  void _addCommentBottomSheet(context) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: MediaQuery.of(context).viewInsets,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+              color: Colors.grey.shade900,
+            ),
+            // height: 500,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(height: 20),
+                TextField(
+                  decoration: InputDecoration(
+                    hintText: 'Add a comment',
+                    border: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                            width: 0, color: Colors.transparent),
+                        borderRadius: BorderRadius.circular(5.0)),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide:
+                          const BorderSide(width: 0, color: Colors.transparent),
+                      borderRadius: BorderRadius.circular(5.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                            width: 0, color: Colors.transparent),
+                        borderRadius: BorderRadius.circular(5.0)),
+                    // filled: true,
+                    // fillColor: Colors.grey.shade800,
+                  ),
+                  autofocus: true,
+                  controller: _addCommentController,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(30)),
+                        color: Colors.deepPurpleAccent.shade100,
+                      ),
+                      height: 33,
+                      child: TextButton(
+                        onPressed: () {
+                          addCommentCubit.addComment(CommentSubmit.fromJson({
+                            "parentId": postsModel!.sId,
+                            "subredditId": postsModel!.subreddit!.id,
+                            "postId": postsModel!.sId,
+                            "text": _addCommentController.text,
+                          }));
+                        },
+                        child: const Text(
+                          "Reply",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                  ],
+                ),
+                const SizedBox(height: 10),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 

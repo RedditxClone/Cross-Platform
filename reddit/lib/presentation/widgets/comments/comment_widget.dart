@@ -5,13 +5,17 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:reddit/business_logic/cubit/comments/add_comment_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/vote_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/data/model/comments/comment_model.dart';
+import 'package:reddit/data/model/comments/comment_submit.dart';
+import 'package:reddit/data/repository/comments/comments_repository.dart';
 import 'package:reddit/data/repository/posts/post_actions_repository.dart';
+import 'package:reddit/data/web_services/comments/comments_web_services.dart';
 import 'package:reddit/data/web_services/posts/post_actions_web_services.dart';
 
 class CommentWidget extends StatelessWidget {
@@ -19,10 +23,15 @@ class CommentWidget extends StatelessWidget {
   late Responsive responsive;
   late PostActionsRepository postActionsRepository;
   late VoteCubit voteCubit;
+  late CommentsRepository commentsRepository;
+  late AddCommentCubit addCommentCubit;
   late TextEditingController _addCommentController;
-  CommentWidget({this.commentsModel, super.key}) {
+  String? subredditID;
+  CommentWidget({this.commentsModel, this.subredditID, super.key}) {
     postActionsRepository = PostActionsRepository(PostActionsWebServices());
     voteCubit = VoteCubit(postActionsRepository);
+    commentsRepository = CommentsRepository(CommentsWebServices());
+    addCommentCubit = AddCommentCubit(commentsRepository);
     _addCommentController = TextEditingController();
   }
   @override
@@ -325,7 +334,14 @@ class CommentWidget extends StatelessWidget {
                       ),
                       height: 33,
                       child: TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          addCommentCubit.addComment(CommentSubmit.fromJson({
+                            "parentId": commentsModel!.sId,
+                            "subredditId": subredditID,
+                            "postId": commentsModel!.postId,
+                            "text": _addCommentController.text,
+                          }));
+                        },
                         child: const Text(
                           "Reply",
                           style: TextStyle(color: Colors.white),

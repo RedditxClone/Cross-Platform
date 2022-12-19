@@ -8,6 +8,8 @@ class Comments {
   String? postId;
   User? user;
   String? voteType;
+  String? type;
+  String? createdDate;
   List<Comments>? children;
 
   Comments(
@@ -20,6 +22,8 @@ class Comments {
       this.postId,
       this.user,
       this.voteType,
+      this.type,
+      this.createdDate,
       this.children});
 
   Comments.fromJson(Map<String, dynamic> json) {
@@ -32,6 +36,8 @@ class Comments {
     postId = json['postId'];
     user = json['user'] != null ? new User.fromJson(json['user']) : null;
     voteType = json['voteType'];
+    type = json['type'];
+    createdDate = json['createdDate'];
     if (json['children'] != null) {
       children = <Comments>[];
       json['children'].forEach((v) {
@@ -49,6 +55,8 @@ class Comments {
     data['spammedBy'] = this.spammedBy;
     data['spammedAt'] = this.spammedAt;
     data['postId'] = this.postId;
+    data['type'] = this.type;
+    data['createdDate'] = this.createdDate;
     if (this.user != null) {
       data['user'] = this.user!.toJson();
     }

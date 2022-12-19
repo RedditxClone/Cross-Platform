@@ -47,4 +47,37 @@ class CommentsWebServices {
       return [];
     }
   }
+
+  /// `Returns` the new comment.
+  /// This function performs `POST` request to the endpoint `comment/submit` to submit a new comment.
+  Future<dynamic> addComment(Map<String, dynamic> newComment) async {
+    try {
+      Response response = await dio.post(
+        'comment/submit',
+        options: Options(
+          headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+        ),
+        data: newComment,
+      );
+      debugPrint(
+          "Add comments status code in web services ${response.statusCode}");
+      // debugPrint("${response.data}");
+      return response.data;
+    } catch (e) {
+      if (e is DioError) {
+        if (e.response != null) {
+          debugPrint(
+              "Error in submit comment, status code ${e.response!.statusCode!}");
+          if (e.response!.statusCode == 403) {
+            debugPrint("Unauthorized");
+          }
+          debugPrint("${e.response!.data}");
+        }
+        debugPrint("$e");
+      } else {
+        debugPrint("$e");
+      }
+      return {};
+    }
+  }
 }
