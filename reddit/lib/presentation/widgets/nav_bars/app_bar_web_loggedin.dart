@@ -6,6 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:reddit/business_logic/cubit/create_community_cubit.dart';
 import 'package:reddit/business_logic/cubit/subreddit_page_cubit.dart';
 import 'package:reddit/constants/strings.dart';
+import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/data/model/auth_model.dart';
 // import 'package:reddit/data/model/signin.dart';
 import 'package:reddit/data/repository/create_community_repository.dart';
@@ -51,15 +52,7 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
         createCommunityDialog();
         break;
       case 'r/subreddit':
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (_) => BlocProvider(
-                    create: (context) => SubredditPageCubit(
-                        SubredditPageRepository(SubredditWebServices())),
-                    child: const SubredditPageScreen(
-                      subredditId: 'reddit', //TODO : add here subreddit name
-                    ))));
+        Navigator.pushNamed(context, subredditPageScreenRoute);
         break;
       case 'User settings':
         Navigator.pushNamed(context, settingsTabsRoute);
@@ -68,106 +61,53 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
     }
   }
 
+  DropdownMenuItem<String> dropDownMenuTitle(String title) {
+    return DropdownMenuItem(
+        enabled: false,
+        child: Text(title,
+            style: const TextStyle(fontSize: 12, color: Colors.grey)));
+  }
+
+  DropdownMenuItem<String> dropDownMenuItem(String title, IconData icon,
+      {String imgUrl = ''}) {
+    return DropdownMenuItem(
+        value: title,
+        key: Key(title),
+        child: Row(children: [
+          imgUrl == ''
+              ? Icon(icon, size: 20)
+              : CircleAvatar(
+                  radius: 15,
+                  backgroundImage: NetworkImage(
+                    imgUrl,
+                  )),
+          const SizedBox(width: 8),
+          MediaQuery.of(context).size.width < 930
+              ? const SizedBox(width: 0)
+              : Text(title, style: const TextStyle(fontSize: 15))
+        ]));
+  }
+
   List<DropdownMenuItem<String>> createItems(BuildContext context) {
     return [
-      const DropdownMenuItem(
-          enabled: false,
-          child: Text('FEEDS',
-              style: TextStyle(fontSize: 12, color: Colors.grey))),
-      DropdownMenuItem(
-          value: 'Home',
-          child: Row(children: [
-            const Icon(Icons.home_filled, size: 20),
-            const SizedBox(width: 8),
-            MediaQuery.of(context).size.width < 930
-                ? const SizedBox(width: 0)
-                : const Text('Home', style: TextStyle(fontSize: 15))
-          ])),
-      DropdownMenuItem(
-          key: const Key('popular-test'),
-          value: 'Popular',
-          child: Row(children: [
-            const Icon(Icons.arrow_circle_up_outlined, size: 20),
-            const SizedBox(width: 8),
-            MediaQuery.of(context).size.width < 930
-                ? const SizedBox(width: 0)
-                : const Text('Popular', style: TextStyle(fontSize: 15))
-          ])),
-      DropdownMenuItem(
-          value: 'All',
-          child: Row(children: [
-            const FaIcon(FontAwesomeIcons.chartBar, size: 20),
-            const SizedBox(width: 8),
-            MediaQuery.of(context).size.width < 930
-                ? const SizedBox(width: 0)
-                : const Text('All', style: TextStyle(fontSize: 15))
-          ])),
-      //
-      const DropdownMenuItem(
-          enabled: false,
-          child: Text('YOUR COMMUNITIES',
-              style: TextStyle(fontSize: 12, color: Colors.grey))),
-      DropdownMenuItem(
-          value: 'Create Community',
-          child: Row(children: [
-            const Icon(Icons.add, size: 20),
-            const SizedBox(width: 8),
-            MediaQuery.of(context).size.width < 930
-                ? const SizedBox(width: 0)
-                : const Text('Create Community', style: TextStyle(fontSize: 15))
-          ])),
-      DropdownMenuItem(
-          value: 'r/subreddit',
-          child: Row(children: [
-            const CircleAvatar(radius: 13, child: Icon(Icons.person, size: 15)),
-            const SizedBox(width: 8),
-            MediaQuery.of(context).size.width < 930
-                ? const SizedBox(width: 0)
-                : const Text('r/subreddit', style: TextStyle(fontSize: 15))
-          ])),
-      //
-      const DropdownMenuItem(
-          enabled: false,
-          child: Text('OTHER',
-              style: TextStyle(fontSize: 12, color: Colors.grey))),
-      DropdownMenuItem(
-          key: const Key('user-settings-test'),
-          value: 'User settings',
-          child: Row(children: [
-            const CircleAvatar(radius: 13, child: Icon(Icons.person, size: 15)),
-            const SizedBox(width: 8),
-            MediaQuery.of(context).size.width < 930
-                ? const SizedBox(width: 0)
-                : const Text('User Settings', style: TextStyle(fontSize: 15))
-          ])),
-      DropdownMenuItem(
-          value: 'Messages',
-          child: Row(children: [
-            const CircleAvatar(radius: 13, child: Icon(Icons.person, size: 15)),
-            const SizedBox(width: 8),
-            MediaQuery.of(context).size.width < 930
-                ? const SizedBox(width: 0)
-                : const Text('Messages', style: TextStyle(fontSize: 15))
-          ])),
-      DropdownMenuItem(
-          value: 'u/user_name',
-          child: Row(children: [
-            const CircleAvatar(radius: 13, child: Icon(Icons.person, size: 15)),
-            const SizedBox(width: 8),
-            MediaQuery.of(context).size.width < 930
-                ? const SizedBox(width: 0)
-                : const Text('u/user_name', style: TextStyle(fontSize: 15))
-          ])),
+      dropDownMenuTitle('YOUR COMMUNITIES'),
+      dropDownMenuItem('Create Community', Icons.add),
+      dropDownMenuItem('r/subreddit', Icons.person, imgUrl: ''),
 
-      DropdownMenuItem(
-          value: 'Create Post',
-          child: Row(children: [
-            const Icon(Icons.add, size: 20),
-            const SizedBox(width: 8),
-            MediaQuery.of(context).size.width < 930
-                ? const SizedBox(width: 0)
-                : const Text('Create Post', style: TextStyle(fontSize: 15))
-          ])),
+      dropDownMenuTitle('FEEDS'),
+      dropDownMenuItem('Home', Icons.home_filled),
+      dropDownMenuItem('Popular', Icons.arrow_circle_up_outlined),
+      // dropDownMenuItem('All',FontAwesomeIcons.chartBar),
+
+      dropDownMenuTitle('FOLLOWING'),
+      dropDownMenuItem('u/user_name', Icons.person, imgUrl: ''),
+
+      dropDownMenuTitle('OTHER'),
+      dropDownMenuItem('User settings', Icons.person,
+          imgUrl: UserData.user!.profilePic!),
+      dropDownMenuItem('Messages', Icons.person,
+          imgUrl: UserData.user!.profilePic!),
+      dropDownMenuItem('Create Post', Icons.add),
     ];
   }
 
@@ -204,19 +144,27 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
             ],
           ),
         ),
-        DropdownButton2(
-            key: const Key('dropdown'),
-            alignment: Alignment.center,
-            buttonHeight: 40,
-            buttonWidth: 0.17 * MediaQuery.of(context).size.width,
-            buttonPadding: const EdgeInsets.only(left: 10),
-            underline: const SizedBox(),
-            style: const TextStyle(fontSize: 14, color: Colors.white),
-            items: createItems(context),
-            value: widget.screen,
-            onChanged: (val) {
-              routeToPage(val);
-            }),
+        Container(
+          decoration: BoxDecoration(
+            color: defaultAppbarBackgroundColor,
+          ),
+          child: DropdownButton2(
+              dropdownDecoration: const BoxDecoration(
+                color: Color.fromRGBO(30, 30, 30, 1),
+              ),
+              key: const Key('dropdown'),
+              alignment: Alignment.center,
+              buttonHeight: 40,
+              buttonWidth: 0.17 * MediaQuery.of(context).size.width,
+              buttonPadding: const EdgeInsets.only(left: 10),
+              underline: const SizedBox(),
+              style: const TextStyle(fontSize: 14, color: Colors.white),
+              items: createItems(context),
+              value: widget.screen,
+              onChanged: (val) {
+                routeToPage(val);
+              }),
+        ),
         SizedBox(
           key: const Key('search-bar'),
           width: 0.25 * MediaQuery.of(context).size.width,
