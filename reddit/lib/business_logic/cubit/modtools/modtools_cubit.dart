@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
 import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/data/model/posts/posts_model.dart';
@@ -60,16 +61,38 @@ class ModtoolsCubit extends Cubit<ModtoolsState> {
 
   /// [subredditID] is the id of subreddit to insert an approved user
   /// [username] is the username of the user to be inserted in the approved list
-  /// This function emits state [AddedToApprovedUsers] adding a new user to the approved list.
+  /// This function emits state [AddedToApprovedUsers] on adding a new user to the approved list or if the user already existed.
   void addApprovedUser(String subredditID, String username) {
     if (isClosed) return;
-    repository.addApprovedUser(subredditID, username).then((statusCode) {
+    bool usernameExist = false;
+    approvedUsers.forEach((user) {
+      if (user.username == username) {
+        usernameExist = true;
+      }
+    });
+
+    if (usernameExist) {
       repository.getAprroved(subredditID).then((aprrovedList) {
         approvedUsers.clear();
         approvedUsers.addAll(aprrovedList.map((user) => User.fromJson(user)));
         emit(AddedToApprovedUsers(approvedUsers));
+        debugPrint('username : $username already exist');
+        return;
       });
-    });
+    } else {
+      repository.addApprovedUser(subredditID, username).then((statusCode) {
+        if (statusCode == 201) {
+          repository.getAprroved(subredditID).then((aprrovedList) {
+            approvedUsers.clear();
+            approvedUsers
+                .addAll(aprrovedList.map((user) => User.fromJson(user)));
+            emit(AddedToApprovedUsers(approvedUsers));
+          });
+        } else {
+          emit(WrongUsername());
+        }
+      });
+    }
   }
 
   /// [subredditID] is the id of subreddit to remove an approved user

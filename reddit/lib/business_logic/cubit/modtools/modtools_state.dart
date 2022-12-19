@@ -15,6 +15,10 @@ class AddedToApprovedUsers extends ModtoolsState {
   AddedToApprovedUsers(this.approved);
 }
 
+class WrongUsername extends ModtoolsState {
+  WrongUsername();
+}
+
 class RemovedFromApprovedUsers extends ModtoolsState {
   List<User> approved;
   RemovedFromApprovedUsers(this.approved);
