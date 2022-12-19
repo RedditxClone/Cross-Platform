@@ -1,8 +1,12 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_my_profile_cubit.dart';
+import 'package:reddit/business_logic/cubit/settings/settings_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
@@ -40,6 +44,73 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
       avatar: icon,
       onPressed: () {},
     );
+  }
+
+  /// [context] : build context.
+  /// [color] : color of the error msg to be displayer e.g. ('red' : error , 'blue' : success ).
+  /// [title] : message to be displayed to the user.
+  void displayMsg(BuildContext context, Color color, String title) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      width: 400,
+      content: Container(
+          height: 50,
+          padding: const EdgeInsets.all(5),
+          decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              color: Colors.black,
+              borderRadius: const BorderRadius.all(Radius.circular(10))),
+          child: Row(
+            children: [
+              Container(
+                margin: const EdgeInsets.only(right: 10),
+                decoration: BoxDecoration(
+                    color: color,
+                    borderRadius: const BorderRadius.all(Radius.circular(10))),
+                width: 9,
+              ),
+              Logo(
+                Logos.reddit,
+                color: Colors.white,
+                size: 20,
+              ),
+              const SizedBox(width: 10),
+              Text(
+                title,
+                style: const TextStyle(fontSize: 16, color: Colors.white),
+              ),
+            ],
+          )),
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+    ));
+  }
+
+  /// [src] : source of the image can be (camera or gallery).
+  /// [dest] : destionation of the image can be 'cover' to change the cover photo or 'profile' to change the profile photo.
+  ///
+  /// calls the `changeProfilephotoWeb` or `changeProfilephotoWeb` methods inside [SettingsCubit] that Emits sate SettingsChanged on successfully updating photo.
+  ///
+  /// This function might throw an exception if the user does not allow the app to access the gallery or camera.
+  Future pickImageWeb(ImageSource src, String dest) async {
+    try {
+      final imagePicker = await ImagePicker().pickImage(source: src);
+      if (imagePicker == null) return;
+      Uint8List imageBytes = await imagePicker.readAsBytes();
+      setState(() {
+        if (dest == 'profile') {
+          BlocProvider.of<SettingsCubit>(context)
+              .changeProfilephotoWeb(UserData.profileSettings!, imageBytes);
+        } else if (dest == 'cover') {
+          BlocProvider.of<SettingsCubit>(context)
+              .changeCoverphotoWeb(UserData.profileSettings!, imageBytes);
+        }
+        displayMsg(context, Colors.blue, 'Changes Saved');
+      });
+    } on PlatformException catch (e) {
+      debugPrint(e.toString());
+      displayMsg(context, Colors.red, 'Could not load image');
+    }
   }
 
   void _addSocialLinks() {
@@ -212,20 +283,24 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                UserData.user!.profilePic == null ||
-                        UserData.user!.profilePic == ''
-                    ? const CircleAvatar(
-                        radius: 50,
-                        child: Icon(
-                          Icons.person,
-                          size: 50,
-                        ),
-                      )
-                    : CircleAvatar(
-                        radius: 60,
-                        backgroundImage: NetworkImage(
-                          UserData.user!.profilePic!,
-                        )),
+                BlocBuilder<SettingsCubit, SettingsState>(
+                  builder: (context, state) {
+                    return UserData.user!.profilePic == null ||
+                            UserData.user!.profilePic == ''
+                        ? const CircleAvatar(
+                            radius: 50,
+                            child: Icon(
+                              Icons.person,
+                              size: 50,
+                            ),
+                          )
+                        : CircleAvatar(
+                            radius: 60,
+                            backgroundImage: NetworkImage(
+                              UserData.user!.profilePic!,
+                            ));
+                  },
+                ),
                 const SizedBox(width: 60),
                 Column(
                   children: [
@@ -236,7 +311,8 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
                         radius: 17,
                         backgroundColor: Colors.black,
                         child: IconButton(
-                            onPressed: () {}, // TODO : change cover photo here
+                            onPressed: () =>
+                                pickImageWeb(ImageSource.gallery, 'profile'),
                             icon: const Icon(
                               Icons.add_a_photo_outlined,
                               color: Colors.white,
