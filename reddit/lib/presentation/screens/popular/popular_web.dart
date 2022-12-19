@@ -190,7 +190,7 @@ class _PopularWebState extends State<PopularWeb> {
             constraints: const BoxConstraints(minWidth: 70.0, minHeight: 20.0),
             alignment: Alignment.center,
             child: const Text(
-              'Create post',
+              'Create Post',
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontSize: 15,
@@ -217,7 +217,7 @@ class _PopularWebState extends State<PopularWeb> {
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(25))),
         child: const Text(
-          "Create community",
+          "Create Community",
           style: TextStyle(color: Colors.white, fontSize: 15),
         ),
       ),
