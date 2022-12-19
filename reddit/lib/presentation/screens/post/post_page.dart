@@ -49,65 +49,102 @@ class _PostPageState extends State<PostPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(
-        actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.sort)),
-          const SizedBox(
-            width: 15,
-          ),
-          IconButton(
-            onPressed: () {
-              _scaffoldKey.currentState!.openEndDrawer();
-            },
-            icon: UserData.user != null && UserData.user!.profilePic != ""
-                ? CircleAvatar(
-                    // radius: 16,
-                    backgroundImage: NetworkImage(UserData.user!.profilePic!),
-                  )
-                : const CircleAvatar(
-                    // radius: 16,
-                    child: Icon(Icons.person),
-                  ),
-          )
-        ],
-      ),
-      endDrawer: BlocProvider(
-        create: (context) =>
-            EndDrawerCubit(EndDrawerRepository(SettingsWebServices())),
-        child: EndDrawer(
-          2,
-          35,
+    return SafeArea(
+      child: Scaffold(
+        key: _scaffoldKey,
+        appBar: AppBar(
+          actions: [
+            IconButton(onPressed: () {}, icon: const Icon(Icons.sort)),
+            const SizedBox(
+              width: 15,
+            ),
+            IconButton(
+              onPressed: () {
+                _scaffoldKey.currentState!.openEndDrawer();
+              },
+              icon: UserData.user != null && UserData.user!.profilePic != ""
+                  ? CircleAvatar(
+                      // radius: 16,
+                      backgroundImage: NetworkImage(UserData.user!.profilePic!),
+                    )
+                  : const CircleAvatar(
+                      // radius: 16,
+                      child: Icon(Icons.person),
+                    ),
+            )
+          ],
         ),
-      ),
-      body: ListView(
-        children: [
-          PostsWeb(
-            postsModel: widget.postModel,
-            insidePostPage: true,
+        endDrawer: BlocProvider(
+          create: (context) =>
+              EndDrawerCubit(EndDrawerRepository(SettingsWebServices())),
+          child: EndDrawer(
+            2,
+            35,
           ),
-          BlocBuilder<CommentsCubit, CommentsState>(
-            builder: (context, state) {
-              if (state is CommentsLoaded) {
-                debugPrint("Comments loaded successfully");
-                return Column(
-                  children: [
-                    ...state.comments!
-                        .map((e) => CommentsWithChildrenInit(
-                              commentsModel: e,
-                              subredditID: widget.subredditID,
-                            ))
-                        .toList(),
-                  ],
-                );
-              } else if (state is CommentsLoading) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              return Container();
-            },
-          ),
-        ],
+        ),
+        body: ListView(
+          children: [
+            PostsWeb(
+              postsModel: widget.postModel,
+              insidePostPage: true,
+            ),
+            BlocBuilder<CommentsCubit, CommentsState>(
+              builder: (context, state) {
+                if (state is CommentsLoaded) {
+                  debugPrint("Comments loaded successfully");
+                  if (state.comments!.isNotEmpty) {
+                    return Column(
+                      children: [
+                        ...state.comments!
+                            .map((e) => CommentsWithChildrenInit(
+                                  commentsModel: e,
+                                  subredditID: widget.subredditID,
+                                ))
+                            .toList(),
+                      ],
+                    );
+                  }
+                  return Center(
+                    child: Column(children: [
+                      Image.asset(
+                        "assets/images/comments.jpg",
+                        scale: 3,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: Text(
+                          "Be the first to comment",
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Expanded(flex: 3, child: Container()),
+                          Expanded(
+                            flex: 20,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Text(
+                                "Nobody's responded to this post yet. Add your thoughts and get the conversation going",
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                          Expanded(flex: 3, child: Container()),
+                        ],
+                      ),
+                    ]),
+                  );
+                } else if (state is CommentsLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                return Container();
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
