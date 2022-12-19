@@ -28,6 +28,7 @@ import 'package:reddit/presentation/screens/modtools/web/spam_web.dart';
 import 'package:reddit/presentation/screens/modtools/web/traffic_stats.dart';
 import 'package:reddit/presentation/screens/modtools/web/unmoderated.dart';
 import 'package:reddit/presentation/screens/post/post_page.dart';
+import 'package:reddit/presentation/screens/post/post_page_web.dart';
 import 'package:reddit/presentation/screens/profile/other_user_profile_screen.dart';
 import 'business_logic/cubit/feed_settings_cubit.dart';
 import 'business_logic/cubit/left_drawer/left_drawer_cubit.dart';
@@ -481,7 +482,9 @@ class AppRouter {
           Map<String, dynamic> argMap = arguments as Map<String, dynamic>;
           return BlocProvider.value(
             value: commentsCubit,
-            child: PostPage(arguments: arguments),
+            child: isMobile
+                ? PostPage(arguments: arguments)
+                : PostPageWeb(arguments: arguments),
           );
         });
       case manageNotificationsRoute:

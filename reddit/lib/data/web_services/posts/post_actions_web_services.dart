@@ -19,7 +19,7 @@ class PostActionsWebServices {
   /// This function performs `POST` request to the endpoint `baseUrl/post/$id/save`.
   Future<dynamic> savePost(String id) async {
     try {
-      Response response = await dio.post('post/$id/save',
+      Response response = await dio.post('user/post/$id/save',
           options: Options(
             headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
@@ -47,7 +47,7 @@ class PostActionsWebServices {
   /// This function performs `POST` request to the endpoint `baseUrl/post/$id/unsave`.
   Future<dynamic> unsavePost(String id) async {
     try {
-      Response response = await dio.post('post/$id/unsave',
+      Response response = await dio.post('user/post/$id/unsave',
           options: Options(
             headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));

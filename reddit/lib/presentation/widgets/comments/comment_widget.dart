@@ -66,10 +66,9 @@ class CommentWidget extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          // --------------------------------------------------
-          // ---------VOTE BUTTONS SMALL SCREEN----------------
-          // --------------------------------------------------
-          moreButtonMobile(context),
+          responsive.isSmallSizedScreen()
+              ? moreButtonMobile(context)
+              : commentOptionsWeb(context),
           replyButton(context),
           voteButtonsSmallScreen()
         ],
@@ -537,6 +536,174 @@ class CommentWidget extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
+    );
+  }
+
+  Widget commentOptionsWeb(context) {
+    List<PopupMenuEntry> optionsList = [
+      PopupMenuItem(
+        value: 0,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: const [
+            Icon(
+              Icons.copy,
+              size: 13,
+            ),
+            SizedBox(width: 5),
+            Text(
+              "Copy text",
+              style: TextStyle(fontSize: 12),
+            ),
+          ],
+        ),
+      ),
+      // const PopupMenuDivider(),
+      PopupMenuItem(
+        value: 1,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: const [
+            Icon(
+              Icons.report_problem_outlined,
+              size: 10,
+            ),
+            SizedBox(width: 5),
+            Text(
+              "Spam",
+              style: TextStyle(fontSize: 12),
+            ),
+          ],
+        ),
+      ),
+      PopupMenuItem(
+        value: 2,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: const [
+            Icon(
+              Icons.block,
+              size: 10,
+            ),
+            SizedBox(width: 5),
+            Text(
+              "Block account",
+              style: TextStyle(fontSize: 12),
+            ),
+          ],
+        ),
+      ),
+      // PopupMenuItem(
+      //   value: 3,
+      //   child: Row(
+      //     mainAxisAlignment: MainAxisAlignment.start,
+      //     children: const [
+      //       Icon(
+      //         Icons.hide_source,
+      //         size: 10,
+      //       ),
+      //       SizedBox(width: 5),
+      //       Text(
+      //         "Hide",
+      //         style: TextStyle(fontSize: 12),
+      //       ),
+      //     ],
+      //   ),
+      // ),
+      UserData.user != null
+          ? commentsModel != null
+              ? commentsModel!.user != null
+                  ? commentsModel!.user!.id != null
+                      ? commentsModel!.user!.id == UserData.user!.userId
+                          ? PopupMenuItem(
+                              value: 4,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: const [
+                                  Icon(
+                                    Icons.delete,
+                                    size: 10,
+                                  ),
+                                  SizedBox(width: 5),
+                                  Text(
+                                    "Delete",
+                                    style: TextStyle(fontSize: 12),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : const PopupMenuItem(
+                              child: null,
+                              enabled: false,
+                            )
+                      : const PopupMenuItem(
+                          child: null,
+                          enabled: false,
+                        )
+                  : const PopupMenuItem(
+                      child: null,
+                      enabled: false,
+                    )
+              : const PopupMenuItem(
+                  child: null,
+                  enabled: false,
+                )
+          : const PopupMenuItem(
+              child: null,
+              enabled: false,
+            ),
+    ];
+    return PopupMenuButton(
+      color: Colors.grey.shade900,
+      shape: ContinuousRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      padding: const EdgeInsets.all(0),
+      // offset: Offset.fromDirection(0, 150),
+      position: PopupMenuPosition.under,
+      itemBuilder: (_) => optionsList,
+      constraints: const BoxConstraints.expand(width: 130, height: 240),
+      onSelected: (value) {
+        switch (value) {
+          case 0:
+            if (commentsModel != null) {
+              if (commentsModel!.text != null) {
+                Clipboard.setData(ClipboardData(
+                  text: commentsModel!.text!,
+                )).then((_) {
+                  debugPrint("Copied ${commentsModel!.text!}");
+                  displayMsg(
+                      context, Colors.green, "Your copy is ready for pasta!");
+                });
+              }
+            }
+            break;
+          case 1:
+            if (commentsModel != null) {
+              if (commentsModel!.sId != null) {
+                // postActionsCubit.spamPost(commentsModel!.sId!);
+              }
+            }
+            break;
+          case 2:
+            break;
+          // case 3:
+          //   if (postsModel != null) {
+          //     if (postsModel!.sId != null) {
+          //       removePostCubit.hidePost(postsModel!.sId!);
+          //     }
+          //   }
+          //   break;
+          case 4:
+            if (commentsModel != null) {
+              if (commentsModel!.sId != null) {
+                // removePostCubit.deletePost(commentsModel!.sId!);
+              }
+            }
+            break;
+          default:
+            break;
+        }
+      },
+      child: const Icon(Icons.more_horiz, color: Colors.grey),
     );
   }
 }
