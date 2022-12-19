@@ -117,6 +117,46 @@ class _SignupMobileState extends State<SignupMobile> {
     );
   }
 
+  /// [context] : build context.
+  /// [color] : color of the error msg to be displayer e.g. ('red' : error , 'blue' : success ).
+  /// [title] : message to be displayed to the user.
+  void displayMsg(BuildContext context, Color color, String title) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      width: 400,
+      content: Container(
+          height: 50,
+          padding: const EdgeInsets.all(5),
+          decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              color: Colors.black,
+              borderRadius: const BorderRadius.all(Radius.circular(10))),
+          child: Row(
+            children: [
+              Container(
+                margin: const EdgeInsets.only(right: 10),
+                decoration: BoxDecoration(
+                    color: color,
+                    borderRadius: const BorderRadius.all(Radius.circular(10))),
+                width: 9,
+              ),
+              Logo(
+                Logos.reddit,
+                color: Colors.white,
+                size: 20,
+              ),
+              const SizedBox(width: 10),
+              Text(
+                title,
+                style: const TextStyle(fontSize: 16, color: Colors.white),
+              ),
+            ],
+          )),
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+    ));
+  }
+
   //this an async fucntion to log in with google account and store the result in database
   void signInWithGoogle() async {
     try {
@@ -127,76 +167,16 @@ class _SignupMobileState extends State<SignupMobile> {
           BlocProvider.of<AuthCubit>(context).loginWithGoogle(googleToken);
         } else {
           debugPrint("token is null");
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Row(
-                children: [
-                  const Icon(
-                    Icons.error,
-                    color: Colors.red,
-                  ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.01,
-                  ),
-                  const Text(
-                    "Error in Signing in with Google",
-                    style: TextStyle(
-                      color: Colors.red,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
+          displayMsg(context, Colors.red, "Error in Signing in with Google");
         }
       } else {
         debugPrint("google account is null");
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                const Icon(
-                  Icons.error,
-                  color: Colors.red,
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.01,
-                ),
-                const Text(
-                  "Error in Signing in with Google",
-                  style: TextStyle(
-                    color: Colors.red,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
+        displayMsg(context, Colors.red, "Error in Signing in with Google");
       }
     } catch (e) {
       debugPrint("error in google sign in $e");
       debugPrint("error in google sign in hereeeeeeeeee");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              const Icon(
-                Icons.error,
-                color: Colors.red,
-              ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.01,
-              ),
-              const Text(
-                "Error in Signing in with Google",
-                style: TextStyle(
-                  color: Colors.red,
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
+      displayMsg(context, Colors.red, "Error in Signing in with Google");
     }
   }
 
@@ -252,27 +232,7 @@ class _SignupMobileState extends State<SignupMobile> {
       // );
       // }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              const Icon(
-                Icons.error,
-                color: Colors.red,
-              ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.01,
-              ),
-              const Text(
-                "Error in Signing in with github",
-                style: TextStyle(
-                  color: Colors.red,
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
+      displayMsg(context, Colors.red, "Error in Signing in with github");
     }
   }
 
@@ -662,27 +622,8 @@ class _SignupMobileState extends State<SignupMobile> {
             } else {
               //user = null
               debugPrint("failed in signing up");
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Row(
-                    children: [
-                      const Icon(
-                        Icons.error,
-                        color: Colors.red,
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.01,
-                      ),
-                      const Text(
-                        'Username or password is incorrect',
-                        style: TextStyle(
-                          color: Colors.red,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
+              displayMsg(
+                  context, Colors.red, "Username or password is incorrect");
             }
           } else if (state is Login) {
             if (state.userDataJson != {}) {
@@ -694,27 +635,7 @@ class _SignupMobileState extends State<SignupMobile> {
             } else {
               //user = null
               debugPrint("failed in login");
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Row(
-                    children: [
-                      const Icon(
-                        Icons.error,
-                        color: Colors.red,
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.01,
-                      ),
-                      const Text(
-                        'Please Try Again',
-                        style: TextStyle(
-                          color: Colors.red,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
+              displayMsg(context, Colors.red, "Please Try Again");
             }
           }
         },
