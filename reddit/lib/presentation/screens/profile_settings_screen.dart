@@ -49,13 +49,12 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
       switch (dest) {
         case 'cover':
           // imgCover = imageTemp;
-          print(image.path);
           BlocProvider.of<SettingsCubit>(context)
-              .changeCoverphoto(profileSettings!, image.path);
+              .changeCoverphoto(UserData.profileSettings!, image.path);
           break;
         case 'profile':
           BlocProvider.of<SettingsCubit>(context)
-              .changeProfilephoto(profileSettings!, image.path);
+              .changeProfilephoto(UserData.profileSettings!, image.path);
 
           break;
         default:
@@ -196,10 +195,10 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                 decoration: const BoxDecoration(
                   color: Color.fromRGBO(30, 30, 30, 100),
                 ),
-                child: (profileSettings!.cover != '')
+                child: (UserData.user!.coverPhoto != '')
                     ? Image.network(
-                        profileSettings!.cover,
-                        fit: BoxFit.cover,
+                        UserData.user!.coverPhoto,
+                        fit: BoxFit.fitWidth,
                       )
                     : const Icon(Icons.add_a_photo_outlined),
               ),
@@ -210,12 +209,12 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
               left: 20,
               child: Container(
                   decoration: const BoxDecoration(shape: BoxShape.circle),
-                  child: (profileSettings!.profile != '' && imgProfile == null)
+                  child: (UserData.user!.profilePic! != '')
                       ? ClipOval(
                           child: InkWell(
                             onTap: () => chooseProfilePhotoBottomSheet(context),
                             child: Image.network(
-                              profileSettings!.profile,
+                              UserData.user!.profilePic!,
                               width: 80,
                               height: 80,
                               fit: BoxFit.cover,
@@ -396,13 +395,10 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
           showActiveCommunities =
               profileSettings!.activeInCommunitiesVisibility;
           contentVisibility = profileSettings!.contentVisibility;
-          // oldAbout = profileSettings!.about;
-          // oldDisplayName = profileSettings!.about;
-          // oldShowActive = profileSettings!.activeInCommunitiesVisibility;
-          // oldContVis = profileSettings!.contentVisibility;
           return buildEditProfileBody(context);
         } else if (state is SettingsChanged) {
-          print('state changed');
+          print(
+              'state changed, the new image is : ${UserData.user!.profilePic}');
           profileSettings = state.settings;
           displayName = TextEditingController();
           about = TextEditingController();

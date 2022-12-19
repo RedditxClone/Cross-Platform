@@ -507,8 +507,8 @@ class AppRouter {
       //           ));
       case profileSettingsRoute:
         return MaterialPageRoute(
-            builder: (_) => BlocProvider(
-                  create: (BuildContext context) => settingsCubit,
+            builder: (_) => BlocProvider.value(
+                  value: settingsCubit,
                   child: const ProfileSettingsScreen(),
                 ));
       case sendMessageRoute:

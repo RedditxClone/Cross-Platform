@@ -66,11 +66,14 @@ class SettingsCubit extends Cubit<SettingsState> {
   ///
   /// This function calls the function [SettingsRepository.updateImage] that updates any photo on mobile.
   void changeProfilephoto(ProfileSettings settings, String img) {
+    print('before isClosed change profile pic');
     if (isClosed) return;
+    print('after isClosed change profile pic');
     settingsRepository.updateImage('profile', img).then((image) {
-      settings.profile = image;
-      debugPrint(image);
-      UserData.user!.profilePic = image;
+      UserData.profileSettings!.profile =
+          UserData.user!.profilePic = settings.profile = image;
+
+      debugPrint(UserData.user!.profilePic);
       emit(SettingsChanged(settings));
     });
   }
