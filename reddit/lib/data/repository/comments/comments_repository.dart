@@ -14,7 +14,7 @@ class CommentsRepository {
   /// after getting it from [CommentsWebServices] and mapping it to the model list.
   Future<List<Comments>> getThingComments(String id) async {
     final comments = await commentsWebServices.getThingComments(id);
-    debugPrint("Timeline comments from repo:");
+    debugPrint("Post comments from repo:");
     debugPrint("$comments");
     return List<Comments>.from(comments.map((i) => Comments.fromJson(i)));
   }

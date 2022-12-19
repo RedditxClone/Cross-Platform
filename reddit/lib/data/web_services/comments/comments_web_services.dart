@@ -7,7 +7,7 @@ class CommentsWebServices {
   late Dio dio;
   CommentsWebServices() {
     BaseOptions options = BaseOptions(
-      baseUrl: "https://a8eda59d-d8f3-4ef2-9581-29e6473824d9.mock.pstmn.io/",
+      baseUrl: baseUrl,
       receiveDataWhenStatusError: true,
       connectTimeout: 20 * 1000, //20 secs
       receiveTimeout: 20 * 1000,
@@ -22,13 +22,13 @@ class CommentsWebServices {
       // Get random posts if the user is not signed in (Without token)
       // Get joined communities posts if the user is signed in (With token)
       Response response = UserData.user == null
-          ? await dio.get('thing/id/with-children')
-          : await dio.get('thing/id/with-children',
+          ? await dio.get('thing/$id/with-children')
+          : await dio.get('thing/$id/with-children',
               options: Options(
                 headers: {"Authorization": "Bearer ${UserData.user!.token}"},
               ));
-      // debugPrint("Timeline posts in web services ${response.data}");
       debugPrint("Comments status code in web services ${response.statusCode}");
+      // debugPrint("${response.data}");
       return response.data;
     } catch (e) {
       if (e is DioError) {
@@ -38,6 +38,7 @@ class CommentsWebServices {
           if (e.response!.statusCode == 403) {
             debugPrint("Unauthorized");
           }
+          debugPrint("${e.response!.data}");
         }
         debugPrint("$e");
       } else {

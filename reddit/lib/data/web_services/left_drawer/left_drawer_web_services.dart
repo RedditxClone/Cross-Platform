@@ -23,7 +23,7 @@ class LeftDrawerWebServices {
           options: Options(
             headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
-      debugPrint("${response.data}");
+      // debugPrint("${response.data}");
       debugPrint(
           "Get moderating communities, Status code is ${response.statusCode!}");
       return response.data;

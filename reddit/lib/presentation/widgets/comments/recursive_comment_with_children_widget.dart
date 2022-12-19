@@ -29,24 +29,34 @@ class RecursiveCommentWithChildren extends StatelessWidget {
               ),
             ],
           ),
-          ...commentsModel!.children!.map((e) => Row(
-                children: [
-                  Expanded(
-                    flex: 1,
-                    child: Container(),
-                  ),
-                  Expanded(
-                    flex: 35,
-                    child: Container(
-                      decoration: BoxDecoration(
-                          border: Border(
-                              left: BorderSide(
-                                  color: Colors.grey.shade600, width: 1))),
-                      child: RecursiveCommentWithChildren(commentsModel: e),
-                    ),
-                  )
-                ],
-              )),
+          commentsModel!.children != null && commentsModel!.children!.isNotEmpty
+              ? Column(
+                  children: [
+                    ...commentsModel!.children!.map((e) {
+                      return Row(
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: Container(),
+                          ),
+                          Expanded(
+                            flex: 35,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  border: Border(
+                                      left: BorderSide(
+                                          color: Colors.grey.shade600,
+                                          width: 1))),
+                              child: RecursiveCommentWithChildren(
+                                  commentsModel: e),
+                            ),
+                          )
+                        ],
+                      );
+                    }),
+                  ],
+                )
+              : Container(),
         ],
       ),
     );

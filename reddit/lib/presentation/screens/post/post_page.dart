@@ -89,6 +89,15 @@ class _PostPageState extends State<PostPage> {
             builder: (context, state) {
               if (state is CommentsLoaded) {
                 debugPrint("Comments loaded successfully");
+                return Column(
+                  children: [
+                    ...state.comments!
+                        .map((e) => CommentsWithChildrenInit(
+                              commentsModel: e,
+                            ))
+                        .toList(),
+                  ],
+                );
               } else if (state is CommentsLoading) {
                 return const Center(child: CircularProgressIndicator());
               }

@@ -558,7 +558,7 @@ class PostsWeb extends StatelessWidget {
         // --------------------------------------------------
         // --------------COMMENTS BUTTON---------------------
         // --------------------------------------------------
-        commentsButton(),
+        commentsButton(context),
         const SizedBox(width: 10),
         // --------------------------------------------------
         // -----------------SHARE BUTTON---------------------
@@ -687,11 +687,20 @@ class PostsWeb extends StatelessWidget {
     );
   }
 
-  Widget commentsButton() {
+  Widget commentsButton(context) {
     return InkWell(
       onTap: () {
         // Open post page
         // Display comments with postID
+
+        if (insidePostPage != null) {
+          if (insidePostPage == true) {
+            // Add a comment function
+            return;
+          }
+        }
+        Navigator.of(context)
+            .pushNamed(postPageRoute, arguments: {"post": postsModel});
       },
       child: Row(
         children: [
@@ -786,6 +795,7 @@ class PostsWeb extends StatelessWidget {
   void _postBottomSheet(context) {
     showModalBottomSheet<void>(
       context: context,
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
             topLeft: Radius.circular(30), topRight: Radius.circular(30)),
@@ -797,11 +807,13 @@ class PostsWeb extends StatelessWidget {
                 topLeft: Radius.circular(30), topRight: Radius.circular(30)),
             color: Colors.grey.shade900,
           ),
-          height: 500,
+          // height: MediaQuery.of(context).size.height * 0.75,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
+              const SizedBox(height: 10),
+
               Card(
                 color: Colors.grey.shade900,
                 child: ListTile(

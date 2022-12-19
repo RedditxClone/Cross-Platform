@@ -19,9 +19,11 @@ class CommentWidget extends StatelessWidget {
   late Responsive responsive;
   late PostActionsRepository postActionsRepository;
   late VoteCubit voteCubit;
+  late TextEditingController _addCommentController;
   CommentWidget({this.commentsModel, super.key}) {
     postActionsRepository = PostActionsRepository(PostActionsWebServices());
     voteCubit = VoteCubit(postActionsRepository);
+    _addCommentController = TextEditingController();
   }
   @override
   Widget build(BuildContext context) {
@@ -52,16 +54,18 @@ class CommentWidget extends StatelessWidget {
           // ---------VOTE BUTTONS SMALL SCREEN----------------
           // --------------------------------------------------
           moreButtonMobile(context),
-          replyButton(),
+          replyButton(context),
           voteButtonsSmallScreen()
         ],
       ),
     );
   }
 
-  Widget replyButton() {
+  Widget replyButton(context) {
     return TextButton.icon(
-      onPressed: () {},
+      onPressed: () {
+        _addCommentBottomSheet(context);
+      },
       icon: const Icon(
         Icons.reply_rounded,
       ),
@@ -157,10 +161,11 @@ class CommentWidget extends StatelessWidget {
     );
   }
 
-  /// Builds the UI of the bottom sheet shown when choosing gender.
+  /// Builds the UI of the bottom sheet of comment options.
   void _commentBottomSheet(context) {
     showModalBottomSheet<void>(
       context: context,
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
             topLeft: Radius.circular(30), topRight: Radius.circular(30)),
@@ -172,11 +177,12 @@ class CommentWidget extends StatelessWidget {
                 topLeft: Radius.circular(30), topRight: Radius.circular(30)),
             color: Colors.grey.shade900,
           ),
-          height: 500,
+          // height: 500,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
+              const SizedBox(height: 10),
               Card(
                 color: Colors.grey.shade900,
                 child: ListTile(
@@ -233,30 +239,105 @@ class CommentWidget extends StatelessWidget {
                   },
                 ),
               ),
-
-              // UserData.user != null
-              //     ? commentsModel != null
-              //         ? commentsModel!.user != null
-              //             ? commentsModel!.user!.id != null
-              //                 ? commentsModel!.user!.id == UserData.user!.userId
-              //                     ? Card(
-              //                         color: Colors.grey.shade900,
-              //                         child: ListTile(
-              //                           title: const Text("Delete post"),
-              //                           leading: const Icon(Icons.delete),
-              //                           onTap: () {
-              //                             Navigator.pop(context);
-              //                             removePostCubit
-              //                                 .deletePost(commentsModel!.sId!);
-              //                           },
-              //                         ),
-              //                       )
-              //                     : Container()
-              //                 : Container()
-              //             : Container()
-              //         : Container()
-              //     : Container(),
+              UserData.user != null
+                  ? commentsModel != null
+                      ? commentsModel!.user != null
+                          ? commentsModel!.user!.id != null
+                              ? commentsModel!.user!.id == UserData.user!.userId
+                                  ? Card(
+                                      color: Colors.grey.shade900,
+                                      child: ListTile(
+                                        title: const Text("Delete comment"),
+                                        leading: const Icon(Icons.delete),
+                                        onTap: () {
+                                          Navigator.pop(context);
+                                          // delete comment function
+                                          // removePostCubit
+                                          //     .deletePost(commentsModel!.sId!);
+                                        },
+                                      ),
+                                    )
+                                  : Container()
+                              : Container()
+                          : Container()
+                      : Container()
+                  : Container(),
             ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _addCommentBottomSheet(context) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: MediaQuery.of(context).viewInsets,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+              color: Colors.grey.shade900,
+            ),
+            // height: 500,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(height: 20),
+                TextField(
+                  decoration: InputDecoration(
+                    hintText: 'Add a comment',
+                    border: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                            width: 0, color: Colors.transparent),
+                        borderRadius: BorderRadius.circular(5.0)),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide:
+                          const BorderSide(width: 0, color: Colors.transparent),
+                      borderRadius: BorderRadius.circular(5.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                            width: 0, color: Colors.transparent),
+                        borderRadius: BorderRadius.circular(5.0)),
+                    // filled: true,
+                    // fillColor: Colors.grey.shade800,
+                  ),
+                  autofocus: true,
+                  controller: _addCommentController,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(30)),
+                        color: Colors.deepPurpleAccent.shade100,
+                      ),
+                      height: 33,
+                      child: TextButton(
+                        onPressed: () {},
+                        child: const Text(
+                          "Reply",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                  ],
+                ),
+                const SizedBox(height: 10),
+              ],
+            ),
           ),
         );
       },
