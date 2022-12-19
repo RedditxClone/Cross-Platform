@@ -312,9 +312,6 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                         BlocProvider.of<MessagesCubit>(buildcontext)
                             .sendMessage(subjectController.text,
                                 messageController.text, otherUser!.username);
-
-                        Navigator.pop(context);
-                        Navigator.pop(context);
                       },
                       child: const Text('Send', style: TextStyle(fontSize: 20)))
                 ],
@@ -570,8 +567,10 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                   if (state is MessageSent) {
                     subjectController.text = '';
                     messageController.text = '';
-                    Navigator.pushNamed(context, otherProfilePageRoute,
-                        arguments: otherUser!.userId);
+                    Navigator.pushReplacementNamed(
+                        context, otherProfilePageRoute,
+                        arguments: otherUser!.username);
+                    Navigator.pop(context);
                     displayMsg(
                         context, Colors.green, ' Message is sent successfully');
                   } else if (state is EmptySubject) {

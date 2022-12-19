@@ -133,7 +133,8 @@ class AppRouter {
   late UserProfileCubit userProfileCubit;
   late MessagesWebServices messagesWebServices;
   late MessagesRepository messagesRepository;
-  late MessagesCubit messagesCubit;
+  late MessagesCubit messagesCubit_approved;
+  late MessagesCubit messagesCubit_profile;
 
   late ModToolsWebServices modtoolsWebServices;
   late ModToolsRepository modtoolsRepository;
@@ -180,7 +181,8 @@ class AppRouter {
 
     messagesWebServices = MessagesWebServices();
     messagesRepository = MessagesRepository(messagesWebServices);
-    messagesCubit = MessagesCubit(messagesRepository);
+    messagesCubit_approved = MessagesCubit(messagesRepository);
+    messagesCubit_profile = MessagesCubit(messagesRepository);
 
     modtoolsWebServices = ModToolsWebServices();
     modtoolsRepository = ModToolsRepository(modtoolsWebServices);
@@ -262,7 +264,7 @@ class AppRouter {
           builder: (_) => MultiBlocProvider(
             providers: [
               BlocProvider.value(value: userProfileCubit),
-              BlocProvider.value(value: messagesCubit),
+              BlocProvider.value(value: messagesCubit_profile),
             ],
             child: kIsWeb
                 ? OtherProfilePageWeb(userID: userID)
@@ -308,7 +310,7 @@ class AppRouter {
             builder: (_) => MultiBlocProvider(
                     providers: [
                       BlocProvider.value(value: modtoolsCubit),
-                      BlocProvider.value(value: messagesCubit),
+                      BlocProvider.value(value: messagesCubit_approved),
                     ],
                     child: kIsWeb
                         ? const ApprovedWeb()
@@ -513,7 +515,7 @@ class AppRouter {
         String username = arguments as String;
         return MaterialPageRoute(
             builder: (_) => BlocProvider(
-                  create: (BuildContext context) => messagesCubit,
+                  create: (BuildContext context) => messagesCubit_profile,
                   child: SendMessageWeb(username: username),
                 ));
 
