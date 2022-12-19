@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:reddit/business_logic/cubit/comments/add_comment_cubit.dart';
+import 'package:reddit/business_logic/cubit/comments/comments_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/vote_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/strings.dart';
@@ -278,9 +279,9 @@ class CommentWidget extends StatelessWidget {
     );
   }
 
-  void _addCommentBottomSheet(context) {
+  void _addCommentBottomSheet(parentContext) {
     showModalBottomSheet<void>(
-      context: context,
+      context: parentContext,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
@@ -341,6 +342,9 @@ class CommentWidget extends StatelessWidget {
                             "postId": commentsModel!.postId,
                             "text": _addCommentController.text,
                           }));
+                          Navigator.pop(context);
+                          BlocProvider.of<CommentsCubit>(parentContext)
+                              .getThingComments(commentsModel!.postId!);
                         },
                         child: const Text(
                           "Reply",
