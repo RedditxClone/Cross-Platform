@@ -110,7 +110,7 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
             automaticallyImplyLeading: false,
             backgroundColor: defaultAppbarBackgroundColor,
             title: UserData.user != null
-                ? const AppBarWebLoggedIn( screen: 'r/subreddit')
+                ? const AppBarWebLoggedIn(screen: 'r/subreddit')
                 : const AppBarWebNotLoggedIn(screen: 'r/subreddit'));
   }
 
@@ -509,7 +509,9 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                                                     Radius.circular(20),
                                                   )),
                                                 ),
-                                                onPressed: () {},
+                                                onPressed: () =>
+                                                    Navigator.pushNamed(
+                                                        context, modlistRoute),
                                                 child: Row(
                                                   children: const [
                                                     Icon(Icons.settings),

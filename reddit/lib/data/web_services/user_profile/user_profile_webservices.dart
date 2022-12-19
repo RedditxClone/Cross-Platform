@@ -30,7 +30,6 @@ class UserProfileWebServices {
                   headers: {"Authorization": "Bearer ${UserData.user!.token}"},
                 )
               : null);
-      print("Get user mustafaaaa ${response.statusCode}");
       return response.data;
     } catch (e) {
       if (e is DioError) {

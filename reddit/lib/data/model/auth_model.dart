@@ -19,16 +19,24 @@ class User {
   late String?
       profilePic; //in case of google or facebook user it will be taken from the google or facebook and in case of reddit sign in it will be null
   late String token;
+  late String coverPhoto;
   late String? displayName;
   late String? about;
+  late String? createdAt;
+  late bool? isFollowed;
+  late bool? isBlocked;
   late Map<String, dynamic> interests;
   late bool cakeDay;
+  late String date;
   User.fromJson(Map<String, dynamic> json) {
     userId = json['_id'];
     username = json['username'];
     email = json['email'] ?? "";
     profilePic =
         json['profilePhoto'] == '' ? '' : imagesUrl + json['profilePhoto'];
+    coverPhoto = json['coverPhoto'] == null || json['coverPhoto'] == ''
+        ? ''
+        : imagesUrl + json['coverPhoto'];
     if (UserData.isLogged()) {
       token = PreferenceUtils.getString(SharedPrefKeys.token);
     } else {
@@ -37,8 +45,12 @@ class User {
     type = json['authType'] ?? "";
     // gender = json['gender'];
     displayName = json['displayName'] ?? "";
+    date = json['date'] ?? "";
     about = json['about'] ?? "";
     cakeDay = json['cakeDay'] ?? true;
+    isFollowed = json['isFollowed'] ?? false;
+    isBlocked = json['isBlocked'] ?? false;
+    createdAt = json['createdAt'] ?? "";
   }
   Map<String, dynamic> toJson() {
     return {
