@@ -212,7 +212,9 @@ class _HomeWebState extends State<HomeWeb> {
       height: 54,
       padding: const EdgeInsets.all(10),
       child: OutlinedButton(
-        onPressed: () => createCommunityDialog(),
+        onPressed: () => UserData.isLoggedIn
+            ? createCommunityDialog()
+            : Navigator.pushNamed(context, loginPage),
         style: OutlinedButton.styleFrom(
             // padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
             side: const BorderSide(width: 1, color: Colors.white),
