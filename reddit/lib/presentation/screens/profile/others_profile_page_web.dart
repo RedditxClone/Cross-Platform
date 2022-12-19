@@ -315,7 +315,7 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
                         ),
                         const SizedBox(width: 5),
                         Text(
-                            DateFormat('DD MM YYYY').format(DateTime.parse(
+                            DateFormat('dd MM yyyy').format(DateTime.parse(
                                 otherUser!.createdAt! == ""
                                     ? "2022-12-17T16:58:07.872Z"
                                     : otherUser!.createdAt!)),

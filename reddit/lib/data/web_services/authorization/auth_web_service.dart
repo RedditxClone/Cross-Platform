@@ -180,7 +180,7 @@ class AuthWebService {
       });
       Response response = await DioHelper.postDataWithHeaders(
           url: 'user/me/$key',
-          data: formData,
+          data: {'photo': formData},
           headers: {"Authorization": "Bearer ${UserData.user!.token}"});
       debugPrint("update picture status code " +
           response.statusCode.toString() +

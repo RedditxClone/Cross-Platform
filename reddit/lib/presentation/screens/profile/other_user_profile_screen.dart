@@ -118,7 +118,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
 
   Widget _unfollow() {
     return SizedBox(
-      width: 126,
+      width: 135,
       child: OutlinedButton(
           onPressed: () {
             BlocProvider.of<UserProfileCubit>(context)
@@ -159,7 +159,10 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                   end: Alignment.bottomCenter,
                   colors: [Colors.redAccent, Colors.black])),
           child: otherUser!.coverPhoto != ""
-              ? Image.network(otherUser!.coverPhoto)
+              ? Image.network(
+                  otherUser!.coverPhoto,
+                  fit: BoxFit.cover,
+                )
               : null,
         ),
         Padding(
@@ -187,22 +190,6 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                           )),
                   Row(
                     children: [
-                      SizedBox(
-                        width: 55,
-                        child: OutlinedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              side: const BorderSide(
-                                  width: 1.0, color: Colors.white),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(32.0),
-                              ),
-                            ),
-                            child: const Icon(
-                              Icons.message_outlined,
-                              color: Colors.white,
-                            )),
-                      ),
                       const SizedBox(width: 10),
                       BlocBuilder<UserProfileCubit, UserProfileState>(
                         builder: (context, state) {
@@ -229,10 +216,10 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 30)),
               const SizedBox(height: 10),
-              // Text(
-              //     'u/${otherUser!.username} . 1 karma . ${DateFormat('dd MMM yyyy').format(DateTime.parse(UserData.user!.createdAt! == "" ? "2022-12-17T16:58:07.872Z" : UserData.user!.createdAt!))}',
-              //     style: const TextStyle(
-              //         fontWeight: FontWeight.bold, fontSize: 13)),
+              Text(
+                  'u/${otherUser!.username} . 1 karma . ${DateFormat('dd MMM yyyy').format(DateTime.parse(otherUser!.createdAt! == "" ? "2022-12-17T16:58:07.872Z" : UserData.user!.createdAt!))}',
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 13)),
               const SizedBox(height: 5),
               Text(otherUser!.about!,
                   style: const TextStyle(
