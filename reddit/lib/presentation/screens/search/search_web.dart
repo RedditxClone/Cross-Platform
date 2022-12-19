@@ -8,6 +8,7 @@ import 'package:reddit/business_logic/cubit/cubit/search/cubit/search_people_cub
 import 'package:reddit/constants/colors.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/presentation/screens/search/search_tabs.dart';
+import 'package:reddit/presentation/screens/search/search_tabs_mobile.dart';
 import '../../../business_logic/cubit/cubit/search/cubit/search_comments_cubit.dart';
 import '../../../business_logic/cubit/cubit/search/cubit/search_cubit.dart';
 import '../../../business_logic/cubit/cubit/search/cubit/search_posts_cubit.dart';
@@ -89,7 +90,9 @@ class _SearchWebState extends State<SearchWeb> {
     return Scaffold(
       body: SizedBox(
         child: FloatingSearchBar(
-          width: MediaQuery.of(context).size.width * 0.7,
+          width: kIsWeb
+              ? MediaQuery.of(context).size.width * 0.7
+              : MediaQuery.of(context).size.width,
           onQueryChanged: (query) {
             // Future.delayed(const Duration(milliseconds: 500), () {
             // });
@@ -412,11 +415,15 @@ class _SearchWebState extends State<SearchWeb> {
             }
             _searchBarController.close();
           },
-          body: FloatingSearchBarScrollNotifier(
-            child: SearchTabs(
-              searchTerm: selectedTerm,
-            ),
-          ),
+          body: kIsWeb
+              ? FloatingSearchBarScrollNotifier(
+                  child: SearchTabs(
+                    searchTerm: selectedTerm,
+                  ),
+                )
+              : SearchTabsMobile(
+                  searchTerm: selectedTerm,
+                ),
           // body: BlocBuilder<SearchCubit, SearchState>(
           //   builder: (context, state) {
           //     debugPrint("build the search page");

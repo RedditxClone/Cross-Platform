@@ -42,6 +42,7 @@ class SearchWebService {
           query: {},
           headers: {"Authorization": "Bearer ${UserData.user!.token}"},
         );
+        debugPrint("from searchPeople ${res.statusCode}");
       } else {
         res = await DioHelper.getData(
             url: 'search/peoples/?word=$word', query: {});

@@ -51,32 +51,32 @@ class _CommunitiesWebSearchState extends State<CommunitiesWebSearch> {
                           spacing: 10,
                           children: [
                             Wrap(
-                              spacing: 10,
+                              spacing: 15,
                               children: [
-                                TextButton.icon(
-                                  style: TextButton.styleFrom(
-                                    padding: const EdgeInsets.all(0),
-                                    backgroundColor: Colors.transparent,
-                                    foregroundColor: Colors.transparent,
+                                InkWell(
+                                  child: Wrap(
+                                    spacing: 10,
+                                    children: [
+                                      CircleAvatar(
+                                        backgroundColor: Colors.red,
+                                        radius: 10,
+                                        child: Logo(
+                                          Logos.reddit,
+                                          color: Colors.white,
+                                          size: 15,
+                                        ),
+                                      ),
+                                      Text(
+                                        "r/${state.communities[index].name ?? ""}",
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  icon: CircleAvatar(
-                                    backgroundColor: Colors.red,
-                                    radius: 10,
-                                    child: Logo(
-                                      Logos.reddit,
-                                      color: Colors.white,
-                                      size: 15,
-                                    ),
-                                  ),
-                                  label: Text(
-                                    "r/${state.communities[index].name ?? ""}",
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    //navigate to subreddit page
+                                  onTap: () {
+                                    debugPrint("go to community");
                                   },
                                 ),
                                 Text(
@@ -186,9 +186,12 @@ class _CommunitiesWebSearchState extends State<CommunitiesWebSearch> {
               },
             );
           }
-          return const Text(
-            "Start Serching ...",
-            style: TextStyle(color: Colors.white, fontSize: 20),
+          return Container(
+            padding: const EdgeInsets.all(20),
+            child: const Text(
+              "Start Serching ...",
+              style: TextStyle(color: Colors.white, fontSize: 20),
+            ),
           );
         },
       ),

@@ -72,10 +72,12 @@ class _PeopleWebSearchState extends State<PeopleWebSearch> {
                               },
                             ),
                             Text(
-                              state.users[index].about ?? "",
+                              // state.users[index].about ?? "",
+                              "aboadassssssssssssssssssssssssssssssssssssssssssssssssssssut",
                               style: const TextStyle(
                                 color: Colors.grey,
                               ),
+                              overflow: TextOverflow.fade,
                             ),
                           ],
                         ),
@@ -129,13 +131,13 @@ class _PeopleWebSearchState extends State<PeopleWebSearch> {
                                         BlocProvider.of<SearchPeopleCubit>(
                                                 context)
                                             .unfollow(
-                                                state.users[index].username!);
+                                                state.users[index].userId!);
                                       } else {
                                         //follow the user
                                         BlocProvider.of<SearchPeopleCubit>(
                                                 context)
                                             .follow(
-                                                state.users[index].username!);
+                                                state.users[index].userId!);
                                       }
                                     },
                                     style: ElevatedButton.styleFrom(
@@ -169,9 +171,12 @@ class _PeopleWebSearchState extends State<PeopleWebSearch> {
               },
             );
           }
-          return const Text(
-            "Start Serching ...",
-            style: TextStyle(color: Colors.white, fontSize: 20),
+          return Container(
+            padding: const EdgeInsets.all(20),
+            child: const Text(
+              "Start Serching ...",
+              style: TextStyle(color: Colors.white, fontSize: 20),
+            ),
           );
         },
       ),

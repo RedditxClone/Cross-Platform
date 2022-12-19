@@ -39,96 +39,90 @@ class _CommentsWebSearchState extends State<CommentsWebSearch> {
                   margin: const EdgeInsets.all(10),
                   child: ListTile(
                     mouseCursor: SystemMouseCursors.click,
-                    title: Wrap(
-                      direction: Axis.vertical,
-                      children: [
-                        Wrap(
-                          direction: Axis.vertical,
-                          spacing: 10,
-                          children: [
-                            Wrap(
-                              spacing: 10,
-                              children: [
-                                TextButton.icon(
-                                  style: TextButton.styleFrom(
-                                    padding: const EdgeInsets.all(0),
-                                    backgroundColor: Colors.transparent,
-                                    foregroundColor: Colors.transparent,
-                                  ),
-                                  icon: CircleAvatar(
-                                    backgroundColor: Colors.red,
-                                    radius: 10,
-                                    child: Logo(
-                                      Logos.reddit,
-                                      color: Colors.white,
-                                      size: 15,
-                                    ),
-                                  ),
-                                  label: Text(
-                                    "r/${state.comments[index].subreddit!.name ?? ""}",
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    //navigate to subreddit page
-                                  },
+                    title: InkWell(
+                      onTap: () {
+                        //navigate to the post page
+                        debugPrint("navigate to the post page");
+                      },
+                      child: Wrap(
+                        direction: Axis.vertical,
+                        spacing: 15,
+                        children: [
+                          Wrap(
+                            direction: Axis.vertical,
+                            children: [
+                              TextButton.icon(
+                                style: TextButton.styleFrom(
+                                  padding: const EdgeInsets.all(0),
+                                  backgroundColor: Colors.transparent,
+                                  foregroundColor: Colors.transparent,
                                 ),
-                                TextButton(
-                                  style: TextButton.styleFrom(
-                                    padding: const EdgeInsets.all(0),
-                                    backgroundColor: Colors.transparent,
-                                    foregroundColor: Colors.transparent,
+                                icon: CircleAvatar(
+                                  backgroundColor: Colors.red,
+                                  radius: 10,
+                                  child: Logo(
+                                    Logos.reddit,
+                                    color: Colors.white,
+                                    size: 15,
                                   ),
-                                  child: Text(
-                                    "Posted by u/${state.comments[index].postOwner!.username ?? ""} ${state.comments[index].post!.postedFrom ?? ""} ago",
-                                    style: const TextStyle(
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    //navigate to the profile user page
-                                  },
                                 ),
-                              ],
-                            ),
-                            Text(
-                              state.comments[index].post!.title ?? "",
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
+                                label: Text(
+                                  "r/${state.comments[index].subreddit!.name ?? ""}",
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                onPressed: () {
+                                  //navigate to subreddit page
+                                },
                               ),
-                            ),
-                          ],
-                        ),
-                        Wrap(
-                          spacing: 10,
-                          children: [
-                            Text(
-                              "${state.comments[index].upvotes ?? 0} upvotes",
-                              style: const TextStyle(
-                                color: Colors.grey,
+                              InkWell(
+                                child: Text(
+                                  "u/${state.comments[index].postOwner!.username ?? ""} ${state.comments[index].post!.postedFrom ?? ""} ago",
+                                  style: const TextStyle(
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                onTap: () {
+                                  //navigate to the profile user page
+                                },
                               ),
+                            ],
+                          ),
+                          Text(
+                            state.comments[index].post!.title ?? "",
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
                             ),
-                            Text(
-                              "${state.comments[index].post!.commentsCount ?? 0} comments",
-                              style: const TextStyle(
-                                color: Colors.grey,
+                            overflow: TextOverflow.fade,
+                          ),
+                          Wrap(
+                            spacing: 10,
+                            children: [
+                              Text(
+                                "${state.comments[index].upvotes ?? 0} upvotes",
+                                style: const TextStyle(
+                                  color: Colors.grey,
+                                ),
                               ),
-                            ),
-                          ],
-                        )
-                      ],
+                              Text(
+                                "${state.comments[index].post!.commentsCount ?? 0} comments",
+                                style: const TextStyle(
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
                     ),
-                    onTap: () {
-                      //navigate to the post page
-                    },
                     subtitle: ListTile(
                       style: ListTileStyle.list,
                       mouseCursor: SystemMouseCursors.click,
                       title: Container(
-                        padding: const EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
                           color: const Color.fromARGB(255, 18, 35, 45),
                           borderRadius: BorderRadius.circular(20),
@@ -172,6 +166,7 @@ class _CommentsWebSearchState extends State<CommentsWebSearch> {
                       ),
                       onTap: () {
                         //navigate to the comment
+                        debugPrint("navigate to the comment");
                       },
                     ),
                   ),
@@ -179,9 +174,12 @@ class _CommentsWebSearchState extends State<CommentsWebSearch> {
               },
             );
           }
-          return const Text(
-            "Start Serching ...",
-            style: TextStyle(color: Colors.white, fontSize: 20),
+          return Container(
+            padding: const EdgeInsets.all(20),
+            child: const Text(
+              "Start Serching ...",
+              style: TextStyle(color: Colors.white, fontSize: 20),
+            ),
           );
         },
       ),

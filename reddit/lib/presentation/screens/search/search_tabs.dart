@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reddit/business_logic/cubit/cubit/search/cubit/search_comments_cubit.dart';
-import 'package:reddit/business_logic/cubit/cubit/search/cubit/search_cubit.dart';
 import 'package:reddit/business_logic/cubit/cubit/search/cubit/search_posts_cubit.dart';
 import 'package:reddit/presentation/screens/search/comments_web_search.dart';
 import 'package:reddit/presentation/screens/search/communities_web_search.dart';
@@ -10,6 +9,7 @@ import 'package:reddit/presentation/screens/search/posts_web_search.dart';
 import '../../../business_logic/cubit/cubit/search/cubit/search_communities_cubit.dart';
 import '../../../business_logic/cubit/cubit/search/cubit/search_people_cubit.dart';
 import '../../../constants/responsive.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class SearchTabs extends StatefulWidget {
   const SearchTabs({super.key, required this.searchTerm});
@@ -30,11 +30,6 @@ class _SearchTabsState extends State<SearchTabs> {
   late Responsive responsive;
 
   _SearchTabsState(this.searchTerm);
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
