@@ -376,11 +376,23 @@ class SearchWebState extends State<SearchWeb> {
                                                   color: Colors.white,
                                                 ),
                                               ),
-                                              leading:
-                                                  term["profilePhoto"] == ""
-                                                      ? const Icon(Icons.reddit)
-                                                      : Image.network(
-                                                          term["profilePhoto"]),
+                                              leading: CircleAvatar(
+                                                backgroundColor: Colors.white,
+                                                radius: 20,
+                                                backgroundImage: term[
+                                                            "profilePhoto"] !=
+                                                        ''
+                                                    ? NetworkImage(imagesUrl +
+                                                        term["profilePhoto"])
+                                                    : null,
+                                                child:
+                                                    term["profilePhoto"] == ''
+                                                        ? const Icon(
+                                                            Icons.person,
+                                                            size: 20,
+                                                          )
+                                                        : null,
+                                              ),
                                               onTap: () {
                                                 //navigate to the user page we can pass the ID and name of it and all the data needed
                                                 setState(() {
