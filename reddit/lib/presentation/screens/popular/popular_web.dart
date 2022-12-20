@@ -292,10 +292,10 @@ class _PopularWebState extends State<PopularWeb> {
                   state is SignedIn ||
                   state is SignedInWithProfilePhoto) {
                 debugPrint("state is signed in");
-                return const AppBarWebLoggedIn(screen: 'Home');
+                return const AppBarWebLoggedIn(screen: 'Popular');
               } else {
                 debugPrint("state is not signed in");
-                return const AppBarWebNotLoggedIn(screen: 'Home');
+                return const AppBarWebNotLoggedIn(screen: 'Popular');
               }
             },
           ),

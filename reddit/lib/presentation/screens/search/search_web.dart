@@ -12,6 +12,7 @@ import 'package:reddit/presentation/screens/search/search_tabs_mobile.dart';
 import '../../../business_logic/cubit/cubit/search/cubit/search_comments_cubit.dart';
 import '../../../business_logic/cubit/cubit/search/cubit/search_cubit.dart';
 import '../../../business_logic/cubit/cubit/search/cubit/search_posts_cubit.dart';
+import '../../../data/model/auth_model.dart';
 import '../../../helper/utils/shared_keys.dart';
 import '../../../helper/utils/shared_pref.dart';
 
@@ -244,12 +245,29 @@ class SearchWebState extends State<SearchWeb> {
                                               context)
                                           .searchPeople(selectedTerm ?? "");
                                     } else {
-                                      //TODO: if the id isn't an empty string navigate to the page of the user or the subreddit
                                       if (selectedTerm?[0] == 'u') {
                                         //user
-
+                                        if (UserData.isLoggedIn) {
+                                          if (selectedTerm?.substring(2) ==
+                                              UserData.user!.username) {
+                                            Navigator.pushNamed(
+                                                context, profilePageRoute);
+                                          } else {
+                                            Navigator.pushNamed(
+                                                context, otherProfilePageRoute,
+                                                arguments:
+                                                    selectedTerm?.substring(2));
+                                          }
+                                        } else {
+                                          Navigator.pushNamed(
+                                            context,
+                                            otherProfilePageRoute,
+                                            arguments:
+                                                selectedTerm?.substring(2),
+                                          );
+                                        }
                                       } else if (selectedTerm?[0] == 'r') {
-                                        //subreddit
+                                        //ToDO: go to subreddit
 
                                       }
                                     }
@@ -303,7 +321,7 @@ class SearchWebState extends State<SearchWeb> {
                                               //     : Image.network(term["img"]),
                                               leading: const Icon(Icons.reddit),
                                               onTap: () {
-                                                //navigate to the subreddits page we can pass the ID and name of it and all the data needed
+                                                //TODO:navigate to the subreddits page we can pass the ID and name of it and all the data needed
                                                 setState(() {
                                                   selectedTerm =
                                                       "r/${term["name"]}";
@@ -371,6 +389,24 @@ class SearchWebState extends State<SearchWeb> {
                                                   addSearchTerm(selectedTerm!,
                                                       term["_id"]);
                                                 });
+                                                if (UserData.isLoggedIn) {
+                                                  if (term["_id"] ==
+                                                      UserData.user!.userId) {
+                                                    Navigator.pushNamed(context,
+                                                        profilePageRoute);
+                                                  } else {
+                                                    Navigator.pushNamed(context,
+                                                        otherProfilePageRoute,
+                                                        arguments:
+                                                            term["username"]);
+                                                  }
+                                                } else {
+                                                  Navigator.pushNamed(
+                                                    context,
+                                                    otherProfilePageRoute,
+                                                    arguments: term["username"],
+                                                  );
+                                                }
                                                 _searchBarController.close();
                                               },
                                             ),
@@ -416,10 +452,7 @@ class SearchWebState extends State<SearchWeb> {
             }
             _searchBarController.close();
           },
-          body: kIsWeb
-              ? const SearchTabs()
-              : const SearchTabsMobile(
-                ),
+          body: kIsWeb ? const SearchTabs() : const SearchTabsMobile(),
           // body: BlocBuilder<SearchCubit, SearchState>(
           //   builder: (context, state) {
           //     debugPrint("build the search page");
