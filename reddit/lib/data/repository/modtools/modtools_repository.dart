@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:reddit/data/model/modtools/taffic_stats_model.dart';
 import 'package:reddit/data/model/posts/posts_model.dart';
 import 'package:reddit/data/web_services/modtools/modtools_webservices.dart';
@@ -100,8 +101,10 @@ class ModToolsRepository {
   /// This function calls [addModerator] from [ModToolsWebServices] and returns the status code
   /// Returns status code 201 if add is successfull and 400 if the user is already a moderator
   Future<int> addModerator(String subredditId, String username) async {
-    final statusCode = await webServices.addModerator(subredditId, username);
-    return statusCode;
+    Response res = await webServices.addModerator(subredditId, username);
+    debugPrint("rsponse code ${res.statusCode}");
+
+    return res.statusCode ?? 0;
   }
 
   /// [subredditId] is the id of subreddit to add new user to the muted list
@@ -112,9 +115,9 @@ class ModToolsRepository {
   /// Returns status code 201 if add is successfull and 400 if the user is already muted
   Future<int> muteUser(
       String subredditId, String username, String muteReason) async {
-    final statusCode =
+    Response res =
         await webServices.muteUser(subredditId, username, muteReason);
-    return statusCode;
+    return res.statusCode ?? 0;
   }
 
   /// [subredditId] is the id of subreddit to get the muted list
@@ -155,8 +158,8 @@ class ModToolsRepository {
   /// Returns status code 201 if add is successfull and 400 if the user is already banned
   Future<int> banUser(String subredditId, String username, String banReason,
       int banDays, String modNote, String banMessage, bool permanent) async {
-    final statusCode = await webServices.banUser(subredditId, username,
-        banReason, banDays, modNote, banMessage, permanent);
-    return statusCode;
+    Response res = await webServices.banUser(subredditId, username, banReason,
+        banDays, modNote, banMessage, permanent);
+    return res.statusCode ?? 0;
   }
 }

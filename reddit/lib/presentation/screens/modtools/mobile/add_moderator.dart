@@ -45,7 +45,8 @@ class _AddModeratorScreenState extends State<AddModeratorScreen> {
               const SizedBox(width: 10),
               Text(
                 title,
-                style: const TextStyle(fontSize: 16, color: Colors.white),
+                style: TextStyle(
+                    fontSize: title.length > 20 ? 9 : 16, color: Colors.white),
               ),
             ],
           )),
@@ -81,12 +82,14 @@ class _AddModeratorScreenState extends State<AddModeratorScreen> {
             if (state.statusCode == 400) {
               displayMsg(context, Colors.red,
                   ' This user is already a moderator or the username is not valid');
+            } else {
+              displayMsg(context, Colors.green,
+                  ' ${usernameController.text} becomes a moderator');
+              usernameController.text = '';
+              BlocProvider.of<ModtoolsCubit>(context)
+                  .getModerators(widget.subredditId);
+              Navigator.pop(context);
             }
-          } else {
-            displayMsg(context, Colors.green,
-                ' ${usernameController.text} becomes a moderator');
-            usernameController.text = '';
-            Navigator.pop(context);
           }
         },
         child: Padding(

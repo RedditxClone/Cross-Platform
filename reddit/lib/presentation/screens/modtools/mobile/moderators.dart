@@ -19,7 +19,7 @@ class ModeratorsScreen extends StatefulWidget {
 }
 
 class _ModeratorsScreenState extends State<ModeratorsScreen> {
-  late List<User> moderators;
+  List<User>? moderators;
 
   /// [context] : build context.
   /// [color] : color of the error msg to be displayer e.g. ('red' : error , 'blue' : success ).
@@ -63,31 +63,32 @@ class _ModeratorsScreenState extends State<ModeratorsScreen> {
 
   Widget listviewItem(context, index) {
     return Container(
-      margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+      margin: const EdgeInsets.fromLTRB(10, 10, 0, 10),
       // decoration: BoxDecoration(
       //   // color: textFeildColor,
       //   borderRadius: BorderRadius.circular(20),
       // ),
       child: InkWell(
         onTap: () => Navigator.pushNamed(context, otherProfilePageRoute,
-            arguments: moderators[index].username),
+            arguments: moderators![index].username),
         child: Row(children: [
-          moderators[index].profilePic == null ||
-                  moderators[index].profilePic == ''
+          moderators![index].profilePic == null ||
+                  moderators![index].profilePic == ''
               ? const CircleAvatar(
                   radius: 17,
                   backgroundColor: Colors.grey,
                   child: Icon(Icons.person))
               : CircleAvatar(
                   radius: 17,
-                  backgroundImage: NetworkImage(moderators[index].profilePic!)),
+                  backgroundImage:
+                      NetworkImage(moderators![index].profilePic!)),
           const SizedBox(width: 10),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('u/${moderators[index].username}'),
+              Text('u/${moderators![index].username}'),
               Text(
-                moderators[index].about ?? "",
+                moderators![index].about ?? "",
                 style: const TextStyle(color: Colors.grey, fontSize: 12),
               ),
             ],
@@ -125,13 +126,13 @@ class _ModeratorsScreenState extends State<ModeratorsScreen> {
         builder: (context, state) {
           if (state is ModeratorsListAvailable) {
             moderators = state.moderators;
-            if (moderators.isEmpty) {
+            if (moderators!.isEmpty) {
               return const Center(
                 child: Text('No moderators found'),
               );
             }
             return ListView.builder(
-                itemCount: moderators.length,
+                itemCount: moderators!.length,
                 itemBuilder: (context, index) {
                   return listviewItem(context, index);
                 });
