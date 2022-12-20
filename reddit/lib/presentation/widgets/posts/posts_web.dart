@@ -422,11 +422,13 @@ class PostsWeb extends StatelessWidget {
                       onTap: (() {
                         // Go to subreddit page
                         Navigator.pushNamed(context, subredditPageScreenRoute,
-                            arguments: postsModel == null
-                                ? ''
-                                : postsModel!.subreddit == null
-                                    ? ""
-                                    : postsModel!.subreddit!.id);
+                            arguments: <String, dynamic>{
+                              'sId': postsModel == null
+                                  ? ''
+                                  : postsModel!.subreddit == null
+                                      ? ""
+                                      : postsModel!.subreddit!.id
+                            });
                       }),
                       child: Text(
                           "r/${postsModel == null ? '' : postsModel!.subreddit == null ? '' : postsModel!.subreddit!.name ?? ''}",

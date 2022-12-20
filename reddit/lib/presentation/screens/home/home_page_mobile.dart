@@ -208,6 +208,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _switchpage(int index) {
+    if (index == 2) {
+      index = 0;
+      Navigator.pushNamed(context, createPostScreenRoute);
+    }
     setState(() {
       _selectedPageIndex = index;
     });

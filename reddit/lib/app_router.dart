@@ -13,6 +13,7 @@ import 'package:reddit/business_logic/cubit/posts/posts_popular_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_subreddit_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_user_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/sort_cubit.dart';
+import 'package:reddit/data/model/comments/comment_model.dart';
 import 'package:reddit/business_logic/cubit/user_profile/follow_unfollow_cubit.dart';
 import 'package:reddit/data/repository/comments/comments_repository.dart';
 import 'package:reddit/data/web_services/comments/comments_web_services.dart';
@@ -38,6 +39,7 @@ import 'package:reddit/presentation/screens/modtools/web/modqueue_web.dart';
 import 'package:reddit/presentation/screens/modtools/web/spam_web.dart';
 import 'package:reddit/presentation/screens/modtools/web/traffic_stats.dart';
 import 'package:reddit/presentation/screens/modtools/web/unmoderated.dart';
+import 'package:reddit/presentation/screens/new_post/create_post_screen.dart';
 // import 'package:reddit/presentation/screens/profile/other_user_orfile_screen.dart';
 import 'package:reddit/presentation/screens/search/search_web.dart';
 import 'business_logic/cubit/cubit/search/cubit/search_cubit.dart';
@@ -47,9 +49,17 @@ import 'package:reddit/presentation/screens/post/post_page.dart';
 import 'package:reddit/presentation/screens/post/post_page_web.dart';
 import 'package:reddit/presentation/screens/profile/other_user_profile_screen.dart';
 import 'business_logic/cubit/feed_settings_cubit.dart';
+import 'business_logic/cubit/new_post/create_post_cubit.dart';
+import 'business_logic/cubit/new_post/post_flair_cubit.dart';
+import 'business_logic/cubit/new_post/post_subreddit_preview_cubit.dart';
+import 'business_logic/cubit/new_post/post_to_cubit.dart';
+import 'data/model/flair_model.dart';
+import 'data/model/post_model.dart';
+import 'data/model/subreddit_model.dart';
+import 'data/repository/new_post_repository.dart';
 import 'data/repository/search_repo.dart';
+import 'data/web_services/create_post_web_services.dart';
 import 'data/web_services/search_web_service.dart';
-import 'package:reddit/presentation/screens/profile/other_user_profile_screen.dart';
 import 'business_logic/cubit/left_drawer/left_drawer_cubit.dart';
 import 'data/repository/left_drawer/left_drawer_repository.dart';
 import 'data/web_services/left_drawer/left_drawer_web_services.dart';
@@ -60,6 +70,9 @@ import 'package:reddit/presentation/screens/profile/profile_screen.dart';
 import 'business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
 import 'data/repository/auth_repo.dart';
 import 'data/web_services/authorization/auth_web_service.dart';
+import 'presentation/screens/new_post/post_flair_screen.dart';
+import 'presentation/screens/new_post/post_subreddit_preview_screen.dart';
+import 'presentation/screens/new_post/post_to_mobile.dart';
 import 'presentation/screens/setting_tab_ui.dart';
 import 'package:reddit/presentation/screens/recaptcha_screen.dart'
     if (dart.library.html) 'package:reddit/presentation/screens/recaptcha_screen_web.dart'
@@ -181,6 +194,13 @@ class AppRouter {
   late SortCubit popularSortCubit;
   late SortCubit myProfileSortCubit;
   late SortCubit otherProfileSortCubit;
+  late CreatePostRepository postRepository;
+  late CreatePostCubit createPostCubit;
+  late PostToCubit postToCubit;
+  late PostSubredditPreviewCubit postSubredditPreviewCubit;
+  late PostFlairCubit postFlairCubit;
+  late CreatePostWebServices postWebServices;
+
   late SortCubit subredditSortCubit;
   AppRouter() {
     // initialise repository and cubit objects
@@ -241,6 +261,12 @@ class AppRouter {
     otherProfileSortCubit = SortCubit();
     myProfileSortCubit = SortCubit();
     popularSortCubit = SortCubit();
+    postWebServices = CreatePostWebServices();
+    postRepository = CreatePostRepository(postWebServices);
+    createPostCubit = CreatePostCubit(postRepository);
+    postToCubit = PostToCubit(postRepository);
+    postSubredditPreviewCubit = PostSubredditPreviewCubit(postRepository);
+    postFlairCubit = PostFlairCubit(postRepository);
     subredditSortCubit = SortCubit();
   }
   Route? generateRoute(RouteSettings settings) {
@@ -315,6 +341,9 @@ class AppRouter {
                       BlocProvider.value(
                         value: myProfileSortCubit,
                       ),
+                      BlocProvider.value(
+                        value: myProfileSortCubit,
+                      ),
                     ],
                     child: const ProfilePageWeb(),
                   )
@@ -352,15 +381,32 @@ class AppRouter {
         );
 
       case subredditPageScreenRoute:
+        String subredditId =
+            (arguments as Map<String, dynamic>)['sId'] as String;
+        SubredditModel? subredditModel =
+            (arguments)['subreddit'] as SubredditModel?;
         return MaterialPageRoute(
-            builder: (_) => BlocProvider.value(
-                value: subredditPageCubit,
-                child: const SubredditPageScreen(subredditId: "redditx_")));
+            builder: (_) => MultiBlocProvider(
+                    providers: [
+                      BlocProvider(
+                        create: (context) =>
+                            SubredditPageCubit(subredditPageRepository),
+                      ),
+                      BlocProvider(
+                        create: (context) => authCubit,
+                      ),
+                      BlocProvider.value(value: subredditSortCubit),
+                      BlocProvider.value(value: postsSubredditCubit),
+                    ],
+                    child: SubredditPageScreen(
+                      subredditId: subredditId,
+                      subredditModel: subredditModel,
+                    )));
       //---------------------------------------------------------------------------
       //------------------------------MOD LIST-------------------------------------
       //---------------------------------------------------------------------------
       case modlistRoute:
-        final subreddit = settings.arguments as Map<String, String>;
+        final subreddit = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
             builder: (_) => BlocProvider.value(
                 value: modtoolsCubit,
@@ -447,9 +493,7 @@ class AppRouter {
         return MaterialPageRoute(
             builder: (_) => BlocProvider.value(
                   value: historyPageCubit,
-                  child: const HistoryPageScreen(
-                    userID: "6388a61b5e0b583f4a79e41a",
-                  ),
+                  child: const HistoryPageScreen(),
                 ));
       case createCommunityScreenRoute:
         return MaterialPageRoute(
@@ -669,6 +713,44 @@ class AppRouter {
             builder: (_) => BlocProvider(
                   create: (BuildContext context) => messagesCubitProfile,
                   child: SendMessageWeb(username: username),
+                ));
+      case createPostScreenRoute:
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider(
+                  create: (BuildContext context) => createPostCubit,
+                  child: const CreatePostScreen(),
+                ));
+
+      case postToMobileScreenRoute:
+        PostModel newPostModel = arguments as PostModel;
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider(
+                  create: (BuildContext context) => postToCubit,
+                  child: PostToScreen(postModel: newPostModel),
+                ));
+
+      case postSubredditPreviewScreenRoute:
+        PostModel newPostModel =
+            (arguments as Map<String, dynamic>)['post'] as PostModel;
+        SubredditModel subredditModel =
+            (arguments)['subreddit'] as SubredditModel;
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider(
+                  create: (BuildContext context) => postSubredditPreviewCubit,
+                  child: PostSubredditPreviewScreen(
+                    postModel: newPostModel,
+                    subredditModel: subredditModel,
+                  ),
+                ));
+
+      case postFlairScreenRoute:
+        List<FlairModel> flairList = arguments as List<FlairModel>;
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider(
+                  create: (BuildContext context) => postFlairCubit,
+                  child: PostFlairScreen(
+                    flairList: flairList,
+                  ),
                 ));
 
       default:

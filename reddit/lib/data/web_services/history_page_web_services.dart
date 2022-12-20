@@ -16,12 +16,17 @@ class HistoryPageWebServices {
     dio = Dio(options);
   }
   // Gets data from server, the repository calls this function
-  Future<dynamic> getPostsInHistoryPage(String userID, String mode) async {
+  Future<dynamic> getPostsInHistoryPage(String mode) async {
     try {
-      Response response = await dio.get("user/$userID/$mode",
-          options: Options(
-            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
-          ));
+      Response response = mode == 'hidden'
+          ? await dio.get("post/hidden",
+              options: Options(
+                headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+              ))
+          : await dio.get("thing/$mode",
+              options: Options(
+                headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+              ));
 
       return response.data;
     } catch (e) {

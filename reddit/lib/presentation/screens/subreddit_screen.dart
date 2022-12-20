@@ -5,31 +5,49 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:reddit/business_logic/cubit/end_drawer/end_drawer_cubit.dart';
+import 'package:reddit/business_logic/cubit/posts/posts_subreddit_cubit.dart';
 import 'package:reddit/business_logic/cubit/subreddit_page_cubit.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/data/model/auth_model.dart';
+import 'package:reddit/data/model/post_model.dart';
 import 'package:reddit/data/model/subreddit_model.dart';
+import 'package:reddit/data/repository/end_drawer/end_drawer_repository.dart';
+import 'package:reddit/data/web_services/settings_web_services.dart';
+import 'package:reddit/presentation/widgets/home_widgets/end_drawer.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_Not_loggedin.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
+import '../../business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
+import '../../business_logic/cubit/posts/posts_my_profile_cubit.dart';
 import '../../constants/colors.dart';
 import '../../constants/font_sizes.dart';
+import '../widgets/posts/posts_web.dart';
 
 class SubredditPageScreen extends StatefulWidget {
-  const SubredditPageScreen({super.key, required this.subredditId});
   final String subredditId;
+  final SubredditModel? subredditModel;
+  bool _newSubreddit = false;
+  SubredditPageScreen(
+      {super.key, required this.subredditId, this.subredditModel}) {
+    _newSubreddit = subredditModel != null;
+  }
   @override
   State<SubredditPageScreen> createState() => _SubredditPageScreenState();
 }
 
 class _SubredditPageScreenState extends State<SubredditPageScreen> {
-  var joinLeaveButtonText = "";
+  String joinLeaveButtonText = "";
   final ImagePicker _picker = ImagePicker();
-  late SubredditModel _subredditModel;
+  SubredditModel? _subredditModel;
   String _selectedMode = "hot";
   IconData _selectedModeIcon = Icons.fireplace;
   Uint8List? _pickedImage;
   final TextEditingController _controller = TextEditingController();
+  bool? _isMod;
+  bool _updatingIcon = false;
+  String _sortType = 'hot';
+  bool? _joinedSubreddit;
   void _displayMsg(BuildContext context, Color color, String title) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       width: 400,
@@ -74,7 +92,7 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
       if (image == null) return;
       _pickedImage = await image.readAsBytes();
       BlocProvider.of<SubredditPageCubit>(context)
-          .updateSubredditIcon(_subredditModel.subredditId, _pickedImage);
+          .updateSubredditIcon(_subredditModel!.sId!, _pickedImage);
     } catch (e) {
       print(e);
     }
@@ -84,21 +102,23 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
       defaultTargetPlatform == TargetPlatform.android ||
           defaultTargetPlatform == TargetPlatform.iOS;
   late int _upperBarHeight;
-  _SubredditPageScreenState();
   @override
   void initState() {
     _upperBarHeight = _mobilePlatform ? 100 : 200;
 
     super.initState();
+    if (widget._newSubreddit) {
+      print("model in screen" + widget.subredditModel.toString());
+      _subredditModel = widget.subredditModel!;
+      _joinedSubreddit = true;
+      _isMod = true;
+      return;
+    }
     BlocProvider.of<SubredditPageCubit>(context)
         .getSubredditInfo(widget.subredditId);
     // BlocProvider.of<SubredditPageCubit>(context)
-    //     .getSubredditDescription(subreddit);
-    // BlocProvider.of<SubredditPageCubit>(context)
-    //     .getSubredditModerators(subreddit);
-    // BlocProvider.of<SubredditPageCubit>(context).getSubredditIcon(subreddit);
-    // BlocProvider.of<SubredditPageCubit>(context)
-    //     .getPostsInPage(subreddit, "hot");
+    //     .getIfJoined(widget.subredditId);
+    // BlocProvider.of<SubredditPageCubit>(context).getIfMod(widget.subredditId);
   }
 
   PreferredSizeWidget? _buildAppBar() {
@@ -114,7 +134,7 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                 : const AppBarWebNotLoggedIn(screen: 'r/subreddit'));
   }
 
-  Widget _buildAbout(SubredditPageState state) {
+  Widget _buildAbout(SubredditModel subredditModel) {
     return _mobilePlatform
         ? SingleChildScrollView(
             child: Container(
@@ -146,34 +166,33 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                   const SizedBox(
                     height: 10,
                   ),
-                  state is SubredditModeratorsLoading
-                      ? const Center(
-                          child:
-                              CircularProgressIndicator(color: darkFontColor),
-                        )
-                      : SizedBox(
-                          width: double.infinity,
-                          child: Column(
+                  SizedBox(
+                    width: double.infinity,
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          for (String text in subredditModel.moderators!)
+                            Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                for (String text in _subredditModel.moderators)
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        textAlign: TextAlign.left,
-                                        text,
-                                        style: const TextStyle(
-                                            color: lightFontColor),
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      )
-                                    ],
-                                  )
-                              ]),
-                        )
+                                GestureDetector(
+                                  child: Text(
+                                    text,
+                                    style: const TextStyle(
+                                        color: lightFontColor,
+                                        decoration: TextDecoration.underline),
+                                  ),
+                                  onTap: () => Navigator.pushNamed(
+                                      context, otherProfilePageRoute,
+                                      arguments: text),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                )
+                              ],
+                            )
+                        ]),
+                  )
                 ]),
               ),
             ),
@@ -204,8 +223,8 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                                 InkWell(
                                     onTap: () => Navigator.pushNamed(
                                             context, modqueueRoute, arguments: {
-                                          'name': 'bemoireddit2',
-                                          'id': '639b27bbef88b3df0463d04b'
+                                          'name': subredditModel.name,
+                                          'id': subredditModel.sId
                                         }),
                                     child: Padding(
                                       padding: const EdgeInsets.all(5),
@@ -236,15 +255,16 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                         const SizedBox(
                           height: 10,
                         ),
-                        TextField(
-                          maxLines: null,
-                          readOnly: _subredditModel.isMod ? false : true,
-                          controller: _controller,
-                          decoration: const InputDecoration(
-                              focusColor: Colors.transparent,
-                              fillColor: Colors.transparent),
-                          style: const TextStyle(color: lightFontColor),
-                        ),
+                        // if (_subredditModel.description.isNotEmpty)
+                        // TextField(
+                        // maxLines: null,
+                        // readOnly: _isMod ? false : true,
+                        // controller: _controller,
+                        // decoration: const InputDecoration(
+                        // focusColor: Colors.transparent,
+                        // fillColor: Colors.transparent),
+                        // style: const TextStyle(color: lightFontColor),
+                        // ),
                         const SizedBox(
                           height: 10,
                         ),
@@ -257,10 +277,10 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                             const SizedBox(
                               width: 4,
                             ),
-                            Text(
-                              "Created ${_subredditModel.creationDate.month} / ${_subredditModel.creationDate.day} / ${_subredditModel.creationDate.year}",
-                              style: const TextStyle(color: darkFontColor),
-                            )
+                            // Text(
+                            // "Created ${_subredditModel.createdDate.month} / ${_subredditModel.createdDate.day} / ${_subredditModel.createdDate.year}",
+                            // style: const TextStyle(color: darkFontColor),
+                            // )
                           ],
                         ),
                         const SizedBox(
@@ -271,7 +291,7 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                           height: 10,
                         ),
                         Text(
-                          _subredditModel.membersCount.toString(),
+                          subredditModel.memberCount.toString(),
                           style: const TextStyle(color: lightFontColor),
                         ),
                         const Text(
@@ -329,12 +349,19 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                         const SizedBox(
                           height: 10,
                         ),
-                        for (String text in _subredditModel.moderators)
+                        for (String text in subredditModel.moderators!)
                           Column(
                             children: [
-                              Text(
-                                text,
-                                style: const TextStyle(color: lightFontColor),
+                              GestureDetector(
+                                child: Text(
+                                  text,
+                                  style: const TextStyle(
+                                      color: lightFontColor,
+                                      decoration: TextDecoration.underline),
+                                ),
+                                onTap: () => Navigator.pushNamed(
+                                    context, otherProfilePageRoute,
+                                    arguments: text),
                               ),
                               const SizedBox(
                                 height: 10,
@@ -349,50 +376,6 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
               )
             ],
           );
-  }
-
-  Widget _buildPosts() {
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: 5,
-      itemBuilder: (context, position) {
-        return SizedBox(
-          height: 200,
-          width: double.infinity,
-          child: Card(
-            child: SizedBox(
-              width: double.infinity,
-              child: Row(
-                children: [
-                  Column(
-                    children: [
-                      Expanded(
-                          flex: 1,
-                          child: Container(
-                            color: darkCardsColor,
-                          )),
-                      const VerticalDivider(
-                        thickness: 0,
-                      ),
-                      Container(
-                        color: cardsColor,
-                        child: const Center(
-                          child: Text(
-                            "Demo post, hope you are well!!",
-                            style: TextStyle(
-                                color: lightFontColor, fontSize: 22.0),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
   }
 
   Widget _createButtons(String title, IconData icon, String mode) {
@@ -411,14 +394,68 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
       onPressed: () {
         _selectedMode = mode;
         _selectedModeIcon = icon;
-        BlocProvider.of<SubredditPageCubit>(context)
-            .getPostsInPage(_subredditModel.subredditId, mode);
       },
       icon: Icon(icon),
     );
   }
 
-  Widget _buildBody(SubredditPageState state) {
+  Widget _myposts() {
+    return BlocBuilder<PostsSubredditCubit, PostsSubredditState>(
+      builder: (context, state) {
+        if (state is SubredditPostsLoaded) {
+          if (state.posts!.isNotEmpty) {
+            return Column(children: [
+              ...state.posts!.map((e) => PostsWeb(postsModel: e)).toList()
+            ]);
+          }
+          return Center(
+            child: Column(children: [
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Image.asset(
+                  "assets/images/comments.jpg",
+                  scale: 3,
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 10),
+                child: Text(
+                  "Create a post",
+                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              Row(
+                children: [
+                  Expanded(flex: 3, child: Container()),
+                  const Expanded(
+                    flex: 20,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      child: Text(
+                        "No posts are available yet. Create a post now!",
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                  Expanded(flex: 3, child: Container()),
+                ],
+              ),
+            ]),
+          );
+        }
+        return Container();
+      },
+    );
+  }
+
+  Widget _buildBody(subredditModel, joinedSubreddit, isMod) {
+    // isMod = true;
+    joinLeaveButtonText = joinedSubreddit ? "Joined" : "Join";
+    print(joinLeaveButtonText);
+    _controller.text = subredditModel.description ?? "";
+    // List<dynamic> moderators = subredditModel.moderators!;
+    // isMod = moderators.contains(UserData.user!.username);
     return _mobilePlatform
         ? DefaultTabController(
             length: 2,
@@ -427,84 +464,116 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                   (BuildContext context, bool innerBoxIsScrolled) {
                 return <Widget>[
                   SliverAppBar(
+                    leading: IconButton(
+                      icon: const Icon(
+                        Icons.arrow_back,
+                        color: lightFontColor,
+                      ),
+                      onPressed: (() => Navigator.pop(context)),
+                    ),
                     expandedHeight: 250,
                     stretch: true,
                     automaticallyImplyLeading: false,
                     actions: [
-                      Expanded(
-                        flex: 2,
-                        child: IconButton(
-                          icon: const Icon(
-                            Icons.arrow_back,
-                            color: lightFontColor,
-                          ),
-                          onPressed: (() => Navigator.pop(context)),
-                        ),
-                      ),
-                      const Expanded(
-                          flex: 6, child: SizedBox(child: TextField())),
-                      Expanded(
-                          flex: 1,
-                          child: IconButton(
-                              onPressed: () {}, icon: const Icon(Icons.list))),
-                      const Expanded(flex: 2, child: Icon(Icons.reddit)),
+                      BlocBuilder<AuthCubit, AuthState>(
+                        builder: (context, state) {
+                          if (state is Login ||
+                              state is GetTheUserData ||
+                              state is SignedIn ||
+                              state is SignedInWithProfilePhoto) {
+                            return IconButton(
+                              key: const Key('user-icon'),
+                              onPressed: () {
+                                Scaffold.of(context).openEndDrawer();
+                              },
+                              icon: UserData.profileSettings!.profile.isEmpty
+                                  ? const Icon(
+                                      Icons.person,
+                                    )
+                                  : CircleAvatar(
+                                      backgroundImage: NetworkImage(
+                                      UserData.user!.profilePic!,
+                                    )),
+                            );
+                          } else {
+                            return IconButton(
+                                key: const Key('user-icon'),
+                                onPressed: () {
+                                  Scaffold.of(context).openEndDrawer();
+                                },
+                                icon: const CircleAvatar(
+                                    child: Icon(
+                                  Icons.person,
+                                  color: Colors.grey,
+                                  size: 25,
+                                )));
+                          }
+                        },
+                      )
                     ],
-                    backgroundColor: mobileCardsColor,
+                    // backgroundColor: Colors.grey,
                     elevation: 0,
                     flexibleSpace: FlexibleSpaceBar(
-                        background:
-                            Stack(fit: StackFit.expand, children: <Widget>[
-                      Image.asset(
-                        'assets/images/cover.jpg',
-                        width: double.maxFinite,
-                        fit: BoxFit.cover,
-                      ),
-                      Column(
-                        children: [
-                          const SizedBox(
-                            height: kToolbarHeight * 3,
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: SizedBox(
-                              width: double.maxFinite,
-                              child: Card(
-                                color: mobileCardsColor,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                "r/${_subredditModel.subredditId}",
-                                                style: const TextStyle(
-                                                    fontSize: 20,
-                                                    color: lightFontColor),
-                                              ),
-                                              Text(
-                                                  "${_subredditModel.membersCount} members",
+                        background: Container(
+                      decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [Colors.blueAccent, Colors.black])),
+                      child: Stack(fit: StackFit.expand, children: <Widget>[
+                        Column(
+                          children: [
+                            const SizedBox(
+                              height: kToolbarHeight * 3,
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: SizedBox(
+                                width: double.maxFinite,
+                                child: Card(
+                                  color: mobileCardsColor,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  "r/${subredditModel.name}",
                                                   style: const TextStyle(
-                                                    color: darkFontColor,
-                                                  )),
-                                            ],
-                                          ),
-                                          if (_subredditModel.isMod)
+                                                      fontSize: 20,
+                                                      color: lightFontColor),
+                                                ),
+                                                Text(
+                                                    "${subredditModel.memberCount} members",
+                                                    style: const TextStyle(
+                                                      color: darkFontColor,
+                                                    )),
+                                              ],
+                                            ),
                                             TextButton(
                                                 style: TextButton.styleFrom(
-                                                  padding: EdgeInsets.zero,
                                                   foregroundColor:
-                                                      lightFontColor,
+                                                      joinedSubreddit || isMod
+                                                          ? lightFontColor
+                                                          : backgroundColor,
                                                   backgroundColor:
-                                                      Colors.transparent,
+                                                      joinedSubreddit || isMod
+                                                          ? Colors.transparent
+                                                          : lightFontColor,
+                                                  side: isMod
+                                                      ? BorderSide.none
+                                                      : const BorderSide(
+                                                          color: lightFontColor,
+                                                          width: 1),
                                                   shape:
                                                       const RoundedRectangleBorder(
                                                           borderRadius:
@@ -512,64 +581,101 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                                                     Radius.circular(20),
                                                   )),
                                                 ),
-                                                onPressed: () =>
-                                                    Navigator.pushNamed(
+                                                onPressed: () => isMod
+                                                    ? Navigator.pushNamed(
                                                         context, modlistRoute,
                                                         arguments: {
-                                                          'name':
-                                                              'bemoireddit2',
-                                                          'id':
-                                                              '639b27bbef88b3df0463d04b'
-                                                        }),
+                                                            'name':
+                                                                subredditModel
+                                                                    .name,
+                                                            'id': subredditModel
+                                                                .sId
+                                                          })
+                                                    : joinedSubreddit
+                                                        ? BlocProvider.of<
+                                                                    SubredditPageCubit>(
+                                                                context)
+                                                            .leaveSubreddit(
+                                                                subredditModel!
+                                                                    .sId!)
+                                                        : BlocProvider.of<
+                                                                    SubredditPageCubit>(
+                                                                context)
+                                                            .joinSubreddit(
+                                                                subredditModel!
+                                                                    .sId),
                                                 child: Row(
-                                                  children: const [
-                                                    Icon(Icons.settings),
-                                                    SizedBox(
-                                                      width: 2,
-                                                    ),
-                                                    Text("Mod Tools"),
+                                                  children: [
+                                                    if (isMod)
+                                                      Icon(
+                                                        Icons.build,
+                                                        size: 15,
+                                                      ),
+                                                    if (isMod)
+                                                      SizedBox(
+                                                        width: 6,
+                                                      ),
+                                                    Text(isMod
+                                                        ? "Mod Tools"
+                                                        : joinLeaveButtonText),
                                                   ],
                                                 )),
-                                        ],
-                                      ),
-                                      Container(
-                                        height: 200 - 2.7 * kToolbarHeight,
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 8, vertical: 4),
-                                        child: SingleChildScrollView(
-                                          child: Text(
-                                            _subredditModel.description,
-                                            style: const TextStyle(
-                                                color: lightFontColor,
-                                                fontSize: 10),
-                                          ),
+                                          ],
                                         ),
-                                      )
-                                    ],
+                                        // Container(
+                                        // height: 200 - 2.7 * kToolbarHeight,
+                                        // padding: const EdgeInsets.symmetric(
+                                        // horizontal: 8, vertical: 4),
+                                        // child: SingleChildScrollView(
+                                        // child: Text(
+                                        // _subredditModel.description,
+                                        // style: const TextStyle(
+                                        // color: lightFontColor,
+                                        // fontSize: 10),
+                                        // ),
+                                        // ),
+                                        // )
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      Column(children: [
-                        const SizedBox(
-                          height: kToolbarHeight * 2.1,
+                          ],
                         ),
-                        Row(children: const [
-                          SizedBox(
-                            width: 10,
+                        Column(children: [
+                          const SizedBox(
+                            height: kToolbarHeight * 2.1,
                           ),
-                          CircleAvatar(
-                            radius: 30,
-                            backgroundImage: AssetImage(
-                              'assets/images/ironman.jpg',
+                          Row(children: [
+                            const SizedBox(
+                              width: 10,
                             ),
-                          ),
+                            CircleAvatar(
+                                radius: 25,
+                                backgroundColor: Colors.blue,
+                                foregroundImage: subredditModel.icon != null
+                                    ? NetworkImage(
+                                        subredditModel.icon!,
+                                      )
+                                    : null,
+                                child: subredditModel.icon == null
+                                    ? CircleAvatar(
+                                        backgroundColor: Colors.white,
+                                        radius: 16,
+                                        child: Text(
+                                          "r/",
+                                          style: GoogleFonts.ibmPlexSans(
+                                              color: Colors.blue,
+                                              fontSize: 24,
+                                              fontWeight: FontWeight.w800),
+                                        ),
+                                      )
+                                    : null),
+                          ])
                         ])
-                      ])
-                    ])),
+                      ]),
+                    )),
                     pinned: true,
                     floating: true,
                     bottom: const TabBar(
@@ -588,37 +694,41 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
               body: TabBarView(
                 children: <Widget>[
                   SingleChildScrollView(
-                      child: Column(children: [
-                    SizedBox(
-                      height: 50,
-                      child: TextButton(
-                        style: TextButton.styleFrom(
-                          foregroundColor: darkFontColor,
-                          backgroundColor: Colors.transparent,
-                          elevation: 0,
-                        ),
-                        onPressed: () => _showBottomSheet(context),
-                        child: Row(
-                          children: [
-                            Icon(_selectedModeIcon),
-                            const SizedBox(
-                              width: 4,
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: 50,
+                          child: TextButton(
+                            style: TextButton.styleFrom(
+                              foregroundColor: darkFontColor,
+                              backgroundColor: Colors.transparent,
+                              elevation: 0,
                             ),
-                            Text(_selectedMode),
-                            const SizedBox(
-                              width: 4,
+                            onPressed: () => _showBottomSheet(context),
+                            child: Row(
+                              children: [
+                                Icon(_selectedModeIcon),
+                                const SizedBox(
+                                  width: 4,
+                                ),
+                                Text(_selectedMode),
+                                const SizedBox(
+                                  width: 4,
+                                ),
+                                const Icon(
+                                  Icons.arrow_drop_down,
+                                  color: darkFontColor,
+                                )
+                              ],
                             ),
-                            const Icon(
-                              Icons.arrow_drop_down,
-                              color: darkFontColor,
-                            )
-                          ],
+                          ),
                         ),
-                      ),
+                        // _buildPosts()
+                        _myposts()
+                      ],
                     ),
-                    _buildPosts()
-                  ])),
-                  _buildAbout(state)
+                  ),
+                  _buildAbout(subredditModel)
                 ],
               ),
             ),
@@ -659,19 +769,39 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                                     TextButton.icon(
                                       label: const Text(''),
                                       icon: CircleAvatar(
-                                          radius: 50,
-                                          backgroundColor: Colors.white,
-                                          backgroundImage: NetworkImage(
-                                            _subredditModel.icon,
-                                          ),
-                                          child: state is SubredditIconUpdating
+                                          radius: 25,
+                                          backgroundColor: Colors.blue,
+                                          foregroundImage:
+                                              subredditModel.icon != null
+                                                  ? NetworkImage(
+                                                      subredditModel.icon!,
+                                                    )
+                                                  : null,
+                                          child: _updatingIcon
                                               ? const Center(
                                                   child:
                                                       CircularProgressIndicator(
                                                           color: Colors.blue),
                                                 )
-                                              : null),
-                                      onPressed: _subredditModel.isMod
+                                              : subredditModel.icon == null
+                                                  ? CircleAvatar(
+                                                      backgroundColor:
+                                                          Colors.white,
+                                                      radius: 16,
+                                                      child: Text(
+                                                        "r/",
+                                                        style: GoogleFonts
+                                                            .ibmPlexSans(
+                                                                color:
+                                                                    Colors.blue,
+                                                                fontSize: 24,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w800),
+                                                      ),
+                                                    )
+                                                  : null),
+                                      onPressed: isMod
                                           ? () {
                                               _fetchImage();
                                             }
@@ -681,7 +811,7 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                                         backgroundColor: Colors.transparent,
                                       ),
                                     ),
-                                    if (_subredditModel.isMod)
+                                    if (isMod)
                                       const Padding(
                                         padding: EdgeInsets.only(top: 5.0),
                                         child: Text(
@@ -714,7 +844,7 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                                                 SizedBox(
                                                   width: 120,
                                                   child: Text(
-                                                    _subredditModel.subredditId,
+                                                    subredditModel.name!,
                                                     style: const TextStyle(
                                                         color: lightFontColor,
                                                         fontSize: 30),
@@ -727,7 +857,7 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                                                 SizedBox(
                                                   width: 120,
                                                   child: Text(
-                                                    "r/${_subredditModel.subredditId}",
+                                                    "r/${subredditModel.name}",
                                                     textAlign: TextAlign.left,
                                                     style: const TextStyle(
                                                         color: darkFontColor),
@@ -740,22 +870,13 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                                             padding:
                                                 const EdgeInsets.only(top: 8.0),
                                             child: OutlinedButton(
-                                              onHover: (value) {
-                                                joinLeaveButtonText =
-                                                    _subredditModel.joined
-                                                        ? "Leave"
-                                                        : "Join";
-                                                setState(() {});
-                                              },
                                               style: TextButton.styleFrom(
-                                                foregroundColor:
-                                                    _subredditModel.joined
-                                                        ? lightFontColor
-                                                        : backgroundColor,
-                                                backgroundColor:
-                                                    _subredditModel.joined
-                                                        ? Colors.transparent
-                                                        : lightFontColor,
+                                                foregroundColor: joinedSubreddit
+                                                    ? lightFontColor
+                                                    : backgroundColor,
+                                                backgroundColor: joinedSubreddit
+                                                    ? Colors.transparent
+                                                    : lightFontColor,
                                                 side: const BorderSide(
                                                     color: lightFontColor,
                                                     width: 1),
@@ -767,15 +888,19 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                                                 )),
                                               ),
                                               onPressed: () {
-                                                _subredditModel.joined
+                                                joinedSubreddit
                                                     ? BlocProvider.of<
                                                                 SubredditPageCubit>(
                                                             context)
-                                                        .leavePressed()
+                                                        .leaveSubreddit(
+                                                            subredditModel!
+                                                                .sId!)
                                                     : BlocProvider.of<
                                                                 SubredditPageCubit>(
                                                             context)
-                                                        .joinPressed();
+                                                        .joinSubreddit(
+                                                            subredditModel!
+                                                                .sId);
                                               },
                                               child: Text(joinLeaveButtonText),
                                             ),
@@ -820,79 +945,72 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                             children: [
                               Expanded(
                                   flex: 2,
-                                  child: (state is PostsInPageLoading)
-                                      ? const Center(
-                                          child: CircularProgressIndicator(
-                                              color: darkFontColor),
-                                        )
-                                      : Column(
+                                  child:
+                                      // (state is PostsInPageLoading)
+                                      // ? const Center(
+                                      // child: CircularProgressIndicator(
+                                      // color: darkFontColor),
+                                      // )
+                                      // :
+                                      Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 2, bottom: 10.0),
-                                                child: Container(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 8),
-                                                    decoration: BoxDecoration(
-                                                        color: cardsColor,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(3)),
-                                                    child: const TextField(
-                                                      decoration: InputDecoration(
-                                                          fillColor:
-                                                              textFeildColor,
-                                                          icon: Icon(
-                                                              Icons.reddit,
-                                                              color:
-                                                                  darkFontColor),
-                                                          hintStyle: TextStyle(
-                                                              color:
-                                                                  darkFontColor),
-                                                          hintText:
-                                                              "Create post"),
-                                                    )),
-                                              ),
-                                              Container(
-                                                height: 50,
-                                                decoration: BoxDecoration(
-                                                    color: cardsColor,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            3)),
-                                                child: Row(children: [
-                                                  const SizedBox(
-                                                    width: 8,
-                                                  ),
-                                                  _createButtons(
-                                                      'Hot',
-                                                      Icons.fireplace_rounded,
-                                                      'hot'),
-                                                  const SizedBox(
-                                                    width: 4,
-                                                  ),
-                                                  _createButtons(
-                                                      'New',
-                                                      Icons
-                                                          .new_releases_outlined,
-                                                      'new'),
-                                                  const SizedBox(
-                                                    width: 4,
-                                                  ),
-                                                  _createButtons(
-                                                      'Top',
-                                                      Icons
-                                                          .file_upload_outlined,
-                                                      'top'),
-                                                ]),
-                                              ),
-                                              _buildPosts()
-                                            ])),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 2, bottom: 10.0),
+                                          child: Container(
+                                              padding: const EdgeInsets.only(
+                                                  left: 8),
+                                              decoration: BoxDecoration(
+                                                  color: cardsColor,
+                                                  borderRadius:
+                                                      BorderRadius.circular(3)),
+                                              child: const TextField(
+                                                decoration: InputDecoration(
+                                                    fillColor: textFeildColor,
+                                                    icon: Icon(Icons.reddit,
+                                                        color: darkFontColor),
+                                                    hintStyle: TextStyle(
+                                                        color: darkFontColor),
+                                                    hintText: "Create post"),
+                                              )),
+                                        ),
+                                        Container(
+                                          height: 50,
+                                          decoration: BoxDecoration(
+                                              color: cardsColor,
+                                              borderRadius:
+                                                  BorderRadius.circular(3)),
+                                          child: Row(children: [
+                                            const SizedBox(
+                                              width: 8,
+                                            ),
+                                            _createButtons('Hot',
+                                                Icons.fireplace_rounded, 'hot'),
+                                            const SizedBox(
+                                              width: 4,
+                                            ),
+                                            _createButtons(
+                                                'New',
+                                                Icons.new_releases_outlined,
+                                                'new'),
+                                            const SizedBox(
+                                              width: 4,
+                                            ),
+                                            _createButtons(
+                                                'Top',
+                                                Icons.file_upload_outlined,
+                                                'top'),
+                                          ]),
+                                        ),
+                                        // _buildPosts()
+                                        _myposts()
+                                      ])),
                               width > 700
-                                  ? Expanded(flex: 1, child: _buildAbout(state))
+                                  ? Expanded(
+                                      flex: 1,
+                                      child: _buildAbout(subredditModel))
                                   : Container()
                             ],
                           ),
@@ -914,9 +1032,14 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
       body: BlocConsumer<SubredditPageCubit, SubredditPageState>(
           builder: (context, state) {
         if (state is SubredditPageLoaded) {
-          _subredditModel = (state).subredditModel;
-          _controller.text = _subredditModel.description;
-          joinLeaveButtonText = _subredditModel.joined ? "Joined" : "Join";
+          _subredditModel = state.subredditModel;
+          _joinedSubreddit = state.isJoined;
+          _isMod = state.isMod;
+          BlocProvider.of<PostsSubredditCubit>(context)
+              .getSubredditPosts(_subredditModel!.name!);
+          print("_isMod $_isMod");
+          print("_joinedSubreddit $_joinedSubreddit");
+          return _buildBody(_subredditModel, _joinedSubreddit, _isMod);
         } else if (state is SubredditPageLoading) {
           return const Center(
             child: CircularProgressIndicator(
@@ -924,25 +1047,47 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
             ),
           );
         }
+        if (state is SubredditIconUpdating) {
+          _updatingIcon = true;
+        }
+        if (state is SubredditIconLoaded) {
+          _updatingIcon = false;
+        }
+        if (state is InSubreddit) {
+          _joinedSubreddit = true;
+        }
+        if (state is OutSubreddit) {
+          _joinedSubreddit = false;
+        }
+        if (state is Moderator) {
+          _isMod = true;
+        }
+        if (state is NotModerator) {
+          _isMod = false;
+        }
         if (state is LeftSubreddit) {
-          _subredditModel.joined = false;
+          _joinedSubreddit = false;
           joinLeaveButtonText = "Join";
         }
         if (state is JoinedSubreddit) {
           joinLeaveButtonText = "Joined";
-          _subredditModel.joined = true;
+          _joinedSubreddit = true;
         }
-        if (state is SubredditDescriptionLoaded) {
-          _subredditModel.description = (state).subredditDescription;
+        if (_subredditModel != null &&
+            _isMod != null &&
+            _joinedSubreddit != null) {
+          return _buildBody(_subredditModel, _joinedSubreddit, _isMod);
+        } else {
+          return const Center(
+            child: CircularProgressIndicator(
+              color: darkFontColor,
+            ),
+          );
         }
-        if (state is SubredditModeratorsLoaded) {
-          _subredditModel.moderators = (state).subredditModerators;
-        }
-
-        return _buildBody(state);
+        // return Container();
       }, listener: (context, state) {
         if (state is SubredditIconLoaded) {
-          _subredditModel.icon = (state).subredditIcon;
+          // _subredditModel.icon = (state).subredditIcon;
           _displayMsg(
               context, Colors.blue, "Sucessfully updated community icon!");
         }
@@ -950,6 +1095,13 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
           _displayMsg(context, Colors.red, "Failed to updated community icon!");
         }
       }),
+      endDrawer: BlocProvider(
+          create: (context) =>
+              EndDrawerCubit(EndDrawerRepository(SettingsWebServices())),
+          child: EndDrawer(
+            2,
+            35,
+          )),
     );
   }
 
@@ -996,8 +1148,8 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                   onTap: (() {
                     _selectedMode = "hot";
                     _selectedModeIcon = Icons.fireplace_rounded;
-                    BlocProvider.of<SubredditPageCubit>(context).getPostsInPage(
-                        _subredditModel.subredditId, _selectedMode);
+                    BlocProvider.of<PostsSubredditCubit>(context)
+                        .getSubredditPosts(_subredditModel!.name!, sort: "hot");
                     Navigator.of(context).pop();
                   }),
                 ),
@@ -1024,8 +1176,8 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                   onTap: (() {
                     _selectedMode = "new";
                     _selectedModeIcon = Icons.fireplace_rounded;
-                    BlocProvider.of<SubredditPageCubit>(context).getPostsInPage(
-                        _subredditModel.subredditId, _selectedMode);
+                    BlocProvider.of<PostsSubredditCubit>(context)
+                        .getSubredditPosts(_subredditModel!.name!, sort: "hot");
                     Navigator.of(context).pop();
                   }),
                 ),
@@ -1052,8 +1204,8 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                   onTap: (() {
                     _selectedMode = "top";
                     _selectedModeIcon = Icons.file_upload_outlined;
-                    BlocProvider.of<SubredditPageCubit>(context).getPostsInPage(
-                        _subredditModel.subredditId, _selectedMode);
+                    BlocProvider.of<PostsSubredditCubit>(context)
+                        .getSubredditPosts(_subredditModel!.name!, sort: "top");
                     Navigator.of(context).pop();
                   }),
                 ),

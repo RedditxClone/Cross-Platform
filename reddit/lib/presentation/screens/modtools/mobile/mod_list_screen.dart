@@ -60,8 +60,8 @@ class ModListScreen extends StatelessWidget {
           leading: BackButton(
             onPressed: () {
               Navigator.of(context).pushReplacementNamed(
-                subredditPageScreenRoute,
-              );
+                  subredditPageScreenRoute,
+                  arguments: <String, dynamic>{'sId': subredditId});
             },
           ),
           centerTitle: true,

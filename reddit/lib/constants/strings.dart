@@ -79,6 +79,13 @@ const subredditPageScreenRoute = "/subredditPageScreen";
 const historyPageScreenRoute = '/HistoryPageScreen';
 const createCommunityScreenRoute = '/CreateCommunityScreen';
 //---------------------------------------
+// ------create post routes---------
+//---------------------------------------
+const createPostScreenRoute = '/CreatePostScreen';
+const postToMobileScreenRoute = '/PostToScreen';
+const postFlairScreenRoute = '/PostFlairScreen';
+const postSubredditPreviewScreenRoute = '/PostSubredditPreviewScreen';
+//---------------------------------------
 //-----------Mod tools Route-------------
 //---------------------------------------
 const modlistRoute = '/modlist';

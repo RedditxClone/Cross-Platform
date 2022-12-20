@@ -70,7 +70,9 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
         createCommunityDialog();
         break;
       case 'r/subreddit':
-        Navigator.pushNamed(context, subredditPageScreenRoute);
+        Navigator.pushNamed(context, subredditPageScreenRoute,
+            arguments: <String, dynamic>{'sId': ''});
+
         break;
       case 'User settings':
         Navigator.pushNamed(context, settingsTabsRoute);

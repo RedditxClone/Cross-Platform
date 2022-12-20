@@ -4,15 +4,16 @@ class PostModel {
   late String text;
   late bool nsfw;
   late bool spoiler;
-  late List<String> flairs;
-
+  late String flair;
+  late DateTime publishedDate;
   PostModel(
       {required this.subredditId,
       required this.title,
       required this.text,
       required this.nsfw,
       required this.spoiler,
-      required this.flairs});
+      required this.flair,
+      required this.publishedDate});
 
   PostModel.fromJson(Map<String, dynamic> json) {
     subredditId = json['subredditId'];
@@ -20,8 +21,8 @@ class PostModel {
     text = json['text'];
     nsfw = json['nsfw'];
     spoiler = json['spoiler'];
-    flairs = (json['flairs']).cast<String>();
-
+    flair = json['flair'];
+    publishedDate = DateTime.parse(json['publishedDate']);
   }
 
   Map<String, dynamic> toJson() {
@@ -29,9 +30,13 @@ class PostModel {
     data['subredditId'] = subredditId;
     data['title'] = title;
     data['text'] = text;
+
     data['nsfw'] = nsfw;
     data['spoiler'] = spoiler;
-    data['flairs'] = flairs;
+    if (flair.isNotEmpty) {
+      data['flair'] = flair;
+    }
+    //data['publishedDate'] = publishedDate.toIso8601String();
     return data;
   }
 
@@ -41,7 +46,6 @@ class PostModel {
     text = other.text;
     nsfw = other.nsfw;
     spoiler = other.spoiler;
-    flairs = other.flairs;
+    flair = other.flair;
   }
 }
-

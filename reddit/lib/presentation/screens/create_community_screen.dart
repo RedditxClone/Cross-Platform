@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reddit/business_logic/cubit/subreddit_page_cubit.dart';
@@ -120,16 +121,15 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
     return BlocConsumer<CreateCommunityCubit, CreateCommunityState>(
       listener: (context, state) {
         if (state is CreateCommunityCreated) {
-          BlocProvider.of<CreateCommunityCubit>(context).close();
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (_) => BlocProvider(
-                      create: (context) => SubredditPageCubit(
-                          SubredditPageRepository(SubredditWebServices())),
-                      child: SubredditPageScreen(
-                        subredditId: _createCommunityModel.communityName,
-                      ))));
+          Navigator.pushReplacementNamed(
+            context,
+            subredditPageScreenRoute,
+            arguments: <String, dynamic>{
+              "sId": "",
+              "subreddit": (state).subredditModel
+            },
+          );
+          print(state.subredditModel);
         }
       },
       builder: (context, state) {
@@ -377,9 +377,6 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                               actions: [
                                 IconButton(
                                     onPressed: () {
-                                      BlocProvider.of<CreateCommunityCubit>(
-                                              context)
-                                          .close();
                                       Navigator.of(context).pop();
                                     },
                                     icon: const Icon(
@@ -502,7 +499,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                                   dense: true,
                                   contentPadding: EdgeInsets.zero,
                                   activeColor: Colors.blue,
-                                  value: "Public",
+                                  value: "public",
                                   groupValue:
                                       _createCommunityModel.communityType,
                                   title: Row(
@@ -545,7 +542,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                                   dense: true,
                                   contentPadding: EdgeInsets.zero,
                                   activeColor: Colors.blue,
-                                  value: "Restricted",
+                                  value: "restricted",
                                   groupValue:
                                       _createCommunityModel.communityType,
                                   title: Row(
@@ -586,7 +583,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                                   dense: true,
                                   contentPadding: EdgeInsets.zero,
                                   activeColor: Colors.blue,
-                                  value: "Private",
+                                  value: "private",
                                   groupValue:
                                       _createCommunityModel.communityType,
                                   title: Row(
@@ -693,9 +690,6 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                                     )),
                                   ),
                                   onPressed: () {
-                                    BlocProvider.of<CreateCommunityCubit>(
-                                            context)
-                                        .close();
                                     Navigator.of(context).pop();
                                   },
                                   child: Text("Cancel",
