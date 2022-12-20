@@ -131,6 +131,10 @@ import 'package:reddit/presentation/screens/login_screen.dart';
 import 'package:reddit/presentation/screens/signup_page.dart';
 import 'package:reddit/presentation/screens/signup_page2.dart';
 import 'package:reddit/presentation/screens/signup_screen.dart';
+import 'package:reddit/presentation/screens/message_screen.dart';
+import 'package:reddit/data/repository/message_screen_repository.dart';
+import 'package:reddit/data/web_services/message_screen_web_services.dart';
+import 'package:reddit/business_logic/cubit/message_screen_cubit.dart';
 
 class AppRouter {
   // platform
@@ -753,6 +757,19 @@ class AppRouter {
                   ),
                 ));
 
+      //---------------------------------------------------------------------------
+      //------------------------------InboxScreens---------------------------------
+      //---------------------------------------------------------------------------
+      case messageScreenRoute:
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider(
+                  create: (context) => MessageScreenCubit(
+                      MessageScreenRepository(
+                          messageScreenWebServices:
+                              MessageScreenWebServices())),
+                  child: const MessageScreen(),
+                ));
+      //---------------------------------------------------------------------------
       default:
         return null;
     }
