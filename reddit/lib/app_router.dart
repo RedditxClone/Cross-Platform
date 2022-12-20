@@ -395,6 +395,8 @@ class AppRouter {
                       BlocProvider(
                         create: (context) => authCubit,
                       ),
+                      BlocProvider.value(value: subredditSortCubit),
+                      BlocProvider.value(value: postsSubredditCubit),
                     ],
                     child: SubredditPageScreen(
                       subredditId: subredditId,

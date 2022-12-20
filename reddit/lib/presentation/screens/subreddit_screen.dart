@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:reddit/business_logic/cubit/end_drawer/end_drawer_cubit.dart';
+import 'package:reddit/business_logic/cubit/posts/posts_subreddit_cubit.dart';
 import 'package:reddit/business_logic/cubit/subreddit_page_cubit.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
@@ -45,6 +46,7 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
   final TextEditingController _controller = TextEditingController();
   bool? _isMod;
   bool _updatingIcon = false;
+  String _sortType = 'hot';
   bool? _joinedSubreddit;
   void _displayMsg(BuildContext context, Color color, String title) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -376,22 +378,6 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
           );
   }
 
-  Widget _buildPosts() {
-    return Container();
-    // return SingleChildScrollView(
-    //   child: BlocBuilder<PostsMyProfileCubit, PostsMyProfileState>(
-    //     builder: (context, state) {
-    //       if (state is PostsLoaded) {
-    //         return Column(children: [
-    //           ...state.posts.map((e) => PostsWeb(postsModel: e)).toList()
-    //         ]);
-    //       }
-    //       return Container();
-    //     },
-    //   ),
-    // );
-  }
-
   Widget _createButtons(String title, IconData icon, String mode) {
     return TextButton.icon(
       label: Text(title),
@@ -410,6 +396,56 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
         _selectedModeIcon = icon;
       },
       icon: Icon(icon),
+    );
+  }
+
+  Widget _myposts() {
+    return BlocBuilder<PostsSubredditCubit, PostsSubredditState>(
+      builder: (context, state) {
+        if (state is SubredditPostsLoaded) {
+          if (state.posts!.isNotEmpty) {
+            return Column(children: [
+              ...state.posts!.map((e) => PostsWeb(postsModel: e)).toList()
+            ]);
+          }
+          return Center(
+            child: Column(children: [
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Image.asset(
+                  "assets/images/comments.jpg",
+                  scale: 3,
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 10),
+                child: Text(
+                  "Create a post",
+                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              Row(
+                children: [
+                  Expanded(flex: 3, child: Container()),
+                  const Expanded(
+                    flex: 20,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      child: Text(
+                        "No posts are available yet. Create a post now!",
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                  Expanded(flex: 3, child: Container()),
+                ],
+              ),
+            ]),
+          );
+        }
+        return Container();
+      },
     );
   }
 
@@ -687,7 +723,8 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                             ),
                           ),
                         ),
-                        _buildPosts()
+                        // _buildPosts()
+                        _myposts()
                       ],
                     ),
                   ),
@@ -967,7 +1004,8 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                                                 'top'),
                                           ]),
                                         ),
-                                        _buildPosts()
+                                        // _buildPosts()
+                                        _myposts()
                                       ])),
                               width > 700
                                   ? Expanded(
@@ -997,6 +1035,8 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
           _subredditModel = state.subredditModel;
           _joinedSubreddit = state.isJoined;
           _isMod = state.isMod;
+          BlocProvider.of<PostsSubredditCubit>(context)
+              .getSubredditPosts(_subredditModel!.name!);
           print("_isMod $_isMod");
           print("_joinedSubreddit $_joinedSubreddit");
           return _buildBody(_subredditModel, _joinedSubreddit, _isMod);
@@ -1108,6 +1148,8 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                   onTap: (() {
                     _selectedMode = "hot";
                     _selectedModeIcon = Icons.fireplace_rounded;
+                    BlocProvider.of<PostsSubredditCubit>(context)
+                        .getSubredditPosts(_subredditModel!.name!, sort: "hot");
                     Navigator.of(context).pop();
                   }),
                 ),
@@ -1134,6 +1176,8 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                   onTap: (() {
                     _selectedMode = "new";
                     _selectedModeIcon = Icons.fireplace_rounded;
+                    BlocProvider.of<PostsSubredditCubit>(context)
+                        .getSubredditPosts(_subredditModel!.name!, sort: "hot");
                     Navigator.of(context).pop();
                   }),
                 ),
@@ -1160,6 +1204,8 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                   onTap: (() {
                     _selectedMode = "top";
                     _selectedModeIcon = Icons.file_upload_outlined;
+                    BlocProvider.of<PostsSubredditCubit>(context)
+                        .getSubredditPosts(_subredditModel!.name!, sort: "top");
                     Navigator.of(context).pop();
                   }),
                 ),
