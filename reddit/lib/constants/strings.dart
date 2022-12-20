@@ -2,10 +2,11 @@
 // --------------Backend-----------------
 //---------------------------------------
 // Backend URL
-const baseUrl = String.fromEnvironment('BASE_URL', defaultValue: '');
+const baseUrl = "https://swproject.demosfortest.com/api/";
+const imagesUrl = String.fromEnvironment('MEDIA_URL', defaultValue: '');
 const mockUrl = 'https://a3a539c4-1746-44d4-8e06-d579a1d30d53.mock.pstmn.io/';
 // Use mock server instead of our backend server
-const useMockServerForAllWebServices = true;
+const useMockServerForAllWebServices = false;
 //---------------------------------------
 // -----------homepage routes-----------
 //---------------------------------------
@@ -64,9 +65,41 @@ const getHelpPage =
     'https://reddithelp.com/hc/en-us/sections/360008917491-Account-Security';
 const signupScreen = '/signupScreen';
 const loginScreen = '/loginScreen';
-const forgetPasswordAndroid = '/forgetPasswordAndroud';
-const forgetUsernameAndroid = '/forgetUsernameAndroud';
+const forgetPasswordAndroid = '/forgetPasswordAndroid';
+const forgetUsernameAndroid = '/forgetUsernameAndroid';
 const interesetesScreen = '/interesetesScreen';
 const chooseGenderScreen = '/chooseGenderScreen';
 const chooseProfileImgScreen = '/chooseProfileImgScreen';
+const gitHubClientID = '278e3e6f443383001225';
+//---------------------------------------
+// ------subreddit page route---------
+//---------------------------------------
+const subredditPageScreenRoute = "/subredditPageScreen";
+const historyPageScreenRoute = '/HistoryPageScreen';
 const createCommunityScreenRoute = '/CreateCommunityScreen';
+//---------------------------------------
+// ------create post routes---------
+//---------------------------------------
+const createPostScreenRoute = '/CreatePostScreen';
+const postToMobileScreenRoute = '/PostToScreen';
+const postFlairScreenRoute = '/PostFlairScreen';
+const postSubredditPreviewScreenRoute = '/PostSubredditPreviewScreen';
+//---------------------------------------
+//-----------Mod tools Route-------------
+//---------------------------------------
+const modlistRoute = '/modlist';
+const modqueueRoute = '/modqueue';
+const spamRoute = '/spam';
+const editedRoute = '/edited';
+const approvedRoute = '/approved';
+const communitySettingsRoute = '/communitysettings';
+const tafficRoute = '/taffic';
+const rulesRoute = '/rules';
+const unmoderatedRoute = '/unmod';
+const moderatorsRoute = '/mod';
+//---------------------------------------
+// ------------Message Route-------------
+//---------------------------------------
+const sendMessageRoute = '/message';
+const inboxRoute = '/inbox';
+const sentRoute = '/sent';

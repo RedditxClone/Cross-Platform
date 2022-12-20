@@ -1,37 +1,37 @@
 // ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:reddit/business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
-import 'package:reddit/constants/strings.dart';
+import 'package:reddit/business_logic/cubit/posts/posts_home_cubit.dart';
 import 'package:reddit/constants/theme_colors.dart';
-import 'package:reddit/data/model/signin.dart';
+import 'package:reddit/data/model/auth_model.dart';
+import 'package:reddit/data/web_services/authorization/auth_web_service.dart';
+import 'package:reddit/helper/utils/shared_keys.dart';
 import 'package:reddit/presentation/screens/home/home_web.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_Not_loggedin.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
-import 'dart:io';
-import '../../../business_logic/cubit/choose_profile_image_login_cubit.dart';
-import '../../../helper/dio.dart';
+import '../../../../data/repository/auth_repo.dart';
+import '../../../helper/utils/shared_pref.dart';
 
 class HomePageWeb extends StatefulWidget {
-  User? user;
-  HomePageWeb(this.user, {Key? key}) : super(key: key);
+  const HomePageWeb({Key? key}) : super(key: key);
 
   @override
-  State<HomePageWeb> createState() => _HomePageWebState(user: user);
+  State<HomePageWeb> createState() => _HomePageWebState();
 }
 
 class _HomePageWebState extends State<HomePageWeb> {
-  late bool isLoggedIn;
-  User? user;
-  _HomePageWebState({required this.user});
+  late AuthRepo authRepo;
   @override
   void initState() {
     super.initState();
-    isLoggedIn = user != null;
+    BlocProvider.of<AuthCubit>(context)
+        .getUserData(PreferenceUtils.getString(SharedPrefKeys.token));
+    authRepo = AuthRepo(AuthWebService());
   }
 
   Map<String, String> interests = {
@@ -55,15 +55,14 @@ class _HomePageWebState extends State<HomePageWeb> {
   };
   Map<String, dynamic> selectedInterests = {};
   Uint8List? imgCover;
+  int intersetsCount = 0;
 
   //this function is used to add the user interests to the database
-  void addInterests() async {
-    user?.interests = selectedInterests;
-    debugPrint("after storing${user?.interests}");
-    DioHelper.patchData(
-            url: '/api/user/me/prefs', data: selectedInterests, options: null)
+  void addInterests() {
+    authRepo
+        .addInterests(selectedInterests, UserData.user!.token)
         .then((value) {
-      if (value.statusCode == 200) {
+      if (value) {
         Navigator.of(context).pop();
         showDialogToChooseProfilePicture();
       } else {
@@ -94,15 +93,9 @@ class _HomePageWebState extends State<HomePageWeb> {
   //This function takes the selected gender and sends it to the server
   //gender will be null if not selected
   void selectGender(String gender) async {
-    user?.gender = gender;
-    await DioHelper.patchData(
-            url: "/api/user/me/prefs",
-            data: {
-              "gender": gender,
-            },
-            options: null)
-        .then((res) {
-      if (res.statusCode == 200) {
+    authRepo.genderInSignup(gender, UserData.user!.token).then((updated) {
+      if (updated) {
+        debugPrint("success gender");
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Row(
@@ -157,8 +150,7 @@ class _HomePageWebState extends State<HomePageWeb> {
   void showDialogToChooseGender() {
     var buttonColor1 = const Color.fromARGB(255, 237, 237, 237);
     var buttonColor2 = const Color.fromARGB(255, 237, 237, 237);
-    var buttonColor3 = const Color.fromARGB(255, 237, 237, 237);
-    var buttonColor4 = const Color.fromARGB(255, 237, 237, 237);
+    bool choosed = false;
     showDialog(
       barrierDismissible: false,
       context: context,
@@ -227,17 +219,23 @@ class _HomePageWebState extends State<HomePageWeb> {
                         textAlign: TextAlign.center,
                       ),
                     ),
+                    SizedBox(
+                      height: MediaQuery.of(dialogContext).size.height * 0.05,
+                    ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ElevatedButton(
                         onPressed: () {
                           setState(() {
-                            buttonColor1 ==
-                                    const Color.fromARGB(255, 82, 46, 46)
-                                ? null
-                                : selectGender("Man");
-                            buttonColor1 =
-                                const Color.fromARGB(255, 82, 46, 46);
+                            if (!choosed) {
+                              buttonColor1 ==
+                                      const Color.fromARGB(255, 82, 46, 46)
+                                  ? null
+                                  : selectGender("male");
+                              buttonColor1 =
+                                  const Color.fromARGB(255, 82, 46, 46);
+                              choosed = true;
+                            }
                           });
                         },
                         style: ElevatedButton.styleFrom(
@@ -271,12 +269,16 @@ class _HomePageWebState extends State<HomePageWeb> {
                       padding: const EdgeInsets.all(8.0),
                       child: ElevatedButton(
                         onPressed: () {
-                          buttonColor2 == const Color.fromARGB(255, 82, 46, 46)
-                              ? null
-                              : selectGender("Woman");
                           setState(() {
-                            buttonColor2 =
-                                const Color.fromARGB(255, 82, 46, 46);
+                            if (!choosed) {
+                              buttonColor2 ==
+                                      const Color.fromARGB(255, 82, 46, 46)
+                                  ? null
+                                  : selectGender("woman");
+                              buttonColor2 =
+                                  const Color.fromARGB(255, 82, 46, 46);
+                              choosed = true;
+                            }
                           });
                         },
                         style: ElevatedButton.styleFrom(
@@ -306,84 +308,6 @@ class _HomePageWebState extends State<HomePageWeb> {
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          buttonColor3 == const Color.fromARGB(255, 82, 46, 46)
-                              ? null
-                              : selectGender("Non-binary");
-                          setState(() {
-                            buttonColor3 =
-                                const Color.fromARGB(255, 82, 46, 46);
-                          });
-                        },
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.grey,
-                          backgroundColor: buttonColor3,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            side: BorderSide(
-                              color: buttonColor3 ==
-                                      const Color.fromARGB(255, 82, 46, 46)
-                                  ? Colors.red
-                                  : buttonColor3,
-                            ),
-                          ),
-                        ),
-                        child: Container(
-                          padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                          width: MediaQuery.of(dialogContext).size.width,
-                          child: const Text(
-                            "Non-binary",
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.black,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          buttonColor4 == const Color.fromARGB(255, 82, 46, 46)
-                              ? null
-                              : selectGender("I prefer not to say");
-                          setState(() {
-                            buttonColor4 =
-                                const Color.fromARGB(255, 82, 46, 46);
-                          });
-                        },
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.grey,
-                          backgroundColor: buttonColor4,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            side: BorderSide(
-                              color: buttonColor4 ==
-                                      const Color.fromARGB(255, 82, 46, 46)
-                                  ? Colors.red
-                                  : buttonColor4,
-                            ),
-                          ),
-                        ),
-                        child: Container(
-                          padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                          width: MediaQuery.of(dialogContext).size.width,
-                          child: const Text(
-                            "I prefer not to say",
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.black,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -394,10 +318,10 @@ class _HomePageWebState extends State<HomePageWeb> {
     );
   }
 
-  int intersetsCount = 0;
 //This function will show the dialog to choose interests
   void showDialogToChooseInterests() {
     selectedInterests.clear();
+    intersetsCount = 0;
     showDialog(
       barrierDismissible: false,
       context: context,
@@ -596,9 +520,9 @@ class _HomePageWebState extends State<HomePageWeb> {
       if (imagePicker == null) return false;
       imgCover = await imagePicker.readAsBytes();
       // BlocProvider.of<AuthCubit>(context)
-      //     .changeProfilephotoWeb(user, imgCover!);
-      // displayMsg(context, Colors.blue, 'Changes Saved');
-
+      //     .changeProfilephotoWeb(UserData.user, imgCover!);
+      authRepo.updateImageWeb('profilephoto', imgCover!, UserData.user!.token);
+      displayMsg(context, Colors.blue, 'Changes Saved');
     } on PlatformException catch (e) {
       debugPrint("Error in pickImageWeb: ${e.toString()}");
     }
@@ -706,7 +630,7 @@ class _HomePageWebState extends State<HomePageWeb> {
                                           setState(() {
                                             BlocProvider.of<AuthCubit>(context)
                                                 .changeProfilephotoWeb(
-                                                    user, imgCover!);
+                                                    imgCover!);
                                             displayMsg(context, Colors.blue,
                                                 'Changes Saved');
                                           });
@@ -726,8 +650,7 @@ class _HomePageWebState extends State<HomePageWeb> {
                                       if (value) {
                                         setState(() {
                                           BlocProvider.of<AuthCubit>(context)
-                                              .changeProfilephotoWeb(
-                                                  user, imgCover!);
+                                              .changeProfilephotoWeb(imgCover!);
                                           displayMsg(context, Colors.blue,
                                               'Changes Saved');
                                         });
@@ -761,10 +684,6 @@ class _HomePageWebState extends State<HomePageWeb> {
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.pop(c);
-                          // Navigator.of(context).pushReplacementNamed(
-                          //   homePageRoute,
-                          //   arguments: user,
-                          // );
                         },
                         style: const ButtonStyle(
                           shape: MaterialStatePropertyAll(
@@ -854,26 +773,64 @@ class _HomePageWebState extends State<HomePageWeb> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          shape:
-              const Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
-          automaticallyImplyLeading: false,
-          backgroundColor: defaultAppbarBackgroundColor,
-          title: isLoggedIn
-              ? AppBarWebLoggedIn(user: user!, screen: 'Home')
-              : const AppBarWebNotLoggedIn(screen: 'Home')),
+        shape: const Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
+        automaticallyImplyLeading: false,
+        backgroundColor: defaultAppbarBackgroundColor,
+        // title: UserData.isLoggedIn
+        //     ? const AppBarWebLoggedIn(screen: 'Home')
+        //     : const AppBarWebNotLoggedIn(screen: 'Home'),
+        title: BlocBuilder<AuthCubit, AuthState>(
+          builder: (context, state) {
+            if (state is Login ||
+                state is GetTheUserData ||
+                state is SignedIn ||
+                state is SignedInWithProfilePhoto) {
+              debugPrint("state is signed in");
+              return const AppBarWebLoggedIn(screen: 'Home');
+            } else {
+              debugPrint("state is not signed in");
+              return const AppBarWebNotLoggedIn(screen: 'Home');
+            }
+          },
+        ),
+      ),
       body: BlocBuilder<AuthCubit, AuthState>(
         builder: (context, state) {
-          debugPrint("user in the home page ${user?.email}");
           if (state is SignedIn) {
             debugPrint("state is signed in");
             WidgetsBinding.instance
                 .addPostFrameCallback((_) => showDialogToChooseGender());
+            BlocProvider.of<PostsHomeCubit>(context).getTimelinePosts();
+
+            return const HomeWeb();
           } else if (state is SignedInWithProfilePhoto) {
             debugPrint("state is SignedInWithProfilePhoto");
-            user = state.user;
-            debugPrint("user in the home page ${user?.imageUrl}");
+            UserData.profileSettings!.profile = state.imgUrl;
+            debugPrint(
+                "user in the home page ${UserData.profileSettings!.profile}");
+            BlocProvider.of<PostsHomeCubit>(context).getTimelinePosts();
+
+            return const HomeWeb();
+          } else if (state is Login) {
+            BlocProvider.of<PostsHomeCubit>(context).getTimelinePosts();
+
+            return const HomeWeb();
+          } else if (state is GetTheUserData) {
+            if (state.userDataJson != {}) {
+              debugPrint("user is nottttttttttttttttttttttttt null");
+              UserData.initUser(state.userDataJson);
+              BlocProvider.of<PostsHomeCubit>(context).getTimelinePosts();
+
+              return const HomeWeb();
+            }
+          } else if (state is NotLoggedIn) {
+            BlocProvider.of<PostsHomeCubit>(context).getTimelinePosts();
+
+            return const HomeWeb();
           }
-          return HomeWeb(isLoggedIn: isLoggedIn);
+          return const Center(
+            child: CircularProgressIndicator.adaptive(),
+          );
         },
       ),
     );

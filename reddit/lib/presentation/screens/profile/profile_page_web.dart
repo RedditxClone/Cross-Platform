@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:reddit/business_logic/cubit/posts/posts_my_profile_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
-import 'package:reddit/data/model/signin.dart';
+import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
-import 'package:reddit/presentation/widgets/posts/posts.dart';
 import 'package:reddit/presentation/widgets/posts/posts_web.dart';
 
 class ProfilePageWeb extends StatefulWidget {
@@ -16,15 +17,20 @@ class ProfilePageWeb extends StatefulWidget {
 }
 
 class _ProfilePageWebState extends State<ProfilePageWeb> {
-  User user =
-      User(userId: 'userId', name: 'name', email: 'email', imageUrl: null);
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    BlocProvider.of<PostsMyProfileCubit>(context).getMyProfilePosts();
+  }
+
   late Responsive _responsive;
   String _outlineButtonLabel = 'Joined';
   String sortBy = 'new';
   bool _isOverviewTab = true;
   Widget socialLinks(Widget icon, String lable) {
     return ActionChip(
-      backgroundColor: Color.fromARGB(255, 76, 76, 76),
+      backgroundColor: const Color.fromARGB(255, 76, 76, 76),
       label: Text(
         lable,
       ),
@@ -205,13 +211,17 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                const CircleAvatar(
-                    radius: 60,
-                    child: Icon(
-                      // TODO : display profile picture here
-                      Icons.person,
-                      size: 50,
-                    )),
+                UserData.user!.profilePic == null ||
+                        UserData.user!.profilePic == ''
+                    ? const Icon(
+                        Icons.person,
+                        size: 50,
+                      )
+                    : CircleAvatar(
+                        radius: 60,
+                        backgroundImage: NetworkImage(
+                          UserData.user!.profilePic!,
+                        )),
                 const SizedBox(width: 60),
                 Column(
                   children: [
@@ -240,10 +250,13 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
             ),
           ],
         ),
-        const Text('Markos',
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
-        const Text('u/mark_yasser . 1m',
-            style: TextStyle(fontSize: 12, color: Colors.grey)),
+        Text(
+            UserData.user!.displayName == ''
+                ? UserData.user!.username
+                : UserData.user!.displayName!,
+            style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+        Text('u/${UserData.user!.username} . 1m',
+            style: const TextStyle(fontSize: 12, color: Colors.grey)),
         //------------change profile picture button----------
         Container(
           width: double.infinity,
@@ -380,7 +393,9 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
           height: 50,
           padding: const EdgeInsets.all(10),
           child: ElevatedButton(
-            onPressed: () {}, // TODO : navigate to add new post
+            onPressed: () {
+              Navigator.pushNamed(context, createPostScreenRoute);
+            }, // TODO : navigate to add new post
             style: const ButtonStyle(
               shape: MaterialStatePropertyAll(
                 RoundedRectangleBorder(
@@ -505,14 +520,18 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
                     child: Container(
                       padding: const EdgeInsets.all(15),
                       width: 10,
-                      child: Column(
-                        children: [
-                          _sortBy(),
-                          const PostsWeb(),
-                          const PostsWeb(),
-                          const PostsWeb(),
-                          const PostsWeb(),
-                        ],
+                      child:
+                          BlocBuilder<PostsMyProfileCubit, PostsMyProfileState>(
+                        builder: (context, state) {
+                          if (state is PostsLoaded) {
+                            return Column(children: [
+                              ...state.posts!
+                                  .map((e) => PostsWeb(postsModel: e))
+                                  .toList()
+                            ]);
+                          }
+                          return Container();
+                        },
                       ),
                     ),
                   ),
@@ -675,7 +694,7 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
               const Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
           automaticallyImplyLeading: false,
           backgroundColor: defaultAppbarBackgroundColor,
-          title: AppBarWebLoggedIn(user: user, screen: 'u/user_name')),
+          title: const AppBarWebLoggedIn(screen: 'u/user_name')),
       body: DefaultTabController(
         length: 8,
         child: Scaffold(
@@ -694,7 +713,7 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
               padding: _isOverviewTab
                   ? EdgeInsets.symmetric(
                       horizontal: MediaQuery.of(context).size.width * 0.25 > 300
-                          ? MediaQuery.of(context).size.width * 0.25
+                          ? MediaQuery.of(context).size.width * 0.22
                           : MediaQuery.of(context).size.width * 0.1 > 100 &&
                                   MediaQuery.of(context).size.width * 0.25 <=
                                       300

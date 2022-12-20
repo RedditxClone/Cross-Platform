@@ -1,5 +1,6 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -21,41 +22,19 @@ void main() async {
   late EmailSettingsCubit emailSettingsCubit;
   late MockEmailSettingsCubit mockEmailSettingsCubit;
 
-    const String settingsFromWebServicesString = '''{
-    "inbox_messages": true,
-    "chat_requests": true,
-    "new_user_welcome": true,
+  final Map<String, dynamic> settingsFromWebServices = {
+    "inboxMessages": true,
+    "newUserFlair": true,
     "comments_on_post": true,
-    "replies_to_comments": true,
-    "upvotes_on_post": true,
-    "upvotes_on_comments": true,
-    "username_mentions": true,
-    "new_followers": true,
-    "daily_digest": true,
-    "weekly_recap": true,
-    "community_discovery": true,
-    "unsubscribe_emails": false
-  }''';
-    final Map<String, dynamic> settingsFromWebServices = {
-    "inbox_messages": true,
-    "chat_requests": true,
-    "new_user_welcome": true,
-    "comments_on_post": true,
-    "replies_to_comments": true,
-    "upvotes_on_post": true,
-    "upvotes_on_comments": true,
-    "username_mentions": true,
-    "new_followers": true,
-    "daily_digest": true,
-    "weekly_recap": true,
-    "community_discovery": true,
-    "unsubscribe_emails": false,
+    "repliesComments": true,
+    "upvotePosts": true,
+    "upvoteComments": true,
+    "mentions": true,
+    "newFollowers": true,
   };
-
 
   final settingsFromRepository = EmailSettings(
     inboxMessages: true,
-    chatRequests: true,
     newUserWelcome: true,
     commentsOnPost: true,
     repliesToComments: true,
@@ -63,10 +42,6 @@ void main() async {
     upvotesOnComments: true,
     usernameMentions: true,
     newFollowers: true,
-    dailyDigest: true,
-    weeklyRecap: true,
-    communityDiscovery: true,
-    unsubscribeEmails: false,
   );
 
   group("State test", () {
@@ -83,7 +58,7 @@ void main() async {
       'Settings loading, loaded states are emitted correctly after getting settings data from server',
       setUp: () {
         when(() => mockEmailSettingsWebService.getEmailSettings()).thenAnswer(
-          (_) async => settingsFromWebServicesString,
+          (_) async => settingsFromWebServices,
         );
       },
       build: () {
@@ -113,124 +88,6 @@ void main() async {
         EmailSettings.fromJson(settingsFromWebServices),
         settingsFromRepository,
       );
-    });
-  });
-  // Check if the data shown on UI is the same as the data comming from server.
-  // Check if update settings function is called when updating any value from UI.
-  group("UI data matches response data", () {
-    setUp(() {
-      mockEmailSettingsCubit = MockEmailSettingsCubit();
-      when(() => mockEmailSettingsCubit.state)
-          .thenReturn(EmailSettingsLoaded(settingsFromRepository));
-    });
-    testWidgets('email settings screen', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        MultiBlocProvider(
-          providers: [
-            BlocProvider<EmailSettingsCubit>(
-              create: (context) => mockEmailSettingsCubit,
-            )
-          ],
-          child: const MaterialApp(home: EmailSettingsWeb()),
-        ),
-      );
-
-      expect(
-          find.byWidgetPredicate((widget) =>
-              widget is SwitchListTile &&
-              widget.key == const Key('inbox_messages') &&
-              widget.value == settingsFromRepository.inboxMessages),
-          findsOneWidget);
-      expect(
-          find.byWidgetPredicate((widget) =>
-              widget is SwitchListTile &&
-              widget.key == const Key('chat_requests') &&
-              widget.value == settingsFromRepository.chatRequests),
-          findsOneWidget);
-
-      expect(
-          find.byWidgetPredicate((widget) =>
-              widget is SwitchListTile &&
-              widget.key == const Key('new_user_welcome') &&
-              widget.value == settingsFromRepository.newUserWelcome),
-          findsOneWidget);
-
-      expect(
-          find.byWidgetPredicate((widget) =>
-              widget is SwitchListTile &&
-              widget.key == const Key('comments_on_post') &&
-              widget.value == settingsFromRepository.commentsOnPost),
-          findsOneWidget);
-
-      expect(
-          find.byWidgetPredicate((widget) =>
-              widget is SwitchListTile &&
-              widget.key == const Key('replies_to_comments') &&
-              widget.value == settingsFromRepository.repliesToComments),
-          findsOneWidget);
-
-      expect(
-          find.byWidgetPredicate((widget) =>
-              widget is SwitchListTile &&
-              widget.key == const Key('upvotes_on_post') &&
-              widget.value == settingsFromRepository.upvotesOnPost),
-          findsOneWidget);
-
-      expect(
-          find.byWidgetPredicate((widget) =>
-              widget is SwitchListTile &&
-              widget.key == const Key('upvotes_on_comments') &&
-              widget.value == settingsFromRepository.upvotesOnComments),
-          findsOneWidget);
-
-      expect(
-          find.byWidgetPredicate((widget) =>
-              widget is SwitchListTile &&
-              widget.key == const Key('username_mentions') &&
-              widget.value == settingsFromRepository.usernameMentions),
-          findsOneWidget);
-
-      expect(
-          find.byWidgetPredicate((widget) =>
-              widget is SwitchListTile &&
-              widget.key == const Key('new_followers') &&
-              widget.value == settingsFromRepository.newFollowers),
-          findsOneWidget);
-
-      expect(
-          find.byWidgetPredicate((widget) =>
-              widget is SwitchListTile &&
-              widget.key == const Key('daily_digest') &&
-              widget.value == settingsFromRepository.dailyDigest),
-          findsOneWidget);
-
-      expect(
-          find.byWidgetPredicate((widget) =>
-              widget is SwitchListTile &&
-              widget.key == const Key('weekly_recap') &&
-              widget.value == settingsFromRepository.weeklyRecap),
-          findsOneWidget);
-
-      expect(
-          find.byWidgetPredicate((widget) =>
-              widget is SwitchListTile &&
-              widget.key == const Key('community_discovery') &&
-              widget.value == settingsFromRepository.communityDiscovery),
-          findsOneWidget);
-
-      expect(
-          find.byWidgetPredicate((widget) =>
-              widget is SwitchListTile &&
-              widget.key == const Key('unsubscribe_emails') &&
-              widget.value == settingsFromRepository.unsubscribeEmails),
-          findsOneWidget);
-
-      // Update settings function is called after pressing on the switch
-      await tester.ensureVisible(find.byKey(const Key("inbox_messages")));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key("inbox_messages")));
-      verify(() => mockEmailSettingsCubit
-          .updateEmailSettings(settingsFromRepository)).called(1);
     });
   });
 }

@@ -2,33 +2,32 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:reddit/business_logic/cubit/end_drawer/end_drawer_cubit.dart';
 import 'package:reddit/constants/strings.dart';
+import 'package:reddit/data/model/auth_model.dart';
+
+import '../../../business_logic/cubit/create_community_cubit.dart';
+import '../../../data/repository/create_community_repository.dart';
+import '../../../data/web_services/create_community_web_services.dart';
+import '../../screens/create_community_screen.dart';
 
 /// Class that build the UI of the homepage end drawer
 class EndDrawer extends StatelessWidget {
-  late int _karma;
-  late int _redditAge;
-  late String _username;
-  late String _profilePicture;
-  late String _email;
-  late bool _isLoggedIn;
-  late bool _isMan;
+  late final int _karma;
+  late final int _redditAge;
   File? imgProfile;
-  EndDrawer(this._isLoggedIn, this._username, this._profilePicture, this._karma,
-      this._redditAge, this._isMan, this._email,
-      {Key? key})
-      : super(key: key);
+  EndDrawer(this._karma, this._redditAge, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
       backgroundColor: Colors.black,
       width: 300,
-      child: _isLoggedIn
+      child: UserData.isLoggedIn
           ? _buildLoggedInEndDrawer(context)
           : _buildLoggedOutEndDrawer(context),
     );
@@ -89,6 +88,7 @@ class EndDrawer extends StatelessWidget {
                   title: const Text("Sign up / Log in"),
                   onTap: () {
                     // TODO: go to sign up / log in page
+                    Navigator.pushNamed(context, loginScreen);
                   },
                 ),
                 ListTile(
@@ -126,14 +126,15 @@ class EndDrawer extends StatelessWidget {
           onTap: () {
             chooseProfilePhotoBottomSheet(context);
           },
-          child: _profilePicture == ""
+          child: UserData.profileSettings!.profile == ""
               ? const Icon(
                   Icons.person_pin,
                   size: 240,
                 )
               : CircleAvatar(
                   radius: 120.0,
-                  backgroundImage: NetworkImage(_profilePicture),
+                  backgroundImage:
+                      NetworkImage(UserData.profileSettings!.profile),
                   backgroundColor: Colors.transparent,
                 ),
         );
@@ -150,9 +151,13 @@ class EndDrawer extends StatelessWidget {
         // TODO: this may be changed by another settings page
         // Navigator.of(context).pop();
         Navigator.of(context).pushNamed(accountSettingsRoute, arguments: {
-          "username": _username,
-          "email": _email,
-          "gender": _isMan,
+          "username": UserData.user!.username,
+          "email": UserData.user!.email,
+          "gender": UserData.accountSettings!.gender == 'male'
+              ? 1
+              : UserData.accountSettings!.gender == ''
+                  ? 2
+                  : 0, //_isMan
         });
       },
     );
@@ -173,11 +178,15 @@ class EndDrawer extends StatelessWidget {
                 onTap: () => Navigator.of(context).pushNamed(profilePageRoute),
               ),
               ListTile(
-                leading: const FaIcon(FontAwesomeIcons.plus),
-                title: const Text("Create a community"),
-                onTap: () =>
-                    Navigator.of(context).pushNamed(createCommunityScreenRoute),
-              ),
+                  leading: const FaIcon(FontAwesomeIcons.plus),
+                  title: const Text("Create a community"),
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                      builder: (_) => BlocProvider(
+                            create: (context) => CreateCommunityCubit(
+                                CreateCommunityRepository(
+                                    CreateCommunityWebServices())),
+                            child: const CreateCommunityScreen(),
+                          )))),
               ListTile(
                 leading: const FaIcon(FontAwesomeIcons.bookmark),
                 title: const Text("Saved"),
@@ -186,7 +195,8 @@ class EndDrawer extends StatelessWidget {
               ListTile(
                 leading: const FaIcon(FontAwesomeIcons.clock),
                 title: const Text("History"),
-                onTap: () {},
+                onTap: () =>
+                    Navigator.of(context).pushNamed(historyPageScreenRoute),
               ),
               ListTile(
                 leading: const Icon(Icons.paste_outlined),
@@ -295,7 +305,7 @@ class EndDrawer extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            "u/$_username",
+            "u/${UserData.user!.username}",
             style: const TextStyle(
               fontSize: 19,
             ),
@@ -333,7 +343,7 @@ class EndDrawer extends StatelessWidget {
               ),
               ListTile(
                 leading: const Icon(Icons.person),
-                title: Text("u/$_username"),
+                title: Text("u/${UserData.user!.username}"),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -403,14 +413,15 @@ class EndDrawer extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(8, 12, 0, 0),
-                child: Text("U/${_username.toUpperCase()}"),
+                child: Text("U/${UserData.user!.username.toUpperCase()}"),
               ),
               const Divider(
                 color: Colors.grey,
               ),
               ListTile(
                 onTap: () {
-                  // Logout function
+                  UserData.logout();
+                  Navigator.of(context).pushReplacementNamed(homePageRoute);
                 },
                 leading: const Icon(Icons.exit_to_app),
                 title: const Text(
@@ -455,6 +466,8 @@ class EndDrawer extends StatelessWidget {
       final imageTemp = File(image.path);
 
       imgProfile = imageTemp;
+      // BlocProvider.of<AuthCubit>(context).changeProfilephotoMob(imageTemp);
+
       BlocProvider.of<EndDrawerCubit>(context).changeProfilephoto(imageTemp);
     } on PlatformException catch (e) {
       displayMsg(context, Colors.red, 'Error', 'Could not load image');

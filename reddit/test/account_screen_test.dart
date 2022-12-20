@@ -2,10 +2,12 @@ import 'dart:convert';
 
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:reddit/business_logic/cubit/cubit/account_settings_cubit.dart';
+import 'package:reddit/business_logic/cubit/cubit/change_password_cubit.dart';
 import 'package:reddit/data/model/account_settings_model.dart';
 import 'package:reddit/data/model/change_password_model.dart';
 import 'package:reddit/data/repository/account_settings_repository.dart';
@@ -22,6 +24,7 @@ void main() async {
   late MockAccountSettingsWebService mockAccountSettingsWebService;
   late AccountSettingsRepository accountSettingsRepository;
   late AccountSettingsCubit accountSettingsCubit;
+  late ChangePasswordCubit changePasswordCubit;
   late MockAccountSettingsCubit mockAccountSettingsCubit;
   const settingsFromWebServices = {
     "gender": "male",
@@ -52,6 +55,7 @@ void main() async {
       accountSettingsRepository =
           AccountSettingsRepository(mockAccountSettingsWebService);
       accountSettingsCubit = AccountSettingsCubit(accountSettingsRepository);
+      changePasswordCubit = ChangePasswordCubit(accountSettingsRepository);
     });
     // Calling getAccountSettings() function returns the correct state
     // AccountSettingsLoading means that the request is sent and we are waiting for the response
@@ -84,7 +88,7 @@ void main() async {
           cubit.updateAccountSettings(settingsFromRepository),
       expect: () => [isA<AccountSettingsLoaded>()],
     );
-    blocTest<AccountSettingsCubit, AccountSettingsState>(
+    blocTest<ChangePasswordCubit, ChangePasswordState>(
       'Password updated successfully state is emitted correctly after if server responded with 200',
       setUp: () {
         when(() => mockAccountSettingsWebService
@@ -92,13 +96,13 @@ void main() async {
             .thenAnswer((_) async => 200);
       },
       build: () {
-        return accountSettingsCubit;
+        return changePasswordCubit;
       },
-      act: (AccountSettingsCubit cubit) =>
+      act: (ChangePasswordCubit cubit) =>
           cubit.changePassword(changePasswordModel),
       expect: () => [isA<PasswordUpdatedSuccessfully>()],
     );
-    blocTest<AccountSettingsCubit, AccountSettingsState>(
+    blocTest<ChangePasswordCubit, ChangePasswordState>(
       'Wrong password state is emitted correctly after if server responded with 403',
       setUp: () {
         when(() => mockAccountSettingsWebService
@@ -106,9 +110,9 @@ void main() async {
             .thenAnswer((_) async => 403);
       },
       build: () {
-        return accountSettingsCubit;
+        return changePasswordCubit;
       },
-      act: (AccountSettingsCubit cubit) =>
+      act: (ChangePasswordCubit cubit) =>
           cubit.changePassword(changePasswordModel),
       expect: () => [isA<WrongPassword>()],
     );

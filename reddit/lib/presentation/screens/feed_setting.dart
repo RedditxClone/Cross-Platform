@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reddit/business_logic/cubit/feed_settings_cubit.dart';
 import 'package:reddit/data/model/feed_setting_model.dart';

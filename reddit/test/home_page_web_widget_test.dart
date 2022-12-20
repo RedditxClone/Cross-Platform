@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:reddit/data/model/signin.dart';
+import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/presentation/screens/home/home_page_web.dart';
 
 void main() {
   setUp(() {});
   Widget createWidgetUnderTest() {
     return MaterialApp(
-      home: HomePageWeb(
-          User(userId: '', name: 'name', email: 'email', imageUrl: null)),
+      home: HomePageWeb(),
     );
   }
 

@@ -15,11 +15,4 @@ class EndDrawerRepository {
     print(newVal);
     return jsonDecode(newVal)[key];
   }
-
-  /// [changed] : a [Map] that contains only the changed profile settings.
-  /// Returns status code `200` if success and `401` if an error occured.
-  Future<dynamic> updatePrefs(Map changed) async {
-    final newVal = await settingsWebServices.updatePrefs(changed);
-    return newVal;
-  }
 }

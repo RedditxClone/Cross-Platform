@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:reddit/data/model/create_community_model.dart';
+import 'package:reddit/data/model/subreddit_model.dart';
 import 'package:reddit/data/repository/create_community_repository.dart';
 part 'create_community_state.dart';
 
@@ -9,15 +10,18 @@ class CreateCommunityCubit extends Cubit<CreateCommunityState> {
   CreateCommunityCubit(this.createCommunityRepository)
       : super(CreateCommunityInitial());
 
-  void createCommunity(CreateCommunityModel createCommunityModel) async {
+  void createCommunity(CreateCommunityModel createCommunityModel) {
     if (isClosed) return;
-    final ifCreated =
-        await createCommunityRepository.createCommunity(createCommunityModel);
-    if (ifCreated) {
-      emit(CreateCommunityCreated());
-    } else {
-      emit(CreateCommunityFailedToCreate());
-    }
+    createCommunityRepository
+        .createCommunity(createCommunityModel)
+        .then((subredditModel) {
+      print(subredditModel);
+      if (subredditModel != null) {
+        emit(CreateCommunityCreated(subredditModel));
+      } else {
+        emit(CreateCommunityFailedToCreate());
+      }
+    });
   }
 
   void createBloc() {

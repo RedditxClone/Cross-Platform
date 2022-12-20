@@ -1,15 +1,14 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:reddit/constants/strings.dart';
+import 'package:reddit/data/model/auth_model.dart';
 
 class EmailSettingsWebServices {
-  bool useMockServer = true;
-  String mockUrl =
-      "https://f1c179b0-0158-4a47-ba39-7b803b8ae58a.mock.pstmn.io/";
   late Dio dio;
+  
   EmailSettingsWebServices() {
     BaseOptions options = BaseOptions(
-      baseUrl: useMockServer ? mockUrl : baseUrl,
+      baseUrl: baseUrl,
       receiveDataWhenStatusError: true,
       connectTimeout: 20 * 1000, //20 secs
       receiveTimeout: 20 * 1000,
@@ -19,7 +18,11 @@ class EmailSettingsWebServices {
   // Gets data from server, the repository calls this function
   Future<dynamic> getEmailSettings() async {
     try {
-      Response response = await dio.get('user/me/prefs');
+      Response response = await dio.get('user/me/prefs',
+          options: Options(
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+          ));
+
       return response.data;
     } catch (e) {
       return [];
@@ -29,17 +32,19 @@ class EmailSettingsWebServices {
   Future<void> updateEmailSettings(
       Map<String, dynamic> newEmailSettings) async {
     try {
-      Response response = await dio.patch(
-        'user/me/prefs',
-        data: newEmailSettings,
-      );
+      Response response = await dio.patch('user/me/prefs',
+          data: newEmailSettings,
+          options: Options(
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+          ));
+
       if (response.statusCode == 200) {
-        print("updated Email settings");
+        debugPrint("updated Email settings");
       } else {
-        print("Failed to update Email settings");
+        debugPrint("Failed to update Email settings");
       }
     } catch (e) {
-      print(e);
+      debugPrint(e.toString());
     }
   }
 }
