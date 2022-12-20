@@ -1,8 +1,10 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:reddit/business_logic/cubit/modtools/modtools_cubit.dart';
 import 'package:reddit/constants/theme_colors.dart';
+import 'package:reddit/data/model/modtools/taffic_stats_model.dart';
 
 class TrafficStatsWidget extends StatefulWidget {
   String screen = '';
@@ -16,6 +18,9 @@ class TrafficStatsWidget extends StatefulWidget {
 }
 
 class _TrafficStatsWidgetState extends State<TrafficStatsWidget> {
+  List<TrafficStats> trafficStats = [];
+  List<FlSpot> joined = [];
+  List<FlSpot> left = [];
   @override
   void initState() {
     BlocProvider.of<ModtoolsCubit>(context)
@@ -40,41 +45,47 @@ class _TrafficStatsWidgetState extends State<TrafficStatsWidget> {
         String text = '';
         switch (value.toInt()) {
           case 0:
-            text = 'Jan';
+            text = DateFormat.MMMMd()
+                .format(DateTime.now().subtract(const Duration(days: 6)));
             break;
           case 1:
-            text = 'Feb';
+            text = DateFormat.MMMMd()
+                .format(DateTime.now().subtract(const Duration(days: 5)));
             break;
           case 2:
-            text = 'Mar';
+            text = DateFormat.MMMMd()
+                .format(DateTime.now().subtract(const Duration(days: 4)));
             break;
           case 3:
-            text = 'April';
+            text = DateFormat.MMMMd()
+                .format(DateTime.now().subtract(const Duration(days: 3)));
             break;
           case 4:
-            text = 'May';
+            text = DateFormat.MMMMd()
+                .format(DateTime.now().subtract(const Duration(days: 2)));
             break;
           case 5:
-            text = 'Jun';
+            text = DateFormat.MMMMd()
+                .format(DateTime.now().subtract(const Duration(days: 1)));
             break;
           case 6:
-            text = 'Jul';
+            text = DateFormat.MMMMd().format(DateTime.now());
             break;
-          case 7:
-            text = 'Aug';
-            break;
-          case 8:
-            text = 'Sep';
-            break;
-          case 9:
-            text = 'Oct';
-            break;
-          case 10:
-            text = 'Nov';
-            break;
-          case 11:
-            text = 'Dec';
-            break;
+          // case 7:
+          //   text = 'Aug';
+          //   break;
+          // case 8:
+          //   text = 'Sep';
+          //   break;
+          // case 9:
+          //   text = 'Oct';
+          //   break;
+          // case 10:
+          //   text = 'Nov';
+          //   break;
+          // case 11:
+          //   text = 'Dec';
+          //   break;
         }
 
         return Text(text);
@@ -82,7 +93,25 @@ class _TrafficStatsWidgetState extends State<TrafficStatsWidget> {
     );
   }
 
+  void _initPoints() {
+    double index = 6;
+    joined.add(const FlSpot(0, 0));
+    trafficStats.forEach((element) {
+      joined.add(FlSpot(index, element.joined as double));
+      // print('joined point : ($index , ${element.joined as double})');
+      index--;
+    });
+    index = 6;
+    left.add(const FlSpot(0, 0));
+    trafficStats.forEach((element) {
+      left.add(FlSpot(index, element.left as double));
+      // print('left point : ($index , ${element.left as double})');
+      index--;
+    });
+  }
+
   Widget _graph() {
+    _initPoints();
     return Container(
       height: 400,
       width: MediaQuery.of(context).size.width - 450,
@@ -100,25 +129,13 @@ class _TrafficStatsWidgetState extends State<TrafficStatsWidget> {
               rightTitles:
                   AxisTitles(sideTitles: SideTitles(showTitles: false)),
             ),
-            maxX: 11,
-            maxY: 11,
+            maxX: 6,
+            maxY: 6,
             minX: 0,
             minY: 0,
             lineBarsData: [
-              LineChartBarData(spots: [
-                const FlSpot(0, 0),
-                const FlSpot(5, 5),
-                const FlSpot(7, 2),
-                const FlSpot(8, 7),
-                const FlSpot(11, 0),
-              ]),
-              LineChartBarData(color: Colors.yellow, spots: [
-                const FlSpot(0, 0),
-                const FlSpot(3, 0),
-                const FlSpot(4, 3),
-                const FlSpot(8, 9),
-                const FlSpot(11, 0),
-              ]),
+              LineChartBarData(color: Colors.blue, spots: joined),
+              LineChartBarData(color: Colors.yellow, spots: left),
             ])),
       ),
     );
@@ -141,17 +158,17 @@ class _TrafficStatsWidgetState extends State<TrafficStatsWidget> {
     return Container(
         padding: const EdgeInsets.only(top: 50),
         width: 130,
-        height: 150,
+        height: 100,
         child:
             Column(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-          _colorItem(Colors.blue, 'New Reddit'),
-          _colorItem(Colors.orange, 'Old Reddit'),
-          _colorItem(Colors.red, 'Mobile Web'),
-          _colorItem(Colors.cyanAccent, 'Reddit Apps'),
+          _colorItem(Colors.blue, 'Joined'),
+          _colorItem(Colors.orange, 'Left'),
+          // _colorItem(Colors.red, 'Mobile Web'),
+          // _colorItem(Colors.cyanAccent, 'Reddit Apps'),
         ]));
   }
 
-  Widget _rowItem(int number, int total) {
+  Widget _rowItem(String number, int total, String label) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
       width: MediaQuery.of(context).size.width - 1130,
@@ -169,7 +186,7 @@ class _TrafficStatsWidgetState extends State<TrafficStatsWidget> {
             style: const TextStyle(fontSize: 30),
           ),
           Text(
-            'TOTAL - LAST ${number.toString()} HOURS',
+            'TOTAL - LAST $label',
             style: const TextStyle(fontSize: 11, color: Colors.grey),
           ),
         ],
@@ -182,9 +199,9 @@ class _TrafficStatsWidgetState extends State<TrafficStatsWidget> {
         child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        _rowItem(23, 13),
-        _rowItem(315, 3),
-        _rowItem(24, 21),
+        _rowItem('N/A', 13, '24 HOURS'),
+        _rowItem('0', 3, '7 DAYS'),
+        _rowItem('0', 21, 'MONTH'),
       ],
     ));
   }
@@ -192,7 +209,10 @@ class _TrafficStatsWidgetState extends State<TrafficStatsWidget> {
   Widget _buildGraph() {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [_graph(), _colorCode()],
+      children: [
+        _graph(),
+        _colorCode(),
+      ],
     );
   }
 
@@ -211,20 +231,30 @@ class _TrafficStatsWidgetState extends State<TrafficStatsWidget> {
                   style: const TextStyle(fontSize: 18),
                 ),
                 const SizedBox(height: 10),
-                Container(
-                  height: 600,
-                  width: MediaQuery.of(context).size.width - 320,
-                  color: defaultSecondaryColor,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _buildUpperGraph(),
-                      _buildGraph(),
-                    ],
-                  ),
+                BlocBuilder<ModtoolsCubit, ModtoolsState>(
+                  builder: (context, state) {
+                    if (state is TrafficStatsAvailable) {
+                      trafficStats = state.tafficstats;
+                      return Container(
+                        height: 600,
+                        width: MediaQuery.of(context).size.width - 320,
+                        color: defaultSecondaryColor,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            _buildUpperGraph(),
+                            _buildGraph(),
+                          ],
+                        ),
+                      );
+                    }
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  },
                 ),
                 const SizedBox(height: 20),
-                _buildTable(),
+                // _buildTable(),
               ],
             ),
           ),
