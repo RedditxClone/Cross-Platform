@@ -6,6 +6,7 @@ import 'package:flutter/src/widgets/framework.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:reddit/business_logic/cubit/new_post/create_post_cubit.dart';
 import 'package:reddit/data/model/post_model.dart';
 import 'package:reddit/presentation/screens/new_post/post_to_mobile.dart';
@@ -24,6 +25,10 @@ class CreatePostScreen extends StatefulWidget {
 
 class _CreatePostScreenState extends State<CreatePostScreen> {
   bool _validURL = false;
+
+  var _picker;
+
+  var _pickedImage;
   _selectedType() {
     switch (_selectedTypeIndex) {
       case 0:
@@ -39,10 +44,20 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     }
   }
 
+  _fetchImage() async {
+    // Pick an image
+    try {
+      final image = await _picker.pickImage(source: ImageSource.gallery);
+      if (image == null) return;
+      _pickedImage = await image.readAsBytes();
+    } catch (e) {
+      print(e);
+    }
+  }
+
   _pickImage() {
-    return Container(
-      color: Colors.blue,
-    );
+    _fetchImage();
+    return Container();
   }
 
   _pickVideo() {
