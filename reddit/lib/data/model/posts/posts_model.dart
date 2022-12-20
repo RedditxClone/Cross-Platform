@@ -62,7 +62,7 @@ class PostsModel {
     userId = json['userId'];
     nsfw = json['nsfw'];
     spoiler = json['spoiler'];
-    flair = json['flair'];
+    // flair = json['flair'];
     images = json['images'] == null ? [] : json['images'].cast<String>();
     commentCount = json['commentCount'];
     title = json['title'];
