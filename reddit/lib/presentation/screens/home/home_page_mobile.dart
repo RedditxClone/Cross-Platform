@@ -300,9 +300,48 @@ class _HomePageState extends State<HomePage> {
     return BlocBuilder<PostsHomeCubit, PostsHomeState>(
       builder: (context, state) {
         if (state is PostsLoaded) {
-          return ListView(children: [
-            ...state.posts!.map((e) => PostsWeb(postsModel: e)).toList()
-          ]);
+          if (state.posts!.isNotEmpty) {
+            return ListView(children: [
+              ...state.posts!.map((e) => PostsWeb(postsModel: e)).toList()
+            ]);
+          }
+          return Center(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: Image.asset(
+                    "assets/images/comments.jpg",
+                    scale: 3,
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  child: Text(
+                    "Be the first to create a post",
+                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Row(
+                  children: [
+                    Expanded(flex: 3, child: Container()),
+                    const Expanded(
+                      flex: 20,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10),
+                        child: Text(
+                          "No posts are available yet. Create a post or join a community!",
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                    Expanded(flex: 3, child: Container()),
+                  ],
+                ),
+              ],
+            ),
+          );
         }
         return const Center(child: CircularProgressIndicator());
       },
@@ -314,34 +353,51 @@ class _HomePageState extends State<HomePage> {
     return BlocBuilder<PostsPopularCubit, PostsPopularState>(
       builder: (context, state) {
         if (state is PopularPostsLoaded) {
-          return ListView(
-            children: [
-              Column(
+          if (state.posts!.isNotEmpty) {
+            return ListView(
+              children: [
+                Column(
+                  children: [
+                    ...state.posts!.map((e) => PostsWeb(postsModel: e)).toList()
+                  ],
+                ),
+              ],
+            );
+          }
+          return Center(
+            child: Column(children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: Image.asset(
+                  "assets/images/comments.jpg",
+                  scale: 3,
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 10),
+                child: Text(
+                  "Be the first to create a post",
+                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              Row(
                 children: [
-                  // SizedBox(
-                  //   height: cardHeight,
-                  //   child: ListView(
-                  //     scrollDirection: Axis.horizontal,
-                  //     children: List.generate(
-                  //       10,
-                  //       (int index) {
-                  //         return Card(
-                  //           key: const Key('row-card'),
-                  //           color: Colors.blue,
-                  //           child: SizedBox(
-                  //             width: 150.0,
-                  //             height: cardHeight,
-                  //             child: Center(child: Text("$index")),
-                  //           ),
-                  //         );
-                  //       },
-                  //     ),
-                  //   ),
-                  // ),
-                  ...state.posts!.map((e) => PostsWeb(postsModel: e)).toList()
+                  Expanded(flex: 3, child: Container()),
+                  const Expanded(
+                    flex: 20,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      child: Text(
+                        "No posts are available yet. Create a post or join a community!",
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                  Expanded(flex: 3, child: Container()),
                 ],
               ),
-            ],
+            ]),
           );
         }
         return const Center(child: CircularProgressIndicator());

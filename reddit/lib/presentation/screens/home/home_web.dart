@@ -332,11 +332,52 @@ class _HomeWebState extends State<HomeWeb> {
                           BlocBuilder<PostsHomeCubit, PostsHomeState>(
                             builder: (context, state) {
                               if (state is PostsLoaded) {
-                                return Column(children: [
-                                  ...state.posts!
-                                      .map((e) => PostsWeb(postsModel: e))
-                                      .toList()
-                                ]);
+                                if (state.posts!.isNotEmpty) {
+                                  return Column(children: [
+                                    ...state.posts!
+                                        .map((e) => PostsWeb(postsModel: e))
+                                        .toList()
+                                  ]);
+                                }
+                                return Center(
+                                  child: Column(children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(20.0),
+                                      child: Image.asset(
+                                        "assets/images/comments.jpg",
+                                        scale: 3,
+                                      ),
+                                    ),
+                                    const Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 10),
+                                      child: Text(
+                                        "Be the first to create a post",
+                                        style: TextStyle(
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.bold),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                    Row(
+                                      children: [
+                                        Expanded(flex: 3, child: Container()),
+                                        const Expanded(
+                                          flex: 20,
+                                          child: Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 10),
+                                            child: Text(
+                                              "No posts are available yet. Create a post or join a community!",
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(flex: 3, child: Container()),
+                                      ],
+                                    ),
+                                  ]),
+                                );
                               }
                               return Container();
                             },
