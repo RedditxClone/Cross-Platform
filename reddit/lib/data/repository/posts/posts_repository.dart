@@ -28,10 +28,23 @@ class PostsRepository {
     return List<PostsModel>.from(posts.map((i) => PostsModel.fromJson(i)));
   }
 
+  /// Returns [List] of [PostsModel] object that contains a user's profile posts whether your are logged in or logged out
+  /// after getting it from [PostsWebServices] and mapping it to the model list.
+  Future<List<PostsModel>> getUserPosts(
+      String id, String sort, int page, int limit) async {
+    final posts =
+        await postsDrawerWebServices.getUserPosts(id, sort, page, limit);
+    // debugPrint("Popular posts from repo:");
+    // debugPrint("$posts");
+    return List<PostsModel>.from(posts.map((i) => PostsModel.fromJson(i)));
+  }
+
   /// Returns [List] of [PostsModel] object that contains the logged in user's profile posts
   /// after getting it from [PostsWebServices] and mapping it to the model list.
-  Future<List<PostsModel>> getMyProfilePosts() async {
-    final posts = await postsDrawerWebServices.getMyProfilePosts();
+  Future<List<PostsModel>> getMyProfilePosts(
+      String sort, int page, int limit) async {
+    final posts =
+        await postsDrawerWebServices.getMyProfilePosts(sort, page, limit);
     // debugPrint("My profile posts from repo:");
     // debugPrint("$posts");
     return List<PostsModel>.from(posts.map((i) => PostsModel.fromJson(i)));

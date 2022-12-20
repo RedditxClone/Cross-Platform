@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:intl/intl.dart';
+import 'package:reddit/business_logic/cubit/posts/posts_user_cubit.dart';
 import 'package:reddit/business_logic/cubit/user_profile/user_profile_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/strings.dart';
@@ -469,10 +470,7 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
                       child: Column(
                         children: [
                           _sortBy(),
-                          PostsWeb(),
-                          PostsWeb(),
-                          PostsWeb(),
-                          PostsWeb(),
+                          _myposts(),
                         ],
                       ),
                     ),
@@ -509,50 +507,52 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
 
   Widget _myposts() {
     // TODO : continue this function
-    return Container(
-      padding: const EdgeInsets.all(5),
-      height: 120,
-      color: defaultSecondaryColor,
-      child: Row(
-        children: [
-          Container(
-            color: defaultSecondaryColor.withOpacity(0.001),
-            child: Column(
-              children: const [
-                SizedBox(height: 10),
-                Icon(Icons.arrow_upward, color: Colors.grey),
-                SizedBox(height: 10),
-                Text("0", style: TextStyle(fontSize: 13)),
-                SizedBox(height: 10),
-                Icon(Icons.arrow_downward, color: Colors.grey),
-              ],
-            ),
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Here is a post label',
-                style: TextStyle(color: Colors.white, fontSize: 18),
+    return BlocBuilder<PostsUserCubit, PostsUserState>(
+      builder: (context, state) {
+        if (state is UserPostsLoaded) {
+          if (state.posts!.isNotEmpty) {
+            return Column(children: [
+              ...state.posts!.map((e) => PostsWeb(postsModel: e)).toList()
+            ]);
+          }
+          return Center(
+            child: Column(children: [
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Image.asset(
+                  "assets/images/comments.jpg",
+                  scale: 3,
+                ),
               ),
-              const Text('r/redditx_'),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 10),
+                child: Text(
+                  "Create a post",
+                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+              ),
               Row(
                 children: [
-                  InkWell(
-                    onTap: () {},
-                    child: Row(children: const [
-                      Icon(Icons.mode_comment_outlined, color: Colors.grey),
-                      SizedBox(width: 5),
-                      Text("0", style: TextStyle(fontSize: 13)),
-                    ]),
+                  Expanded(flex: 3, child: Container()),
+                  const Expanded(
+                    flex: 20,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      child: Text(
+                        "No posts are available yet. Create a post now!",
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
                   ),
+                  Expanded(flex: 3, child: Container()),
                 ],
-              )
-            ],
-          ),
-        ],
-      ),
+              ),
+            ]),
+          );
+        }
+        return Container();
+      },
     );
   }
 
@@ -573,8 +573,84 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
               child: Column(
                 children: [
                   _sortBy(),
-                  // TODO : add user posts here
                   _myposts(),
+                ],
+              ),
+            ),
+            MediaQuery.of(context).size.width < 1000
+                ? const SizedBox(width: 0)
+                : Column(
+                    children: [
+                      Container(
+                        width: 320,
+                        height: 500,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            color: defaultSecondaryColor),
+                        margin: const EdgeInsets.only(bottom: 15),
+                        child: _buildProfileCard(),
+                      ),
+                    ],
+                  ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildComments() {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: SingleChildScrollView(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              margin: MediaQuery.of(context).size.width < 1000
+                  ? const EdgeInsets.only(right: 0)
+                  : const EdgeInsets.only(right: 20),
+              width: MediaQuery.of(context).size.width < 1000
+                  ? MediaQuery.of(context).size.width - 40
+                  : MediaQuery.of(context).size.width - 380,
+              child: Column(
+                children: [
+                  _sortBy(),
+                  Center(
+                    child: Column(children: [
+                      Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Image.asset(
+                          "assets/images/comments.jpg",
+                          scale: 3,
+                        ),
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10),
+                        child: Text(
+                          "Create a comment",
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Expanded(flex: 3, child: Container()),
+                          const Expanded(
+                            flex: 20,
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 10),
+                              child: Text(
+                                "No comments are available yet. Create a comment now!",
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                          Expanded(flex: 3, child: Container()),
+                        ],
+                      ),
+                    ]),
+                  ),
                 ],
               ),
             ),
@@ -604,7 +680,7 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
       children: [
         _buildOverview(),
         _buildPosts(),
-        _buildPosts(),
+        _buildComments(),
       ],
     );
   }
@@ -686,6 +762,8 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
             builder: (context, state) {
               if (state is UserInfoAvailable) {
                 otherUser = state.userInfo;
+                BlocProvider.of<PostsUserCubit>(context)
+                    .getUserPosts(state.userInfo.userId, limit: 50);
                 return _buildBody();
               } else if (state is FollowOtherUserSuccess ||
                   state is FollowOtherUserNotSuccess ||
