@@ -85,8 +85,10 @@ class ModeratingSubredditsDrawerModel {
       this.iV});
 
   ModeratingSubredditsDrawerModel.fromJson(Map<String, dynamic> json) {
-    subTopics = json['subTopics'].cast<String>();
-    bannedUsers = json['bannedUsers'].cast<String>();
+    subTopics =
+        json['subTopics'] == null ? [] : json['subTopics'].cast<String>();
+    bannedUsers =
+        json['bannedUsers'] == null ? [] : json['bannedUsers'].cast<String>();
     notificationType = json['notificationType'];
     sId = json['_id'];
     name = json['name'];
@@ -105,26 +107,39 @@ class ModeratingSubredditsDrawerModel {
     allowImages = json['allowImages'];
     allowVideos = json['allowVideos'];
     acceptingRequestsToJoin = json['acceptingRequestsToJoin'];
-    communityTopics = json['communityTopics'].cast<String>();
+    communityTopics = json['communityTopics'] == null
+        ? []
+        : json['communityTopics'].cast<String>();
     requirePostFlair = json['requirePostFlair'];
     postTextBodyRule = json['postTextBodyRule'];
     restrictPostTitleLength = json['restrictPostTitleLength'];
     banPostBodyWords = json['banPostBodyWords'];
-    postBodyBannedWords = json['postBodyBannedWords'].cast<String>();
+    postBodyBannedWords = json['postBodyBannedWords'] == null
+        ? []
+        : json['postBodyBannedWords'].cast<String>();
     banPostTitleWords = json['banPostTitleWords'];
-    postTitleBannedWords = json['postTitleBannedWords'].cast<String>();
+    postTitleBannedWords = json['postTitleBannedWords'] == null
+        ? []
+        : json['postTitleBannedWords'].cast<String>();
     requireWordsInPostTitle = json['requireWordsInPostTitle'];
     postGuidelines = json['postGuidelines'];
     welcomeMessageEnabled = json['welcomeMessageEnabled'];
-    flairList = json['flairList'].cast<String>();
-    moderators = json['moderators'].cast<String>();
-    categories = json['categories'].cast<String>();
+    flairList =
+        json['flairList'] == null ? [] : json['flairList'].cast<String>();
+    moderators =
+        json['moderators'] == null ? [] : json['moderators'].cast<String>();
+    categories =
+        json['categories'] == null ? [] : json['categories'].cast<String>();
     createdDate = json['createdDate'];
-    rules = json['rules'].cast<String>();
-    joinList = json['joinList'].cast<String>();
-    panedUsers = json['panedUsers'].cast<String>();
-    mutedUsers = json['mutedUsers'].cast<String>();
-    approvedUsers = json['approvedUsers'].cast<String>();
+    rules = json['rules'] == null ? [] : json['rules'].cast<String>();
+    joinList = json['joinList'] == null ? [] : json['joinList'].cast<String>();
+    panedUsers =
+        json['panedUsers'] == null ? [] : json['panedUsers'].cast<String>();
+    mutedUsers =
+        json['mutedUsers'] == null ? [] : json['mutedUsers'].cast<String>();
+    approvedUsers = json['approvedUsers'] == null
+        ? []
+        : json['approvedUsers'].cast<String>();
     iV = json['__v'];
   }
 
