@@ -388,7 +388,9 @@ class AppRouter {
                         ? ApprovedWeb(
                             subredditName: subreddit['name']!,
                             subredditId: subreddit['id']!)
-                        : ApprovedUsersScreen(subredditId: subreddit['id']!)));
+                        : ApprovedUsersScreen(
+                            subredditName: subreddit['name']!,
+                            subredditId: subreddit['id']!)));
 
       case editedRoute:
         final subreddit = settings.arguments as Map<String, String>;

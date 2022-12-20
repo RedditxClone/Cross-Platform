@@ -9,7 +9,9 @@ import 'package:reddit/data/model/auth_model.dart';
 
 class ApprovedUsersScreen extends StatefulWidget {
   final String subredditId;
-  const ApprovedUsersScreen({super.key, required this.subredditId});
+  final String subredditName;
+  const ApprovedUsersScreen(
+      {super.key, required this.subredditName, required this.subredditId});
 
   @override
   State<ApprovedUsersScreen> createState() => _ApprovedUsersScreenState();
@@ -279,7 +281,10 @@ class _ApprovedUsersScreenState extends State<ApprovedUsersScreen> {
         actions: [
           IconButton(
               onPressed: () => Navigator.pushNamed(context, addApprovedRoute,
-                  arguments: widget.subredditId),
+                      arguments: {
+                        'id': widget.subredditId,
+                        'name': widget.subredditName
+                      }),
               icon: const Icon(Icons.add))
         ],
       ),
