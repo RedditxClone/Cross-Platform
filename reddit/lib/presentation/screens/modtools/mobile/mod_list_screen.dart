@@ -83,8 +83,16 @@ class ModListScreen extends StatelessWidget {
               'Approved users',
               () => Navigator.of(context).pushNamed(approvedRoute,
                   arguments: {'name': subredditName, 'id': subredditId})),
-          listItem(Icons.speaker_notes_off_outlined, 'Muted users', () {}),
-          listItem(Icons.remove_circle_outline_outlined, 'Banned users', () {}),
+          listItem(
+              Icons.speaker_notes_off_outlined,
+              'Muted users',
+              () => Navigator.of(context).pushNamed(mutedUsersRoute,
+                  arguments: {'name': subredditName, 'id': subredditId})),
+          listItem(
+              Icons.remove_circle_outline_outlined,
+              'Banned users',
+              () => Navigator.of(context).pushNamed(bannedUsersRoute,
+                  arguments: {'name': subredditName, 'id': subredditId})),
         ],
       ),
     );

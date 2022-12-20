@@ -31,8 +31,12 @@ import 'package:reddit/presentation/screens/messages/send_message_web.dart';
 import 'package:reddit/presentation/screens/modtools/mobile/add_approved_user_screen.dart';
 import 'package:reddit/presentation/screens/modtools/mobile/add_moderator.dart';
 import 'package:reddit/presentation/screens/modtools/mobile/approved_users.dart';
+import 'package:reddit/presentation/screens/modtools/mobile/ban_user.dart';
+import 'package:reddit/presentation/screens/modtools/mobile/banned_users.dart';
 import 'package:reddit/presentation/screens/modtools/mobile/mod_list_screen.dart';
 import 'package:reddit/presentation/screens/modtools/mobile/moderators.dart';
+import 'package:reddit/presentation/screens/modtools/mobile/mute_user_screen.dart';
+import 'package:reddit/presentation/screens/modtools/mobile/muted_users_screen.dart';
 import 'package:reddit/presentation/screens/modtools/web/approved_web.dart';
 import 'package:reddit/presentation/screens/modtools/web/edited_web.dart';
 import 'package:reddit/presentation/screens/modtools/web/modqueue_web.dart';
@@ -409,6 +413,22 @@ class AppRouter {
             child: AddModeratorScreen(subredditId: subreddit['id']!),
           ),
         );
+      case addMutedUserRoute:
+        final subreddit = settings.arguments as Map<String, String>;
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider.value(
+            value: modtoolsCubit,
+            child: MuteUserScreen(subredditId: subreddit['id']!),
+          ),
+        );
+      case addBannedUserRoute:
+        final subreddit = settings.arguments as Map<String, String>;
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider.value(
+            value: modtoolsCubit,
+            child: BanUserScreen(subredditId: subreddit['id']!),
+          ),
+        );
 
       case approvedRoute:
         final subreddit = settings.arguments as Map<String, String>;
@@ -437,6 +457,34 @@ class AppRouter {
                             subredditName: subreddit['name']!,
                             subredditId: subreddit['id']!)
                         : ModeratorsScreen(
+                            subredditName: subreddit['name']!,
+                            subredditId: subreddit['id']!)));
+      case bannedUsersRoute:
+        final subreddit = settings.arguments as Map<String, String>;
+        return MaterialPageRoute(
+            builder: (_) => MultiBlocProvider(
+                    providers: [
+                      BlocProvider.value(value: modtoolsCubit),
+                    ],
+                    child: kIsWeb
+                        ? ApprovedWeb(
+                            subredditName: subreddit['name']!,
+                            subredditId: subreddit['id']!)
+                        : BannedUsersScreen(
+                            subredditName: subreddit['name']!,
+                            subredditId: subreddit['id']!)));
+      case mutedUsersRoute:
+        final subreddit = settings.arguments as Map<String, String>;
+        return MaterialPageRoute(
+            builder: (_) => MultiBlocProvider(
+                    providers: [
+                      BlocProvider.value(value: modtoolsCubit),
+                    ],
+                    child: kIsWeb
+                        ? ApprovedWeb(
+                            subredditName: subreddit['name']!,
+                            subredditId: subreddit['id']!)
+                        : MutedUsersScreen(
                             subredditName: subreddit['name']!,
                             subredditId: subreddit['id']!)));
       case editedRoute:
