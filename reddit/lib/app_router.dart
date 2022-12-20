@@ -10,6 +10,7 @@ import 'package:reddit/business_logic/cubit/modtools/modtools_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_home_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_my_profile_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_popular_cubit.dart';
+import 'package:reddit/business_logic/cubit/posts/posts_subreddit_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_user_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/sort_cubit.dart';
 import 'package:reddit/data/model/comments/comment_model.dart';
@@ -186,6 +187,7 @@ class AppRouter {
   late PostsPopularCubit postsPopularCubit;
   late PostsMyProfileCubit postsMyProfileCubit;
   late PostsUserCubit postsUserCubit;
+  late PostsSubredditCubit postsSubredditCubit;
   late CommentsRepository commentsRepository;
   late CommentsCubit commentsCubit;
   late SortCubit homeSortCubit;
@@ -199,6 +201,7 @@ class AppRouter {
   late PostFlairCubit postFlairCubit;
   late CreatePostWebServices postWebServices;
 
+  late SortCubit subredditSortCubit;
   AppRouter() {
     // initialise repository and cubit objects
     safetySettingsRepository =
@@ -231,6 +234,7 @@ class AppRouter {
     postsHomeCubit = PostsHomeCubit(postsRepository);
     postsPopularCubit = PostsPopularCubit(postsRepository);
     postsMyProfileCubit = PostsMyProfileCubit(postsRepository);
+    postsSubredditCubit = PostsSubredditCubit(postsRepository);
     postsUserCubit = PostsUserCubit(postsRepository);
     commentsRepository = CommentsRepository(CommentsWebServices());
     commentsCubit = CommentsCubit(commentsRepository);
@@ -263,6 +267,7 @@ class AppRouter {
     postToCubit = PostToCubit(postRepository);
     postSubredditPreviewCubit = PostSubredditPreviewCubit(postRepository);
     postFlairCubit = PostFlairCubit(postRepository);
+    subredditSortCubit = SortCubit();
   }
   Route? generateRoute(RouteSettings settings) {
     final arguments = settings.arguments;
@@ -390,6 +395,8 @@ class AppRouter {
                       BlocProvider(
                         create: (context) => authCubit,
                       ),
+                      BlocProvider.value(value: subredditSortCubit),
+                      BlocProvider.value(value: postsSubredditCubit),
                     ],
                     child: SubredditPageScreen(
                       subredditId: subredditId,
@@ -399,7 +406,7 @@ class AppRouter {
       //------------------------------MOD LIST-------------------------------------
       //---------------------------------------------------------------------------
       case modlistRoute:
-        final subreddit = settings.arguments as Map<String, String>;
+        final subreddit = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
             builder: (_) => BlocProvider.value(
                 value: modtoolsCubit,

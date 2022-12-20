@@ -9,9 +9,9 @@ class SubredditPageLoading extends SubredditPageState {}
 
 class SubredditPageLoaded extends SubredditPageState {
   final SubredditModel subredditModel;
-  SubredditPageLoaded(this.subredditModel) {
-    "print in state constructor!!";
-  }
+  final bool isMod;
+  final bool isJoined;
+  SubredditPageLoaded(this.subredditModel, this.isMod, this.isJoined);
 }
 
 class PostsInPageLoading extends SubredditPageState {}

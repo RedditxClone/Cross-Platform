@@ -29,9 +29,8 @@ class PostModel {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['subredditId'] = subredditId;
     data['title'] = title;
-    if (text.isNotEmpty) {
-      data['text'] = text;
-    }
+    data['text'] = text;
+
     data['nsfw'] = nsfw;
     data['spoiler'] = spoiler;
     if (flair.isNotEmpty) {

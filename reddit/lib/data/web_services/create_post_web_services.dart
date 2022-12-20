@@ -35,9 +35,7 @@ class CreatePostWebServices {
       } else {
         return false;
       }
-    } on DioError catch (e) {
-      debugPrint(e.response?.statusCode.toString());
-      debugPrint(e.response?.statusMessage.toString());
+    } catch (e) {
       return false;
     }
   }
@@ -56,8 +54,7 @@ class CreatePostWebServices {
         print(response.data);
       }
       return response.data;
-    } on DioError catch (e) {
-      debugPrint(e.response?.statusCode.toString());
+    } catch (e) {
       return [];
     }
   }
@@ -72,8 +69,7 @@ class CreatePostWebServices {
         print(response.data);
       }
       return response.data;
-    } on DioError catch (e) {
-      debugPrint(e.response?.statusCode.toString());
+    } catch (e) {
       return [];
     }
   }

@@ -148,4 +148,36 @@ class PostsWebServices {
       return [];
     }
   }
+
+  /// `Returns` subreddit page posts.
+  /// This function performs `GET` request to the endpoint `user/$name/posts`.
+  Future<dynamic> getSubredditPosts(
+      String name, String sort, int page, int limit) async {
+    try {
+      Response response = UserData.user == null
+          ? await dio.get('user/$name/posts',
+              queryParameters: {"sort": sort, "page": page, "limit": limit})
+          : await dio.get('subreddit/$name/posts',
+              options: Options(
+                headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+              ),
+              queryParameters: {"sort": sort, "page": page, "limit": limit});
+      // debugPrint("posts in web services ${response.data}");
+      debugPrint(
+          "Subreddit posts status code in web services ${response.statusCode}");
+      return response.data;
+    } catch (e) {
+      if (e is DioError) {
+        debugPrint(
+            "Error in profile posts, status code ${e.response!.statusCode!}");
+        if (e.response!.statusCode == 403) {
+          debugPrint("Unauthorized");
+        }
+        debugPrint("$e");
+      } else {
+        debugPrint("$e");
+      }
+      return [];
+    }
+  }
 }

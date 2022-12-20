@@ -40,8 +40,10 @@ class _PostSubredditPreviewScreenState
     return BlocConsumer<PostSubredditPreviewCubit, PostSubredditPreviewState>(
       listener: (context, state) async {
         if (state is CreatePostCreated) {
-          Navigator.popUntil(
-              context, ModalRoute.withName(createPostScreenRoute));
+          Navigator.pop(context);
+          Navigator.pop(context);
+          // Navigator.pop(context);
+          Navigator.pushReplacementNamed(context, homePageRoute);
         }
       },
       builder: (context, state) {

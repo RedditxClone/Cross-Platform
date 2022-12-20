@@ -1,15 +1,11 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:reddit/business_logic/cubit/new_post/create_post_cubit.dart';
 import 'package:reddit/data/model/post_model.dart';
-import 'package:reddit/presentation/screens/new_post/post_to_mobile.dart';
 import 'package:zefyrka/zefyrka.dart';
 
 import '../../../constants/colors.dart';
