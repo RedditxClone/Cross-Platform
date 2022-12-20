@@ -17,3 +17,9 @@ class SettingsChanged extends SettingsState {
   final ProfileSettings settings;
   SettingsChanged(this.settings);
 }
+
+/// Emitted on every update in the profile settings page.
+class ProfilePhotoUpdated extends SettingsState {
+  final String imgUrl;
+  ProfilePhotoUpdated(this.imgUrl);
+}

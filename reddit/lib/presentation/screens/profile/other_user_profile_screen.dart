@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:intl/intl.dart';
 import 'package:reddit/business_logic/cubit/messages/messages_cubit.dart';
 import 'package:reddit/business_logic/cubit/user_profile/user_profile_cubit.dart';
 import 'package:reddit/constants/strings.dart';
@@ -117,7 +118,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
 
   Widget _unfollow() {
     return SizedBox(
-      width: 126,
+      width: 135,
       child: OutlinedButton(
           onPressed: () {
             BlocProvider.of<UserProfileCubit>(context)
@@ -152,11 +153,18 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
       children: [
         // cover photo
         Container(
-            decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [Colors.redAccent, Colors.black]))),
+          decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.redAccent, Colors.black])),
+          child: otherUser!.coverPhoto != ""
+              ? Image.network(
+                  otherUser!.coverPhoto,
+                  fit: BoxFit.cover,
+                )
+              : null,
+        ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
@@ -168,9 +176,12 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   otherUser!.profilePic == null || otherUser!.profilePic == ''
-                      ? const Icon(
-                          Icons.person,
-                          size: 50,
+                      ? const CircleAvatar(
+                          radius: 50,
+                          child: Icon(
+                            Icons.person,
+                            size: 50,
+                          ),
                         )
                       : CircleAvatar(
                           radius: 50,
@@ -179,22 +190,6 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                           )),
                   Row(
                     children: [
-                      SizedBox(
-                        width: 55,
-                        child: OutlinedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              side: const BorderSide(
-                                  width: 1.0, color: Colors.white),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(32.0),
-                              ),
-                            ),
-                            child: const Icon(
-                              Icons.message_outlined,
-                              color: Colors.white,
-                            )),
-                      ),
                       const SizedBox(width: 10),
                       BlocBuilder<UserProfileCubit, UserProfileState>(
                         builder: (context, state) {
@@ -203,7 +198,9 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                           } else if (state is UnFollowOtherUserSuccess) {
                             return _follow();
                           }
-                          return _follow();
+                          return otherUser!.isFollowed!
+                              ? _unfollow()
+                              : _follow();
                         },
                       ),
                       const SizedBox(width: 10),
@@ -219,7 +216,8 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 30)),
               const SizedBox(height: 10),
-              Text('u/${otherUser!.username} . 1 karma . 3 Oct 2022',
+              Text(
+                  'u/${otherUser!.username} . 1 karma . ${DateFormat('dd MMM yyyy').format(DateTime.parse(otherUser!.createdAt! == "" ? "2022-12-17T16:58:07.872Z" : UserData.user!.createdAt!))}',
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 13)),
               const SizedBox(height: 5),
@@ -435,12 +433,19 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
         Row(
           children: [
             const SizedBox(width: 30),
-            const CircleAvatar(
-                radius: 20,
-                child: Icon(
-                  Icons.person,
-                  size: 20,
-                )),
+            otherUser!.profilePic == null || otherUser!.profilePic == ''
+                ? const CircleAvatar(
+                    radius: 20,
+                    child: Icon(
+                      Icons.person,
+                      size: 20,
+                    ),
+                  )
+                : CircleAvatar(
+                    radius: 20,
+                    backgroundImage: NetworkImage(
+                      otherUser!.profilePic!,
+                    )),
             const SizedBox(width: 10),
             Text(
               otherUser!.displayName == ''
@@ -547,6 +552,11 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                 BlocListener<MessagesCubit, MessagesState>(
                     listener: (context, state) {
                   if (state is MessageSent) {
+                    subjectController.text = '';
+                    messageController.text = '';
+                    Navigator.pushReplacementNamed(
+                        context, otherProfilePageRoute,
+                        arguments: otherUser!.username);
                     Navigator.pop(context);
                     displayMsg(
                         context, Colors.green, ' Message is sent successfully');

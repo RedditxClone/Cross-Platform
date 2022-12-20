@@ -9,8 +9,9 @@ import 'package:reddit/data/repository/end_drawer/end_drawer_repository.dart';
 import 'package:reddit/data/repository/left_drawer/left_drawer_repository.dart';
 import 'package:reddit/data/web_services/create_post_web_services.dart';
 import 'package:reddit/data/web_services/left_drawer/left_drawer_web_services.dart';
+import 'package:reddit/business_logic/cubit/posts/posts_home_cubit.dart';
+import 'package:reddit/data/repository/end_drawer/end_drawer_repository.dart';
 import 'package:reddit/data/web_services/settings_web_services.dart';
-import 'package:reddit/constants/strings.dart';
 import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/presentation/screens/new_post/create_post_screen.dart';
 import 'package:reddit/presentation/screens/home/home.dart';
@@ -26,6 +27,7 @@ import 'package:reddit/presentation/widgets/posts/posts_web.dart';
 
 import '../../../business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
 import '../../../business_logic/cubit/left_drawer/left_drawer_cubit.dart';
+import '../../../constants/strings.dart';
 import '../../../helper/utils/shared_keys.dart';
 import '../../../helper/utils/shared_pref.dart';
 
@@ -37,7 +39,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late CreatePostCubit _createPostCubit;
   late int _selectedPageIndex = 0;
   late String _screen;
   IconData dropDownArrow = Icons.keyboard_arrow_down;
@@ -332,26 +333,26 @@ class _HomePageState extends State<HomePage> {
             children: [
               Column(
                 children: [
-                  SizedBox(
-                    height: cardHeight,
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      children: List.generate(
-                        10,
-                        (int index) {
-                          return Card(
-                            key: const Key('row-card'),
-                            color: Colors.blue,
-                            child: SizedBox(
-                              width: 150.0,
-                              height: cardHeight,
-                              child: Center(child: Text("$index")),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
+                  // SizedBox(
+                  //   height: cardHeight,
+                  //   child: ListView(
+                  //     scrollDirection: Axis.horizontal,
+                  //     children: List.generate(
+                  //       10,
+                  //       (int index) {
+                  //         return Card(
+                  //           key: const Key('row-card'),
+                  //           color: Colors.blue,
+                  //           child: SizedBox(
+                  //             width: 150.0,
+                  //             height: cardHeight,
+                  //             child: Center(child: Text("$index")),
+                  //           ),
+                  //         );
+                  //       },
+                  //     ),
+                  //   ),
+                  // ),
                   ...state.posts!.map((e) => PostsWeb(postsModel: e)).toList()
                 ],
               ),

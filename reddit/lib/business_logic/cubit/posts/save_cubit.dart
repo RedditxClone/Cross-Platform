@@ -22,7 +22,7 @@ class SaveCubit extends Cubit<SaveState> {
       postActionsRepository.savePost(id).then((statusCode) {
         debugPrint("Save in cubit");
         debugPrint("$statusCode");
-        if (statusCode == 201) {
+        if (statusCode == 200) {
           emit(Saved());
         } else {
           emit(SaveError(statusCode));
@@ -41,7 +41,7 @@ class SaveCubit extends Cubit<SaveState> {
       emit(UnsaveError(403));
     } else {
       postActionsRepository.unsavePost(id).then((statusCode) {
-        if (statusCode == 201) {
+        if (statusCode == 200) {
           emit(Unsaved());
         } else {
           emit(UnsaveError(statusCode));

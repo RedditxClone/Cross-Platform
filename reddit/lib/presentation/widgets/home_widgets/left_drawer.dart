@@ -259,7 +259,7 @@ class _LeftDrawerState extends State<LeftDrawer> {
                                 onTap: () {
                                   Navigator.pushNamed(
                                       context, otherProfilePageRoute,
-                                      arguments: e.sId!);
+                                      arguments: e.username!);
                                 },
                                 leading: CircleAvatar(
                                   radius: 15.0,

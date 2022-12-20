@@ -172,23 +172,21 @@ class AuthWebService {
   /// This function makes the request to update the user profile picture during signup.
   /// This function calls the function [DioHelper.patchData] which makes the request to the server.
   /// Returns the response data from the server.
-  Future<dynamic> updateImageWeb(
-      Uint8List fileAsBytes, String key, String token) async {
+  Future<dynamic> updateImageWeb(Uint8List fileAsBytes, String key) async {
     try {
       FormData formData = FormData.fromMap({
-        "file": MultipartFile.fromBytes(fileAsBytes,
-            contentType: MediaType('application', 'json'), filename: key)
+        "photo": MultipartFile.fromBytes(fileAsBytes,
+            contentType: MediaType('application', 'json'), filename: 'photo')
       });
-      Response response = await DioHelper.patchData(
-        url: 'user/me/$key',
-        data: formData,
-        options: Options(
-          headers: {"Authorization": "Bearer $token"},
-        ),
-      );
-
-      debugPrint("res of img = ${response.statusCode}");
-      return response;
+      Response response = await DioHelper.postDataWithHeaders(
+          url: 'user/me/$key',
+          data: {'photo': formData},
+          headers: {"Authorization": "Bearer ${UserData.user!.token}"});
+      debugPrint("update picture status code " +
+          response.statusCode.toString() +
+          " new image link : " +
+          response.data['${key}Photo']);
+      return response.data;
     } catch (e) {
       debugPrint("error in image web ${e.toString()}");
       return '';

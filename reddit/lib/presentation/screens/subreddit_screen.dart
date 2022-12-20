@@ -523,7 +523,9 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                                                     Radius.circular(20),
                                                   )),
                                                 ),
-                                                onPressed: () {},
+                                                onPressed: () =>
+                                                    Navigator.pushNamed(
+                                                        context, modlistRoute),
                                                 child: Row(
                                                   children: const [
                                                     Icon(Icons.build),

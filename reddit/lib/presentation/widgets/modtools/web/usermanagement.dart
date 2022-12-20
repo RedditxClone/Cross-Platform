@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:icons_plus/icons_plus.dart';
+import 'package:reddit/business_logic/cubit/modtools/modtools_cubit.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/data/model/auth_model.dart';
@@ -14,10 +17,18 @@ class UserManagement extends StatefulWidget {
 
 class _UserManagementState extends State<UserManagement> {
   String addButtonName = '';
+  TextEditingController addApprovedUserController = TextEditingController();
+  List<User>? approvedUsers;
+  @override
+  void initState() {
+    super.initState();
+    BlocProvider.of<ModtoolsCubit>(context)
+        .getApprovedUsers('639b27bbef88b3df0463d04b');
+  }
 
   Widget emptyUserManagement(context) {
     return Container(
-        height: 300,
+        height: 200,
         width: MediaQuery.of(context).size.width - 320,
         color: defaultSecondaryColor,
         child: Center(
@@ -26,14 +37,54 @@ class _UserManagementState extends State<UserManagement> {
             children: const [
               Icon(Icons.speaker_notes_off_outlined, color: Colors.grey),
               SizedBox(height: 30),
-              Text('No muted users in r/redditx_',
+              Text('No approved users in r/redditx_',
                   style: TextStyle(fontSize: 17, color: Colors.grey)),
             ],
           ),
         ));
   }
 
-  Widget listviewItem(context) {
+  /// [context] : build context.
+  /// [color] : color of the error msg to be displayer e.g. ('red' : error , 'blue' : success ).
+  /// [title] : message to be displayed to the user.
+  void displayMsg(BuildContext context, Color color, String title) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      width: 450,
+      content: Container(
+          height: 50,
+          padding: const EdgeInsets.all(5),
+          decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              color: Colors.black,
+              borderRadius: const BorderRadius.all(Radius.circular(10))),
+          child: Row(
+            children: [
+              Container(
+                margin: const EdgeInsets.only(right: 10),
+                decoration: BoxDecoration(
+                    color: color,
+                    borderRadius: const BorderRadius.all(Radius.circular(10))),
+                width: 9,
+              ),
+              Logo(
+                Logos.reddit,
+                color: Colors.white,
+                size: 20,
+              ),
+              const SizedBox(width: 10),
+              Text(
+                title,
+                style: const TextStyle(fontSize: 16, color: Colors.white),
+              ),
+            ],
+          )),
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+    ));
+  }
+
+  Widget listviewItem(context, index) {
     return Container(
       decoration: BoxDecoration(
         border: const Border(
@@ -42,28 +93,28 @@ class _UserManagementState extends State<UserManagement> {
         color: defaultSecondaryColor,
       ),
       padding: const EdgeInsets.all(10),
-      child: Row(children: [
+      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         Material(
           color: Colors.transparent,
           child: InkWell(
             hoverColor: defaultThirdColor,
             onTap: () => Navigator.pushNamed(context, otherProfilePageRoute,
-                arguments:
-                    "638f9e7d31186b7fd21bae89"), // TODO : Navigate to other user profile
+                arguments: approvedUsers![index].username),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               child: Row(children: [
-                CircleAvatar(
-                    radius: 17,
-                    backgroundColor: Colors.grey,
-                    child: UserData.user == null ||
-                            UserData.user!.profilePic == null ||
-                            UserData.user!.profilePic == ''
-                        ? const Icon(Icons.person)
-                        : Image.network(UserData.user!.profilePic!,
-                            fit: BoxFit.cover)),
+                approvedUsers![index].profilePic == null ||
+                        approvedUsers![index].profilePic == ''
+                    ? const CircleAvatar(
+                        radius: 17,
+                        backgroundColor: Colors.grey,
+                        child: Icon(Icons.person))
+                    : CircleAvatar(
+                        radius: 17,
+                        backgroundImage:
+                            NetworkImage(approvedUsers![index].profilePic!)),
                 const SizedBox(width: 10),
-                const Text('user_name'),
+                Text(approvedUsers![index].username),
               ]),
             ),
           ),
@@ -71,14 +122,20 @@ class _UserManagementState extends State<UserManagement> {
         const SizedBox(width: 148),
         const Text('2 months ago',
             style: TextStyle(fontSize: 13, color: Colors.grey)),
-        SizedBox(width: MediaQuery.of(context).size.width - 880),
+        SizedBox(
+            width: MediaQuery.of(context).size.width - 880 > 0
+                ? MediaQuery.of(context).size.width - 880
+                : 0),
         InkWell(
-            onTap: () => () {},
+            onTap: () => Navigator.pushNamed(context, sendMessageRoute,
+                arguments: approvedUsers![index].username),
             child: const Text('Send message',
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold))),
         const SizedBox(width: 20),
         InkWell(
-            onTap: () => () {},
+            onTap: () => BlocProvider.of<ModtoolsCubit>(context)
+                .removeApprovedUser(
+                    '639b27bbef88b3df0463d04b', approvedUsers![index].username),
             child: const Text('Remove',
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)))
       ]),
@@ -87,20 +144,52 @@ class _UserManagementState extends State<UserManagement> {
 
   Widget userManagementList(context) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height - 230,
-      width: MediaQuery.of(context).size.width - 320,
-      child: ListView(
-        children: [
-          listviewItem(context),
-          listviewItem(context),
-          listviewItem(context),
-          listviewItem(context),
-          listviewItem(context),
-          listviewItem(context),
-          listviewItem(context),
-        ],
-      ),
-    );
+        height: MediaQuery.of(context).size.height - 230,
+        width: MediaQuery.of(context).size.width - 320,
+        child: BlocListener<ModtoolsCubit, ModtoolsState>(
+          listener: (context, state) {
+            if (state is AddedToApprovedUsers) {
+              displayMsg(context, Colors.green,
+                  'Successfully added an approved submitter');
+            }
+          },
+          child: BlocBuilder<ModtoolsCubit, ModtoolsState>(
+            builder: (context, state) {
+              if (state is ApprovedListAvailable) {
+                approvedUsers = state.approved;
+                if (approvedUsers!.isEmpty) {
+                  return emptyUserManagement(context);
+                }
+                return ListView.builder(
+                    itemCount: approvedUsers!.length,
+                    itemBuilder: (context, index) {
+                      return listviewItem(context, index);
+                    });
+              }
+              if (state is AddedToApprovedUsers) {
+                approvedUsers = state.approved;
+                addApprovedUserController.text = '';
+                return ListView.builder(
+                    itemCount: approvedUsers!.length,
+                    itemBuilder: (context, index) {
+                      return listviewItem(context, index);
+                    });
+              }
+              if (state is RemovedFromApprovedUsers) {
+                approvedUsers = state.approved;
+                if (approvedUsers!.isEmpty) {
+                  return emptyUserManagement(context);
+                }
+                return ListView.builder(
+                    itemCount: approvedUsers!.length,
+                    itemBuilder: (context, index) {
+                      return listviewItem(context, index);
+                    });
+              }
+              return emptyUserManagement(context);
+            },
+          ),
+        ));
   }
 
   void _addApproved(context) {
@@ -141,7 +230,7 @@ class _UserManagementState extends State<UserManagement> {
                       width: 420,
                       padding: const EdgeInsets.all(8.0),
                       child: TextField(
-                        controller: null,
+                        controller: addApprovedUserController,
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: 'Enter username',
@@ -175,7 +264,12 @@ class _UserManagementState extends State<UserManagement> {
                         ),
                         const SizedBox(width: 10),
                         ElevatedButton(
-                          onPressed: () {}, // TODO : add user reques
+                          onPressed: () {
+                            Navigator.pop(context);
+                            BlocProvider.of<ModtoolsCubit>(context)
+                                .addApprovedUser('639b27bbef88b3df0463d04b',
+                                    addApprovedUserController.text);
+                          },
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(

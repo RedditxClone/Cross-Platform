@@ -15,23 +15,7 @@
 //       color: Colors.black,
 //       child: ListView(
 //         children: [
-//           SizedBox(
-//             height: cardHeight,
-//             child: ListView(
-//               scrollDirection: Axis.horizontal,
-//               children: List.generate(10, (int index) {
-//                 return Card(
-//                   key: const Key('row-card'),
-//                   color: Colors.blue,
-//                   child: SizedBox(
-//                     width: 150.0,
-//                     height: cardHeight,
-//                     child: Center(child: Text("$index")),
-//                   ),
-//                 );
-//               }),
-//             ),
-//           ),
+//           
 //           BlocBuilder<PostsHomeCubit, PostsHomeState>(
 //             builder: (context, state) {
 //               if (state is PostsLoaded) {

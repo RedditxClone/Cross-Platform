@@ -33,12 +33,16 @@ class ModListScreen extends StatelessWidget {
                         fontSize: 20, fontWeight: FontWeight.bold))
               ],
             ),
-            Row(children: const [
-              Icon(
-                Icons.arrow_forward,
-                color: Colors.grey,
-                size: 25,
-              ),
+            Row(children: [
+              IconButton(
+                  onPressed: () {
+                    func();
+                  },
+                  icon: const Icon(
+                    Icons.arrow_forward,
+                    color: Colors.grey,
+                    size: 25,
+                  )),
               SizedBox(width: 15),
             ]),
           ],
@@ -53,7 +57,7 @@ class ModListScreen extends StatelessWidget {
           leading: BackButton(
             onPressed: () {
               Navigator.of(context).pushReplacementNamed(
-                subredditPageScreenRoute, 
+                subredditPageScreenRoute,
               );
             },
           ),
@@ -67,7 +71,12 @@ class ModListScreen extends StatelessWidget {
           listItem(Icons.queue_outlined, 'Mod queue', () {}),
           title('USER MANAGEMENT'),
           listItem(Icons.shield_outlined, 'Moderators', () {}),
-          listItem(Icons.mic_external_on_outlined, 'Approved users', () {}),
+          listItem(
+              Icons.mic_external_on_outlined,
+              'Approved users',
+              () => Navigator.of(context).pushNamed(
+                    approvedRoute,
+                  )),
           listItem(Icons.speaker_notes_off_outlined, 'Muted users', () {}),
         ],
       ),

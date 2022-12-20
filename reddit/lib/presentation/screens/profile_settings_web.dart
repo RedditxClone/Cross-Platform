@@ -7,6 +7,7 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:reddit/business_logic/cubit/settings/settings_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
+import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/data/model/user_settings.dart';
 
 class ProfileSettingsWeb extends StatefulWidget {
@@ -240,13 +241,13 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
                 children: [
                   Container(
                     decoration: const BoxDecoration(shape: BoxShape.circle),
-                    child: profileSettings!.profile != ''
+                    child: UserData.user!.profilePic != ''
                         ? GestureDetector(
                             onTap: () =>
                                 pickImageWeb(ImageSource.gallery, 'profile'),
                             child: ClipOval(
                               child: Image.network(
-                                profileSettings!.profile,
+                                UserData.user!.profilePic!,
                                 width: 120,
                                 height: 120,
                                 fit: BoxFit.cover,
@@ -297,7 +298,7 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
                     //add image here
                     child: (profileSettings!.cover != '')
                         ? Image.network(
-                            profileSettings!.cover,
+                            UserData.user!.coverPhoto,
                             fit: BoxFit.fitWidth,
                           )
                         : Column(
@@ -441,6 +442,7 @@ class _ProfileSettingsWebState extends State<ProfileSettingsWeb> {
                 profileSettings!.activeInCommunitiesVisibility;
             return buildEditProfileBody();
           } else if (state is SettingsChanged) {
+            debugPrint("new state : " + UserData.user!.coverPhoto);
             profileSettings = state.settings;
             return buildEditProfileBody();
           } else {

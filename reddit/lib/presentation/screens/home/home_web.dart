@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reddit/business_logic/cubit/create_community_cubit.dart';
 import 'package:reddit/business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_home_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
+import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/data/model/auth_model.dart';
+import 'package:reddit/data/repository/create_community_repository.dart';
+import 'package:reddit/data/web_services/create_community_web_services.dart';
+import 'package:reddit/presentation/screens/create_community_screen.dart';
 import 'package:reddit/presentation/widgets/home_widgets/left_list_not_logged_in.dart';
 import 'package:reddit/presentation/widgets/posts/posts_web.dart';
 
@@ -18,6 +23,7 @@ class HomeWeb extends StatefulWidget {
 class _HomeWebState extends State<HomeWeb> {
   late Responsive responsive;
   String sortBy = 'best';
+
   Widget _sortBy() {
     return Container(
       // sort posts
@@ -149,6 +155,121 @@ class _HomeWebState extends State<HomeWeb> {
     );
   }
 
+  Widget _createPost() {
+    return Container(
+      width: double.infinity,
+      height: 53,
+      padding: const EdgeInsets.all(10),
+      child: ElevatedButton(
+        onPressed: () {}, // TODO : navigate to add new post
+        style: ButtonStyle(
+          backgroundColor:
+              MaterialStateProperty.all(Colors.white.withOpacity(0.7)),
+          shape: const MaterialStatePropertyAll(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(25),
+              ),
+            ),
+          ),
+          padding: const MaterialStatePropertyAll(EdgeInsets.all(0.0)),
+        ),
+        child: Ink(
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.2),
+            borderRadius: const BorderRadius.all(Radius.circular(80.0)),
+          ),
+          child: Container(
+            constraints: const BoxConstraints(minWidth: 70.0, minHeight: 20.0),
+            alignment: Alignment.center,
+            child: const Text(
+              'Create Post',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void createCommunityDialog() {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => BlocProvider(
+              create: (context) => CreateCommunityCubit(
+                  CreateCommunityRepository(CreateCommunityWebServices())),
+              child: const CreateCommunityScreen(),
+            ));
+  }
+
+  Widget _createCommunity() {
+    return Container(
+      width: double.infinity,
+      height: 54,
+      padding: const EdgeInsets.all(10),
+      child: OutlinedButton(
+        onPressed: () => UserData.isLoggedIn
+            ? createCommunityDialog()
+            : Navigator.pushNamed(context, loginPage),
+        style: OutlinedButton.styleFrom(
+            // padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
+            side: const BorderSide(width: 1, color: Colors.white),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(25))),
+        child: const Text(
+          "Create Community",
+          style: TextStyle(color: Colors.white, fontSize: 15),
+        ),
+      ),
+    );
+  }
+
+  Widget _rightCard() {
+    return Container(
+      height: UserData.isLoggedIn ? 305 : 285,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          color: defaultSecondaryColor.withOpacity(0.85)),
+      margin: const EdgeInsets.only(bottom: 15),
+      child: Column(
+        children: [
+          Container(
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(5)),
+            child: ClipRRect(
+              clipBehavior: Clip.antiAlias,
+              child: Image.asset(
+                'assets/images/right_card_home.jpg',
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          Container(
+            height: 200,
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              children: [
+                Expanded(
+                    child: Text(
+                  'Your personal Reddit frontpage. Come here to check in with your favorite communities.',
+                  style: TextStyle(
+                      fontSize: 16, color: Colors.white.withOpacity(0.8)),
+                )),
+                Divider(),
+                _createPost(),
+                _createCommunity()
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     responsive = Responsive(context);
@@ -193,14 +314,6 @@ class _HomeWebState extends State<HomeWeb> {
                       width: 10,
                       child: Column(
                         children: [
-                          Container(
-                            // add new post
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
-                                color: const Color.fromRGBO(70, 70, 70, 100)),
-                            height: 70,
-                            margin: const EdgeInsets.only(bottom: 15),
-                          ),
                           // sort posts
                           _sortBy(),
                           // -----------------------------------------------
@@ -229,32 +342,7 @@ class _HomeWebState extends State<HomeWeb> {
                           child: Padding(
                             padding: const EdgeInsets.only(top: 15),
                             child: Column(
-                              children: [
-                                Container(
-                                  height: 500,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
-                                      color: const Color.fromRGBO(
-                                          70, 70, 70, 100)),
-                                  margin: const EdgeInsets.only(bottom: 15),
-                                ),
-                                Container(
-                                  height: 200,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
-                                      color: const Color.fromRGBO(
-                                          70, 70, 70, 100)),
-                                  margin: const EdgeInsets.only(bottom: 15),
-                                ),
-                                Container(
-                                  height: 200,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
-                                      color: const Color.fromRGBO(
-                                          70, 70, 70, 100)),
-                                  margin: const EdgeInsets.only(bottom: 15),
-                                ),
-                              ],
+                              children: [_rightCard()],
                             ),
                           )),
                   Expanded(
