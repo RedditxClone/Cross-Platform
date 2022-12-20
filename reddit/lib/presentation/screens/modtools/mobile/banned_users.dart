@@ -19,7 +19,7 @@ class BannedUsersScreen extends StatefulWidget {
 }
 
 class _BannedUsersScreenState extends State<BannedUsersScreen> {
-  List<User>? moderators;
+  List<User>? bannedUsers;
 
   /// [context] : build context.
   /// [color] : color of the error msg to be displayer e.g. ('red' : error , 'blue' : success ).
@@ -62,6 +62,8 @@ class _BannedUsersScreenState extends State<BannedUsersScreen> {
   }
 
   Widget listviewItem(context, index) {
+    Duration date =
+        DateTime.now().difference(DateTime.parse(bannedUsers![index].date));
     return Container(
       margin: const EdgeInsets.fromLTRB(10, 10, 0, 10),
       // decoration: BoxDecoration(
@@ -70,10 +72,10 @@ class _BannedUsersScreenState extends State<BannedUsersScreen> {
       // ),
       child: InkWell(
         onTap: () => Navigator.pushNamed(context, otherProfilePageRoute,
-            arguments: moderators![index].username),
+            arguments: bannedUsers![index].username),
         child: Row(children: [
-          moderators![index].profilePic == null ||
-                  moderators![index].profilePic == ''
+          bannedUsers![index].profilePic == null ||
+                  bannedUsers![index].profilePic == ''
               ? const CircleAvatar(
                   radius: 17,
                   backgroundColor: Colors.grey,
@@ -81,14 +83,20 @@ class _BannedUsersScreenState extends State<BannedUsersScreen> {
               : CircleAvatar(
                   radius: 17,
                   backgroundImage:
-                      NetworkImage(moderators![index].profilePic!)),
+                      NetworkImage(bannedUsers![index].profilePic!)),
           const SizedBox(width: 10),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('u/${moderators![index].username}'),
+              Text('u/${bannedUsers![index].username}'),
               Text(
-                moderators![index].about ?? "",
+                date.inHours > 24
+                    ? '${date.inDays} days ago'
+                    : date.inMinutes > 60
+                        ? '${date.inHours} hours ago'
+                        : date.inSeconds > 60
+                            ? '${date.inMinutes} mins ago'
+                            : '${date.inSeconds + 1} secs ago',
                 style: const TextStyle(color: Colors.grey, fontSize: 12),
               ),
             ],
@@ -101,7 +109,7 @@ class _BannedUsersScreenState extends State<BannedUsersScreen> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<ModtoolsCubit>(context).getModerators(widget.subredditId);
+    BlocProvider.of<ModtoolsCubit>(context).getBannedUsers(widget.subredditId);
   }
 
   @override
@@ -124,20 +132,20 @@ class _BannedUsersScreenState extends State<BannedUsersScreen> {
       ),
       body: BlocBuilder<ModtoolsCubit, ModtoolsState>(
         builder: (context, state) {
-          if (state is ModeratorsListAvailable) {
-            moderators = state.moderators;
-            if (moderators!.isEmpty) {
+          if (state is BannedListAvailable) {
+            bannedUsers = state.bannedUsers;
+            if (bannedUsers!.isEmpty) {
               return const Center(
-                child: Text('No moderators found'),
+                child: Text('No Banned users found'),
               );
             }
             return ListView.builder(
-                itemCount: moderators!.length,
+                itemCount: bannedUsers!.length,
                 itemBuilder: (context, index) {
                   return listviewItem(context, index);
                 });
           }
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator.adaptive());
         },
       ),
     );

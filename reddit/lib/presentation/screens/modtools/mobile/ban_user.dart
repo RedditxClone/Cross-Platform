@@ -14,6 +14,16 @@ class BanUserScreen extends StatefulWidget {
 
 class _BanUserScreenState extends State<BanUserScreen> {
   TextEditingController usernameController = TextEditingController();
+  TextEditingController reasonController = TextEditingController();
+  TextEditingController noteController = TextEditingController();
+  TextEditingController dayController = TextEditingController();
+  TextEditingController msgController = TextEditingController();
+  FocusNode usernameFocusNode = FocusNode();
+  FocusNode reasonFocusNode = FocusNode();
+  FocusNode noteFocusNode = FocusNode();
+  FocusNode dayFocusNode = FocusNode();
+  FocusNode msgFocusNode = FocusNode();
+  bool isPermanent = false;
 
   /// [context] : build context.
   /// [color] : color of the error msg to be displayer e.g. ('red' : error , 'blue' : success ).
@@ -63,12 +73,19 @@ class _BanUserScreenState extends State<BanUserScreen> {
           backgroundColor: defaultSecondaryColor,
           leading: const CloseButton(),
           centerTitle: true,
-          title: const Text('Add a moderator'),
+          title: const Text('Add a banned user'),
           actions: [
             TextButton(
                 onPressed: () {
-                  BlocProvider.of<ModtoolsCubit>(context).addModerator(
-                      widget.subredditId, usernameController.text);
+                  BlocProvider.of<ModtoolsCubit>(context).banUser(
+                    widget.subredditId,
+                    usernameController.text,
+                    reasonController.text,
+                    isPermanent ? 0 : int.tryParse(dayController.text) ?? 0,
+                    noteController.text,
+                    msgController.text,
+                    isPermanent,
+                  );
                 },
                 child: const Text('ADD',
                     style: TextStyle(
@@ -78,16 +95,17 @@ class _BanUserScreenState extends State<BanUserScreen> {
           ]),
       body: BlocListener<ModtoolsCubit, ModtoolsState>(
         listener: (context, state) {
-          if (state is AddedToModerators) {
+          if (state is BanUser) {
             if (state.statusCode == 400) {
               displayMsg(context, Colors.red,
-                  ' This user is already a moderator or the username is not valid');
+                  'This user is already banned or the username is not valid');
             } else {
               displayMsg(context, Colors.green,
-                  ' ${usernameController.text} becomes a moderator');
+                  ' ${usernameController.text} is banned');
               usernameController.text = '';
+              reasonController.text = '';
               BlocProvider.of<ModtoolsCubit>(context)
-                  .getModerators(widget.subredditId);
+                  .getBannedUsers(widget.subredditId);
               Navigator.pop(context);
             }
           }
@@ -101,6 +119,7 @@ class _BanUserScreenState extends State<BanUserScreen> {
               const Text('Username', style: TextStyle(fontSize: 17)),
               const SizedBox(height: 10),
               TextField(
+                focusNode: usernameFocusNode,
                 controller: usernameController,
                 style: const TextStyle(fontSize: 18),
                 keyboardType: TextInputType.text,
@@ -113,10 +132,133 @@ class _BanUserScreenState extends State<BanUserScreen> {
                   contentPadding: const EdgeInsets.all(15),
                   hintText: 'username',
                 ),
+                textInputAction: TextInputAction.next,
+                onEditingComplete: () {
+                  reasonFocusNode.requestFocus();
+                },
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'Mod note',
+                style: TextStyle(
+                  fontSize: 17,
+                ),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                focusNode: noteFocusNode,
+                controller: noteController,
+                style: const TextStyle(fontSize: 18),
+                keyboardType: TextInputType.text,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(3)),
+                  contentPadding: const EdgeInsets.all(15),
+                  hintText: 'For other mods to know why this user is muted',
+                  hintStyle: const TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
+                  ),
+                ),
+                textInputAction: TextInputAction.next,
+                onEditingComplete: () {
+                  noteFocusNode.unfocus();
+                  reasonFocusNode.requestFocus();
+                },
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'Banned Reason',
+                style: TextStyle(
+                  fontSize: 17,
+                ),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                focusNode: reasonFocusNode,
+                controller: reasonController,
+                style: const TextStyle(fontSize: 18),
+                keyboardType: TextInputType.text,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(3)),
+                  contentPadding: const EdgeInsets.all(15),
+                  hintText: 'Reason for bannig this user',
+                  hintStyle: const TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
+                  ),
+                ),
+                textInputAction: TextInputAction.next,
+                onEditingComplete: () {
+                  reasonFocusNode.unfocus();
+                  dayFocusNode.requestFocus();
+                },
+              ),
+              const SizedBox(height: 10),
+              const Text("How Long?"),
+              const SizedBox(height: 10),
+              Wrap(
+                spacing: 20,
+                children: [
+                  SizedBox(
+                    width: 100,
+                    child: TextField(
+                      controller: dayController,
+                      focusNode: dayFocusNode,
+                      keyboardType: TextInputType.number,
+                      style: const TextStyle(fontSize: 15),
+                      textInputAction: TextInputAction.next,
+                      onEditingComplete: () {
+                        dayFocusNode.unfocus();
+                        msgFocusNode.requestFocus();
+                      },
+                    ),
+                  ),
+                  const Text("Days"),
+                  Checkbox(
+                    value: isPermanent,
+                    onChanged: (value) {
+                      setState(() {
+                        isPermanent = value ?? false;
+                        if (isPermanent) {
+                          dayController.text = '';
+                          dayFocusNode.unfocus();
+                        }
+                      });
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              const Text("Note to inclue in ban message"),
+              const SizedBox(height: 10),
+              TextField(
+                focusNode: msgFocusNode,
+                controller: msgController,
+                style: const TextStyle(fontSize: 18),
+                keyboardType: TextInputType.text,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(3)),
+                  contentPadding: const EdgeInsets.all(15),
+                  hintText: 'Note to include in ban message',
+                  hintStyle: const TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
+                  ),
+                ),
                 textInputAction: TextInputAction.done,
                 onEditingComplete: () {
-                  BlocProvider.of<ModtoolsCubit>(context).addModerator(
-                      widget.subredditId, usernameController.text);
+                  BlocProvider.of<ModtoolsCubit>(context).banUser(
+                    widget.subredditId,
+                    usernameController.text,
+                    reasonController.text,
+                    isPermanent ? 0 : int.tryParse(dayController.text) ?? 0,
+                    noteController.text,
+                    msgController.text,
+                    isPermanent,
+                  );
                 },
               ),
             ],

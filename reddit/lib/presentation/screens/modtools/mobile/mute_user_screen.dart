@@ -89,10 +89,11 @@ class _MuteUserScreenState extends State<MuteUserScreen> {
                   'This user is already muted or the username is not valid');
             } else {
               displayMsg(context, Colors.green,
-                  ' ${usernameController.text} becomes a moderator');
+                  ' ${usernameController.text} is muted');
               usernameController.text = '';
+              reasonController.text = '';
               BlocProvider.of<ModtoolsCubit>(context)
-                  .getModerators(widget.subredditId);
+                  .getMutedUsers(widget.subredditId);
               Navigator.pop(context);
             }
           }
@@ -124,6 +125,7 @@ class _MuteUserScreenState extends State<MuteUserScreen> {
                   reasonFocusNode.requestFocus();
                 },
               ),
+              const SizedBox(height: 20),
               const Text(
                 'Mod note about why they were muted',
                 style: TextStyle(

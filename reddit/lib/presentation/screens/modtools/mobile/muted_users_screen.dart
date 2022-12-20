@@ -118,10 +118,10 @@ class _MutedUsersScreenState extends State<MutedUsersScreen> {
         backgroundColor: defaultSecondaryColor,
         leading: const BackButton(),
         centerTitle: true,
-        title: const Text('Moderators'),
+        title: const Text('Muted Users'),
         actions: [
           IconButton(
-              onPressed: () => Navigator.pushNamed(context, addModeratorRoute,
+              onPressed: () => Navigator.pushNamed(context, addMutedUserRoute,
                       arguments: {
                         'id': widget.subredditId,
                         'name': widget.subredditName
@@ -144,7 +144,7 @@ class _MutedUsersScreenState extends State<MutedUsersScreen> {
                   return listviewItem(context, index);
                 });
           }
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator.adaptive());
         },
       ),
     );
