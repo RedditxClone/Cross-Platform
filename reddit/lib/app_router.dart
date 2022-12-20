@@ -399,7 +399,7 @@ class AppRouter {
       //------------------------------MOD LIST-------------------------------------
       //---------------------------------------------------------------------------
       case modlistRoute:
-        final subreddit = settings.arguments as Map<String, String>;
+        final subreddit = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
             builder: (_) => BlocProvider.value(
                 value: modtoolsCubit,
