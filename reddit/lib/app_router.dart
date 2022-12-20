@@ -250,9 +250,8 @@ class AppRouter {
             builder: (_) => kIsWeb
                 ? MultiBlocProvider(
                     providers: [
-                      BlocProvider(
-                        create: (context) => postsMyProfileCubit,
-                      ),
+                      BlocProvider(create: (context) => postsMyProfileCubit),
+                      BlocProvider.value(value: settingsCubit),
                     ],
                     child: const ProfilePageWeb(),
                   )

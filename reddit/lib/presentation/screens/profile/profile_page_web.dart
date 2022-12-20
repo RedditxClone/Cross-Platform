@@ -343,7 +343,7 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
           height: 65,
           padding: const EdgeInsets.all(15),
           child: ElevatedButton(
-            onPressed: () {}, // TODO : change profile photo here
+            onPressed: () => pickImageWeb(ImageSource.gallery, 'profile'),
             style: const ButtonStyle(
               shape: MaterialStatePropertyAll(
                 RoundedRectangleBorder(
@@ -371,7 +371,7 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
                 child: const Text(
                   'Change your profile picture',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 17),
+                  style: TextStyle(fontSize: 15),
                 ),
               ),
             ),
@@ -398,7 +398,7 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
                         size: 10,
                       ),
                       SizedBox(width: 5),
-                      Text('1', // TODO : add karma number here
+                      Text('1',
                           style: TextStyle(fontSize: 10, color: Colors.grey)),
                     ],
                   )
@@ -447,8 +447,7 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
               width: 180,
               height: 40,
               child: ElevatedButton(
-                  onPressed: () =>
-                      _addSocialLinks(), // TODO : add social links here
+                  onPressed: () => _addSocialLinks(),
                   style: ElevatedButton.styleFrom(
                     foregroundColor: const Color.fromARGB(255, 77, 77, 77),
                     backgroundColor: const Color.fromARGB(255, 116, 116, 116),
@@ -473,24 +472,26 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
         //--------------------add new post--------------------
         Container(
           width: double.infinity,
-          height: 50,
+          height: 51,
           padding: const EdgeInsets.all(10),
           child: ElevatedButton(
             onPressed: () {}, // TODO : navigate to add new post
-            style: const ButtonStyle(
-              shape: MaterialStatePropertyAll(
+            style: ButtonStyle(
+              backgroundColor:
+                  MaterialStatePropertyAll(Colors.white.withOpacity(0.5)),
+              shape: const MaterialStatePropertyAll(
                 RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(
                     Radius.circular(25),
                   ),
                 ),
               ),
-              padding: MaterialStatePropertyAll(EdgeInsets.all(0.0)),
+              padding: const MaterialStatePropertyAll(EdgeInsets.all(0.0)),
             ),
             child: Ink(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.all(Radius.circular(80.0)),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.5),
+                borderRadius: const BorderRadius.all(Radius.circular(80.0)),
               ),
               child: Container(
                 constraints:
