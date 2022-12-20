@@ -43,7 +43,7 @@ class _PostFlairScreenState extends State<PostFlairScreen> {
           if (_groupValue == 0) {
             _selectedFId = "";
           } else {
-            _selectedFId = widget.flairList[_groupValue - 1].fId;
+            _selectedFId = widget.flairList[_groupValue - 1].fId!;
           }
         }
 
@@ -101,7 +101,7 @@ class _PostFlairScreenState extends State<PostFlairScreen> {
                             maxWidth: MediaQuery.of(context).size.width * 0.7,
                           ),
                           child: Text(
-                            widget.flairList[i].text,
+                            widget.flairList[i].text!,
                             style: const TextStyle(
                                 fontSize: statementFontSize,
                                 color: Colors.black,

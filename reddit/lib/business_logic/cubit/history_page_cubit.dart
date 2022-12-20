@@ -1,13 +1,14 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import '../../data/model/post_model.dart';
+import '../../data/model/posts/posts_model.dart';
 import '../../data/repository/history_page_repository.dart';
 
 part 'history_page_state.dart';
 
 class HistoryPageCubit extends Cubit<HistoryPageState> {
   final HistoryPageRepository subredditPageRepository;
-  List<PostModel>? _postsInPageModels;
+  List<PostsModel>? _postsInPageModels;
 
   HistoryPageCubit(this.subredditPageRepository)
       : super(SubredditPageInitial());
