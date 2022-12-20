@@ -119,10 +119,10 @@ class _BannedUsersScreenState extends State<BannedUsersScreen> {
         backgroundColor: defaultSecondaryColor,
         leading: const BackButton(),
         centerTitle: true,
-        title: const Text('Moderators'),
+        title: const Text('Banned Users'),
         actions: [
           IconButton(
-              onPressed: () => Navigator.pushNamed(context, addModeratorRoute,
+              onPressed: () => Navigator.pushNamed(context, addBannedUserRoute,
                       arguments: {
                         'id': widget.subredditId,
                         'name': widget.subredditName
