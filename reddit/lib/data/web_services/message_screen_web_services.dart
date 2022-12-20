@@ -12,7 +12,7 @@ import '../model/auth_model.dart';
 
 class MessageScreenWebServices {
   late Dio dio;
-  String token = UserData.user!.token;
+  String? token = UserData.user!.token;
   //String mockUrl = "https://43a82e45-5f65-4651-90fe-a2190fb44ded.mock.pstmn.io/";
   ///Setting Dio Options.
   MessageScreenWebServices() {

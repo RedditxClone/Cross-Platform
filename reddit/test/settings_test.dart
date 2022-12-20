@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -87,8 +86,8 @@ void main() async {
     blocTest<SettingsCubit, SettingsState>(
       'Settings loaded state is emitted correctly after updating settings',
       setUp: () {
-        when(() =>
-                mockAccountSettingsWebService.updateImage(file, 'coverphoto'))
+        when(() => mockAccountSettingsWebService.updateImage(
+                file.path, 'coverphoto'))
             .thenAnswer(
                 (_) async => {"coverphoto": "$patchResponse['coverphoto']"});
       },
@@ -96,7 +95,7 @@ void main() async {
         return accountSettingsCubit;
       },
       act: (SettingsCubit cubit) =>
-          cubit.changeCoverphoto(settingsFromRepository!, file),
+          cubit.changeCoverphoto(settingsFromRepository!, file.path),
       expect: () => [isA<SettingsChanged>()],
     );
   });

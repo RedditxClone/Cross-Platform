@@ -87,6 +87,7 @@ class EndDrawer extends StatelessWidget {
                   title: const Text("Sign up / Log in"),
                   onTap: () {
                     // TODO: go to sign up / log in page
+                    Navigator.pushNamed(context, loginScreen);
                   },
                 ),
                 ListTile(
@@ -151,7 +152,11 @@ class EndDrawer extends StatelessWidget {
         Navigator.of(context).pushNamed(accountSettingsRoute, arguments: {
           "username": UserData.user!.username,
           "email": UserData.user!.email,
-          "gender": UserData.accountSettings!.gender == 'male',//_isMan
+          "gender": UserData.accountSettings!.gender == 'male'
+              ? 1
+              : UserData.accountSettings!.gender == ''
+                  ? 2
+                  : 0, //_isMan
         });
       },
     );
@@ -167,7 +172,16 @@ class EndDrawer extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ListTile(
-                leading: const Icon(Icons.person),
+                leading: UserData.user!.profilePic == null ||
+                        UserData.user!.profilePic == ''
+                    ? const CircleAvatar(
+                        radius: 17,
+                        backgroundColor: Colors.grey,
+                        child: Icon(Icons.person))
+                    : CircleAvatar(
+                        radius: 17,
+                        backgroundImage:
+                            NetworkImage(UserData.user!.profilePic!)),
                 title: const Text("My profile"),
                 onTap: () => Navigator.of(context).pushNamed(profilePageRoute),
               ),
@@ -240,7 +254,8 @@ class EndDrawer extends StatelessWidget {
                     FontAwesomeIcons.cakeCandles,
                     color: Colors.blue,
                   ),
-                  title: Text("$_redditAge d"),
+                  title: Text(
+                      "${DateTime.now().difference(DateTime.parse(UserData.user!.createdAt!)).inDays} d"),
                   subtitle: const Text("Reddit age"),
                 ),
               ),
@@ -407,7 +422,7 @@ class EndDrawer extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(8, 12, 0, 0),
-                child: Text("U/${UserData.user!.username.toUpperCase()}"),
+                child: Text("U/${UserData.user!.username ?? "".toUpperCase()}"),
               ),
               const Divider(
                 color: Colors.grey,
@@ -460,7 +475,9 @@ class EndDrawer extends StatelessWidget {
       final imageTemp = File(image.path);
 
       imgProfile = imageTemp;
-      BlocProvider.of<EndDrawerCubit>(context).changeProfilephoto(imageTemp);
+      // BlocProvider.of<AuthCubit>(context).changeProfilephotoMob(imageTemp);
+
+      BlocProvider.of<EndDrawerCubit>(context).changeProfilephoto(image.path);
     } on PlatformException catch (e) {
       displayMsg(context, Colors.red, 'Error', 'Could not load image');
     }

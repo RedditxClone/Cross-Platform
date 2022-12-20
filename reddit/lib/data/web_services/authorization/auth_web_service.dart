@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:reddit/constants/strings.dart';
+import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/helper/dio.dart';
 
 class AuthWebService {
@@ -171,23 +172,21 @@ class AuthWebService {
   /// This function makes the request to update the user profile picture during signup.
   /// This function calls the function [DioHelper.patchData] which makes the request to the server.
   /// Returns the response data from the server.
-  Future<dynamic> updateImageWeb(
-      Uint8List fileAsBytes, String key, String token) async {
+  Future<dynamic> updateImageWeb(Uint8List fileAsBytes, String key) async {
     try {
       FormData formData = FormData.fromMap({
-        "file": MultipartFile.fromBytes(fileAsBytes,
-            contentType: MediaType('application', 'json'), filename: key)
+        "photo": MultipartFile.fromBytes(fileAsBytes,
+            contentType: MediaType('application', 'json'), filename: 'photo')
       });
-      Response response = await DioHelper.patchData(
-        url: 'user/me/$key',
-        data: formData,
-        options: Options(
-          headers: {"Authorization": "Bearer $token"},
-        ),
-      );
-
-      debugPrint("res of img = ${response.statusCode}");
-      return response;
+      Response response = await DioHelper.postDataWithHeaders(
+          url: 'user/me/$key',
+          data: {'photo': formData},
+          headers: {"Authorization": "Bearer ${UserData.user!.token}"});
+      debugPrint("update picture status code " +
+          response.statusCode.toString() +
+          " new image link : " +
+          response.data['${key}Photo']);
+      return response.data;
     } catch (e) {
       debugPrint("error in image web ${e.toString()}");
       return '';
@@ -241,17 +240,19 @@ class AuthWebService {
     }
   }
 
-  /// [userId] : [String] which is The id of the user.
+  /// [token] : [String] which is The id of the user.
   ///
   /// get the user data with userId
   /// This function calls the function [DioHelper.getData] which makes the request to the server.
   /// Returns the response data from the server.
-  Future getUserData(String userId) async {
+  Future getUserData(String token) async {
     try {
-      var res = await DioHelper.getData(
-        url: 'user/$userId',
-        query: {},
-      );
+      var res = await DioHelper.getDataWithHeaders(
+          url: 'user/me',
+          query: {},
+          headers: {
+            "Authorization": "Bearer $token",
+          });
       return res;
     } on DioError catch (e) {
       debugPrint("from dio $e");

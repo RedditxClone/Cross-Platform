@@ -110,7 +110,7 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
             automaticallyImplyLeading: false,
             backgroundColor: defaultAppbarBackgroundColor,
             title: UserData.user != null
-                ? const AppBarWebLoggedIn( screen: 'r/subreddit')
+                ? const AppBarWebLoggedIn(screen: 'r/subreddit')
                 : const AppBarWebNotLoggedIn(screen: 'r/subreddit'));
   }
 
@@ -203,7 +203,10 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                               children: [
                                 InkWell(
                                     onTap: () => Navigator.pushNamed(
-                                        context, modqueueRoute),
+                                            context, modqueueRoute, arguments: {
+                                          'name': 'bemoireddit2',
+                                          'id': '639b27bbef88b3df0463d04b'
+                                        }),
                                     child: Padding(
                                       padding: const EdgeInsets.all(5),
                                       child: Row(children: const [
@@ -509,7 +512,15 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                                                     Radius.circular(20),
                                                   )),
                                                 ),
-                                                onPressed: () {},
+                                                onPressed: () =>
+                                                    Navigator.pushNamed(
+                                                        context, modlistRoute,
+                                                        arguments: {
+                                                          'name':
+                                                              'bemoireddit2',
+                                                          'id':
+                                                              '639b27bbef88b3df0463d04b'
+                                                        }),
                                                 child: Row(
                                                   children: const [
                                                     Icon(Icons.settings),

@@ -94,31 +94,45 @@ class HomeNotLoggedIn extends StatelessWidget {
           ),
           Column(
             children: [
-              ElevatedButton(
-                onPressed: () => Navigator.pushNamed(context, signupScreen),
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 130),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25))),
-                child: const Text(
-                  "SIGN UP",
-                  style: TextStyle(color: Colors.white, fontSize: 16),
-                ),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () =>
+                          Navigator.pushNamed(context, signupScreen),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                          // padding: const EdgeInsets.symmetric(
+                          //     vertical: 10, horizontal: 130),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25))),
+                      child: const Text(
+                        "SIGN UP",
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              ElevatedButton(
-                onPressed: () => Navigator.pushNamed(context, loginScreen),
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: defaultWebBackgroundColor,
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 130),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25))),
-                child: const Text(
-                  "SIGN IN",
-                  style: TextStyle(color: Colors.blue, fontSize: 16),
-                ),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () =>
+                          Navigator.pushNamed(context, loginScreen),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: defaultWebBackgroundColor,
+                          // padding: const EdgeInsets.symmetric(
+                          //     vertical: 10, horizontal: 130),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25))),
+                      child: const Text(
+                        "SIGN IN",
+                        style: TextStyle(color: Colors.blue, fontSize: 16),
+                      ),
+                    ),
+                  ),
+                ],
               )
             ],
           )

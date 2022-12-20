@@ -44,18 +44,17 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
 
       final image = await ImagePicker().pickImage(source: src);
       if (image == null) return;
-      final imageTemp = File(image.path);
+      // final imageTemp = File(image.path);
 
       switch (dest) {
         case 'cover':
           // imgCover = imageTemp;
           BlocProvider.of<SettingsCubit>(context)
-              .changeCoverphoto(profileSettings!, imageTemp);
+              .changeCoverphoto(UserData.profileSettings!, image.path);
           break;
         case 'profile':
-          imgProfile = imageTemp;
           BlocProvider.of<SettingsCubit>(context)
-              .changeProfilephoto(profileSettings!, imageTemp);
+              .changeProfilephoto(UserData.profileSettings!, image.path);
 
           break;
         default:
@@ -196,10 +195,10 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                 decoration: const BoxDecoration(
                   color: Color.fromRGBO(30, 30, 30, 100),
                 ),
-                child: (profileSettings!.cover != '')
+                child: (UserData.user!.coverPhoto != '')
                     ? Image.network(
-                        profileSettings!.cover,
-                        fit: BoxFit.cover,
+                        UserData.user!.coverPhoto,
+                        fit: BoxFit.fitWidth,
                       )
                     : const Icon(Icons.add_a_photo_outlined),
               ),
@@ -210,17 +209,15 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
               left: 20,
               child: Container(
                   decoration: const BoxDecoration(shape: BoxShape.circle),
-                  child: (profileSettings!.profile != '' && imgProfile == null)
+                  child: (UserData.user!.profilePic! != '')
                       ? ClipOval(
                           child: InkWell(
-                            onTap: () => chooseProfilePhotoBottomSheet(context),
-                            child: Image.network(
-                              profileSettings!.profile,
-                              width: 80,
-                              height: 80,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
+                              onTap: () =>
+                                  chooseProfilePhotoBottomSheet(context),
+                              child: CircleAvatar(
+                                  radius: 40,
+                                  backgroundImage: NetworkImage(
+                                      UserData.user!.profilePic!))),
                         )
                       : ElevatedButton(
                           onPressed: () =>
@@ -380,13 +377,14 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                   print(changed);
                   BlocProvider.of<SettingsCubit>(context)
                       .updateSettings(profileSettings!, changed);
-                  // Navigator.pop(context);
                 }
+                Navigator.pop(context);
               },
               child: const Text('Save', style: TextStyle(fontSize: 20)))
         ],
       ),
-      body: BlocBuilder<SettingsCubit, SettingsState>(builder: (_, state) {
+      body:
+          BlocBuilder<SettingsCubit, SettingsState>(builder: (context, state) {
         if (state is SettingsAvailable) {
           profileSettings = state.settings;
           displayName = TextEditingController();
@@ -396,13 +394,12 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
           showActiveCommunities =
               profileSettings!.activeInCommunitiesVisibility;
           contentVisibility = profileSettings!.contentVisibility;
-          // oldAbout = profileSettings!.about;
-          // oldDisplayName = profileSettings!.about;
-          // oldShowActive = profileSettings!.activeInCommunitiesVisibility;
-          // oldContVis = profileSettings!.contentVisibility;
           return buildEditProfileBody(context);
         } else if (state is SettingsChanged) {
-          print('state changed');
+          print(
+              'state changed, the new image is : ${UserData.user!.profilePic}');
+          UserData.user!.profilePic = state.settings.profile;
+          UserData.user!.coverPhoto = state.settings.cover;
           profileSettings = state.settings;
           displayName = TextEditingController();
           about = TextEditingController();

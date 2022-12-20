@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:reddit/business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
+import 'package:reddit/business_logic/cubit/posts/posts_home_cubit.dart';
 import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/data/web_services/authorization/auth_web_service.dart';
@@ -28,7 +29,7 @@ class _HomePageWebState extends State<HomePageWeb> {
   void initState() {
     super.initState();
     BlocProvider.of<AuthCubit>(context)
-          .getUserData(PreferenceUtils.getString(SharedPrefKeys.userId));
+        .getUserData(PreferenceUtils.getString(SharedPrefKeys.token));
     authRepo = AuthRepo(AuthWebService());
   }
 
@@ -58,31 +59,14 @@ class _HomePageWebState extends State<HomePageWeb> {
   //this function is used to add the user interests to the database
   void addInterests() {
     authRepo
-        .addInterests(selectedInterests, UserData.user!.token)
+        .addInterests(selectedInterests, UserData.user!.token ?? "")
         .then((value) {
       if (value) {
         Navigator.of(context).pop();
         showDialogToChooseProfilePicture();
       } else {
-        SnackBar(
-          content: Row(
-            children: const [
-              Icon(
-                Icons.error,
-                color: Colors.red,
-              ),
-              SizedBox(
-                width: 10,
-              ),
-              Text(
-                'Error in storing your data please try again',
-                style: TextStyle(
-                  color: Colors.red,
-                ),
-              ),
-            ],
-          ),
-        );
+        displayMsg(
+            context, Colors.red, 'Error in storing your data please try again');
       }
     });
     debugPrint("interests added");
@@ -91,55 +75,15 @@ class _HomePageWebState extends State<HomePageWeb> {
   //This function takes the selected gender and sends it to the server
   //gender will be null if not selected
   void selectGender(String gender) async {
-    authRepo.genderInSignup(gender, UserData.user!.token).then((updated) {
+    authRepo.genderInSignup(gender, UserData.user!.token!).then((updated) {
       if (updated) {
         debugPrint("success gender");
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: const [
-                Icon(
-                  Icons.reddit,
-                  color: Colors.green,
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                Text(
-                  'Data add successfully',
-                  style: TextStyle(
-                    color: Colors.black,
-                    backgroundColor: Colors.white,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
+        displayMsg(context, Colors.blue, ' Logged in successfully');
         Navigator.of(context).pop();
         showDialogToChooseInterests();
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: const [
-                Icon(
-                  Icons.error,
-                  color: Colors.red,
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                Text(
-                  'Error in storing your data please try again',
-                  style: TextStyle(
-                    color: Colors.red,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
+        displayMsg(context, Colors.red,
+            ' Error in storing your data please try again');
       }
     });
   }
@@ -158,7 +102,7 @@ class _HomePageWebState extends State<HomePageWeb> {
             data: ThemeData.light(),
             child: AlertDialog(
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(40),
+                borderRadius: BorderRadius.circular(20),
               ),
               icon: const Icon(
                 Icons.reddit,
@@ -329,7 +273,7 @@ class _HomePageWebState extends State<HomePageWeb> {
             data: ThemeData.light(),
             child: AlertDialog(
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(40),
+                borderRadius: BorderRadius.circular(20),
               ),
               icon: AppBar(
                 elevation: 0,
@@ -453,7 +397,7 @@ class _HomePageWebState extends State<HomePageWeb> {
                               shape: MaterialStatePropertyAll(
                                 RoundedRectangleBorder(
                                   borderRadius: BorderRadius.all(
-                                    Radius.circular(25),
+                                    Radius.circular(30),
                                   ),
                                 ),
                               ),
@@ -519,7 +463,7 @@ class _HomePageWebState extends State<HomePageWeb> {
       imgCover = await imagePicker.readAsBytes();
       // BlocProvider.of<AuthCubit>(context)
       //     .changeProfilephotoWeb(UserData.user, imgCover!);
-      authRepo.updateImageWeb('profilephoto', imgCover!, UserData.user!.token);
+      authRepo.updateImageWeb('profile', imgCover!);
       displayMsg(context, Colors.blue, 'Changes Saved');
     } on PlatformException catch (e) {
       debugPrint("Error in pickImageWeb: ${e.toString()}");
@@ -537,7 +481,7 @@ class _HomePageWebState extends State<HomePageWeb> {
             data: ThemeData.light(),
             child: AlertDialog(
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(40),
+                borderRadius: BorderRadius.circular(20),
               ),
               icon: AppBar(
                 elevation: 0,
@@ -619,7 +563,9 @@ class _HomePageWebState extends State<HomePageWeb> {
                             shape: BoxShape.circle,
                           ),
                           child: imgCover != null
-                              ? ClipOval(
+                              ? CircleAvatar(
+                                  radius: 250,
+                                  backgroundImage: MemoryImage(imgCover!),
                                   child: InkWell(
                                     onTap: () {
                                       pickImageWeb(ImageSource.gallery)
@@ -635,42 +581,29 @@ class _HomePageWebState extends State<HomePageWeb> {
                                         }
                                       });
                                     },
-                                    child: Image.memory(
-                                      imgCover!,
-                                      fit: BoxFit.fill,
-                                    ),
                                   ),
                                 )
-                              : ElevatedButton(
-                                  onPressed: () {
-                                    pickImageWeb(ImageSource.gallery)
-                                        .then((value) {
-                                      if (value) {
-                                        setState(() {
-                                          BlocProvider.of<AuthCubit>(context)
-                                              .changeProfilephotoWeb(imgCover!);
-                                          displayMsg(context, Colors.blue,
-                                              'Changes Saved');
-                                        });
-                                      }
-                                    });
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(80.0),
-                                    ),
-                                  ),
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 20, horizontal: 5),
-                                    child: const Icon(
-                                      Icons.person,
-                                      size: 40,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ),
+                              : CircleAvatar(
+                                  backgroundColor: Colors.grey,
+                                  radius: 250,
+                                  child: InkWell(
+                                    onTap: () {
+                                      pickImageWeb(ImageSource.gallery)
+                                          .then((value) {
+                                        if (value) {
+                                          setState(() {
+                                            BlocProvider.of<AuthCubit>(context)
+                                                .changeProfilephotoWeb(
+                                                    imgCover!);
+                                            displayMsg(context, Colors.blue,
+                                                'Changes Saved');
+                                          });
+                                        }
+                                      });
+                                    },
+                                    child: const Icon(Icons.person,
+                                        size: 150, color: Colors.black),
+                                  )),
                         ),
                       ],
                     ),
@@ -774,9 +707,6 @@ class _HomePageWebState extends State<HomePageWeb> {
         shape: const Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
         automaticallyImplyLeading: false,
         backgroundColor: defaultAppbarBackgroundColor,
-        // title: UserData.isLoggedIn
-        //     ? const AppBarWebLoggedIn(screen: 'Home')
-        //     : const AppBarWebNotLoggedIn(screen: 'Home'),
         title: BlocBuilder<AuthCubit, AuthState>(
           builder: (context, state) {
             if (state is Login ||
@@ -798,22 +728,37 @@ class _HomePageWebState extends State<HomePageWeb> {
             debugPrint("state is signed in");
             WidgetsBinding.instance
                 .addPostFrameCallback((_) => showDialogToChooseGender());
+            BlocProvider.of<PostsHomeCubit>(context)
+                .getTimelinePosts(sort: "best");
+
             return const HomeWeb();
           } else if (state is SignedInWithProfilePhoto) {
             debugPrint("state is SignedInWithProfilePhoto");
             UserData.profileSettings!.profile = state.imgUrl;
             debugPrint(
                 "user in the home page ${UserData.profileSettings!.profile}");
+            BlocProvider.of<PostsHomeCubit>(context)
+                .getTimelinePosts(sort: "best");
+
             return const HomeWeb();
           } else if (state is Login) {
+            BlocProvider.of<PostsHomeCubit>(context)
+                .getTimelinePosts(sort: "best");
+
             return const HomeWeb();
           } else if (state is GetTheUserData) {
             if (state.userDataJson != {}) {
               debugPrint("user is nottttttttttttttttttttttttt null");
               UserData.initUser(state.userDataJson);
+              BlocProvider.of<PostsHomeCubit>(context)
+                  .getTimelinePosts(sort: "best");
+
               return const HomeWeb();
             }
-          }else if(state is NotLoggedIn){
+          } else if (state is NotLoggedIn) {
+            BlocProvider.of<PostsHomeCubit>(context)
+                .getTimelinePosts(sort: "best");
+
             return const HomeWeb();
           }
           return const Center(

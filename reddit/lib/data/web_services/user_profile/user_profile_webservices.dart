@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/data/model/auth_model.dart';
 
@@ -22,17 +23,56 @@ class UserProfileWebServices {
   /// `Returns` : [User] info
   Future<dynamic> getUserInfo(String userId) async {
     try {
+      print(userId);
       Response response = await dio.get('user/$userId',
-          options: Options(
-            headers: {"Authorization": "Bearer  ${UserData.user!.token}"},
-          ));
-      print(response.statusCode);
+          options: UserData.isLoggedIn
+              ? Options(
+                  headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+                )
+              : null);
       return response.data;
     } catch (e) {
       if (e is DioError) {
-        print(e);
-        return "";
+        debugPrint("Status code is ${e.response!.data}");
       }
+      debugPrint("$e");
+      return "";
+    }
+  }
+
+  Future<dynamic> getMyModeratedSubreddits() async {
+    try {
+      Response response = await dio.get('subreddit/moderation/me',
+          options: UserData.isLoggedIn
+              ? Options(
+                  headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+                )
+              : null);
+      return response.data;
+    } catch (e) {
+      if (e is DioError) {
+        debugPrint("Status code is ${e.response!.data}");
+      }
+      debugPrint("$e");
+      return "";
+    }
+  }
+
+  Future<dynamic> leaveSubreddit(String subredditId) async {
+    try {
+      Response response = await dio.post('subreddit/$subredditId/leave',
+          options: UserData.isLoggedIn
+              ? Options(
+                  headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+                )
+              : null);
+      return response.statusCode;
+    } catch (e) {
+      if (e is DioError) {
+        debugPrint("Status code is ${e.response!.data}");
+      }
+      debugPrint("$e");
+      return "";
     }
   }
 
@@ -45,20 +85,21 @@ class UserProfileWebServices {
     try {
       Response response = await dio.post('user/$userId/follow',
           options: Options(
-            headers: {"Authorization": "Bearer  ${UserData.user!.token}"},
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
       print(response.statusCode);
       return response.statusCode;
     } catch (e) {
       if (e is DioError) {
-        print(e);
-        return "";
+        debugPrint("Status code is ${e.response!.data}");
       }
+      debugPrint("$e");
+      return "";
     }
   }
 
   /// [userId] : the id of user to be unfollowed
-  /// `Returns` [statusCode] of the request:
+  /// `Returns` [response.statusCode] of the request:
   /// - 201: you have unfollowed the user successfully
   /// - 400: either you are not following the user or there is a block between you and the user or wrong user id
   /// - 401: user is not logged in
@@ -68,13 +109,32 @@ class UserProfileWebServices {
           options: Options(
             headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
-      print(response.statusCode);
       return response.statusCode;
     } catch (e) {
       if (e is DioError) {
-        print(e);
-        return "";
+        debugPrint("Status code is ${e.response!.data}");
       }
+      debugPrint("$e");
+      return "";
+    }
+  }
+
+  /// [username] : the username we want to block.
+  ///
+  /// Returns status code 200 if success  and 401 if there is an error occured (e.g. Unautherized) and `[]` (empty list) if an exception
+  /// occured while trying to perform the request.
+  ///
+  /// This function Performs post request to the endpoint `baseUrl/user/`[username]`/block` to block a user.
+  Future<dynamic> blockUser(String username) async {
+    try {
+      Response response = await dio.post('user/$username/block',
+          options: Options(
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+          ));
+      debugPrint('status code : ${response.statusCode}');
+      return response.statusCode;
+    } catch (e) {
+      return [];
     }
   }
 }

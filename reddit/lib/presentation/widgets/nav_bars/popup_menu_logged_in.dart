@@ -40,7 +40,7 @@ class PopupMenuLoggedIn extends StatelessWidget {
             SizedBox(width: 5),
             Text(
               'My Stuff',
-              style: TextStyle(fontSize: 17),
+              style: TextStyle(fontSize: 14),
             )
           ])),
       PopupMenuItem(
@@ -148,7 +148,7 @@ class PopupMenuLoggedIn extends StatelessWidget {
           ])),
     ];
     return PopupMenuButton(
-      color: defaultSecondaryColor,
+      color: const Color.fromRGBO(30, 30, 30, 1),
       key: const Key('popup-menu'),
       padding: const EdgeInsets.all(0.4),
       offset: Offset.fromDirection(0, 150),
@@ -180,19 +180,21 @@ class PopupMenuLoggedIn extends StatelessWidget {
       },
       child: Row(
         children: [
-          CircleAvatar(
-              child: UserData.user!.profilePic == null ||
-                      UserData.user!.profilePic == ''
-                  ? const Icon(Icons.person)
-                  : Image.network(UserData.user!.profilePic!,
-                      fit: BoxFit.cover)),
+          UserData.user!.profilePic == null || UserData.user!.profilePic == ''
+              ? const Icon(
+                  Icons.person,
+                )
+              : CircleAvatar(
+                  backgroundImage: NetworkImage(
+                  UserData.user!.profilePic!,
+                )),
           const SizedBox(width: 10),
           MediaQuery.of(context).size.width < 950
               ? const SizedBox(width: 0)
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(UserData.user!.username,
+                    Text(UserData.user!.username ?? "",
                         style: const TextStyle(fontSize: 15)),
                     const Text('karma', style: TextStyle(fontSize: 10)),
                   ],

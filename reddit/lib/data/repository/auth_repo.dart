@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:reddit/constants/strings.dart';
 
 import '../model/auth_model.dart';
 import '../web_services/authorization/auth_web_service.dart';
@@ -182,15 +183,11 @@ class AuthRepo {
   /// This function makes the request to the server to get the user's profile picture.
   /// This function calls the function [AuthWebService.updateImageWeb] which makes the request to the server.
   /// Returns [String] : it restuns a string which the link of the profile picture on the server.
-  Future<dynamic> updateImageWeb(
-      String key, Uint8List fileAsBytes, String token) async {
-    var res = await authWebService.updateImageWeb(fileAsBytes, key, token);
-    if (res.statusCode == 200) {
-      UserData.profileSettings!.profile = res.data[key];
-      return res.data[key];
-    } else {
-      return null;
-    }
+  Future<dynamic> updateImageWeb(String key, Uint8List fileAsBytes) async {
+    var res = await authWebService.updateImageWeb(fileAsBytes, key);
+
+    UserData.profileSettings!.profile = imagesUrl + res['${key}Photo'];
+    return imagesUrl + res['${key}Photo'];
   }
 
   /// [token] : [String] which is The token of the user.
@@ -224,13 +221,13 @@ class AuthRepo {
     }
   }
 
-  /// [userId] : [String] which is The id of the user.
+  /// [token] : [String] which is The id of the user.
   ///
   /// This function makes the request to get the user data with the user Id.
   /// This function calls the function [AuthWebService.getUserData] which makes the request to the server.
   /// Returns [User] : it restuns a user object if the status code is 200 and null in case of status code isn't 200.
-  Future<Map<String, dynamic>> getUserData(String userId) async {
-    var res = await authWebService.getUserData(userId);
+  Future<Map<String, dynamic>> getUserData(String token) async {
+    var res = await authWebService.getUserData(token);
     if (res.statusCode == 200) {
       debugPrint("user data from repo: ${res.data.toString()}");
       user = res.data;

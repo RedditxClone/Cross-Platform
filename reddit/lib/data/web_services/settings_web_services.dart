@@ -48,21 +48,33 @@ class SettingsWebServices {
   ///
   /// This function Performs patch request to the endpoint `baseUrl/user/me/`[key] to update an image and get the
   /// from the new path the API.
-  Future<dynamic> updateImage(File file, String key) async {
+  Future<dynamic> updateImage(String filepath, String key) async {
     try {
-      String fileName = file.path.split('/').last;
+      print("file name : " + filepath);
       FormData formData = FormData.fromMap(
-          {"file": await MultipartFile.fromFile(file.path, filename: 'photo')});
-      Response response = await dio.patch('user/me/$key',
+          {"photo": await MultipartFile.fromFile(filepath, filename: 'photo')});
+      Response response = await dio.post('user/me/$key',
           data: formData,
           options: Options(
             headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
-      debugPrint(response.statusCode.toString());
+      debugPrint("update picture status code " +
+          response.statusCode.toString() +
+          " new image link : " +
+          response.data['${key}Photo']);
+
       return response.data;
     } catch (e) {
-      // print(e.toString());
-      return '';
+      if (e is DioError) {
+        // print(e);
+        if (e is DioError) {
+          debugPrint("Status code is ${e.response!.data}");
+        } else {
+          debugPrint("$e");
+        }
+      }
+      print(e.toString());
+      return "";
     }
   }
 
@@ -77,15 +89,18 @@ class SettingsWebServices {
   Future<dynamic> updateImageWeb(Uint8List fileAsBytes, String key) async {
     try {
       FormData formData = FormData.fromMap({
-        "file": MultipartFile.fromBytes(fileAsBytes,
+        "photo": MultipartFile.fromBytes(fileAsBytes,
             contentType: MediaType('application', 'json'), filename: 'photo')
       });
-      Response response = await dio.patch('user/me/$key',
+      Response response = await dio.post('user/me/$key',
           data: formData,
           options: Options(
             headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
-      debugPrint(response.statusCode.toString());
+      debugPrint("update picture status code " +
+          response.statusCode.toString() +
+          " new image link : " +
+          response.data['${key}Photo']);
       return response.data;
     } catch (e) {
       debugPrint(e.toString());

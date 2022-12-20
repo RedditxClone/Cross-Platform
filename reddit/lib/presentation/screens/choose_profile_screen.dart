@@ -20,44 +20,40 @@ class ChooseProfileImgAndroid extends StatefulWidget {
 class ChooseProfileImgAndroidState extends State<ChooseProfileImgAndroid> {
   File? imgCover;
 
-  //this function to display the image if selected and if not it will show a static icon
-  void displayMsg(
-      BuildContext context, Color color, String title, String subtitle) {
+  /// [context] : build context.
+  /// [color] : color of the error msg to be displayer e.g. ('red' : error , 'blue' : success ).
+  /// [title] : message to be displayed to the user.
+  void displayMsg(BuildContext context, Color color, String title) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      width: 400,
       content: Container(
-        padding: const EdgeInsets.all(5),
-        decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(10))),
-        height: 70,
-        child: Row(
-          children: [
-            Container(
-              margin: const EdgeInsets.only(right: 10),
-              decoration: BoxDecoration(
-                  color: color,
-                  borderRadius: const BorderRadius.all(Radius.circular(10))),
-              width: 7,
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(fontSize: 20, color: color),
-                ),
-                Text(
-                  subtitle,
-                  style: TextStyle(fontSize: 13, color: color),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+          height: 50,
+          padding: const EdgeInsets.all(5),
+          decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              color: Colors.black,
+              borderRadius: const BorderRadius.all(Radius.circular(10))),
+          child: Row(
+            children: [
+              Container(
+                margin: const EdgeInsets.only(right: 10),
+                decoration: BoxDecoration(
+                    color: color,
+                    borderRadius: const BorderRadius.all(Radius.circular(10))),
+                width: 9,
+              ),
+              Logo(
+                Logos.reddit,
+                color: Colors.white,
+                size: 20,
+              ),
+              const SizedBox(width: 10),
+              Text(
+                title,
+                style: const TextStyle(fontSize: 16, color: Colors.white),
+              ),
+            ],
+          )),
       behavior: SnackBarBehavior.floating,
       backgroundColor: Colors.transparent,
       elevation: 0,
@@ -129,10 +125,10 @@ class ChooseProfileImgAndroidState extends State<ChooseProfileImgAndroid> {
       final image = await ImagePicker().pickImage(source: src);
       if (image == null) return;
       final imageTemp = File(image.path);
-      BlocProvider.of<AuthCubit>(context).changeProfilephotoMob(imageTemp);
+      BlocProvider.of<AuthCubit>(context).changeProfilephotoMob(image.path);
     } on PlatformException catch (e) {
       debugPrint(e.toString());
-      displayMsg(context, Colors.red, 'Error', 'Could not load image');
+      displayMsg(context, Colors.red, 'Could not load image');
     }
   }
 
@@ -214,15 +210,10 @@ class ChooseProfileImgAndroidState extends State<ChooseProfileImgAndroid> {
                       builder: (context, state) {
                     if (state is ChooseProfileImageLoginChanged) {
                       UserData.profileSettings!.profile = state.url;
-                      return ClipOval(
-                        child: InkWell(
-                          onTap: () => chooseProfilePhotoBottomSheet(context),
-                          child: Image.network(
-                            UserData.profileSettings!.profile,
-                            fit: BoxFit.fill,
-                          ),
-                        ),
-                      );
+                      return CircleAvatar(
+                          radius: 120,
+                          backgroundImage:
+                              NetworkImage(UserData.profileSettings!.profile));
                     } else {
                       return ElevatedButton(
                           onPressed: () =>
@@ -238,7 +229,7 @@ class ChooseProfileImgAndroidState extends State<ChooseProfileImgAndroid> {
                                 vertical: 20, horizontal: 5),
                             child: const Icon(
                               Icons.person,
-                              size: 40,
+                              size: 120,
                               color: Colors.black,
                             ),
                           ));
@@ -254,7 +245,7 @@ class ChooseProfileImgAndroidState extends State<ChooseProfileImgAndroid> {
               color: Theme.of(context).scaffoldBackgroundColor,
               child: ElevatedButton(
                 onPressed: () {
-                  if (UserData.profileSettings!.profile != '') {
+                  if (UserData.user!.profilePic != '') {
                     Navigator.of(context).pushReplacementNamed(
                       homePageRoute,
                     );

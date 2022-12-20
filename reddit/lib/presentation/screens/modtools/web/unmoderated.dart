@@ -7,7 +7,10 @@ import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_Not_loggedin.da
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 
 class UnmoderatedWeb extends StatefulWidget {
-  const UnmoderatedWeb({super.key});
+  String subredditName;
+  final String subredditId;
+  UnmoderatedWeb(
+      {super.key, required this.subredditName, required this.subredditId});
 
   @override
   State<UnmoderatedWeb> createState() => _UnmoderatedWebWebState();
@@ -23,15 +26,19 @@ class _UnmoderatedWebWebState extends State<UnmoderatedWeb> {
           automaticallyImplyLeading: false,
           backgroundColor: defaultAppbarBackgroundColor,
           title: UserData.user != null
-              ? const AppBarWebLoggedIn( screen: 'r/subreddit')
+              ? const AppBarWebLoggedIn(screen: 'r/subreddit')
               : const AppBarWebNotLoggedIn(screen: 'r/subreddit')),
       body: Container(
           color: defaultWebBackgroundColor,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              LeftModList(screen: 'Unmoderated'),
-              QueuesWidget(screen: 'Unmoderated')
+              LeftModList(
+                  screen: 'Unmoderated',
+                  subredditName: widget.subredditName,
+                  subredditId: widget.subredditId),
+              QueuesWidget(
+                  screen: 'Unmoderated', subredditName: widget.subredditName)
             ],
           )),
     );
