@@ -12,3 +12,5 @@ class UserJoinedSubredditsUploaded extends PostToState {
 
   UserJoinedSubredditsUploaded(this.userJoinedSubreddits);
 }
+
+class UserJoinedSubredditsUploading extends PostToState {}

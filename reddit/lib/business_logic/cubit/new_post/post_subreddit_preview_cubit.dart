@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
 import '../../../data/model/post_model.dart';
@@ -16,7 +17,7 @@ class PostSubredditPreviewCubit extends Cubit<PostSubredditPreviewState> {
     createPostRepository.submitPost(postModel).then((ifCreated) {
       if (ifCreated) {
         emit(CreatePostCreated());
-        print("submitted successfully=============");
+        debugPrint("submitted successfully=============");
       } else {
         emit(CreatePostFailedToCreate());
       }

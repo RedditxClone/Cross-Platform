@@ -105,68 +105,75 @@ class _PostToScreenState extends State<PostToScreen> {
             elevation: 0,
             backgroundColor: Colors.transparent,
           ),
-          body: Padding(
-            padding: const EdgeInsets.all(10),
-            child: Wrap(
-              children: [
-                SizedBox(
-                  child: TextField(
-                    onChanged: (value) =>
-                        BlocProvider.of<PostToCubit>(context).uIChanged(),
-                    style: GoogleFonts.ibmPlexSans(
-                        fontWeight: FontWeight.w700, color: lightFontColor),
-                    decoration: InputDecoration(
-                      fillColor: mobileTextFeildColor,
-                      prefixIcon: const Icon(
-                        Icons.search_outlined,
-                        color: darkFontColor,
+          body: state is UserJoinedSubredditsUploading
+              ? const Center(
+                  child: CircularProgressIndicator(color: Colors.blue),
+                )
+              : Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Wrap(
+                    children: [
+                      SizedBox(
+                        child: TextField(
+                          onChanged: (value) =>
+                              BlocProvider.of<PostToCubit>(context).uIChanged(),
+                          style: GoogleFonts.ibmPlexSans(
+                              fontWeight: FontWeight.w700,
+                              color: lightFontColor),
+                          decoration: InputDecoration(
+                            fillColor: mobileTextFeildColor,
+                            prefixIcon: const Icon(
+                              Icons.search_outlined,
+                              color: darkFontColor,
+                            ),
+                            filled: true,
+                            border: InputBorder.none,
+                            hintText: "Search",
+                            hintStyle: GoogleFonts.ibmPlexSans(
+                                fontWeight: FontWeight.w700,
+                                color: darkFontColor),
+                          ),
+                          controller: _searchController,
+                        ),
                       ),
-                      filled: true,
-                      border: InputBorder.none,
-                      hintText: "Search",
-                      hintStyle: GoogleFonts.ibmPlexSans(
-                          fontWeight: FontWeight.w700, color: darkFontColor),
-                    ),
-                    controller: _searchController,
+                      SingleChildScrollView(
+                          child: Column(
+                        children: [
+                          _buildSubredditsList(state),
+                          if (!_seeMore && _joinedSubreddits.length > 5)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 20),
+                              child: TextButton(
+                                  style: TextButton.styleFrom(
+                                    side: const BorderSide(
+                                        color: Color(0xff368fe9), width: 1),
+                                    fixedSize: Size(
+                                        MediaQuery.of(context).size.width, 35),
+                                    foregroundColor: const Color(0xff368fe9),
+                                    backgroundColor: Colors.transparent,
+                                    shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(
+                                      Radius.circular(20),
+                                    )),
+                                  ),
+                                  onPressed: () {
+                                    _seeMore = true;
+                                    BlocProvider.of<PostToCubit>(context)
+                                        .uIChanged();
+                                  },
+                                  child: Text(
+                                    "See more",
+                                    style: GoogleFonts.ibmPlexSans(
+                                      fontSize: headerFontSize,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  )),
+                            ),
+                        ],
+                      ))
+                    ],
                   ),
                 ),
-                SingleChildScrollView(
-                    child: Column(
-                  children: [
-                    _buildSubredditsList(state),
-                    if (!_seeMore && _joinedSubreddits.length > 5)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 20),
-                        child: TextButton(
-                            style: TextButton.styleFrom(
-                              side: const BorderSide(
-                                  color: Color(0xff368fe9), width: 1),
-                              fixedSize:
-                                  Size(MediaQuery.of(context).size.width, 35),
-                              foregroundColor: const Color(0xff368fe9),
-                              backgroundColor: Colors.transparent,
-                              shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(
-                                Radius.circular(20),
-                              )),
-                            ),
-                            onPressed: () {
-                              _seeMore = true;
-                              BlocProvider.of<PostToCubit>(context).uIChanged();
-                            },
-                            child: Text(
-                              "See more",
-                              style: GoogleFonts.ibmPlexSans(
-                                fontSize: headerFontSize,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            )),
-                      ),
-                  ],
-                ))
-              ],
-            ),
-          ),
         );
       },
     );

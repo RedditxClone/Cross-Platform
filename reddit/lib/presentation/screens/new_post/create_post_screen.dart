@@ -93,7 +93,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       child: TextField(
         onChanged: (value) {
           _validURL = Uri.parse(_urlController.text).host.isNotEmpty;
-          print("valid url" + _validURL.toString());
           BlocProvider.of<CreatePostCubit>(context).uIChanged();
         },
         style: GoogleFonts.ibmPlexSans(
