@@ -23,7 +23,7 @@ class _ApprovedWebState extends State<ApprovedWeb> {
           automaticallyImplyLeading: false,
           backgroundColor: defaultAppbarBackgroundColor,
           title: UserData.user != null
-              ? const AppBarWebLoggedIn( screen: 'r/subreddit')
+              ? const AppBarWebLoggedIn(screen: 'r/subreddit')
               : const AppBarWebNotLoggedIn(screen: 'r/subreddit')),
       body: Container(
           color: defaultWebBackgroundColor,
@@ -31,7 +31,7 @@ class _ApprovedWebState extends State<ApprovedWeb> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              LeftModList(screen: 'Approved'),
+              LeftModList(screen: 'Approved', subredditName: ''),
               UserManagement(screen: 'Approved')
             ],
           )),

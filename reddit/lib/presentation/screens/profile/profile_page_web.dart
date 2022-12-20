@@ -854,42 +854,42 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
                     icon: Text('OVERVIEW',
                         style: TextStyle(
                             fontSize:
-                                _responsive.isSmallSizedScreen() ? 8 : 13))),
+                                _responsive.isSmallSizedScreen() ? 7 : 12))),
                 Tab(
                     icon: Text('POSTS',
                         style: TextStyle(
                             fontSize:
-                                _responsive.isSmallSizedScreen() ? 8 : 13))),
+                                _responsive.isSmallSizedScreen() ? 7 : 12))),
                 Tab(
                     icon: Text('COMMENTS',
                         style: TextStyle(
                             fontSize:
-                                _responsive.isSmallSizedScreen() ? 8 : 13))),
+                                _responsive.isSmallSizedScreen() ? 7 : 12))),
                 Tab(
                     icon: Text('HISTORY',
                         style: TextStyle(
                             fontSize:
-                                _responsive.isSmallSizedScreen() ? 8 : 13))),
+                                _responsive.isSmallSizedScreen() ? 7 : 12))),
                 Tab(
                     icon: Text('SAVED',
                         style: TextStyle(
                             fontSize:
-                                _responsive.isSmallSizedScreen() ? 8 : 13))),
+                                _responsive.isSmallSizedScreen() ? 7 : 12))),
                 Tab(
                     icon: Text('HIDDEN',
                         style: TextStyle(
                             fontSize:
-                                _responsive.isSmallSizedScreen() ? 8 : 13))),
+                                _responsive.isSmallSizedScreen() ? 7 : 12))),
                 Tab(
                     icon: Text('UPVOTED',
                         style: TextStyle(
                             fontSize:
-                                _responsive.isSmallSizedScreen() ? 8 : 13))),
+                                _responsive.isSmallSizedScreen() ? 7 : 12))),
                 Tab(
                     icon: Text('DOWNVOTED',
                         style: TextStyle(
                             fontSize:
-                                _responsive.isSmallSizedScreen() ? 8 : 13))),
+                                _responsive.isSmallSizedScreen() ? 6 : 11))),
               ],
             ),
           ),

@@ -203,7 +203,8 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                               children: [
                                 InkWell(
                                     onTap: () => Navigator.pushNamed(
-                                        context, modqueueRoute),
+                                        context, modqueueRoute,
+                                        arguments: _subredditModel.subredditId),
                                     child: Padding(
                                       padding: const EdgeInsets.all(5),
                                       child: Row(children: const [

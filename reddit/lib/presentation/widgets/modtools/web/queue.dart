@@ -8,7 +8,8 @@ import 'package:reddit/presentation/widgets/posts/posts_web.dart';
 
 class QueuesWidget extends StatefulWidget {
   String screen = '';
-  QueuesWidget({required this.screen, super.key});
+  String subredditName = '';
+  QueuesWidget({required this.screen, required this.subredditName, super.key});
 
   @override
   State<QueuesWidget> createState() => _QueuesWidgetState();
@@ -19,13 +20,13 @@ class _QueuesWidgetState extends State<QueuesWidget> {
   void initState() {
     if (widget.screen == 'Edited') {
       BlocProvider.of<ModtoolsCubit>(context)
-          .getEditedPosts('639b27bbef88b3df0463d04b');
+          .getEditedPosts('639b27bbef88b3df0463d04b', widget.subredditName);
     } else if (widget.screen == 'Spam') {
       BlocProvider.of<ModtoolsCubit>(context)
-          .getSpammedPosts('639b27bbef88b3df0463d04b');
+          .getSpammedPosts('639b27bbef88b3df0463d04b', widget.subredditName);
     } else if (widget.screen == 'Unmoderated') {
-      BlocProvider.of<ModtoolsCubit>(context)
-          .getUnmoderatedPosts('639b27bbef88b3df0463d04b');
+      BlocProvider.of<ModtoolsCubit>(context).getUnmoderatedPosts(
+          '639b27bbef88b3df0463d04b', widget.subredditName);
     }
     super.initState();
   }
@@ -148,7 +149,7 @@ class _QueuesWidgetState extends State<QueuesWidget> {
                       }
                       if (state is UnmoderatedPostsReady) {
                         if (state.posts.isNotEmpty &&
-                            widget.screen == 'Unmpderated') {
+                            widget.screen == 'Unmoderated') {
                           return Column(children: [
                             ...state.posts
                                 .map((e) => PostsWeb(postsModel: e))

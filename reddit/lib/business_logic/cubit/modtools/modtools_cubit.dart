@@ -15,33 +15,36 @@ class ModtoolsCubit extends Cubit<ModtoolsState> {
   ModtoolsCubit(this.repository) : super(ModtoolsInitial());
 
   /// [subredditID] is the id of subreddit to which we get the edited posts list
+  /// [subredditName] is the name of subreddit to which we get the edited posts list
   /// This function emits state [EditedPostsReady] on initState of the `Queue` widget.
-  void getEditedPosts(String subredditID) {
+  void getEditedPosts(String subredditID, String subredditName) {
     if (isClosed) return;
     emit(Loading());
-    repository.getEditedPosts(subredditID).then((posts) {
+    repository.getEditedPosts(subredditID, subredditName).then((posts) {
       emit(EditedPostsReady(posts));
       modToolsPosts = posts;
     });
   }
 
   /// [subredditID] is the id of subreddit to which we get the spammed posts list
+  /// [subredditName] is the name of subreddit to which we get the spammed posts list
   /// This function emits state [EditedPostsReady] on initState of the `Queue` widget.
-  void getSpammedPosts(String subredditID) {
+  void getSpammedPosts(String subredditID, String subredditName) {
     if (isClosed) return;
     emit(Loading());
-    repository.getSpammedPosts(subredditID).then((posts) {
+    repository.getSpammedPosts(subredditID, subredditName).then((posts) {
       emit(SpammedPostsReady(posts));
       modToolsPosts = posts;
     });
   }
 
   /// [subredditID] is the id of subreddit to which we get the unmoderated posts list
+  /// [subredditName] is the name of subreddit to which we get the unmoderated posts list
   /// This function emits state [EditedPostsReady] on initState of the `Queue` widget.
-  void getUnmoderatedPosts(String subredditID) {
+  void getUnmoderatedPosts(String subredditID, String subredditName) {
     if (isClosed) return;
     emit(Loading());
-    repository.getUnmoderatedPosts(subredditID).then((posts) {
+    repository.getUnmoderatedPosts(subredditID, subredditName).then((posts) {
       emit(UnmoderatedPostsReady(posts));
       modToolsPosts = posts;
     });

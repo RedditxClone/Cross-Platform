@@ -297,19 +297,26 @@ class AppRouter {
                 value: modtoolsCubit, child: const ModListScreen()));
 
       case modqueueRoute:
-        return MaterialPageRoute(
-            builder: (_) => BlocProvider.value(
-                value: modtoolsCubit, child: const ModQueueWeb()));
-
-      case spamRoute:
-        return MaterialPageRoute(
-            builder: (_) => BlocProvider.value(
-                value: modtoolsCubit, child: kIsWeb ? const SpamWeb() : null));
-      case unmoderatedRoute:
+        final subredditName = settings.arguments as String;
         return MaterialPageRoute(
             builder: (_) => BlocProvider.value(
                 value: modtoolsCubit,
-                child: kIsWeb ? const UnmoderatedWeb() : null));
+                child: ModQueueWeb(subredditName: subredditName)));
+
+      case spamRoute:
+        final subredditName = settings.arguments as String;
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider.value(
+                value: modtoolsCubit,
+                child: kIsWeb ? SpamWeb(subredditName: subredditName) : null));
+      case unmoderatedRoute:
+        final subredditName = settings.arguments as String;
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider.value(
+                value: modtoolsCubit,
+                child: kIsWeb
+                    ? UnmoderatedWeb(subredditName: subredditName)
+                    : null));
 
       case addApprovedRoute:
         return MaterialPageRoute(
@@ -328,10 +335,12 @@ class AppRouter {
                         : const ApprovedUsersScreen()));
 
       case editedRoute:
+        final subredditName = settings.arguments as String;
         return MaterialPageRoute(
             builder: (_) => BlocProvider.value(
                 value: modtoolsCubit,
-                child: kIsWeb ? const EditedWeb() : null));
+                child:
+                    kIsWeb ? EditedWeb(subredditName: subredditName) : null));
 
       case tafficRoute:
         return MaterialPageRoute(

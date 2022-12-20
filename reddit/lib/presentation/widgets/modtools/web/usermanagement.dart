@@ -85,6 +85,8 @@ class _UserManagementState extends State<UserManagement> {
   }
 
   Widget listviewItem(context, index) {
+    Duration date =
+        DateTime.now().difference(DateTime.parse(approvedUsers![index].date));
     return Container(
       decoration: BoxDecoration(
         border: const Border(
@@ -119,9 +121,16 @@ class _UserManagementState extends State<UserManagement> {
             ),
           ),
         ),
-        const SizedBox(width: 148),
-        const Text('2 months ago',
-            style: TextStyle(fontSize: 13, color: Colors.grey)),
+        SizedBox(width: 148.0 - approvedUsers![index].username.length * 7),
+        Text(
+            date.inHours > 24
+                ? '${date.inDays} days ago'
+                : date.inMinutes > 60
+                    ? '${date.inHours} hours ago'
+                    : date.inSeconds > 60
+                        ? '${date.inMinutes} minunts ago'
+                        : '${date.inSeconds + 1} seconds ago',
+            style: const TextStyle(fontSize: 13, color: Colors.grey)),
         SizedBox(
             width: MediaQuery.of(context).size.width - 880 > 0
                 ? MediaQuery.of(context).size.width - 880

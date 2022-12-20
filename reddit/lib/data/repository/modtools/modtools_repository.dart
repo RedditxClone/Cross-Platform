@@ -6,27 +6,45 @@ class ModToolsRepository {
   ModToolsRepository(this.webServices);
 
   /// [subredditId] is the id of subreddit to get the edited posts
+  /// [subredditName] is the name of subreddit to get the edited posts
   /// Returns [List] of [PostsModel] object that contains the list of edited posts
   /// after getting it from [ModToolsWebServices] and mapping it to the model list.
-  Future<List<PostsModel>> getEditedPosts(String subredditId) async {
+  Future<List<PostsModel>> getEditedPosts(
+      String subredditId, String subredditName) async {
     final posts = await webServices.getEditedPosts(subredditId);
-    return List<PostsModel>.from(posts.map((i) => PostsModel.fromJson(i)));
+    return List<PostsModel>.from(posts.map((i) {
+      PostsModel temp = PostsModel.fromJson(i);
+      temp.subreddit!.name = subredditName;
+      return temp;
+    }));
   }
 
   /// [subredditId] is the id of subreddit to get the spammed posts
+  /// [subredditName] is the name of subreddit to get the spammed posts
   /// Returns [List] of [PostsModel] object that contains the list of spammed posts
   /// after getting it from [ModToolsWebServices] and mapping it to the model list.
-  Future<List<PostsModel>> getSpammedPosts(String subredditId) async {
+  Future<List<PostsModel>> getSpammedPosts(
+      String subredditId, String subredditName) async {
     final posts = await webServices.getSpammedPosts(subredditId);
-    return List<PostsModel>.from(posts.map((i) => PostsModel.fromJson(i)));
+    return List<PostsModel>.from(posts.map((i) {
+      PostsModel temp = PostsModel.fromJson(i);
+      temp.subreddit!.name = subredditName;
+      return temp;
+    }));
   }
 
   /// [subredditId] is the id of subreddit to get the unmoderated posts
+  /// [subredditName] is the name of subreddit to get the unmoderated posts
   /// Returns [List] of [PostsModel] object that contains the list of unmoderated posts
   /// after getting it from [ModToolsWebServices] and mapping it to the model list.
-  Future<List<PostsModel>> getUnmoderatedPosts(String subredditId) async {
+  Future<List<PostsModel>> getUnmoderatedPosts(
+      String subredditId, String subredditName) async {
     final posts = await webServices.getUnmoderatedPosts(subredditId);
-    return List<PostsModel>.from(posts.map((i) => PostsModel.fromJson(i)));
+    return List<PostsModel>.from(posts.map((i) {
+      PostsModel temp = PostsModel.fromJson(i);
+      temp.subreddit!.name = subredditName;
+      return temp;
+    }));
   }
 
   /// [subredditID] is the id of subreddit to which we get the approved list
