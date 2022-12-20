@@ -613,7 +613,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                     if (state is UserInfoAvailable) {
                       otherUser = state.userInfo;
                       BlocProvider.of<PostsUserCubit>(context)
-                          .getUserPosts(state.userInfo.userId, limit: 50);
+                          .getUserPosts(state.userInfo.userId??"", limit: 50);
                       return _buildAppBar(context);
                     }
                     if (state is FollowOtherUserSuccess ||
