@@ -3,11 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:intl/intl.dart';
 import 'package:reddit/business_logic/cubit/messages/messages_cubit.dart';
+import 'package:reddit/business_logic/cubit/posts/posts_user_cubit.dart';
 import 'package:reddit/business_logic/cubit/user_profile/user_profile_cubit.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/presentation/widgets/posts/posts.dart';
+import 'package:reddit/presentation/widgets/posts/posts_web.dart';
 
 class OtherProfileScreen extends StatefulWidget {
   final String userID;
@@ -75,6 +77,44 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
     ));
   }
 
+  Widget _indicateEmpty(String title, String subtitle) {
+    return Center(
+      child: Column(children: [
+        Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Image.asset(
+            "assets/images/comments.jpg",
+            scale: 3,
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 10),
+          child: Text(
+            title,
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+          ),
+        ),
+        Row(
+          children: [
+            Expanded(flex: 3, child: Container()),
+            Expanded(
+              flex: 20,
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 10),
+                child: Text(
+                  subtitle,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+            Expanded(flex: 3, child: Container()),
+          ],
+        ),
+      ]),
+    );
+  }
+
   Widget _empty() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -100,7 +140,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
           onPressed: () {
             UserData.isLoggedIn
                 ? BlocProvider.of<UserProfileCubit>(context)
-                    .follow(otherUser!.userId)
+                    .follow(otherUser!.userId??"")
                 : Navigator.pushNamed(context, loginScreen);
           },
           style: ElevatedButton.styleFrom(
@@ -122,7 +162,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
       child: OutlinedButton(
           onPressed: () {
             BlocProvider.of<UserProfileCubit>(context)
-                .unfollow(otherUser!.userId);
+                .unfollow(otherUser!.userId??"");
           },
           style: ElevatedButton.styleFrom(
             side: const BorderSide(width: 1.0, color: Colors.white),
@@ -211,7 +251,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
               const SizedBox(height: 20),
               Text(
                   otherUser!.displayName == ''
-                      ? otherUser!.username
+                      ? otherUser!.username??""
                       : otherUser!.displayName!,
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 30)),
@@ -256,7 +296,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
               ),
               ElevatedButton(
                 onPressed: () => BlocProvider.of<UserProfileCubit>(buildcontext)
-                    .blockUser(otherUser!.userId), // TODO : CHANGE TO USERNAME
+                    .blockUser(otherUser!.userId??""), // TODO : CHANGE TO USERNAME
                 style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
                     padding: const EdgeInsets.symmetric(
@@ -298,7 +338,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                       onPressed: () {
                         BlocProvider.of<MessagesCubit>(buildcontext)
                             .sendMessage(subjectController.text,
-                                messageController.text, otherUser!.username);
+                                messageController.text, otherUser!.username??"");
                       },
                       child: const Text('Send', style: TextStyle(fontSize: 20)))
                 ],
@@ -449,7 +489,7 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
             const SizedBox(width: 10),
             Text(
               otherUser!.displayName == ''
-                  ? otherUser!.username
+                  ? otherUser!.username??""
                   : otherUser!.displayName!,
               overflow: TextOverflow.ellipsis,
             ),
@@ -471,14 +511,52 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
 
   Widget _buildPosts() {
     return SingleChildScrollView(
-      child: Column(
-        children: const [
-          Posts(),
-          Posts(),
-          Posts(),
-          Posts(),
-          Posts(),
-        ],
+      child: BlocBuilder<PostsUserCubit, PostsUserState>(
+        builder: (context, state) {
+          if (state is UserPostsLoaded) {
+            if (state.posts!.isNotEmpty) {
+              return Column(children: [
+                ...state.posts!.map((e) => PostsWeb(postsModel: e)).toList()
+              ]);
+            }
+            return Center(
+              child: Column(children: [
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Image.asset(
+                    "assets/images/comments.jpg",
+                    scale: 3,
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  child: Text(
+                    "Create a post",
+                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Row(
+                  children: [
+                    Expanded(flex: 3, child: Container()),
+                    const Expanded(
+                      flex: 20,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10),
+                        child: Text(
+                          "No posts are available yet. Create a post now!",
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                    Expanded(flex: 3, child: Container()),
+                  ],
+                ),
+              ]),
+            );
+          }
+          return Container();
+        },
       ),
     );
   }
@@ -489,8 +567,8 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
       child: TabBarView(
         children: [
           _buildPosts(),
-          _empty(),
-          _empty(),
+          _indicateEmpty("Wow, such empty!", ""),
+          _indicateEmpty("Wow, such empty!", ""),
         ],
       ),
     );
@@ -534,6 +612,8 @@ class _OtherProfileScreenState extends State<OtherProfileScreen> {
                   builder: (context, state) {
                     if (state is UserInfoAvailable) {
                       otherUser = state.userInfo;
+                      BlocProvider.of<PostsUserCubit>(context)
+                          .getUserPosts(state.userInfo.userId??"", limit: 50);
                       return _buildAppBar(context);
                     }
                     if (state is FollowOtherUserSuccess ||

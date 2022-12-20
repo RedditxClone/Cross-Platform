@@ -67,7 +67,7 @@ class _SendMessageScreenState extends State<SendMessageScreen> {
                 () => BlocProvider.of<MessagesCubit>(context).sendMessage(
                     subjectController.text,
                     messageController.text,
-                    otherUser!.username);
+                    otherUser!.username??"");
               },
               child: const Text('Send', style: TextStyle(fontSize: 20)))
         ],

@@ -1,22 +1,12 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:reddit/business_logic/cubit/new_post/create_post_cubit.dart';
 import 'package:reddit/business_logic/cubit/end_drawer/end_drawer_cubit.dart';
-import 'package:reddit/data/repository/new_post_repository.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_home_cubit.dart';
-import 'package:reddit/data/repository/end_drawer/end_drawer_repository.dart';
-import 'package:reddit/data/repository/left_drawer/left_drawer_repository.dart';
-import 'package:reddit/data/web_services/create_post_web_services.dart';
-import 'package:reddit/data/web_services/left_drawer/left_drawer_web_services.dart';
-import 'package:reddit/business_logic/cubit/posts/posts_home_cubit.dart';
+import 'package:reddit/business_logic/cubit/posts/posts_popular_cubit.dart';
 import 'package:reddit/data/repository/end_drawer/end_drawer_repository.dart';
 import 'package:reddit/data/web_services/settings_web_services.dart';
 import 'package:reddit/data/model/auth_model.dart';
-import 'package:reddit/presentation/screens/new_post/create_post_screen.dart';
-import 'package:reddit/presentation/screens/home/home.dart';
-import 'package:reddit/presentation/screens/home/home_not_loggedin_mobile.dart';
-import 'package:reddit/presentation/screens/popular/popular.dart';
 import 'package:reddit/presentation/screens/test_home_screens/chat.dart';
 import 'package:reddit/presentation/screens/test_home_screens/explore.dart';
 import 'package:reddit/presentation/screens/test_home_screens/notifications.dart';
@@ -130,7 +120,7 @@ class _HomePageState extends State<HomePage> {
                       child: CircularProgressIndicator.adaptive());
                 })
               : BlocBuilder<AuthCubit, AuthState>(builder: (context, state) {
-                  BlocProvider.of<PostsHomeCubit>(context).getTimelinePosts();
+                  BlocProvider.of<PostsPopularCubit>(context).getPopularPosts();
                   if (state is Login ||
                       state is GetTheUserData ||
                       state is SignedIn) {
@@ -169,7 +159,9 @@ class _HomePageState extends State<HomePage> {
             child: buildHomeAppBar(),
           ),
           'appbar_action': IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(context, searchRouteWeb);
+              },
               icon: const Icon(Icons.search_outlined,
                   color: Colors.grey, size: 40)),
         };
@@ -187,7 +179,7 @@ class _HomePageState extends State<HomePage> {
         };
       case 2:
         return {
-          'page': Container(),
+          'page': const AddPost(),
           'appbar_title': const Text(""),
           'appbar_action': const SizedBox(width: 1)
         };
@@ -217,8 +209,8 @@ class _HomePageState extends State<HomePage> {
 
   void _switchpage(int index) {
     if (index == 2) {
+      index = 0;
       Navigator.pushNamed(context, createPostScreenRoute);
-      _selectedPageIndex = 0;
     }
     setState(() {
       _selectedPageIndex = index;
@@ -290,7 +282,7 @@ class _HomePageState extends State<HomePage> {
           unselectedItemColor: Colors.grey,
           currentIndex: _selectedPageIndex,
           type: BottomNavigationBarType.fixed,
-          onTap: (value) => _switchpage(value),
+          onTap: _switchpage,
           items: [
             bottomNavBarItem(0, Icons.home, Icons.home_outlined),
             bottomNavBarItem(1, Icons.navigation, Icons.navigation_outlined),
@@ -315,9 +307,48 @@ class _HomePageState extends State<HomePage> {
     return BlocBuilder<PostsHomeCubit, PostsHomeState>(
       builder: (context, state) {
         if (state is PostsLoaded) {
-          return ListView(children: [
-            ...state.posts!.map((e) => PostsWeb(postsModel: e)).toList()
-          ]);
+          if (state.posts!.isNotEmpty) {
+            return ListView(children: [
+              ...state.posts!.map((e) => PostsWeb(postsModel: e)).toList()
+            ]);
+          }
+          return Center(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: Image.asset(
+                    "assets/images/comments.jpg",
+                    scale: 3,
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  child: Text(
+                    "Be the first to create a post",
+                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Row(
+                  children: [
+                    Expanded(flex: 3, child: Container()),
+                    const Expanded(
+                      flex: 20,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10),
+                        child: Text(
+                          "No posts are available yet. Create a post or join a community!",
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                    Expanded(flex: 3, child: Container()),
+                  ],
+                ),
+              ],
+            ),
+          );
         }
         return const Center(child: CircularProgressIndicator());
       },
@@ -326,37 +357,54 @@ class _HomePageState extends State<HomePage> {
 
   Widget popularPosts() {
     double cardHeight = 100;
-    return BlocBuilder<PostsHomeCubit, PostsHomeState>(
+    return BlocBuilder<PostsPopularCubit, PostsPopularState>(
       builder: (context, state) {
-        if (state is PostsLoaded) {
-          return ListView(
-            children: [
-              Column(
+        if (state is PopularPostsLoaded) {
+          if (state.posts!.isNotEmpty) {
+            return ListView(
+              children: [
+                Column(
+                  children: [
+                    ...state.posts!.map((e) => PostsWeb(postsModel: e)).toList()
+                  ],
+                ),
+              ],
+            );
+          }
+          return Center(
+            child: Column(children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: Image.asset(
+                  "assets/images/comments.jpg",
+                  scale: 3,
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 10),
+                child: Text(
+                  "Be the first to create a post",
+                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              Row(
                 children: [
-                  // SizedBox(
-                  //   height: cardHeight,
-                  //   child: ListView(
-                  //     scrollDirection: Axis.horizontal,
-                  //     children: List.generate(
-                  //       10,
-                  //       (int index) {
-                  //         return Card(
-                  //           key: const Key('row-card'),
-                  //           color: Colors.blue,
-                  //           child: SizedBox(
-                  //             width: 150.0,
-                  //             height: cardHeight,
-                  //             child: Center(child: Text("$index")),
-                  //           ),
-                  //         );
-                  //       },
-                  //     ),
-                  //   ),
-                  // ),
-                  ...state.posts!.map((e) => PostsWeb(postsModel: e)).toList()
+                  Expanded(flex: 3, child: Container()),
+                  const Expanded(
+                    flex: 20,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      child: Text(
+                        "No posts are available yet. Create a post or join a community!",
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                  Expanded(flex: 3, child: Container()),
                 ],
               ),
-            ],
+            ]),
           );
         }
         return const Center(child: CircularProgressIndicator());

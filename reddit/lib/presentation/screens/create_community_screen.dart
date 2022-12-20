@@ -121,16 +121,14 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
     return BlocConsumer<CreateCommunityCubit, CreateCommunityState>(
       listener: (context, state) {
         if (state is CreateCommunityCreated) {
-          Navigator.push(
-          context,
-          MaterialPageRoute(
-          builder: (_) => BlocProvider(
-          create: (context) => SubredditPageCubit(
-          SubredditPageRepository(SubredditWebServices())),
-          child: SubredditPageScreen(
-          subredditId: "",
-          subredditModel: (state).subredditModel,
-          ))));
+          Navigator.pushReplacementNamed(
+            context,
+            subredditPageScreenRoute,
+            arguments: <String, dynamic>{
+              "sId": "",
+              "subreddit": (state).subredditModel
+            },
+          );
           print(state.subredditModel);
         }
       },

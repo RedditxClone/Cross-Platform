@@ -26,7 +26,6 @@ class SafetySettingsCubit extends Cubit<SafetySettingsState> {
         userSettings.blocked
             .addAll(blockedList.map((e) => User.fromJson(e['blocked'])));
         settings = userSettings;
-        debugPrint(settings!.blocked.first.username);
         emit(SafetySettingsAvailable(userSettings));
       });
     });

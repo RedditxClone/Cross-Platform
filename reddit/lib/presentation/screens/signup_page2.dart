@@ -365,7 +365,6 @@ class _SignupWeb2State extends State<SignupWeb2> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

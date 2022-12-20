@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
       themeMode: ThemeMode.dark,
       debugShowCheckedModeBanner: false,
       onGenerateRoute: appRouter.generateRoute,
-      // initialRoute: homePageRoute,
+      // initialRoute: searchRouteWeb,
       // initialRoute: tafficRoute,
 
       initialRoute: kIsWeb

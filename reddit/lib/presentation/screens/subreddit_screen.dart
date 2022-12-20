@@ -408,6 +408,8 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
 
   Widget _buildBody(subredditModel, joinedSubreddit, isMod) {
     _controller.text = subredditModel.description ?? "";
+    // List<String> moderators = subredditModel.moderators!;
+    // isMod = moderators.contains(UserData.user!.username);
     return _mobilePlatform
         ? DefaultTabController(
             length: 2,
@@ -788,7 +790,6 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                                                     joinedSubreddit
                                                         ? "Leave"
                                                         : "Join";
-                                                setState(() {});
                                               },
                                               style: TextButton.styleFrom(
                                                 foregroundColor: joinedSubreddit

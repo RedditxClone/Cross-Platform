@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
@@ -423,7 +422,7 @@ class EndDrawer extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(8, 12, 0, 0),
-                child: Text("U/${UserData.user!.username.toUpperCase()}"),
+                child: Text("U/${UserData.user!.username ?? "".toUpperCase()}"),
               ),
               const Divider(
                 color: Colors.grey,

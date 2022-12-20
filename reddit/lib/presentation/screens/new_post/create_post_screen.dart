@@ -81,13 +81,15 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           BlocProvider.of<CreatePostCubit>(context).uIChanged();
         },
         style: GoogleFonts.ibmPlexSans(
-            fontSize: 30, fontWeight: FontWeight.w100, color: lightFontColor),
+            fontSize: headerFontSize,
+            fontWeight: FontWeight.w500,
+            color: lightFontColor),
         decoration: InputDecoration(
           border: InputBorder.none,
           hintText: "URL",
           hintStyle: GoogleFonts.ibmPlexSans(
-              fontSize: 25,
-              fontWeight: FontWeight.w300,
+              fontSize: headerFontSize,
+              fontWeight: FontWeight.w500,
               color: const Color(0xff898d90)),
         ),
         controller: _urlController,

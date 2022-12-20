@@ -114,7 +114,7 @@ class _UserManagementState extends State<UserManagement> {
                         backgroundImage:
                             NetworkImage(approvedUsers![index].profilePic!)),
                 const SizedBox(width: 10),
-                Text(approvedUsers![index].username),
+                Text(approvedUsers![index].username??""),
               ]),
             ),
           ),
@@ -135,7 +135,7 @@ class _UserManagementState extends State<UserManagement> {
         InkWell(
             onTap: () => BlocProvider.of<ModtoolsCubit>(context)
                 .removeApprovedUser(
-                    '639b27bbef88b3df0463d04b', approvedUsers![index].username),
+                    '639b27bbef88b3df0463d04b', approvedUsers![index].username??""),
             child: const Text('Remove',
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)))
       ]),

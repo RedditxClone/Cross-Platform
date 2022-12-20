@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reddit/business_logic/cubit/cubit/account_settings_cubit.dart';
 import 'package:reddit/business_logic/cubit/cubit/change_password_cubit.dart';

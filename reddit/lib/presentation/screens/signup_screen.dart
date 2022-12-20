@@ -637,38 +637,6 @@ class _SignupMobileState extends State<SignupMobile> {
               debugPrint("failed in login");
               displayMsg(context, Colors.red, "Please Try Again");
             }
-          } else if (state is Login) {
-            if (state.userDataJson != {}) {
-              UserData.initUser(state.userDataJson); //this couldn't be null
-              debugPrint("success in login");
-              Navigator.of(context).pushReplacementNamed(
-                homePageRoute,
-              );
-            } else {
-              //user = null
-              debugPrint("failed in login");
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Row(
-                    children: [
-                      const Icon(
-                        Icons.error,
-                        color: Colors.red,
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.01,
-                      ),
-                      const Text(
-                        'Please Try Again',
-                        style: TextStyle(
-                          color: Colors.red,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }
           }
         },
       ),

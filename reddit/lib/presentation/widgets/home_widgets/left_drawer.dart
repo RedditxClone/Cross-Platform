@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:reddit/business_logic/cubit/left_drawer/left_drawer_cubit.dart';
@@ -147,7 +146,9 @@ class _LeftDrawerState extends State<LeftDrawer> {
                                 onTap: () {
                                   Navigator.pushNamed(
                                       context, subredditPageScreenRoute,
-                                      arguments: e.sId!);
+                                      arguments: <String, dynamic>{
+                                        'sId': e.sId!
+                                      });
                                 },
                                 leading: const Icon(Icons.groups_sharp),
                                 // Icon of subreddit doesn't exist in api
@@ -208,7 +209,9 @@ class _LeftDrawerState extends State<LeftDrawer> {
                                 onTap: () {
                                   Navigator.pushNamed(
                                       context, subredditPageScreenRoute,
-                                      arguments: e.sId!);
+                                      arguments: <String, dynamic>{
+                                        'sId': e.sId!
+                                      });
                                 },
                                 leading: const Icon(Icons.groups_sharp),
                                 // Icon of subreddit doesn't exist in api

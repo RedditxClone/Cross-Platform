@@ -611,13 +611,14 @@ class SubredditModel {
         flairList!.add(FlairModel.fromJson(flair));
       });
     }
-    moderators = json['moderators'] as List<dynamic>?;
+    moderators = json['moderators']as List<dynamic>?;
     categories = json['categories'] as List<dynamic>?;
     createdDate = json['createdDate'] != null
         ? DateTime.tryParse(json['createdDate']) ?? DateTime.now()
         : DateTime.now();
     rules = json['rules'] as List<dynamic>?;
     joinList = json['joinList'] as List<dynamic>?;
+    memberCount = joinList == null ? 0 : joinList!.length;
     bannedUsers = json['bannedUsers'] as List<dynamic>?;
     mutedUsers = json['mutedUsers'] as List<dynamic>?;
     approvedUsers = json['approvedUsers'] as List<dynamic>?;

@@ -240,18 +240,18 @@ class AuthWebService {
     }
   }
 
-  /// [userId] : [String] which is The id of the user.
+  /// [token] : [String] which is The id of the user.
   ///
   /// get the user data with userId
   /// This function calls the function [DioHelper.getData] which makes the request to the server.
   /// Returns the response data from the server.
-  Future getUserData(String userId) async {
+  Future getUserData(String token) async {
     try {
       var res = await DioHelper.getDataWithHeaders(
           url: 'user/me',
           query: {},
           headers: {
-            "Authorization": "Bearer $userId",
+            "Authorization": "Bearer $token",
           });
       return res;
     } on DioError catch (e) {
