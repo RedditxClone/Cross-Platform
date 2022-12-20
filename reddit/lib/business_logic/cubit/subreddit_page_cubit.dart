@@ -21,46 +21,63 @@ class SubredditPageCubit extends Cubit<SubredditPageState> {
   SubredditPageCubit(this.subredditPageRepository)
       : super(SubredditPageInitial());
 
-  void getPostsInPage(String subreddit, String mode) {
-    emit(PostsInPageLoading());
+  // void getPostsInPage(String subreddit, String mode) {
+  //   emit(PostsInPageLoading());
 
-    subredditPageRepository.getPostsInPage(subreddit, mode).then((value) {
-      _postsInPageModels = value;
-      emit(PostsInPageLoaded(_postsInPageModels!));
+  //   subredditPageRepository.getPostsInPage(subreddit, mode).then((value) {
+  //     _postsInPageModels = value;
+  //     emit(PostsInPageLoaded(_postsInPageModels!));
+  //   });
+  // }
+
+  void leaveSubreddit(subredditId) {
+    subredditPageRepository.leaveSubreddit(subredditId).then((value) {
+      if (value) {
+        emit(LeftSubreddit());
+      } else {
+        emit(FailedToLeave());
+      }
     });
   }
 
-  void leavePressed() {
-    emit(LeftSubreddit());
-  }
-  void joinPressed() {
-    emit(JoinedSubreddit());
+  void joinSubreddit(subredditId) {
+    subredditPageRepository.joinSubreddit(subredditId).then((value) {
+      if (value) {
+        emit(JoinedSubreddit());
+      } else {
+        emit(FailedToJoin());
+      }
+    });
   }
 
-  void getSubredditInfo(String subredditName) {
+  void getSubredditInfo(String subredditId) {
     emit(SubredditPageLoading());
-
-    subredditPageRepository.getSubredditInfo(subredditName).then((value) {
+    subredditPageRepository.getSubredditInfo(subredditId).then((value) {
       _subredditModel = value;
-      emit(SubredditPageLoaded(_subredditModel!));
+      print(_subredditModel!.name);
+      subredditPageRepository.getIfJoined(subredditId).then((isJoined) {
+        subredditPageRepository.getIfMod(subredditId).then((isMod) {
+          emit(SubredditPageLoaded(_subredditModel!, isMod, isJoined));
+        });
+      });
     });
   }
 
-  void getSubredditIcon(String subredditName) {
-    subredditPageRepository.getSubredditIcon(subredditName).then((value) {
-      _subredditIcon = value;
-      emit(SubredditIconLoaded(_subredditIcon!));
-    });
-  }
+  // void getSubredditIcon(String subredditName) {
+  //   subredditPageRepository.getSubredditIcon(subredditName).then((value) {
+  //     _subredditIcon = value;
+  //     emit(SubredditIconLoaded(_subredditIcon!));
+  //   });
+  // }
 
-  void getSubredditDescription(String subredditName) {
-    subredditPageRepository
-        .getSubredditDescription(subredditName)
-        .then((value) {
-      _subredditIcon = value;
-      emit(SubredditDescriptionLoaded(_subredditDescription!));
-    });
-  }
+  // void getSubredditDescription(String subredditName) {
+  //   subredditPageRepository
+  //       .getSubredditDescription(subredditName)
+  //       .then((value) {
+  //     _subredditIcon = value;
+  //     emit(SubredditDescriptionLoaded(_subredditDescription!));
+  //   });
+  // }
 
   void updateSubredditIcon(String subredditName, Uint8List? pickedImage) {
     emit(SubredditIconUpdating());
@@ -68,16 +85,38 @@ class SubredditPageCubit extends Cubit<SubredditPageState> {
       emit(SubredditIconUpdateFailed());
     } else {
       subredditPageRepository.updateSubredditIcon(subredditName, pickedImage);
-      subredditPageRepository.getSubredditIcon(subredditName);
+      // subredditPageRepository.getSubredditIcon(subredditName);
     }
   }
 
-  void getSubredditModerators(String subreddit) {
-    emit(SubredditModeratorsLoading());
+  // void getSubredditModerators(String subreddit) {
+  //   emit(SubredditModeratorsLoading());
 
-    subredditPageRepository.getSubredditModerators(subreddit).then((value) {
-      _subredditModerators = value;
-      emit(SubredditModeratorsLoaded(_subredditModerators!));
+  //   subredditPageRepository.getSubredditModerators(subreddit).then((value) {
+  //     _subredditModerators = value;
+  //     emit(SubredditModeratorsLoaded(_subredditModerators!));
+  //   });
+  // }
+
+  getIfJoined(String subredditId) async {
+    if (isClosed) return;
+    subredditPageRepository.getIfJoined(subredditId).then((value) {
+      if (value) {
+        emit(InSubreddit());
+      } else {
+        emit(OutSubreddit());
+      }
+    });
+  }
+
+  getIfMod(String subredditId) async {
+    if (isClosed) return;
+    subredditPageRepository.getIfMod(subredditId).then((value) {
+      if (value) {
+        emit(Moderator());
+      } else {
+        emit(NotModerator());
+      }
     });
   }
 }

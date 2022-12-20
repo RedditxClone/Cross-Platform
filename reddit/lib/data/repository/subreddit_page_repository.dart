@@ -12,23 +12,36 @@ class SubredditPageRepository {
 
   SubredditPageRepository(this.subredditWebServices);
 
-  Future<List<PostModel>> getPostsInPage(String subreddit, String mode) async {
-    final String postsInPage =
-        await subredditWebServices.getPostsInPage(subreddit, mode);
-
-    return List<PostModel>.from(
-        jsonDecode(postsInPage).map((i) => PostModel.fromJson(i)));
-  }
+  // Future<List<PostModel>> getPostsInPage(String subreddit, String mode) async {
+  //   final postsInPage =
+  //       await subredditWebServices.getPostsInPage(subreddit, mode);
+  //   final postModelList = <PostModel>[];
+  //   for (var post in postsInPage) {
+  //     postModelList.add(PostModel.fromJson(post));
+  //   }
+  //   return postModelList;
+  // }
 
   Future<SubredditModel> getSubredditInfo(String subredditName) async {
-    return SubredditModel.fromJson(
-        jsonDecode(await subredditWebServices.getSubredditInfo(subredditName)));
+    final data = await subredditWebServices.getSubredditInfo(subredditName);
+    print("data: " + data.toString());
+    return SubredditModel.fromJson((data));
   }
 
-  Future<String> getSubredditIcon(String subreddit) async {
-    final String subredditIcon = jsonDecode(
-        await subredditWebServices.getSubredditIcon(subreddit))['icon'];
-    return subredditIcon;
+  // Future<String> getSubredditIcon(String subreddit) async {
+  //   final String subredditIcon =
+  //       (await subredditWebServices.getSubredditIcon(subreddit))['icon'];
+  //   return subredditIcon;
+  // }
+
+  Future<bool> joinSubreddit(String subredditId) async {
+    final bool joined = await subredditWebServices.joinSubreddit(subredditId);
+    return joined;
+  }
+
+  Future<bool> leaveSubreddit(String subredditId) async {
+    final bool left = await subredditWebServices.leaveSubreddit(subredditId);
+    return left;
   }
 
   Future<bool> updateSubredditIcon(
@@ -38,23 +51,33 @@ class SubredditPageRepository {
     return updated;
   }
 
-  getSubredditDescription(String subredditName) async {
-    final String subredditDescription;
-    final Map<String, dynamic> json = (jsonDecode(
-        await subredditWebServices.getSubredditDescription(subredditName)));
+  // getSubredditDescription(String subredditName) async {
+  //   final String subredditDescription;
+  //   final Map<String, dynamic> json =
+  //       ((await subredditWebServices.getSubredditDescription(subredditName)));
 
-    subredditDescription = json['description'].toString();
-    print(subredditDescription);
-    return subredditDescription;
+  //   subredditDescription = json['description'].toString();
+  //   print(subredditDescription);
+  //   return subredditDescription;
+  // }
+
+  // getSubredditModerators(String subreddit) async {
+  //   final List<String> subredditModerators;
+  //   final Map<String, dynamic> json =
+  //       ((await subredditWebServices.getSubredditModerators(subreddit)));
+
+  //   subredditModerators = List.from(json['moderators']);
+  //   print(subredditModerators);
+  //   return subredditModerators;
+  // }
+
+  Future<bool> getIfJoined(String subredditId) async {
+    final bool ifJoined = await subredditWebServices.getIfJoined(subredditId);
+    return ifJoined;
   }
 
-  getSubredditModerators(String subreddit) async {
-    final List<String> subredditModerators;
-    final Map<String, dynamic> json = (jsonDecode(
-        await subredditWebServices.getSubredditModerators(subreddit)));
-
-    subredditModerators = List.from(json['moderators']);
-    print(subredditModerators);
-    return subredditModerators;
+  Future<bool> getIfMod(String subredditId) async {
+    final bool ifMod = await subredditWebServices.getIfMod(subredditId);
+    return ifMod;
   }
 }

@@ -522,7 +522,6 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
   }
 
   Widget _myposts() {
-    // TODO : continue this function
     return BlocBuilder<PostsUserCubit, PostsUserState>(
       builder: (context, state) {
         if (state is UserPostsLoaded) {

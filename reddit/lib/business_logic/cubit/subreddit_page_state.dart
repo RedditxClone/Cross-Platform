@@ -9,14 +9,29 @@ class SubredditPageLoading extends SubredditPageState {}
 
 class SubredditPageLoaded extends SubredditPageState {
   final SubredditModel subredditModel;
-  SubredditPageLoaded(this.subredditModel);
+  final bool isMod;
+  final bool isJoined;
+  SubredditPageLoaded(this.subredditModel, this.isMod, this.isJoined);
 }
 
 class PostsInPageLoading extends SubredditPageState {}
 
+class InSubreddit extends SubredditPageState {}
+
+class OutSubreddit extends SubredditPageState {}
+
+class Moderator extends SubredditPageState {}
+
+class NotModerator extends SubredditPageState {}
+
 class JoinedSubreddit extends SubredditPageState {}
 
+class FailedToJoin extends SubredditPageState {}
+
 class LeftSubreddit extends SubredditPageState {}
+
+class FailedToLeave extends SubredditPageState {}
+
 class SubredditDescriptionLoaded extends SubredditPageState {
   final String subredditDescription;
   SubredditDescriptionLoaded(this.subredditDescription);
@@ -30,7 +45,9 @@ class SubredditModeratorsLoaded extends SubredditPageState {
 class SubredditModeratorsLoading extends SubredditPageState {}
 
 class SubredditIconUpdating extends SubredditPageState {}
+
 class SubredditIconUpdateFailed extends SubredditPageState {}
+
 class SubredditIconLoaded extends SubredditPageState {
   final String subredditIcon;
   SubredditIconLoaded(this.subredditIcon);

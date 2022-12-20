@@ -86,14 +86,20 @@ class JoinedSubredditsDrawerModel {
     allowImages = json['allowImages'];
     allowVideos = json['allowVideos'];
     acceptingRequestsToJoin = json['acceptingRequestsToJoin'];
-    communityTopics = json['communityTopics'].cast<String>();
+    communityTopics = json['communityTopics'] == null
+        ? []
+        : json['communityTopics'].cast<String>();
     requirePostFlair = json['requirePostFlair'];
     postTextBodyRule = json['postTextBodyRule'];
     restrictPostTitleLength = json['restrictPostTitleLength'];
     banPostBodyWords = json['banPostBodyWords'];
-    postBodyBannedWords = json['postBodyBannedWords'].cast<String>();
+    postBodyBannedWords = json['postBodyBannedWords'] == null
+        ? []
+        : json['postBodyBannedWords'].cast<String>();
     banPostTitleWords = json['banPostTitleWords'];
-    postTitleBannedWords = json['postTitleBannedWords'].cast<String>();
+    postTitleBannedWords = json['postTitleBannedWords'] == null
+        ? []
+        : json['postTitleBannedWords'].cast<String>();
     requireWordsInPostTitle = json['requireWordsInPostTitle'];
     postGuidelines = json['postGuidelines'];
     welcomeMessageEnabled = json['welcomeMessageEnabled'];

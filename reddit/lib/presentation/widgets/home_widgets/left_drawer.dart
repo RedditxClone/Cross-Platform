@@ -146,7 +146,9 @@ class _LeftDrawerState extends State<LeftDrawer> {
                                 onTap: () {
                                   Navigator.pushNamed(
                                       context, subredditPageScreenRoute,
-                                      arguments: e.sId!);
+                                      arguments: <String, dynamic>{
+                                        'sId': e.sId!
+                                      });
                                 },
                                 leading: const Icon(Icons.groups_sharp),
                                 // Icon of subreddit doesn't exist in api
@@ -207,7 +209,9 @@ class _LeftDrawerState extends State<LeftDrawer> {
                                 onTap: () {
                                   Navigator.pushNamed(
                                       context, subredditPageScreenRoute,
-                                      arguments: e.sId!);
+                                      arguments: <String, dynamic>{
+                                        'sId': e.sId!
+                                      });
                                 },
                                 leading: const Icon(Icons.groups_sharp),
                                 // Icon of subreddit doesn't exist in api
