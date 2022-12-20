@@ -183,4 +183,138 @@ class ModToolsWebServices {
       return null;
     }
   }
+
+  /// [subredditId] is the id of subreddit to get the moderators list
+  ///
+  /// This function calls [Dio.get] to get the moderators list of the subreddit
+  /// it returns a [Future] of [Response] which contains the moderators list
+  Future getModerators(String subredditId) async {
+    try {
+      Response response =
+          await dio.get('subreddit/$subredditId/moderation/moderators',
+              options: Options(
+                headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+              ));
+      debugPrint('getModerators status code : ${response.statusCode}');
+      return response;
+    } on DioError catch (e) {
+      debugPrint(e.toString());
+      return e.response;
+    }
+  }
+
+  /// [subredditId] is the id of subreddit to add new user to the moderators list
+  /// [username] is the username of the user to be added to the moderators list
+  ///
+  /// This function calls [Dio.post] to add new user to the moderators list of the subreddit
+  /// it returns a [Future] of [Response] which contains the status code
+  Future addModerator(String subredditId, String username) async {
+    try {
+      Response res =
+          await dio.post('subreddit/$subredditId/moderation/$username',
+              options: Options(
+                headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+              ));
+      return res;
+    } on DioError catch (e) {
+      debugPrint(e.toString());
+      return e.response;
+    }
+  }
+
+  /// [subredditId] is the id of subreddit to get the banned list
+  ///
+  /// This function calls [Dio.get] to get the banned list of the subreddit
+  /// it returns a [Future] of [Response] which contains the banned list
+  Future getBannedUsers(String subredditId) async {
+    try {
+      Response response = await dio.get('subreddit/$subredditId/user/ban',
+          options: Options(
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+          ));
+      debugPrint('getBannedUsers status code : ${response.statusCode}');
+      return response;
+    } on DioError catch (e) {
+      debugPrint(e.toString());
+      return e.response;
+    }
+  }
+
+  /// [subredditId] is the id of subreddit to add new user to the banned list
+  /// [username] is the username of the user to be added to the banned list
+  /// [banReason] is the reason for banning the user
+  /// [banDays] is the duration for which the user is banned
+  /// [modNote] is the note for banning the user
+  /// [banMessage] is the message to be sent to the user
+  /// [permanent] is the boolean value to ban the user permanently
+  ///
+  /// This function calls [Dio.post] to add new user to the banned list of the subreddit
+  /// it returns a [Future] of [Response] which contains the status code
+  Future banUser(String subredditId, String username, String banReason,
+      int banDays, String modNote, String banMessage, bool permanent) async {
+    try {
+      Response response = await dio.post(
+        'subreddit/$subredditId/user/ban',
+        data: {
+          "username": username,
+          "reason": banReason,
+          "modNote": modNote,
+          "permanent": permanent,
+          "duration": banDays,
+          "message": banMessage,
+        },
+        options: Options(
+          headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+        ),
+      );
+      return response;
+    } on DioError catch (e) {
+      debugPrint(e.toString());
+      return e.response;
+    }
+  }
+
+  /// [subredditId] is the id of subreddit to get the muted list
+  ///
+  /// This function calls [Dio.get] to get the muted list of the subreddit
+  /// it returns a [Future] of [Response] which contains the muted list
+  Future getMutedUsers(String subredditId) async {
+    try {
+      Response response = await dio.get('subreddit/$subredditId/user/mute',
+          options: Options(
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+          ));
+      debugPrint('getMutedUsers status code : ${response.statusCode}');
+      return response;
+    } on DioError catch (e) {
+      debugPrint(e.toString());
+      return e.response;
+    }
+  }
+
+  /// [subredditId] is the id of subreddit to add new user to the muted list
+  /// [username] is the username of the user to be added to the muted list
+  /// [muteReason] is the reason for muting the user
+  ///
+  /// This function calls [Dio.post] to add new user to the muted list of the subreddit
+  /// it returns a [Future] of [Response] which contains the status code
+  Future muteUser(
+      String subredditId, String username, String muteReason) async {
+    try {
+      Response response = await dio.post(
+        'subreddit/$subredditId/user/mute',
+        data: {
+          "username": username,
+          "reason": muteReason,
+        },
+        options: Options(
+          headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+        ),
+      );
+      return response;
+    } on DioError catch (e) {
+      debugPrint(e.toString());
+      return e.response;
+    }
+  }
 }

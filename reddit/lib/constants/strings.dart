@@ -92,6 +92,11 @@ const tafficRoute = '/taffic';
 const rulesRoute = '/rules';
 const unmoderatedRoute = '/unmod';
 const moderatorsRoute = '/mod';
+const addModeratorRoute = '/addmod';
+const mutedUsersRoute = '/mutedusers';
+const addMutedUserRoute = '/addmuteduser';
+const bannedUsersRoute = '/bannedusers';
+const addBannedUserRoute = '/addbanneduser';
 //---------------------------------------
 // ------------Message Route-------------
 //---------------------------------------

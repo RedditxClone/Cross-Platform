@@ -73,13 +73,18 @@ class ModListScreen extends StatelessWidget {
           title('CONTENT & REGULATION'),
           listItem(Icons.queue_outlined, 'Mod queue', () {}),
           title('USER MANAGEMENT'),
-          listItem(Icons.shield_outlined, 'Moderators', () {}),
+          listItem(
+              Icons.shield_outlined,
+              'Moderators',
+              () => Navigator.of(context).pushNamed(moderatorsRoute,
+                  arguments: {'name': subredditName, 'id': subredditId})),
           listItem(
               Icons.mic_external_on_outlined,
               'Approved users',
               () => Navigator.of(context).pushNamed(approvedRoute,
                   arguments: {'name': subredditName, 'id': subredditId})),
           listItem(Icons.speaker_notes_off_outlined, 'Muted users', () {}),
+          listItem(Icons.remove_circle_outline_outlined, 'Banned users', () {}),
         ],
       ),
     );

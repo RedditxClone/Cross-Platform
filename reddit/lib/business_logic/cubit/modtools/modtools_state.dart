@@ -1,6 +1,5 @@
 part of 'modtools_cubit.dart';
 
-@immutable
 abstract class ModtoolsState {}
 
 class ModtoolsInitial extends ModtoolsState {}
@@ -45,3 +44,33 @@ class UnmoderatedPostsReady extends ModtoolsState {
 }
 
 class Loading extends ModtoolsState {}
+
+class ModeratorsListAvailable extends ModtoolsState {
+  List<User> moderators;
+  ModeratorsListAvailable(this.moderators);
+}
+
+class AddedToModerators extends ModtoolsState {
+  int statusCode;
+  AddedToModerators(this.statusCode);
+}
+
+class MutedListAvailable extends ModtoolsState {
+  List<User> mutedUsers;
+  MutedListAvailable(this.mutedUsers);
+}
+
+class BannedListAvailable extends ModtoolsState {
+  List<User> bannedUsers;
+  BannedListAvailable(this.bannedUsers);
+}
+
+class MuteUser extends ModtoolsState {
+  int statusCode;
+  MuteUser(this.statusCode);
+}
+
+class BanUser extends ModtoolsState {
+  int statusCode;
+  BanUser(this.statusCode);
+}
