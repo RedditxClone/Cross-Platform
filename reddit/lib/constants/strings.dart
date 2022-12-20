@@ -72,7 +72,9 @@ const chooseGenderScreen = '/chooseGenderScreen';
 const chooseProfileImgScreen = '/chooseProfileImgScreen';
 const gitHubClientID = '278e3e6f443383001225';
 const searchRouteWeb = '/search';
-
+//---------------------------------------
+// ------subreddit page route---------
+//---------------------------------------
 const subredditPageScreenRoute = "/subredditPageScreen";
 const historyPageScreenRoute = '/HistoryPageScreen';
 const createCommunityScreenRoute = '/CreateCommunityScreen';

@@ -216,7 +216,10 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                               children: [
                                 InkWell(
                                     onTap: () => Navigator.pushNamed(
-                                        context, modqueueRoute),
+                                            context, modqueueRoute, arguments: {
+                                          'name': 'bemoireddit2',
+                                          'id': '639b27bbef88b3df0463d04b'
+                                        }),
                                     child: Padding(
                                       padding: const EdgeInsets.all(5),
                                       child: Row(children: const [
@@ -535,8 +538,15 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                                                 )),
                                               ),
                                               onPressed: () => isMod
-                                                  ? Navigator.pushNamed(
-                                                      context, modlistRoute)
+                                                  ? 
+                                                    Navigator.pushNamed(
+                                                        context, modlistRoute,
+                                                        arguments: {
+                                                          'name':
+                                                              'bemoireddit2',
+                                                          'id':
+                                                              '639b27bbef88b3df0463d04b'
+                                                        })
                                                   : joinedSubreddit
                                                       ? BlocProvider.of<
                                                                   SubredditPageCubit>(

@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reddit/business_logic/cubit/create_community_cubit.dart';
 import 'package:reddit/business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_popular_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/sort_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
-import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/data/model/auth_model.dart';
+import 'package:reddit/data/repository/create_community_repository.dart';
+import 'package:reddit/data/web_services/create_community_web_services.dart';
+import 'package:reddit/presentation/screens/create_community_screen.dart';
 import 'package:reddit/presentation/widgets/home_widgets/left_list_not_logged_in.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_Not_loggedin.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
@@ -214,14 +217,24 @@ class _PopularWebState extends State<PopularWeb> {
     );
   }
 
+  void createCommunityDialog() {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => BlocProvider(
+              create: (context) => CreateCommunityCubit(
+                  CreateCommunityRepository(CreateCommunityWebServices())),
+              child: const CreateCommunityScreen(),
+            ));
+  }
+
   Widget _createCommunity() {
     return Container(
       width: double.infinity,
       height: 54,
       padding: const EdgeInsets.all(10),
       child: OutlinedButton(
-        onPressed: () =>
-            Navigator.of(context).pushNamed(createCommunityScreenRoute),
+        onPressed: () => createCommunityDialog(),
         style: OutlinedButton.styleFrom(
             // padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
             side: const BorderSide(width: 1, color: Colors.white),
@@ -255,7 +268,7 @@ class _PopularWebState extends State<PopularWeb> {
             ),
           ),
           Container(
-            height: 250,
+            height: 260,
             padding: const EdgeInsets.all(10),
             child: Column(
               children: [
@@ -271,6 +284,36 @@ class _PopularWebState extends State<PopularWeb> {
               ],
             ),
           )
+        ],
+      ),
+    );
+  }
+
+  Widget _rightCardNotLoggedin() {
+    return Container(
+      height: 150,
+      padding: const EdgeInsets.only(top: 50),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: const [
+                Text('User Agreement', style: TextStyle(color: Colors.grey)),
+                Text('Content Policy', style: TextStyle(color: Colors.grey))
+              ]),
+          Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: const [
+                Text('Privacy Policy', style: TextStyle(color: Colors.grey)),
+                Text('Moderator Code Of Conduct',
+                    style: TextStyle(color: Colors.grey))
+              ]),
+          const SizedBox(height: 10),
+          const Divider(height: 1, color: Colors.white),
+          const SizedBox(height: 10),
+          const Text('Redditx Inc © 2022. All rights reserved',
+              style: TextStyle(color: Colors.grey))
         ],
       ),
     );
@@ -322,7 +365,11 @@ class _PopularWebState extends State<PopularWeb> {
                           flex: responsive.isSmallSizedScreen() |
                                   responsive.isMediumSizedScreen()
                               ? 0
-                              : 1,
+                              : responsive.isLargeSizedScreen()
+                                  ? 1
+                                  : UserData.isLoggedIn
+                                      ? 2
+                                      : 1,
                           child: const SizedBox(width: 10)),
                       Expanded(
                         flex: responsive.isLargeSizedScreen()
@@ -331,26 +378,26 @@ class _PopularWebState extends State<PopularWeb> {
                                 ? 6
                                 : 7,
                         child: SizedBox(
-                          width: 100,
+                          // width: 100,
                           child: Column(
                             children: [
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Expanded(
-                                    flex: 5,
+                                    flex: UserData.isLoggedIn ? 6 : 5,
                                     child: SizedBox(
                                       width: 10,
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          SizedBox(height: 20),
+                                          const SizedBox(height: 20),
                                           const Text('Popular posts',
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   color: Colors.white)),
-                                          SizedBox(height: 10),
+                                          const SizedBox(height: 10),
                                           _sortBy(),
                                           BlocBuilder<PostsPopularCubit,
                                               PostsPopularState>(
@@ -432,7 +479,11 @@ class _PopularWebState extends State<PopularWeb> {
                                           flex: 3,
                                           child: Column(
                                             // there are the right cards
-                                            children: [_rightCard()],
+                                            children: [
+                                              UserData.isLoggedIn
+                                                  ? _rightCard()
+                                                  : _rightCardNotLoggedin()
+                                            ],
                                           )),
                                 ],
                               )
@@ -444,7 +495,11 @@ class _PopularWebState extends State<PopularWeb> {
                           flex: responsive.isSmallSizedScreen() |
                                   responsive.isMediumSizedScreen()
                               ? 0
-                              : 1,
+                              : responsive.isLargeSizedScreen()
+                                  ? 1
+                                  : UserData.isLoggedIn
+                                      ? 2
+                                      : 1,
                           child: SizedBox(
                               width: responsive.isSmallSizedScreen() ? 0 : 10))
                     ],

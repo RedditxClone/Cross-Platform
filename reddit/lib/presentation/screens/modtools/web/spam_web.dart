@@ -7,7 +7,9 @@ import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_Not_loggedin.da
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 
 class SpamWeb extends StatefulWidget {
-  const SpamWeb({super.key});
+  String subredditName;
+  final String subredditId;
+  SpamWeb({super.key, required this.subredditName, required this.subredditId});
 
   @override
   State<SpamWeb> createState() => _SpamWebState();
@@ -23,15 +25,18 @@ class _SpamWebState extends State<SpamWeb> {
           automaticallyImplyLeading: false,
           backgroundColor: defaultAppbarBackgroundColor,
           title: UserData.user != null
-              ? const AppBarWebLoggedIn( screen: 'r/subreddit')
+              ? const AppBarWebLoggedIn(screen: 'r/subreddit')
               : const AppBarWebNotLoggedIn(screen: 'r/subreddit')),
       body: Container(
           color: defaultWebBackgroundColor,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              LeftModList(screen: 'Spam'),
-              QueuesWidget(screen: 'Spam')
+              LeftModList(
+                  screen: 'Spam',
+                  subredditName: widget.subredditName,
+                  subredditId: widget.subredditId),
+              QueuesWidget(screen: 'Spam', subredditName: widget.subredditName)
             ],
           )),
     );

@@ -7,7 +7,10 @@ import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_Not_loggedin.da
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 
 class EditedWeb extends StatefulWidget {
-  const EditedWeb({super.key});
+  String subredditName;
+  final String subredditId;
+  EditedWeb(
+      {super.key, required this.subredditName, required this.subredditId});
 
   @override
   State<EditedWeb> createState() => _EditedWebState();
@@ -23,15 +26,19 @@ class _EditedWebState extends State<EditedWeb> {
           automaticallyImplyLeading: false,
           backgroundColor: defaultAppbarBackgroundColor,
           title: UserData.user != null
-              ? const AppBarWebLoggedIn( screen: 'r/subreddit')
+              ? const AppBarWebLoggedIn(screen: 'r/subreddit')
               : const AppBarWebNotLoggedIn(screen: 'r/subreddit')),
       body: Container(
           color: defaultWebBackgroundColor,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              LeftModList(screen: 'Edited'),
-              QueuesWidget(screen: 'Edited')
+              LeftModList(
+                  screen: 'Edited',
+                  subredditName: widget.subredditName,
+                  subredditId: widget.subredditId),
+              QueuesWidget(
+                  screen: 'Edited', subredditName: widget.subredditName)
             ],
           )),
     );

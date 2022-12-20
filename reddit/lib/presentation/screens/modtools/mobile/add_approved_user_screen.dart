@@ -5,7 +5,8 @@ import 'package:reddit/business_logic/cubit/modtools/modtools_cubit.dart';
 import 'package:reddit/constants/theme_colors.dart';
 
 class AddApprovedUserScreen extends StatelessWidget {
-  AddApprovedUserScreen({super.key});
+  final String subredditId;
+  AddApprovedUserScreen({super.key, required this.subredditId});
   TextEditingController usernameController = TextEditingController();
 
   /// [context] : build context.
@@ -59,8 +60,8 @@ class AddApprovedUserScreen extends StatelessWidget {
           actions: [
             TextButton(
                 onPressed: () {
-                  BlocProvider.of<ModtoolsCubit>(context).addApprovedUser(
-                      '639b27bbef88b3df0463d04b', usernameController.text);
+                  BlocProvider.of<ModtoolsCubit>(context)
+                      .addApprovedUser(subredditId, usernameController.text);
                 },
                 child: const Text('ADD',
                     style: TextStyle(

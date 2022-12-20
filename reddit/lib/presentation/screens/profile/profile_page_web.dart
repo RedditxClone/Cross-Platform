@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_my_profile_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/sort_cubit.dart';
 import 'package:reddit/business_logic/cubit/settings/settings_cubit.dart';
+import 'package:reddit/business_logic/cubit/user_profile/user_profile_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
@@ -28,6 +29,7 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
     // TODO: implement initState
     super.initState();
     BlocProvider.of<PostsMyProfileCubit>(context).getMyProfilePosts();
+    BlocProvider.of<UserProfileCubit>(context).getMyModeratedSubreddits();
   }
 
   late Responsive _responsive;
@@ -357,7 +359,7 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
           height: 65,
           padding: const EdgeInsets.all(15),
           child: ElevatedButton(
-            onPressed: () {}, // TODO : change profile photo here
+            onPressed: () => pickImageWeb(ImageSource.gallery, 'profile'),
             style: const ButtonStyle(
               shape: MaterialStatePropertyAll(
                 RoundedRectangleBorder(
@@ -385,7 +387,7 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
                 child: const Text(
                   'Change your profile picture',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 17),
+                  style: TextStyle(fontSize: 15),
                 ),
               ),
             ),
@@ -412,7 +414,7 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
                         size: 10,
                       ),
                       SizedBox(width: 5),
-                      Text('1', // TODO : add karma number here
+                      Text('1',
                           style: TextStyle(fontSize: 10, color: Colors.grey)),
                     ],
                   )
@@ -461,8 +463,7 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
               width: 180,
               height: 40,
               child: ElevatedButton(
-                  onPressed: () =>
-                      _addSocialLinks(), // TODO : add social links here
+                  onPressed: () => _addSocialLinks(),
                   style: ElevatedButton.styleFrom(
                     foregroundColor: const Color.fromARGB(255, 77, 77, 77),
                     backgroundColor: const Color.fromARGB(255, 116, 116, 116),
@@ -487,24 +488,26 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
         //--------------------add new post--------------------
         Container(
           width: double.infinity,
-          height: 50,
+          height: 51,
           padding: const EdgeInsets.all(10),
           child: ElevatedButton(
             onPressed: () {}, // TODO : navigate to add new post
-            style: const ButtonStyle(
-              shape: MaterialStatePropertyAll(
+            style: ButtonStyle(
+              backgroundColor:
+                  MaterialStatePropertyAll(Colors.white.withOpacity(0.5)),
+              shape: const MaterialStatePropertyAll(
                 RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(
                     Radius.circular(25),
                   ),
                 ),
               ),
-              padding: MaterialStatePropertyAll(EdgeInsets.all(0.0)),
+              padding: const MaterialStatePropertyAll(EdgeInsets.all(0.0)),
             ),
             child: Ink(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.all(Radius.circular(80.0)),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.5),
+                borderRadius: const BorderRadius.all(Radius.circular(80.0)),
               ),
               child: Container(
                 constraints:
@@ -526,6 +529,64 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
     );
   }
 
+  Widget _modSubreddit(String subredditName, members, subredditId) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        //----------------------my moderator communities----------------------------
+        Row(
+          children: [
+            const CircleAvatar(
+              radius: 20,
+              backgroundColor: Colors.white,
+              child: CircleAvatar(
+                  radius: 17,
+                  backgroundColor: Colors.blue,
+                  child: Icon(
+                    Icons.group_outlined,
+                    size: 25,
+                    color: Colors.white,
+                  )),
+            ),
+            const SizedBox(width: 10),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'r/$subredditName',
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 5),
+                Text('$members members'),
+              ],
+            )
+          ],
+        ),
+        OutlinedButton(
+            onHover: ((value) {
+              setState(() {
+                _outlineButtonLabel = value ? 'Leave' : 'Joined';
+              });
+            }),
+            onPressed: () => BlocProvider.of<UserProfileCubit>(context)
+                .leaveSubreddit(
+                    subredditId), // TODO : on press => leave subreddit
+            style: ButtonStyle(
+              shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.0))),
+            ),
+            child: Text(
+              _outlineButtonLabel,
+              style: const TextStyle(
+                  fontSize: 17,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.bold),
+            ))
+      ],
+    );
+  }
+
   Widget _buildSecondProflieCard() {
     return Padding(
       padding: const EdgeInsets.all(15),
@@ -534,53 +595,29 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
         children: [
           const Expanded(
             child: Text(
-              'You\'re a moderator of these communiteise',
-              style: TextStyle(color: Colors.grey, fontSize: 16),
+              'You\'re a moderator of these communities',
+              style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold),
             ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              //----------------------my moderator communities----------------------------
-              Row(
-                children: [
-                  const CircleAvatar(
-                      radius: 20,
-                      backgroundColor: Colors.blue,
-                      child: Icon(
-                        Icons.person,
-                        size: 15,
-                      )),
-                  const SizedBox(width: 10),
-                  Column(
-                    children: const [
-                      Text('r/redditsx_'),
-                      SizedBox(height: 5),
-                      Text('4 members'),
-                    ],
-                  )
-                ],
-              ),
-              OutlinedButton(
-                  onHover: ((value) {
-                    setState(() {
-                      _outlineButtonLabel = value ? 'Leave' : 'Joined';
-                    });
-                  }),
-                  onPressed: () {}, // TODO : on press => leave subreddit
-                  style: ButtonStyle(
-                    shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30.0))),
-                  ),
-                  child: Text(
-                    _outlineButtonLabel,
-                    style: const TextStyle(
-                        fontSize: 17,
-                        color: Colors.grey,
-                        fontWeight: FontWeight.bold),
-                  ))
-            ],
-          )
+          BlocBuilder<UserProfileCubit, UserProfileState>(
+            builder: (context, state) {
+              if (state is MyModSubredditsAvailable) {
+                state.modSubreddits;
+
+                return Column(
+                  children: state.modSubreddits.map(
+                    (e) {
+                      return _modSubreddit(e.name!, 1, e.sId);
+                    },
+                  ).toList(),
+                );
+              }
+              return Container();
+            },
+          ),
         ],
       ),
     );
@@ -864,42 +901,42 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
                     icon: Text('OVERVIEW',
                         style: TextStyle(
                             fontSize:
-                                _responsive.isSmallSizedScreen() ? 8 : 13))),
+                                _responsive.isSmallSizedScreen() ? 7 : 12))),
                 Tab(
                     icon: Text('POSTS',
                         style: TextStyle(
                             fontSize:
-                                _responsive.isSmallSizedScreen() ? 8 : 13))),
+                                _responsive.isSmallSizedScreen() ? 7 : 12))),
                 Tab(
                     icon: Text('COMMENTS',
                         style: TextStyle(
                             fontSize:
-                                _responsive.isSmallSizedScreen() ? 8 : 13))),
+                                _responsive.isSmallSizedScreen() ? 7 : 12))),
                 Tab(
                     icon: Text('HISTORY',
                         style: TextStyle(
                             fontSize:
-                                _responsive.isSmallSizedScreen() ? 8 : 13))),
+                                _responsive.isSmallSizedScreen() ? 7 : 12))),
                 Tab(
                     icon: Text('SAVED',
                         style: TextStyle(
                             fontSize:
-                                _responsive.isSmallSizedScreen() ? 8 : 13))),
+                                _responsive.isSmallSizedScreen() ? 7 : 12))),
                 Tab(
                     icon: Text('HIDDEN',
                         style: TextStyle(
                             fontSize:
-                                _responsive.isSmallSizedScreen() ? 8 : 13))),
+                                _responsive.isSmallSizedScreen() ? 7 : 12))),
                 Tab(
                     icon: Text('UPVOTED',
                         style: TextStyle(
                             fontSize:
-                                _responsive.isSmallSizedScreen() ? 8 : 13))),
+                                _responsive.isSmallSizedScreen() ? 7 : 12))),
                 Tab(
                     icon: Text('DOWNVOTED',
                         style: TextStyle(
                             fontSize:
-                                _responsive.isSmallSizedScreen() ? 8 : 13))),
+                                _responsive.isSmallSizedScreen() ? 6 : 11))),
               ],
             ),
           ),

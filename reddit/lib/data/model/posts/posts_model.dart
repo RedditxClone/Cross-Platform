@@ -63,7 +63,7 @@ class PostsModel {
     nsfw = json['nsfw'];
     spoiler = json['spoiler'];
     flair = json['flair'];
-    images = json['images'].cast<String>();
+    images = json['images'] == null ? [] : json['images'].cast<String>();
     commentCount = json['commentCount'];
     title = json['title'];
     publishedDate = json['publishedDate'];

@@ -13,6 +13,7 @@ import 'package:reddit/business_logic/cubit/posts/posts_popular_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_user_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/sort_cubit.dart';
 import 'package:reddit/data/model/comments/comment_model.dart';
+import 'package:reddit/business_logic/cubit/user_profile/follow_unfollow_cubit.dart';
 import 'package:reddit/data/repository/comments/comments_repository.dart';
 import 'package:reddit/data/web_services/comments/comments_web_services.dart';
 import 'package:reddit/data/repository/modtools/modtools_repository.dart';
@@ -58,7 +59,6 @@ import 'data/repository/new_post_repository.dart';
 import 'data/repository/search_repo.dart';
 import 'data/web_services/create_post_web_services.dart';
 import 'data/web_services/search_web_service.dart';
-import 'package:reddit/presentation/screens/profile/other_user_profile_screen.dart';
 import 'business_logic/cubit/left_drawer/left_drawer_cubit.dart';
 import 'data/repository/left_drawer/left_drawer_repository.dart';
 import 'data/web_services/left_drawer/left_drawer_web_services.dart';
@@ -172,12 +172,13 @@ class AppRouter {
 
   late MessagesWebServices messagesWebServices;
   late MessagesRepository messagesRepository;
-  late MessagesCubit messagesCubit_approved;
-  late MessagesCubit messagesCubit_profile;
+  late MessagesCubit messagesCubitApproved;
+  late MessagesCubit messagesCubitProfile;
 
   late ModToolsWebServices modtoolsWebServices;
   late ModToolsRepository modtoolsRepository;
   late ModtoolsCubit modtoolsCubit;
+  late FollowUnfollowCubit followUnfollowCubit;
 
   late PostsWebServices postsWebServices;
   late PostsRepository postsRepository;
@@ -236,6 +237,7 @@ class AppRouter {
     userProfileWebServices = UserProfileWebServices();
     userProfileRepository = UserProfileRepository(userProfileWebServices);
     userProfileCubit = UserProfileCubit(userProfileRepository);
+    followUnfollowCubit = FollowUnfollowCubit(userProfileRepository);
     searchCubit = SearchCubit(SearchRepo(SearchWebService()));
     searchPostsCubit = SearchPostsCubit(SearchRepo(SearchWebService()));
     searchCommentsCubit = SearchCommentsCubit(SearchRepo(SearchWebService()));
@@ -245,8 +247,8 @@ class AppRouter {
 
     messagesWebServices = MessagesWebServices();
     messagesRepository = MessagesRepository(messagesWebServices);
-    messagesCubit_approved = MessagesCubit(messagesRepository);
-    messagesCubit_profile = MessagesCubit(messagesRepository);
+    messagesCubitApproved = MessagesCubit(messagesRepository);
+    messagesCubitProfile = MessagesCubit(messagesRepository);
 
     modtoolsWebServices = ModToolsWebServices();
     modtoolsRepository = ModToolsRepository(modtoolsWebServices);
@@ -328,8 +330,11 @@ class AppRouter {
             builder: (_) => kIsWeb
                 ? MultiBlocProvider(
                     providers: [
-                      BlocProvider(
-                        create: (context) => postsMyProfileCubit,
+                      BlocProvider(create: (context) => postsMyProfileCubit),
+                      BlocProvider.value(value: settingsCubit),
+                      BlocProvider.value(value: userProfileCubit),
+                      BlocProvider.value(
+                        value: myProfileSortCubit,
                       ),
                       BlocProvider.value(
                         value: myProfileSortCubit,
@@ -359,8 +364,9 @@ class AppRouter {
             providers: [
               BlocProvider.value(value: userProfileCubit),
               BlocProvider.value(value: settingsCubit),
-              BlocProvider.value(value: messagesCubit_profile),
+              BlocProvider.value(value: messagesCubitProfile),
               BlocProvider.value(value: postsUserCubit),
+              BlocProvider.value(value: followUnfollowCubit),
               BlocProvider.value(value: otherProfileSortCubit),
             ],
             child: kIsWeb
@@ -393,52 +399,88 @@ class AppRouter {
       //------------------------------MOD LIST-------------------------------------
       //---------------------------------------------------------------------------
       case modlistRoute:
-        return MaterialPageRoute(
-            builder: (_) => BlocProvider.value(
-                value: modtoolsCubit, child: const ModListScreen()));
-
-      case modqueueRoute:
-        return MaterialPageRoute(
-            builder: (_) => BlocProvider.value(
-                value: modtoolsCubit, child: const ModQueueWeb()));
-
-      case spamRoute:
-        return MaterialPageRoute(
-            builder: (_) => BlocProvider.value(
-                value: modtoolsCubit, child: kIsWeb ? const SpamWeb() : null));
-      case unmoderatedRoute:
+        final subreddit = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (_) => BlocProvider.value(
                 value: modtoolsCubit,
-                child: kIsWeb ? const UnmoderatedWeb() : null));
+                child: ModListScreen(
+                    subredditName: subreddit['name']!,
+                    subredditId: subreddit['id']!)));
 
-      case addApprovedRoute:
+      case modqueueRoute:
+        final subreddit = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (_) => BlocProvider.value(
-                value: modtoolsCubit, child: AddApprovedUserScreen()));
+                value: modtoolsCubit,
+                child: ModQueueWeb(
+                    subredditName: subreddit['name']!,
+                    subredditId: subreddit['id']!)));
+
+      case spamRoute:
+        final subreddit = settings.arguments as Map<String, String>;
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider.value(
+                value: modtoolsCubit,
+                child: kIsWeb
+                    ? SpamWeb(
+                        subredditName: subreddit['name']!,
+                        subredditId: subreddit['id']!)
+                    : null));
+      case unmoderatedRoute:
+        final subreddit = settings.arguments as Map<String, String>;
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider.value(
+                value: modtoolsCubit,
+                child: kIsWeb
+                    ? UnmoderatedWeb(
+                        subredditName: subreddit['name']!,
+                        subredditId: subreddit['id']!)
+                    : null));
+
+      case addApprovedRoute:
+        final subreddit = settings.arguments as Map<String, String>;
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider.value(
+                value: modtoolsCubit,
+                child: AddApprovedUserScreen(subredditId: subreddit['id']!)));
 
       case approvedRoute:
+        final subreddit = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (_) => MultiBlocProvider(
                     providers: [
                       BlocProvider.value(value: modtoolsCubit),
-                      BlocProvider.value(value: messagesCubit_approved),
+                      BlocProvider.value(value: messagesCubitApproved),
                     ],
                     child: kIsWeb
-                        ? const ApprovedWeb()
-                        : const ApprovedUsersScreen()));
+                        ? ApprovedWeb(
+                            subredditName: subreddit['name']!,
+                            subredditId: subreddit['id']!)
+                        : ApprovedUsersScreen(
+                            subredditName: subreddit['name']!,
+                            subredditId: subreddit['id']!)));
 
       case editedRoute:
+        final subreddit = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (_) => BlocProvider.value(
                 value: modtoolsCubit,
-                child: kIsWeb ? const EditedWeb() : null));
+                child: kIsWeb
+                    ? EditedWeb(
+                        subredditName: subreddit['name']!,
+                        subredditId: subreddit['id']!)
+                    : null));
 
       case tafficRoute:
+        final subreddit = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (_) => BlocProvider.value(
-                value: subredditPageCubit,
-                child: kIsWeb ? const TrafficStatsWeb() : null));
+                value: modtoolsCubit,
+                child: kIsWeb
+                    ? TrafficStatsWeb(
+                        subredditName: subreddit['name']!,
+                        subredditId: subreddit['id']!)
+                    : null));
       //---------------------------------------------------------------------------
       case historyPageScreenRoute:
         return MaterialPageRoute(
@@ -662,7 +704,7 @@ class AppRouter {
         String username = arguments as String;
         return MaterialPageRoute(
             builder: (_) => BlocProvider(
-                  create: (BuildContext context) => messagesCubit_profile,
+                  create: (BuildContext context) => messagesCubitProfile,
                   child: SendMessageWeb(username: username),
                 ));
       case createPostScreenRoute:

@@ -33,13 +33,45 @@ class UserProfileWebServices {
       return response.data;
     } catch (e) {
       if (e is DioError) {
-        // print(e);
-        if (e is DioError) {
-          debugPrint("Status code is ${e.response!.data}");
-        } else {
-          debugPrint("$e");
-        }
+        debugPrint("Status code is ${e.response!.data}");
       }
+      debugPrint("$e");
+      return "";
+    }
+  }
+
+  Future<dynamic> getMyModeratedSubreddits() async {
+    try {
+      Response response = await dio.get('subreddit/moderation/me',
+          options: UserData.isLoggedIn
+              ? Options(
+                  headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+                )
+              : null);
+      return response.data;
+    } catch (e) {
+      if (e is DioError) {
+        debugPrint("Status code is ${e.response!.data}");
+      }
+      debugPrint("$e");
+      return "";
+    }
+  }
+
+  Future<dynamic> leaveSubreddit(String subredditId) async {
+    try {
+      Response response = await dio.post('subreddit/$subredditId/leave',
+          options: UserData.isLoggedIn
+              ? Options(
+                  headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+                )
+              : null);
+      return response.statusCode;
+    } catch (e) {
+      if (e is DioError) {
+        debugPrint("Status code is ${e.response!.data}");
+      }
+      debugPrint("$e");
       return "";
     }
   }
@@ -58,13 +90,10 @@ class UserProfileWebServices {
       print(response.statusCode);
       return response.statusCode;
     } catch (e) {
-      // print(e);
       if (e is DioError) {
         debugPrint("Status code is ${e.response!.data}");
-      } else {
-        debugPrint("$e");
       }
-
+      debugPrint("$e");
       return "";
     }
   }
@@ -83,9 +112,10 @@ class UserProfileWebServices {
       return response.statusCode;
     } catch (e) {
       if (e is DioError) {
-        print(e);
-        return "";
+        debugPrint("Status code is ${e.response!.data}");
       }
+      debugPrint("$e");
+      return "";
     }
   }
 
