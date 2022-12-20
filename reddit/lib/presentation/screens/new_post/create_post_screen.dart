@@ -92,7 +92,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     return SizedBox(
       child: TextField(
         onChanged: (value) {
-          _validURL = (Uri.tryParse(_urlController.text) == null);
+          _validURL = Uri.parse(_urlController.text).host.isNotEmpty;
+          print("valid url" + _validURL.toString());
           BlocProvider.of<CreatePostCubit>(context).uIChanged();
         },
         style: GoogleFonts.ibmPlexSans(
@@ -146,7 +147,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       listener: (context, state) async {
         if (state is NextButtonPressed) {
           _postModel.title = _titleController.text.toString();
-          _postModel.text = _bodyController.text.toString();
+          _postModel.text = _selectedTypeIndex == 2
+              ? _bodyController.text.toString()
+              : _urlController.text.toString();
           Navigator.pushNamed(context, postToMobileScreenRoute,
               arguments: _postModel);
         }

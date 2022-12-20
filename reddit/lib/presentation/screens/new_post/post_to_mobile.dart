@@ -42,7 +42,8 @@ class _PostToScreenState extends State<PostToScreen> {
             onTap: () {
               _postModel.subredditId = _joinedSubreddits[index].sId!;
               _selectedSubredditIndex = index;
-              Navigator.pushNamed(context, postSubredditPreviewScreenRoute,
+              Navigator.pushReplacementNamed(
+                  context, postSubredditPreviewScreenRoute,
                   arguments: <String, dynamic>{
                     'post': _postModel,
                     'subreddit': _joinedSubreddits[index]

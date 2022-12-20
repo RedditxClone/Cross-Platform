@@ -40,7 +40,8 @@ class _PostSubredditPreviewScreenState
     return BlocConsumer<PostSubredditPreviewCubit, PostSubredditPreviewState>(
       listener: (context, state) async {
         if (state is CreatePostCreated) {
-          Navigator.popUntil(context, ModalRoute.withName(homePageRoute));
+          Navigator.popUntil(
+              context, ModalRoute.withName(createPostScreenRoute));
         }
       },
       builder: (context, state) {
@@ -66,6 +67,7 @@ class _PostSubredditPreviewScreenState
                   ),
                   onPressed: _enable
                       ? () {
+                          print("Pressed" + _postModel.text + _postModel.title);
                           BlocProvider.of<PostSubredditPreviewCubit>(context)
                               .postButtonPressed();
                           BlocProvider.of<PostSubredditPreviewCubit>(context)
