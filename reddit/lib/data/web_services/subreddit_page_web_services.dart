@@ -1,0 +1,192 @@
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
+import 'package:http_parser/http_parser.dart';
+import 'package:reddit/constants/strings.dart';
+import 'package:reddit/data/model/auth_model.dart';
+
+class SubredditWebServices {
+  late Dio dio;
+  SubredditWebServices() {
+    BaseOptions options = BaseOptions(
+      baseUrl: baseUrl,
+      receiveDataWhenStatusError: true,
+      connectTimeout: 20 * 1000, //20 secs
+      receiveTimeout: 20 * 1000,
+    );
+    dio = Dio(options);
+  }
+  // Gets data from server, the repository calls this function
+  Future<dynamic> getPostsInPage(String subreddit, String mode) async {
+    try {
+      Response response = await dio.get("subreddit/$subreddit/$mode",
+          options: Options(
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+          ));
+
+      return response.data;
+    } catch (e) {
+      return "[]";
+    }
+  }
+
+  Future<dynamic> getSubredditInfo(String subredditId) async {
+    try {
+      print(subredditId);
+      Response response = await dio.get("subreddit/$subredditId",
+          options: Options(
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+          ));
+
+      return response.data;
+    } on DioError catch (e) {
+      debugPrint(e.response!.statusCode.toString());
+      return {};
+    }
+  }
+
+  // Future<dynamic> getSubredditIcon(String subredditId) async {
+  //   try {
+  //     Response response = await dio.get("subreddit/r/$subredditId/icon",
+  //         options: Options(
+  //           headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+  //         ));
+
+  //     return response.data;
+  //   } catch (e) {
+  //     return "";
+  //   }
+  // }
+
+  Future<bool> updateSubredditIcon(
+      String subredditId, Uint8List updatedIcon) async {
+    final fields = {
+      'file': MultipartFile.fromBytes(updatedIcon,
+          contentType: MediaType('application', 'json'), filename: "icon.jpg")
+    };
+    final formData = FormData.fromMap(fields);
+    debugPrint(formData.fields.toString());
+    try {
+      Response response = await dio.post('subreddit/r/$subredditId/icon',
+          data: formData,
+          options: Options(
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+          ));
+
+      if (response.statusCode == 201) {
+        return true;
+      } else {
+        debugPrint(response.statusCode.toString());
+        return false;
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+      return false;
+    }
+  }
+
+  // getSubredditDescription(subredditId) async {
+  //   try {
+  //     Response response = await dio.get("subreddit/r/$subredditId/description",
+  //         options: Options(
+  //           headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+  //         ));
+
+  //     return response.data;
+  //   } catch (e) {
+  //     return "";
+  //   }
+  // }
+
+  Future<dynamic> getSubredditModerators(String subredditId) async {
+    try {
+      Response response = await dio.get("subreddit/r/$subredditId/moderators",
+          options: Options(
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+          ));
+
+      return response.data;
+    } catch (e) {
+      return "";
+    }
+  }
+
+  Future<bool> joinSubreddit(String subredditId) async {
+    try {
+      Response response = await dio.post('subreddit/$subredditId/join',
+          options: Options(
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+          ));
+
+      if (response.statusCode == 201) {
+        return true;
+      } else {
+        debugPrint(response.statusCode.toString());
+        return false;
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+      return false;
+    }
+  }
+
+  Future<bool> leaveSubreddit(String subredditId) async {
+    try {
+      Response response = await dio.post('subreddit/$subredditId/leave',
+          options: Options(
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+          ));
+
+      if (response.statusCode == 201) {
+        return true;
+      } else {
+        debugPrint(response.statusCode.toString());
+        return false;
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+      return false;
+    }
+  }
+
+  Future<bool> getIfMod(String subredditId) async {
+    try {
+      Response response = await dio.get('subreddit/$subredditId/moderation/me',
+          options: Options(
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+          ));
+
+      if (response.statusCode == 200) {
+        if (response.data == true) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+      return false;
+    } on DioError catch (e) {
+      debugPrint(e.response?.statusCode.toString());
+      return false;
+    }
+  }
+
+  Future<bool> getIfJoined(String subredditId) async {
+    try {
+      Response response = await dio.get('subreddit/$subredditId/join/me',
+          options: Options(
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+          ));
+
+      if (response.statusCode == 200) {
+        if (response.data == true) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+      return false;
+    } on DioError catch (e) {
+      debugPrint(e.response?.statusCode.toString());
+      return false;
+    }
+  }
+}
