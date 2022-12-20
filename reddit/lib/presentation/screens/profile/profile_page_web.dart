@@ -523,13 +523,17 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
         Row(
           children: [
             const CircleAvatar(
-                radius: 20,
-                backgroundColor: Colors.blue,
-                child: Icon(
-                  Icons.group,
-                  size: 20,
-                  color: Colors.white,
-                )),
+              radius: 20,
+              backgroundColor: Colors.white,
+              child: CircleAvatar(
+                  radius: 17,
+                  backgroundColor: Colors.blue,
+                  child: Icon(
+                    Icons.group_outlined,
+                    size: 25,
+                    color: Colors.white,
+                  )),
+            ),
             const SizedBox(width: 10),
             Column(
               mainAxisAlignment: MainAxisAlignment.start,
