@@ -15,11 +15,11 @@ class PostsMyProfileCubit extends Cubit<PostsMyProfileState> {
   /// state [PostsLoading] to indicate that data is loading from the server.
   /// state [PostsLoaded] when posts are loaded successfully.
   /// This function calls the function [PostsRepository.getMyProfilePosts] to get the user's profile posts.
-  void getMyProfilePosts() {
+  void getMyProfilePosts({String sort = "new", int page = 1, int limit = 50}) {
     // To avoid state error when you leave the page
     if (isClosed) return;
     emit(PostsLoading());
-    postsRepository.getMyProfilePosts().then((posts) {
+    postsRepository.getMyProfilePosts(sort, page, limit).then((posts) {
       emit(PostsLoaded(posts));
       this.posts = posts;
     });

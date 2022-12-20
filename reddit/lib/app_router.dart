@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:reddit/business_logic/cubit/cubit/search/cubit/search_comments_cubit.dart';
+import 'package:reddit/business_logic/cubit/cubit/search/cubit/search_communities_cubit.dart';
 import 'package:reddit/business_logic/cubit/comments/comments_cubit.dart';
 import 'package:reddit/business_logic/cubit/cubit/change_password_cubit.dart';
 import 'package:reddit/business_logic/cubit/cubit/delete_account_cubit.dart';
@@ -7,6 +9,9 @@ import 'package:reddit/business_logic/cubit/messages/messages_cubit.dart';
 import 'package:reddit/business_logic/cubit/modtools/modtools_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_home_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_my_profile_cubit.dart';
+import 'package:reddit/business_logic/cubit/posts/posts_popular_cubit.dart';
+import 'package:reddit/business_logic/cubit/posts/posts_user_cubit.dart';
+import 'package:reddit/business_logic/cubit/posts/sort_cubit.dart';
 import 'package:reddit/data/model/comments/comment_model.dart';
 import 'package:reddit/data/repository/comments/comments_repository.dart';
 import 'package:reddit/data/web_services/comments/comments_web_services.dart';
@@ -32,10 +37,18 @@ import 'package:reddit/presentation/screens/modtools/web/modqueue_web.dart';
 import 'package:reddit/presentation/screens/modtools/web/spam_web.dart';
 import 'package:reddit/presentation/screens/modtools/web/traffic_stats.dart';
 import 'package:reddit/presentation/screens/modtools/web/unmoderated.dart';
+// import 'package:reddit/presentation/screens/profile/other_user_orfile_screen.dart';
+import 'package:reddit/presentation/screens/search/search_web.dart';
+import 'business_logic/cubit/cubit/search/cubit/search_cubit.dart';
+import 'business_logic/cubit/cubit/search/cubit/search_people_cubit.dart';
+import 'business_logic/cubit/cubit/search/cubit/search_posts_cubit.dart';
 import 'package:reddit/presentation/screens/post/post_page.dart';
 import 'package:reddit/presentation/screens/post/post_page_web.dart';
 import 'package:reddit/presentation/screens/profile/other_user_profile_screen.dart';
 import 'business_logic/cubit/feed_settings_cubit.dart';
+import 'data/repository/search_repo.dart';
+import 'data/web_services/search_web_service.dart';
+import 'package:reddit/presentation/screens/profile/other_user_profile_screen.dart';
 import 'business_logic/cubit/left_drawer/left_drawer_cubit.dart';
 import 'data/repository/left_drawer/left_drawer_repository.dart';
 import 'data/web_services/left_drawer/left_drawer_web_services.dart';
@@ -137,6 +150,13 @@ class AppRouter {
   late UserProfileWebServices userProfileWebServices;
   late UserProfileRepository userProfileRepository;
   late UserProfileCubit userProfileCubit;
+
+  late SearchCubit searchCubit;
+  late SearchPostsCubit searchPostsCubit;
+  late SearchCommentsCubit searchCommentsCubit;
+  late SearchCommunitiesCubit searchCommunitiesCubit;
+  late SearchPeopleCubit searchUsersCubit;
+
   late MessagesWebServices messagesWebServices;
   late MessagesRepository messagesRepository;
   late MessagesCubit messagesCubit_approved;
@@ -149,9 +169,15 @@ class AppRouter {
   late PostsWebServices postsWebServices;
   late PostsRepository postsRepository;
   late PostsHomeCubit postsHomeCubit;
+  late PostsPopularCubit postsPopularCubit;
   late PostsMyProfileCubit postsMyProfileCubit;
+  late PostsUserCubit postsUserCubit;
   late CommentsRepository commentsRepository;
   late CommentsCubit commentsCubit;
+  late SortCubit homeSortCubit;
+  late SortCubit popularSortCubit;
+  late SortCubit myProfileSortCubit;
+  late SortCubit otherProfileSortCubit;
   AppRouter() {
     // initialise repository and cubit objects
     safetySettingsRepository =
@@ -182,12 +208,20 @@ class AppRouter {
     postsWebServices = PostsWebServices();
     postsRepository = PostsRepository(postsWebServices);
     postsHomeCubit = PostsHomeCubit(postsRepository);
+    postsPopularCubit = PostsPopularCubit(postsRepository);
     postsMyProfileCubit = PostsMyProfileCubit(postsRepository);
+    postsUserCubit = PostsUserCubit(postsRepository);
     commentsRepository = CommentsRepository(CommentsWebServices());
     commentsCubit = CommentsCubit(commentsRepository);
     userProfileWebServices = UserProfileWebServices();
     userProfileRepository = UserProfileRepository(userProfileWebServices);
     userProfileCubit = UserProfileCubit(userProfileRepository);
+    searchCubit = SearchCubit(SearchRepo(SearchWebService()));
+    searchPostsCubit = SearchPostsCubit(SearchRepo(SearchWebService()));
+    searchCommentsCubit = SearchCommentsCubit(SearchRepo(SearchWebService()));
+    searchCommunitiesCubit =
+        SearchCommunitiesCubit(SearchRepo(SearchWebService()));
+    searchUsersCubit = SearchPeopleCubit(SearchRepo(SearchWebService()));
 
     messagesWebServices = MessagesWebServices();
     messagesRepository = MessagesRepository(messagesWebServices);
@@ -197,6 +231,10 @@ class AppRouter {
     modtoolsWebServices = ModToolsWebServices();
     modtoolsRepository = ModToolsRepository(modtoolsWebServices);
     modtoolsCubit = ModtoolsCubit(modtoolsRepository);
+    homeSortCubit = SortCubit();
+    otherProfileSortCubit = SortCubit();
+    myProfileSortCubit = SortCubit();
+    popularSortCubit = SortCubit();
   }
   Route? generateRoute(RouteSettings settings) {
     final arguments = settings.arguments;
@@ -217,15 +255,25 @@ class AppRouter {
               BlocProvider(
                 create: ((context) => authCubit),
               ),
-              BlocProvider(
-                create: (context) => postsHomeCubit,
+              BlocProvider.value(
+                value: postsHomeCubit,
+              ),
+              BlocProvider.value(
+                value: homeSortCubit,
               ),
             ],
             child: kIsWeb
                 ? HomePageWeb()
-                : BlocProvider(
-                    create: (context) => LeftDrawerCubit(
-                        LeftDrawerRepository(LeftDrawerWebServices())),
+                : MultiBlocProvider(
+                    providers: [
+                      BlocProvider(
+                        create: (context) => LeftDrawerCubit(
+                            LeftDrawerRepository(LeftDrawerWebServices())),
+                      ),
+                      BlocProvider.value(
+                        value: postsPopularCubit,
+                      ),
+                    ],
                     child: HomePage(),
                   ),
           ),
@@ -235,14 +283,18 @@ class AppRouter {
         return MaterialPageRoute(
             builder: (_) => MultiBlocProvider(
                   providers: [
-                    BlocProvider(
-                      create: (context) => postsHomeCubit,
+                    BlocProvider.value(
+                      value: postsPopularCubit,
+                    ),
+                    BlocProvider.value(
+                      value: popularSortCubit,
                     ),
                     BlocProvider.value(
                       value: authCubit,
                     ),
                   ],
-                  child: PopularWeb(),
+                  child: const PopularWeb(),
+                  // child: kIsWeb ? const PopularWeb() : const Popular(),
                 ));
 
       case profilePageRoute:
@@ -252,6 +304,9 @@ class AppRouter {
                     providers: [
                       BlocProvider(
                         create: (context) => postsMyProfileCubit,
+                      ),
+                      BlocProvider.value(
+                        value: myProfileSortCubit,
                       ),
                     ],
                     child: const ProfilePageWeb(),
@@ -263,6 +318,9 @@ class AppRouter {
                       ),
                       BlocProvider(
                         create: (context) => postsMyProfileCubit,
+                      ),
+                      BlocProvider.value(
+                        value: myProfileSortCubit,
                       ),
                     ],
                     child: const ProfileScreen(),
@@ -276,6 +334,8 @@ class AppRouter {
               BlocProvider.value(value: userProfileCubit),
               BlocProvider.value(value: settingsCubit),
               BlocProvider.value(value: messagesCubit_profile),
+              BlocProvider.value(value: postsUserCubit),
+              BlocProvider.value(value: otherProfileSortCubit),
             ],
             child: kIsWeb
                 ? OtherProfilePageWeb(userID: userID)
@@ -531,6 +591,33 @@ class AppRouter {
             builder: (_) => BlocProvider.value(
                   value: settingsCubit,
                   child: const ProfileSettingsScreen(),
+                ));
+      case searchRouteWeb:
+        return MaterialPageRoute(
+            builder: (_) => MultiBlocProvider(
+                  providers: [
+                    BlocProvider(
+                      create: (context) =>
+                          SearchCubit(SearchRepo(SearchWebService())),
+                    ),
+                    BlocProvider(
+                      create: (context) =>
+                          SearchPostsCubit(SearchRepo(SearchWebService())),
+                    ),
+                    BlocProvider(
+                      create: (context) =>
+                          SearchCommentsCubit(SearchRepo(SearchWebService())),
+                    ),
+                    BlocProvider(
+                      create: (context) =>
+                          SearchPeopleCubit(SearchRepo(SearchWebService())),
+                    ),
+                    BlocProvider(
+                      create: (context) => SearchCommunitiesCubit(
+                          SearchRepo(SearchWebService())),
+                    ),
+                  ],
+                  child: const SearchWeb(),
                 ));
       case sendMessageRoute:
         String username = arguments as String;

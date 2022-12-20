@@ -59,7 +59,7 @@ class _HomePageWebState extends State<HomePageWeb> {
   //this function is used to add the user interests to the database
   void addInterests() {
     authRepo
-        .addInterests(selectedInterests, UserData.user!.token)
+        .addInterests(selectedInterests, UserData.user!.token ?? "")
         .then((value) {
       if (value) {
         Navigator.of(context).pop();
@@ -75,7 +75,7 @@ class _HomePageWebState extends State<HomePageWeb> {
   //This function takes the selected gender and sends it to the server
   //gender will be null if not selected
   void selectGender(String gender) async {
-    authRepo.genderInSignup(gender, UserData.user!.token).then((updated) {
+    authRepo.genderInSignup(gender, UserData.user!.token!).then((updated) {
       if (updated) {
         debugPrint("success gender");
         displayMsg(context, Colors.blue, ' Logged in successfully');
@@ -707,9 +707,6 @@ class _HomePageWebState extends State<HomePageWeb> {
         shape: const Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
         automaticallyImplyLeading: false,
         backgroundColor: defaultAppbarBackgroundColor,
-        // title: UserData.isLoggedIn
-        //     ? const AppBarWebLoggedIn(screen: 'Home')
-        //     : const AppBarWebNotLoggedIn(screen: 'Home'),
         title: BlocBuilder<AuthCubit, AuthState>(
           builder: (context, state) {
             if (state is Login ||
@@ -731,7 +728,8 @@ class _HomePageWebState extends State<HomePageWeb> {
             debugPrint("state is signed in");
             WidgetsBinding.instance
                 .addPostFrameCallback((_) => showDialogToChooseGender());
-            BlocProvider.of<PostsHomeCubit>(context).getTimelinePosts();
+            BlocProvider.of<PostsHomeCubit>(context)
+                .getTimelinePosts(sort: "best");
 
             return const HomeWeb();
           } else if (state is SignedInWithProfilePhoto) {
@@ -739,23 +737,27 @@ class _HomePageWebState extends State<HomePageWeb> {
             UserData.profileSettings!.profile = state.imgUrl;
             debugPrint(
                 "user in the home page ${UserData.profileSettings!.profile}");
-            BlocProvider.of<PostsHomeCubit>(context).getTimelinePosts();
+            BlocProvider.of<PostsHomeCubit>(context)
+                .getTimelinePosts(sort: "best");
 
             return const HomeWeb();
           } else if (state is Login) {
-            BlocProvider.of<PostsHomeCubit>(context).getTimelinePosts();
+            BlocProvider.of<PostsHomeCubit>(context)
+                .getTimelinePosts(sort: "best");
 
             return const HomeWeb();
           } else if (state is GetTheUserData) {
             if (state.userDataJson != {}) {
               debugPrint("user is nottttttttttttttttttttttttt null");
               UserData.initUser(state.userDataJson);
-              BlocProvider.of<PostsHomeCubit>(context).getTimelinePosts();
+              BlocProvider.of<PostsHomeCubit>(context)
+                  .getTimelinePosts(sort: "best");
 
               return const HomeWeb();
             }
           } else if (state is NotLoggedIn) {
-            BlocProvider.of<PostsHomeCubit>(context).getTimelinePosts();
+            BlocProvider.of<PostsHomeCubit>(context)
+                .getTimelinePosts(sort: "best");
 
             return const HomeWeb();
           }

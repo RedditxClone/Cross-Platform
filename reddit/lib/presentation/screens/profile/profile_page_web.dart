@@ -6,6 +6,7 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_my_profile_cubit.dart';
+import 'package:reddit/business_logic/cubit/posts/sort_cubit.dart';
 import 'package:reddit/business_logic/cubit/settings/settings_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/strings.dart';
@@ -166,104 +167,117 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
   }
 
   Widget _sortBy() {
-    return Container(
-      // sort posts
-      height: 70,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5), color: defaultSecondaryColor),
-      margin: const EdgeInsets.only(bottom: 15),
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Row(
-          children: [
-            ElevatedButton(
-                onPressed: () {
-                  // TODO : sort by new
-                  setState(() {
-                    sortBy = 'new';
-                  });
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.all(15),
-                  backgroundColor: sortBy == 'new'
-                      ? const Color.fromARGB(255, 68, 68, 68)
-                      : Colors.transparent,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0)),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    sortBy == 'new'
-                        ? const Icon(Icons.new_releases_sharp)
-                        : const Icon(Icons.new_releases_outlined),
-                    const SizedBox(width: 5),
-                    const Text(
-                      'New',
-                      style: TextStyle(fontSize: 17),
-                    )
-                  ],
-                )),
-            const SizedBox(width: 10),
-            ElevatedButton(
-                onPressed: () {
-                  // TODO : sort by hot
-                  setState(() {
-                    sortBy = 'hot';
-                  });
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.all(15),
-                  backgroundColor: sortBy == 'hot'
-                      ? const Color.fromARGB(255, 68, 68, 68)
-                      : Colors.transparent,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0)),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    sortBy == 'hot'
-                        ? const Icon(Icons.local_fire_department)
-                        : const Icon(Icons.local_fire_department_outlined),
-                    const SizedBox(width: 5),
-                    const Text(
-                      'Hot',
-                      style: TextStyle(fontSize: 17),
-                    )
-                  ],
-                )),
-            const SizedBox(width: 10),
-            ElevatedButton(
-                onPressed: () {
-                  // TODO : sort by top
-                  setState(() {
-                    sortBy = 'top';
-                  });
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.all(15),
-                  backgroundColor: sortBy == 'top'
-                      ? const Color.fromARGB(255, 68, 68, 68)
-                      : Colors.transparent,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0)),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: const [
-                    Icon(Icons.trending_up_rounded),
-                    SizedBox(width: 5),
-                    Text(
-                      'Top',
-                      style: TextStyle(fontSize: 17),
-                    )
-                  ],
-                )),
-            const SizedBox(width: 10),
-          ],
-        ),
-      ),
+    return BlocBuilder<SortCubit, SortState>(
+      builder: (context, state) {
+        if (state is SortBest) {
+          sortBy = 'best';
+          BlocProvider.of<PostsMyProfileCubit>(context)
+              .getMyProfilePosts(sort: sortBy);
+        } else if (state is SortNew) {
+          sortBy = 'new';
+          BlocProvider.of<PostsMyProfileCubit>(context)
+              .getMyProfilePosts(sort: sortBy);
+        } else if (state is SortHot) {
+          sortBy = 'hot';
+          BlocProvider.of<PostsMyProfileCubit>(context)
+              .getMyProfilePosts(sort: sortBy);
+        } else if (state is SortTop) {
+          sortBy = 'top';
+          BlocProvider.of<PostsMyProfileCubit>(context)
+              .getMyProfilePosts(sort: sortBy);
+        }
+        return Container(
+          // sort posts
+          height: 70,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: defaultSecondaryColor),
+          margin: const EdgeInsets.only(bottom: 15),
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Row(
+              children: [
+                ElevatedButton(
+                    onPressed: () {
+                      BlocProvider.of<SortCubit>(context).sort("new");
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.all(15),
+                      backgroundColor: sortBy == 'new'
+                          ? const Color.fromARGB(255, 68, 68, 68)
+                          : Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        sortBy == 'new'
+                            ? const Icon(Icons.new_releases_sharp)
+                            : const Icon(Icons.new_releases_outlined),
+                        const SizedBox(width: 5),
+                        const Text(
+                          'New',
+                          style: TextStyle(fontSize: 17),
+                        )
+                      ],
+                    )),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                    onPressed: () {
+                      BlocProvider.of<SortCubit>(context).sort("hot");
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.all(15),
+                      backgroundColor: sortBy == 'hot'
+                          ? const Color.fromARGB(255, 68, 68, 68)
+                          : Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        sortBy == 'hot'
+                            ? const Icon(Icons.local_fire_department)
+                            : const Icon(Icons.local_fire_department_outlined),
+                        const SizedBox(width: 5),
+                        const Text(
+                          'Hot',
+                          style: TextStyle(fontSize: 17),
+                        )
+                      ],
+                    )),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                    onPressed: () {
+                      BlocProvider.of<SortCubit>(context).sort("top");
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.all(15),
+                      backgroundColor: sortBy == 'top'
+                          ? const Color.fromARGB(255, 68, 68, 68)
+                          : Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: const [
+                        Icon(Icons.trending_up_rounded),
+                        SizedBox(width: 5),
+                        Text(
+                          'Top',
+                          style: TextStyle(fontSize: 17),
+                        )
+                      ],
+                    )),
+                const SizedBox(width: 10),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -332,7 +346,7 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
         ),
         Text(
             UserData.user!.displayName == ''
-                ? UserData.user!.username
+                ? UserData.user!.username??""
                 : UserData.user!.displayName!,
             style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
         Text('u/${UserData.user!.username} . 1m',
@@ -601,18 +615,11 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
                     child: Container(
                       padding: const EdgeInsets.all(15),
                       width: 10,
-                      child:
-                          BlocBuilder<PostsMyProfileCubit, PostsMyProfileState>(
-                        builder: (context, state) {
-                          if (state is PostsLoaded) {
-                            return Column(children: [
-                              ...state.posts!
-                                  .map((e) => PostsWeb(postsModel: e))
-                                  .toList()
-                            ]);
-                          }
-                          return Container();
-                        },
+                      child: Column(
+                        children: [
+                          _sortBy(),
+                          _myposts(),
+                        ],
                       ),
                     ),
                   ),
@@ -667,50 +674,90 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
 
   Widget _myposts() {
     // TODO : continue this function
-    return Container(
-      padding: const EdgeInsets.all(5),
-      height: 120,
-      color: defaultSecondaryColor,
-      child: Row(
-        children: [
-          Container(
-            color: defaultSecondaryColor.withOpacity(0.001),
-            child: Column(
-              children: const [
-                SizedBox(height: 10),
-                Icon(Icons.arrow_upward, color: Colors.grey),
-                SizedBox(height: 10),
-                Text("0", style: TextStyle(fontSize: 13)),
-                SizedBox(height: 10),
-                Icon(Icons.arrow_downward, color: Colors.grey),
-              ],
-            ),
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Here is a post label',
-                style: TextStyle(color: Colors.white, fontSize: 18),
+    return BlocBuilder<PostsMyProfileCubit, PostsMyProfileState>(
+      builder: (context, state) {
+        if (state is PostsLoaded) {
+          if (state.posts!.isNotEmpty) {
+            return Column(children: [
+              ...state.posts!.map((e) => PostsWeb(postsModel: e)).toList()
+            ]);
+          }
+          return Center(
+            child: Column(children: [
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Image.asset(
+                  "assets/images/comments.jpg",
+                  scale: 3,
+                ),
               ),
-              const Text('r/redditx_'),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 10),
+                child: Text(
+                  "Create a post",
+                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+              ),
               Row(
                 children: [
-                  InkWell(
-                    onTap: () {},
-                    child: Row(children: const [
-                      Icon(Icons.mode_comment_outlined, color: Colors.grey),
-                      SizedBox(width: 5),
-                      Text("0", style: TextStyle(fontSize: 13)),
-                    ]),
+                  Expanded(flex: 3, child: Container()),
+                  const Expanded(
+                    flex: 20,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      child: Text(
+                        "No posts are available yet. Create a post now!",
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
                   ),
+                  Expanded(flex: 3, child: Container()),
                 ],
-              )
-            ],
+              ),
+            ]),
+          );
+        }
+        return Container();
+      },
+    );
+  }
+
+  Widget _indicateEmpty(String title, String subtitle) {
+    return Center(
+      child: Column(children: [
+        Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Image.asset(
+            "assets/images/comments.jpg",
+            scale: 3,
           ),
-        ],
-      ),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 10),
+          child: Text(
+            title,
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+          ),
+        ),
+        Row(
+          children: [
+            Expanded(flex: 3, child: Container()),
+            Expanded(
+              flex: 20,
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 10),
+                child: Text(
+                  subtitle,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+            Expanded(flex: 3, child: Container()),
+          ],
+        ),
+      ]),
     );
   }
 
@@ -860,12 +907,18 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
             children: [
               _buildOverview(),
               _buildPosts(),
-              _buildPosts(),
-              _buildPosts(),
-              _buildPosts(),
-              _buildPosts(),
-              _buildPosts(),
-              _buildPosts(),
+              _indicateEmpty("Create a comment",
+                  "No comments are available yet. Create a comment now!"),
+              _indicateEmpty(
+                  "Open or vote a post", "No history available yet."),
+              _indicateEmpty("Save a post",
+                  "No saved posts are available yet. Save a post now!"),
+              _indicateEmpty(
+                  "Hide a post", "No posts are hidden. Hide a post now!"),
+              _indicateEmpty("Up vote a post",
+                  "No posts are up voted. Up vote a post now!"),
+              _indicateEmpty("Down vote a post",
+                  "No posts are down voted. Down vote a post now!"),
             ],
           ),
         ),

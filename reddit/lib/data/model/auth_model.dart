@@ -11,29 +11,39 @@ import 'feed_setting_model.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class User {
-  late String type;
-  late String userId;
-  late String
+  String? type;
+  String? userId;
+  String?
       username; //in case of google or facebook user it will be taken from the google or facebook and in case of reddit sign in it will be the username
-  late String email;
-  late String?
+  String? email;
+  String?
       profilePic; //in case of google or facebook user it will be taken from the google or facebook and in case of reddit sign in it will be null
-  late String token;
+  String? token;
+  String? displayName;
+  Map<String, dynamic>? interests;
+  bool? cakeDay;
+  String? about;
+  bool? allowFollow;
+  bool? followed;
   late String coverPhoto;
-  late String? displayName;
-  late String? about;
   late String? createdAt;
   late bool? isFollowed;
   late bool? isBlocked;
-  late Map<String, dynamic> interests;
-  late bool cakeDay;
   late String date;
   User.fromJson(Map<String, dynamic> json) {
-    userId = json['_id'];
-    username = json['username'];
+    debugPrint("user id is: ${json['_id']}");
+    debugPrint("user username is: ${json['username']}");
+    debugPrint("user profilePic is: ${json['profilePhoto']}");
+    debugPrint("user cakeDay is: ${json['cakeDay']}");
+    debugPrint("user about is: ${json['about']}");
+    debugPrint("user allowFollow is: ${json['allowFollow']}");
+
+    userId = json['_id'] ?? "";
+    username = json['username'] ?? "";
     email = json['email'] ?? "";
-    profilePic =
-        json['profilePhoto'] == '' ? '' : imagesUrl + json['profilePhoto'];
+    profilePic = json['profilePhoto'] == null || json['profilePhoto'] == ''
+        ? ''
+        : imagesUrl + json['profilePhoto'];
     coverPhoto = json['coverPhoto'] == null || json['coverPhoto'] == ''
         ? ''
         : imagesUrl + json['coverPhoto'];
@@ -48,9 +58,12 @@ class User {
     date = json['date'] ?? "";
     about = json['about'] ?? "";
     cakeDay = json['cakeDay'] ?? true;
+    allowFollow = json['allowFollow'] ?? true;
+    followed = json['followed'] ?? false;
     isFollowed = json['isFollowed'] ?? false;
     isBlocked = json['isBlocked'] ?? false;
     createdAt = json['createdAt'] ?? "";
+    debugPrint("finish with user");
   }
   Map<String, dynamic> toJson() {
     return {
@@ -62,7 +75,7 @@ class User {
       '_id': userId,
       // 'gender': gender,
       'displayName': displayName,
-      // 'about': about,
+      'about': about,
       'cakeDay': cakeDay,
     };
   }
@@ -87,8 +100,9 @@ class UserData {
     UserData.feedSettings = FeedSettingModel.fromJson(json);
     UserData.accountSettings = AccountSettingsModel.fromJson(json);
     UserData.isLoggedIn = true;
-    PreferenceUtils.setString(SharedPrefKeys.token, UserData.user!.token);
-    PreferenceUtils.setString(SharedPrefKeys.userId, UserData.user!.userId);
+    PreferenceUtils.setString(SharedPrefKeys.token, UserData.user!.token ?? "");
+    PreferenceUtils.setString(
+        SharedPrefKeys.userId, UserData.user!.userId ?? "");
   }
 
   static bool isLogged() {
