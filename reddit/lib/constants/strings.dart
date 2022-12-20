@@ -100,9 +100,6 @@ const rulesRoute = '/rules';
 const unmoderatedRoute = '/unmod';
 const moderatorsRoute = '/mod';
 //---------------------------------------
-//-----------Message Screen Route--------
-//---------------------------------------
-const messageScreenRoute = '/messageScreen';
 // ------------Message Route-------------
 //---------------------------------------
 const sendMessageRoute = '/message';
