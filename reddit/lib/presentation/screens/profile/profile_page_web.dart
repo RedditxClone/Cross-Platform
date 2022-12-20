@@ -346,7 +346,7 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
         ),
         Text(
             UserData.user!.displayName == ''
-                ? UserData.user!.username
+                ? UserData.user!.username??""
                 : UserData.user!.displayName!,
             style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
         Text('u/${UserData.user!.username} . 1m',

@@ -60,7 +60,7 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
                     children: [
                       InkWell(
                           onTap: () {},
-                          child: Text(blocked[index].username,
+                          child: Text(blocked[index].username??"",
                               style: const TextStyle(fontSize: 15))),
                       const SizedBox(width: 10),
                       const Text('just now',
@@ -69,7 +69,7 @@ class _SafetySettingsWebState extends State<SafetySettingsWeb> {
                   ),
                   InkWell(
                       onTap: () => BlocProvider.of<SafetySettingsCubit>(context)
-                          .unBlockUser(safetySettings!, blocked[index].userId),
+                          .unBlockUser(safetySettings!, blocked[index].userId??""),
                       child: const Text('Remove',
                           style: TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold))),

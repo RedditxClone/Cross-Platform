@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reddit/business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_popular_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/sort_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
@@ -11,10 +12,8 @@ import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_Not_loggedin.da
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 import 'package:reddit/presentation/widgets/posts/posts_web.dart';
 
-import '../../../business_logic/cubit/posts/posts_home_cubit.dart';
-
 class PopularWeb extends StatefulWidget {
-  PopularWeb({Key? key}) : super(key: key);
+  const PopularWeb({Key? key}) : super(key: key);
 
   @override
   State<PopularWeb> createState() => _PopularWebState();
@@ -282,13 +281,25 @@ class _PopularWebState extends State<PopularWeb> {
     responsive = Responsive(context);
     return Scaffold(
         appBar: AppBar(
-            shape: const Border(
-                bottom: BorderSide(color: Colors.grey, width: 0.3)),
-            automaticallyImplyLeading: false,
-            backgroundColor: defaultAppbarBackgroundColor,
-            title: isLoggedIn
-                ? const AppBarWebLoggedIn(screen: 'Popular')
-                : const AppBarWebNotLoggedIn(screen: 'Popular')),
+          shape:
+              const Border(bottom: BorderSide(color: Colors.grey, width: 0.3)),
+          automaticallyImplyLeading: false,
+          backgroundColor: defaultAppbarBackgroundColor,
+          title: BlocBuilder<AuthCubit, AuthState>(
+            builder: (context, state) {
+              if (state is Login ||
+                  state is GetTheUserData ||
+                  state is SignedIn ||
+                  state is SignedInWithProfilePhoto) {
+                debugPrint("state is signed in");
+                return const AppBarWebLoggedIn(screen: 'Popular');
+              } else {
+                debugPrint("state is not signed in");
+                return const AppBarWebNotLoggedIn(screen: 'Popular');
+              }
+            },
+          ),
+        ),
         body: Container(
           color: defaultWebBackgroundColor,
           child: Row(

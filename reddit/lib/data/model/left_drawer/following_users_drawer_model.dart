@@ -74,7 +74,7 @@ class Meta {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['page'] = this.page;
     data['limit'] = this.limit;
     data['itemCount'] = this.itemCount;
