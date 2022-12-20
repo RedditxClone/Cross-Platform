@@ -153,7 +153,8 @@ class AppRouter {
   late PostsMyProfileCubit postsMyProfileCubit;
   late CommentsRepository commentsRepository;
   late CommentsCubit commentsCubit;
-  late SortCubit sortCubit;
+  late SortCubit homeSortCubit;
+  late SortCubit popularSortCubit;
   AppRouter() {
     // initialise repository and cubit objects
     safetySettingsRepository =
@@ -199,7 +200,8 @@ class AppRouter {
     modtoolsWebServices = ModToolsWebServices();
     modtoolsRepository = ModToolsRepository(modtoolsWebServices);
     modtoolsCubit = ModtoolsCubit(modtoolsRepository);
-    sortCubit = SortCubit();
+    homeSortCubit = SortCubit();
+    popularSortCubit = SortCubit();
   }
   Route? generateRoute(RouteSettings settings) {
     final arguments = settings.arguments;
@@ -224,7 +226,7 @@ class AppRouter {
                 value: postsHomeCubit,
               ),
               BlocProvider.value(
-                value: sortCubit,
+                value: homeSortCubit,
               ),
             ],
             child: kIsWeb
@@ -245,7 +247,7 @@ class AppRouter {
                       value: postsHomeCubit,
                     ),
                     BlocProvider.value(
-                      value: sortCubit,
+                      value: popularSortCubit,
                     ),
                     BlocProvider.value(
                       value: authCubit,
