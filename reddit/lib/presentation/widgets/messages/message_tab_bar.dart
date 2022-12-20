@@ -20,7 +20,7 @@ class MessagesTabBar extends StatelessWidget {
       child: Row(children: [
         TextButton(
             onPressed: () =>
-                Navigator.pushReplacementNamed(context, messageScreenRoute),
+                Navigator.pushReplacementNamed(context, sendMessageRoute),
             child: Text(
               'Send A Private Messge',
               style: TextStyle(
@@ -31,7 +31,7 @@ class MessagesTabBar extends StatelessWidget {
         const SizedBox(width: 30),
         TextButton(
             onPressed: () =>
-                Navigator.pushReplacementNamed(context, messageScreenRoute),
+                Navigator.pushReplacementNamed(context, inboxRoute),
             child: Text(
               'Inbox',
               style: TextStyle(
