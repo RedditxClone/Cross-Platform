@@ -5,7 +5,6 @@ import 'package:reddit/presentation/widgets/nav_bars/popup_menu_not_logged_in.da
 
 class AppBarWebNotLoggedIn extends StatefulWidget {
   final String screen;
-
   const AppBarWebNotLoggedIn({Key? key, required this.screen})
       : super(key: key);
 
@@ -14,6 +13,29 @@ class AppBarWebNotLoggedIn extends StatefulWidget {
 }
 
 class _AppBarWebNotLoggedInState extends State<AppBarWebNotLoggedIn> {
+  late FocusNode searchFocusNode;
+  @override
+  void initState() {
+    super.initState();
+    searchFocusNode = FocusNode();
+    searchFocusNode.addListener(_onFocusChangeSearch);
+  }
+
+  void _onFocusChangeSearch() {
+    if (searchFocusNode.hasFocus) {
+      searchFocusNode.unfocus();
+      Navigator.pushNamed(context, searchRouteWeb);
+    }
+    debugPrint("Focus on search: ${searchFocusNode.hasFocus}");
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    searchFocusNode.dispose();
+    searchFocusNode.removeListener(_onFocusChangeSearch);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -32,6 +54,26 @@ class _AppBarWebNotLoggedInState extends State<AppBarWebNotLoggedIn> {
                   ? const SizedBox(width: 0)
                   : const Text('reddit'),
             ],
+          ),
+        ),
+        SizedBox(
+          width: 80,
+          child: InkWell(
+            onTap: () =>
+                Navigator.pushNamed(context, popularPageRoute, arguments: null),
+            hoverColor: Colors.transparent,
+            child: Row(
+              children: [
+                const Icon(Icons.arrow_circle_up_rounded, size: 25),
+                const SizedBox(width: 4),
+                MediaQuery.of(context).size.width > 1000
+                    ? Text(
+                        widget.screen,
+                        style: const TextStyle(fontSize: 13),
+                      )
+                    : const SizedBox(width: 0)
+              ],
+            ),
           ),
         ),
         // SizedBox(
@@ -58,6 +100,7 @@ class _AppBarWebNotLoggedInState extends State<AppBarWebNotLoggedIn> {
           width: 0.38 * MediaQuery.of(context).size.width,
           height: 40,
           child: TextField(
+              focusNode: searchFocusNode,
               textAlignVertical: TextAlignVertical.center,
               decoration: InputDecoration(
                 border: OutlineInputBorder(

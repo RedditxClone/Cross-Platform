@@ -100,13 +100,13 @@ class _ManageBlockedAccountsScreenState
 
   Widget _buildListElement(index) {
     return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-      _user(blockedUsers![index].profilePic!, blockedUsers![index].username),
+      _user(blockedUsers![index].profilePic!, blockedUsers![index].username??""),
       OutlinedButton(
         onPressed: () {
           displayMsg(context, Colors.green,
               '${blockedUsers![index].username} unblocked');
           BlocProvider.of<SafetySettingsCubit>(context).unBlockUser(
-              UserData.safetySettings!, blockedUsers![index].userId);
+              UserData.safetySettings!, blockedUsers![index].userId??"");
         },
         style: OutlinedButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 17),

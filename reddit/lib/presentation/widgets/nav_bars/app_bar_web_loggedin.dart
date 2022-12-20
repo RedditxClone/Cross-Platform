@@ -2,19 +2,13 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:reddit/business_logic/cubit/create_community_cubit.dart';
-import 'package:reddit/business_logic/cubit/subreddit_page_cubit.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/data/model/auth_model.dart';
-// import 'package:reddit/data/model/signin.dart';
 import 'package:reddit/data/repository/create_community_repository.dart';
-import 'package:reddit/data/repository/subreddit_page_repository.dart';
 import 'package:reddit/data/web_services/create_community_web_services.dart';
-import 'package:reddit/data/web_services/subreddit_page_web_services.dart';
 import 'package:reddit/presentation/screens/create_community_screen.dart';
-import 'package:reddit/presentation/screens/subreddit_screen.dart';
 import 'package:reddit/presentation/widgets/nav_bars/popup_menu_logged_in.dart';
 
 class AppBarWebLoggedIn extends StatefulWidget {
@@ -35,6 +29,30 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
                   CreateCommunityRepository(CreateCommunityWebServices())),
               child: const CreateCommunityScreen(),
             ));
+  }
+
+  late FocusNode searchFocusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    searchFocusNode = FocusNode();
+    searchFocusNode.addListener(_onFocusChangeSearch);
+  }
+
+  void _onFocusChangeSearch() {
+    if (searchFocusNode.hasFocus) {
+      searchFocusNode.unfocus();
+      Navigator.pushNamed(context, searchRouteWeb);
+    }
+    debugPrint("Focus on search: ${searchFocusNode.hasFocus}");
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    searchFocusNode.dispose();
+    searchFocusNode.removeListener(_onFocusChangeSearch);
   }
 
   void routeToPage(val) {
@@ -170,23 +188,25 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
           width: 0.25 * MediaQuery.of(context).size.width,
           height: 40,
           child: TextField(
-              textAlignVertical: TextAlignVertical.center,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderSide: const BorderSide(
-                      width: 1, color: Color.fromRGBO(50, 50, 50, 100)),
-                  borderRadius: BorderRadius.circular(50.0),
-                ),
-                filled: true,
-                hintText: "Search Reddit",
-                isDense: true,
-                hoverColor: const Color.fromRGBO(70, 70, 70, 100),
-                fillColor: const Color.fromRGBO(50, 50, 50, 100),
-                prefixIcon: const Icon(
-                  Icons.search,
-                  size: 25,
-                ),
-              )),
+            focusNode: searchFocusNode,
+            textAlignVertical: TextAlignVertical.center,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderSide: const BorderSide(
+                    width: 1, color: Color.fromRGBO(50, 50, 50, 100)),
+                borderRadius: BorderRadius.circular(50.0),
+              ),
+              filled: true,
+              hintText: "Search Reddit",
+              isDense: true,
+              hoverColor: const Color.fromRGBO(70, 70, 70, 100),
+              fillColor: const Color.fromRGBO(50, 50, 50, 100),
+              prefixIcon: const Icon(
+                Icons.search,
+                size: 25,
+              ),
+            ),
+          ),
         ),
         Row(children: [
           MediaQuery.of(context).size.width < 740

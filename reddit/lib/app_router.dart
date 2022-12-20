@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:reddit/business_logic/cubit/cubit/search/cubit/search_comments_cubit.dart';
+import 'package:reddit/business_logic/cubit/cubit/search/cubit/search_communities_cubit.dart';
 import 'package:reddit/business_logic/cubit/comments/comments_cubit.dart';
 import 'package:reddit/business_logic/cubit/cubit/change_password_cubit.dart';
 import 'package:reddit/business_logic/cubit/cubit/delete_account_cubit.dart';
@@ -35,10 +37,18 @@ import 'package:reddit/presentation/screens/modtools/web/modqueue_web.dart';
 import 'package:reddit/presentation/screens/modtools/web/spam_web.dart';
 import 'package:reddit/presentation/screens/modtools/web/traffic_stats.dart';
 import 'package:reddit/presentation/screens/modtools/web/unmoderated.dart';
+// import 'package:reddit/presentation/screens/profile/other_user_orfile_screen.dart';
+import 'package:reddit/presentation/screens/search/search_web.dart';
+import 'business_logic/cubit/cubit/search/cubit/search_cubit.dart';
+import 'business_logic/cubit/cubit/search/cubit/search_people_cubit.dart';
+import 'business_logic/cubit/cubit/search/cubit/search_posts_cubit.dart';
 import 'package:reddit/presentation/screens/post/post_page.dart';
 import 'package:reddit/presentation/screens/post/post_page_web.dart';
 import 'package:reddit/presentation/screens/profile/other_user_profile_screen.dart';
 import 'business_logic/cubit/feed_settings_cubit.dart';
+import 'data/repository/search_repo.dart';
+import 'data/web_services/search_web_service.dart';
+import 'package:reddit/presentation/screens/profile/other_user_profile_screen.dart';
 import 'business_logic/cubit/left_drawer/left_drawer_cubit.dart';
 import 'data/repository/left_drawer/left_drawer_repository.dart';
 import 'data/web_services/left_drawer/left_drawer_web_services.dart';
@@ -140,6 +150,13 @@ class AppRouter {
   late UserProfileWebServices userProfileWebServices;
   late UserProfileRepository userProfileRepository;
   late UserProfileCubit userProfileCubit;
+
+  late SearchCubit searchCubit;
+  late SearchPostsCubit searchPostsCubit;
+  late SearchCommentsCubit searchCommentsCubit;
+  late SearchCommunitiesCubit searchCommunitiesCubit;
+  late SearchPeopleCubit searchUsersCubit;
+
   late MessagesWebServices messagesWebServices;
   late MessagesRepository messagesRepository;
   late MessagesCubit messagesCubitApproved;
@@ -201,6 +218,12 @@ class AppRouter {
     userProfileRepository = UserProfileRepository(userProfileWebServices);
     userProfileCubit = UserProfileCubit(userProfileRepository);
     followUnfollowCubit = FollowUnfollowCubit(userProfileRepository);
+    searchCubit = SearchCubit(SearchRepo(SearchWebService()));
+    searchPostsCubit = SearchPostsCubit(SearchRepo(SearchWebService()));
+    searchCommentsCubit = SearchCommentsCubit(SearchRepo(SearchWebService()));
+    searchCommunitiesCubit =
+        SearchCommunitiesCubit(SearchRepo(SearchWebService()));
+    searchUsersCubit = SearchPeopleCubit(SearchRepo(SearchWebService()));
 
     messagesWebServices = MessagesWebServices();
     messagesRepository = MessagesRepository(messagesWebServices);
@@ -272,7 +295,8 @@ class AppRouter {
                       value: authCubit,
                     ),
                   ],
-                  child: PopularWeb(),
+                  child: const PopularWeb(),
+                  // child: kIsWeb ? const PopularWeb() : const Popular(),
                 ));
 
       case profilePageRoute:
@@ -606,6 +630,33 @@ class AppRouter {
             builder: (_) => BlocProvider.value(
                   value: settingsCubit,
                   child: const ProfileSettingsScreen(),
+                ));
+      case searchRouteWeb:
+        return MaterialPageRoute(
+            builder: (_) => MultiBlocProvider(
+                  providers: [
+                    BlocProvider(
+                      create: (context) =>
+                          SearchCubit(SearchRepo(SearchWebService())),
+                    ),
+                    BlocProvider(
+                      create: (context) =>
+                          SearchPostsCubit(SearchRepo(SearchWebService())),
+                    ),
+                    BlocProvider(
+                      create: (context) =>
+                          SearchCommentsCubit(SearchRepo(SearchWebService())),
+                    ),
+                    BlocProvider(
+                      create: (context) =>
+                          SearchPeopleCubit(SearchRepo(SearchWebService())),
+                    ),
+                    BlocProvider(
+                      create: (context) => SearchCommunitiesCubit(
+                          SearchRepo(SearchWebService())),
+                    ),
+                  ],
+                  child: const SearchWeb(),
                 ));
       case sendMessageRoute:
         String username = arguments as String;

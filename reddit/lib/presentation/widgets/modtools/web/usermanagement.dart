@@ -116,12 +116,12 @@ class _UserManagementState extends State<UserManagement> {
                         backgroundImage:
                             NetworkImage(approvedUsers![index].profilePic!)),
                 const SizedBox(width: 10),
-                Text(approvedUsers![index].username),
+                Text(approvedUsers![index].username ?? ""),
               ]),
             ),
           ),
         ),
-        SizedBox(width: 148.0 - approvedUsers![index].username.length * 7),
+        SizedBox(width: 148.0 - approvedUsers![index].username!.length * 7),
         Text(
             date.inHours > 24
                 ? '${date.inDays} days ago'
@@ -144,7 +144,7 @@ class _UserManagementState extends State<UserManagement> {
         InkWell(
             onTap: () => BlocProvider.of<ModtoolsCubit>(context)
                 .removeApprovedUser(
-                    widget.subredditId, approvedUsers![index].username),
+                    widget.subredditId, approvedUsers![index].username!),
             child: const Text('Remove',
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)))
       ]),

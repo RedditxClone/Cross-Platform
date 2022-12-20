@@ -95,7 +95,7 @@ class _ApprovedUsersScreenState extends State<ApprovedUsersScreen> {
                         BlocProvider.of<MessagesCubit>(context).sendMessage(
                             subjectController.text,
                             messageController.text,
-                            approvedUsers![index].username);
+                            approvedUsers![index].username ?? "");
                       },
                       child: const Text('Send', style: TextStyle(fontSize: 20)))
                 ],
@@ -193,7 +193,7 @@ class _ApprovedUsersScreenState extends State<ApprovedUsersScreen> {
                       Navigator.pop(context);
                       BlocProvider.of<ModtoolsCubit>(context)
                           .removeApprovedUser(widget.subredditId,
-                              approvedUsers![index].username);
+                              approvedUsers![index].username!);
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,

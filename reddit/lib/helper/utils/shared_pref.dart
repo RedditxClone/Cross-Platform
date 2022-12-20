@@ -22,22 +22,23 @@ class PreferenceUtils {
     return prefs.setString(key.name, value);
   }
 
-  static Future<bool> setBool(String key, bool value) async {
+  static Future<bool> setBool(SharedPrefKeys key, bool value) async {
     var prefs = await _instance;
-    return prefs.setBool(key, value);
+    return prefs.setBool(key.name, value);
   }
 
-  static Future<bool> getBool(String key) async {
+  static Future<bool> getBool(SharedPrefKeys key) async {
     var prefs = await _instance;
-    return prefs.getBool(key) ?? false;
+    return prefs.getBool(key.name) ?? false;
   }
 
-  static Future<bool> setStringList(String key, List<String> list) async {
+  static Future<bool> setStringList(
+      SharedPrefKeys key, List<String> list) async {
     var prefs = await _instance;
-    return prefs.setStringList(key, list);
+    return prefs.setStringList(key.name, list);
   }
 
-  static getStringList(String key) {
-    return _prefsInstance?.getStringList(key) ?? [];
+  static getStringList(SharedPrefKeys key) {
+    return _prefsInstance?.getStringList(key.name) ?? [];
   }
 }
