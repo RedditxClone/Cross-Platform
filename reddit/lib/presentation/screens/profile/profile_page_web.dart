@@ -526,8 +526,9 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
                 radius: 20,
                 backgroundColor: Colors.blue,
                 child: Icon(
-                  Icons.person,
-                  size: 15,
+                  Icons.group,
+                  size: 20,
+                  color: Colors.white,
                 )),
             const SizedBox(width: 10),
             Column(
@@ -576,8 +577,11 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
         children: [
           const Expanded(
             child: Text(
-              'You\'re a moderator of these communiteise',
-              style: TextStyle(color: Colors.grey, fontSize: 16),
+              'You\'re a moderator of these communities',
+              style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold),
             ),
           ),
           BlocBuilder<UserProfileCubit, UserProfileState>(
