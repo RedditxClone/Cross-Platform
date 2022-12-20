@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
       // initialRoute: homePageRoute,
       // initialRoute: tafficRoute,
 
-      initialRoute: allInboxRoute,
+      initialRoute: messageScreenRoute,
 
       // onGenerateInitialRoutes: (String initialRouteName) {
       //   return [

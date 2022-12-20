@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reddit/data/model/message_screen_model.dart';
+import 'package:reddit/business_logic/cubit/message_screen_cubit.dart';
 
 class MessageScreen extends StatefulWidget {
   const MessageScreen({super.key});
@@ -8,56 +11,15 @@ class MessageScreen extends StatefulWidget {
 }
 
 class _MessageScreenState extends State<MessageScreen> {
-  String text1 =
-      '''Thanks for submitting a report to Reddit. Your report and the related content have been processed through our anti-abuse systems for review. It has been determined that the reported content does not violate Reddit’s Content Policy.
+  late List<AllSentMessageModel> allSentMessages;
+  late List<AllMessageInboxModel> allMessagesInbox;
+  late AllMessages allMessages;
 
-If you’d like to restrict contact from the account(s) you reported, you can block them in your Safety and Privacy settings. You can also hide any posts or comments you don’t want to see by selecting Hide from the “…” menu.
-
-If you see any other site policy violations or continue to have problems, submit a new report to let us know and we’ll take further action, as appropriate.
-
-Thanks again for your report, and for looking out for yourself and your fellow redditors. Your reporting helps make Reddit a better, safer, and more welcoming place for everyone.
-
-If you think this decision may have been a mistake, you can send us a message from this link to request your report be re-reviewed.
-
-For your reference, here are additional details about your report:
-
-Report Details
-
-Report Reason: it's promoting hate based on identity or vulnerability
-
-Submitted on: 2022-10-12 15:20:20 UTC
-
-Reported account(s): bemoierian
-
-Link to reported content: https://www.reddit.com/r/redditx_/comments/y1e2vt
-
-This is an automated message; responses will not be received by Reddit admins.
-
-
-Report Reason: it's promoting hate based on identity or vulnerability
-
-Submitted on: 2022-10-12 15:20:20 UTC
-
-Reported account(s): bemoierian
-
-Link to reported content: https://www.reddit.com/r/redditx_/comments/y1e2vt
-
-This is an automated message; responses will not be received by Reddit admins.
-Link to reported content: https://www.reddit.com/r/redditx_/comments/y1e2vt
-
-This is an automated message; responses will not be received by Reddit admins.
-
-
-Report Reason: it's promoting hate based on identity or vulnerability
-
-Submitted on: 2022-10-12 15:20:20 UTC
-
-Reported account(s): bemoierian
-
-Link to reported content: https://www.reddit.com/r/redditx_/comments/y1e2vt
-
-This is an automated message; responses will not be received by Reddit admins.
-''';
+  @override
+  void initState() {
+    super.initState();
+    BlocProvider.of<MessageScreenCubit>(context).getAllMessages();
+  }
 
   Widget createAllMassageContainer(String massageId, String massageTitle,
       String userName, String time, String massageBody, Color c) {
@@ -411,6 +373,55 @@ This is an automated message; responses will not be received by Reddit admins.
     );
   }
 
+  Widget getAllMassageContainerWidgets(
+      List<AllMessageInboxModel> allMessagesList) {
+    return Column(
+        children: allMessagesList
+            .map((message) => createAllMassageContainer(
+                message.id,
+                message.subject,
+                message.authorName,
+                message.createdAt,
+                message.body,
+                const Color.fromARGB(255, 27, 26, 26)))
+            .toList());
+  }
+
+  Widget getAllMessageInbox(List<AllMessageInboxModel> allMessagesList) {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 20, bottom: 100),
+        child: Column(
+            children: <Widget>[getAllMassageContainerWidgets(allMessagesList)]),
+      ),
+    );
+  }
+
+  Widget getAllSendMassageContainerWidgets(
+      List<AllSentMessageModel> allSentMessagesList) {
+    return Column(
+        children: allSentMessagesList
+            .map((message) => createSentMassageContainer(
+                message.id,
+                message.subject,
+                message.destName,
+                message.createdAt,
+                message.body,
+                const Color.fromARGB(255, 27, 26, 26)))
+            .toList());
+  }
+
+  Widget getAllSentMessage(List<AllSentMessageModel> allSentMessagesList) {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 20, bottom: 100),
+        child: Column(children: <Widget>[
+          getAllSendMassageContainerWidgets(allSentMessagesList)
+        ]),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -430,7 +441,7 @@ This is an automated message; responses will not be received by Reddit admins.
               child: Text(
                 'Inbox',
                 style: TextStyle(
-                  color: Color.fromARGB(255, 53, 49, 49),
+                  color: Color.fromARGB(255, 97, 92, 92),
                   fontSize: 15,
                 ),
               ),
@@ -439,57 +450,35 @@ This is an automated message; responses will not be received by Reddit admins.
               child: Text(
                 'Sent', //Will be added in Further Versions Updates
                 style: TextStyle(
-                  color: Color.fromARGB(255, 53, 49, 49),
+                  color: Color.fromARGB(255, 97, 92, 92),
                   fontSize: 15,
                 ),
               ),
             ),
           ]),
         ),
-        body: TabBarView(children: [
-          SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 20, bottom: 100),
-              child: Column(children: <Widget>[
-                createAllMassageContainer(
-                    '1',
-                    'In_The_Name_Of_Allah',
-                    'OmarKh2001',
-                    '2 months',
-                    text1,
-                    const Color.fromARGB(255, 27, 26, 26)),
-                createAllMassageContainer(
-                    '2',
-                    'In the name of God, the Most Gracious, the Most Merciful, God, there is no god but God',
-                    'OKAM2001',
-                    '20 days',
-                    text1,
-                    const Color.fromARGB(255, 53, 49, 49)),
-              ]),
-            ),
-          ),
-          SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 20, bottom: 100),
-              child: Column(children: <Widget>[
-                createSentMassageContainer(
-                    '1',
-                    'In_The_Name_Of_Allah',
-                    'OmarKh2001',
-                    '2 months',
-                    text1,
-                    const Color.fromARGB(255, 27, 26, 26)),
-                createSentMassageContainer(
-                    '2',
-                    'In the name of God, the Most Gracious, the Most Merciful, God, there is no god but God',
-                    'OKAM2001',
-                    '20 days',
-                    text1,
-                    const Color.fromARGB(255, 53, 49, 49)),
-              ]),
-            ),
-          ),
-        ]),
+        body: BlocBuilder<MessageScreenCubit, MessageScreenState>(
+          builder: (context, state) {
+            if (state is AllMessagesLoaded) {
+              allMessages = (state).allMessages;
+              allMessagesInbox = allMessages.getInboxMessages();
+              allSentMessages = allMessages.getSentMessages();
+              print('data in UI');
+              print(allMessages);
+              print(allMessagesInbox);
+              print(allSentMessages);
+              return TabBarView(children: [
+                getAllMessageInbox(allMessagesInbox),
+                getAllSentMessage(allSentMessages),
+              ]);
+            } else {
+              return TabBarView(children: [
+                Container(),
+                Container(),
+              ]);
+            }
+          },
+        ),
       ),
     );
   }
