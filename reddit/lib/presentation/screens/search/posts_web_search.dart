@@ -5,21 +5,21 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:reddit/business_logic/cubit/cubit/search/cubit/search_posts_cubit.dart';
 import 'package:reddit/constants/colors.dart';
 import 'package:reddit/constants/strings.dart';
+import 'package:reddit/data/model/posts/posts_model.dart';
+import 'package:reddit/data/repository/search_repo.dart';
+import 'package:reddit/data/web_services/search_web_service.dart';
+import 'package:reddit/presentation/screens/search/search_web.dart';
 import '../../../constants/theme_colors.dart';
+import '../../../data/model/auth_model.dart';
 
 class PostsWebSearch extends StatefulWidget {
-  final String? searchTerm;
-  const PostsWebSearch({super.key, this.searchTerm});
+  const PostsWebSearch({super.key});
 
   @override
-  // ignore: no_logic_in_create_state
-  State<PostsWebSearch> createState() => _PostsWebSearchState(searchTerm);
+  State<PostsWebSearch> createState() => _PostsWebSearchState();
 }
 
 class _PostsWebSearchState extends State<PostsWebSearch> {
-  final String? searchTerm;
-  _PostsWebSearchState(this.searchTerm);
-
   List<PopupMenuEntry> sortOptionsList = [
     PopupMenuItem(
       value: 0,
@@ -160,16 +160,7 @@ class _PostsWebSearchState extends State<PostsWebSearch> {
   String sortTime = "Time";
   int sortIndex = 0;
   int timeIndex = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    if (searchTerm != null && searchTerm!.isNotEmpty) {
-      BlocProvider.of<SearchPostsCubit>(context)
-          .searchPosts(searchTerm ?? "", sortIndex, timeIndex);
-    }
-  }
-
+  SearchRepo searchRepo = SearchRepo(SearchWebService());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -201,8 +192,12 @@ class _PostsWebSearchState extends State<PostsWebSearch> {
                         sortOption = "Most Comments";
                       }
                       sortIndex = value as int;
-                      BlocProvider.of<SearchPostsCubit>(context)
-                          .searchPosts(searchTerm ?? "", sortIndex, timeIndex);
+                      debugPrint(
+                          "searchTermPost: ${SearchWebState.selectedTerm}");
+                      BlocProvider.of<SearchPostsCubit>(context).searchPosts(
+                          SearchWebState.selectedTerm ?? "",
+                          sortIndex,
+                          timeIndex);
                     },
                     child: Container(
                       padding: const EdgeInsets.all(10),
@@ -246,8 +241,10 @@ class _PostsWebSearchState extends State<PostsWebSearch> {
                         sortTime = "Past Hour";
                       }
                       timeIndex = value as int;
-                      BlocProvider.of<SearchPostsCubit>(context)
-                          .searchPosts(searchTerm ?? "", sortIndex, timeIndex);
+                      BlocProvider.of<SearchPostsCubit>(context).searchPosts(
+                          SearchWebState.selectedTerm ?? "",
+                          sortIndex,
+                          timeIndex);
                     },
                     child: Container(
                       padding: const EdgeInsets.all(10),
@@ -292,9 +289,22 @@ class _PostsWebSearchState extends State<PostsWebSearch> {
                         margin: const EdgeInsets.all(10),
                         child: ListTile(
                           onTap: () {
-                            //navigate to post page
+                            if (UserData.isLoggedIn) {
+                              searchRepo
+                                  .getPostData(state.posts[index].id ?? '')
+                                  .then((value) {
+                                Navigator.of(context)
+                                    .pushNamed(postPageRoute, arguments: {
+                                  "post": PostsModel.fromJson(value),
+                                  "subredditID":
+                                      state.posts[index].subreddit!.id,
+                                });
+                              });
+                            }
                           },
-                          mouseCursor: SystemMouseCursors.click,
+                          mouseCursor: UserData.isLoggedIn
+                              ? SystemMouseCursors.click
+                              : SystemMouseCursors.basic,
                           title: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -329,7 +339,9 @@ class _PostsWebSearchState extends State<PostsWebSearch> {
                                           ),
                                         ),
                                         onPressed: () {
-                                          //navigate to subreddit page
+                                          //TODO: navigate to subreddit page
+                                          debugPrint(
+                                              "navigate to subreddit page from posts");
                                         },
                                       ),
                                       InkWell(
@@ -341,6 +353,24 @@ class _PostsWebSearchState extends State<PostsWebSearch> {
                                         ),
                                         onTap: () {
                                           //navigate to the profile user page
+                                          if (UserData.isLoggedIn) {
+                                            if (state.posts[index].user!
+                                                    .userId ==
+                                                UserData.user!.userId) {
+                                              Navigator.pushNamed(
+                                                  context, profilePageRoute);
+                                            } else {
+                                              Navigator.pushNamed(context,
+                                                  otherProfilePageRoute,
+                                                  arguments: state.posts[index]
+                                                      .user!.username);
+                                            }
+                                          } else {
+                                            Navigator.pushNamed(
+                                                context, otherProfilePageRoute,
+                                                arguments: state.posts[index]
+                                                    .user!.username);
+                                          }
                                         },
                                       ),
                                     ],

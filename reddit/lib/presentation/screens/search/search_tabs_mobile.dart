@@ -6,24 +6,19 @@ import 'package:reddit/presentation/screens/search/comments_web_search.dart';
 import 'package:reddit/presentation/screens/search/communities_web_search.dart';
 import 'package:reddit/presentation/screens/search/people_web_search.dart';
 import 'package:reddit/presentation/screens/search/posts_web_search.dart';
-
 import '../../../business_logic/cubit/cubit/search/cubit/search_comments_cubit.dart';
 import '../../../business_logic/cubit/cubit/search/cubit/search_communities_cubit.dart';
 import '../../../business_logic/cubit/cubit/search/cubit/search_people_cubit.dart';
 import '../../../business_logic/cubit/cubit/search/cubit/search_posts_cubit.dart';
 
 class SearchTabsMobile extends StatefulWidget {
-  const SearchTabsMobile({super.key, this.searchTerm});
-  final String? searchTerm;
+  const SearchTabsMobile({super.key});
 
   @override
-  State<SearchTabsMobile> createState() => _SearchTabsMobileState(searchTerm);
+  State<SearchTabsMobile> createState() => _SearchTabsMobileState();
 }
 
 class _SearchTabsMobileState extends State<SearchTabsMobile> {
-  final String? searchTerm;
-
-  _SearchTabsMobileState(this.searchTerm);
   static const tabTitleStyle = TextStyle(
     fontSize: 9,
     fontWeight: FontWeight.bold,
@@ -91,12 +86,20 @@ class _SearchTabsMobileState extends State<SearchTabsMobile> {
                     value: BlocProvider.of<SearchCommentsCubit>(context),
                     child: const CommentsWebSearch(),
                   ),
-                  BlocProvider.value(
-                    value: BlocProvider.of<SearchCommunitiesCubit>(context),
+                  MultiBlocProvider(
+                    providers: [
+                      BlocProvider.value(
+                        value: BlocProvider.of<SearchCommunitiesCubit>(context),
+                      ),
+                    ],
                     child: const CommunitiesWebSearch(),
                   ),
-                  BlocProvider.value(
-                    value: BlocProvider.of<SearchPeopleCubit>(context),
+                  MultiBlocProvider(
+                    providers: [
+                      BlocProvider.value(
+                        value: BlocProvider.of<SearchPeopleCubit>(context),
+                      ),
+                    ],
                     child: const PeopleWebSearch(),
                   ),
                 ],

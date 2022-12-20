@@ -4,22 +4,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:reddit/business_logic/cubit/cubit/search/cubit/search_comments_cubit.dart';
-
-import '../../../business_logic/cubit/cubit/search/cubit/search_cubit.dart';
 import '../../../constants/colors.dart';
+import '../../../constants/strings.dart';
+import '../../../data/model/auth_model.dart';
+import '../../../data/model/posts/posts_model.dart';
+import '../../../data/repository/search_repo.dart';
+import '../../../data/web_services/search_web_service.dart';
 
 class CommentsWebSearch extends StatefulWidget {
-  const CommentsWebSearch({super.key, this.searchTerm});
-  final String? searchTerm;
+  const CommentsWebSearch({super.key});
 
   @override
-  State<CommentsWebSearch> createState() => _CommentsWebSearchState(searchTerm);
+  State<CommentsWebSearch> createState() => _CommentsWebSearchState();
 }
 
 class _CommentsWebSearchState extends State<CommentsWebSearch> {
-  final String? searchTerm;
-
-  _CommentsWebSearchState(this.searchTerm);
+  _CommentsWebSearchState();
+  SearchRepo searchRepo = SearchRepo(SearchWebService());
 
   @override
   Widget build(BuildContext context) {
@@ -39,11 +40,25 @@ class _CommentsWebSearchState extends State<CommentsWebSearch> {
                         ),
                         margin: const EdgeInsets.all(10),
                         child: ListTile(
-                          mouseCursor: SystemMouseCursors.click,
+                          mouseCursor: UserData.isLoggedIn
+                              ? SystemMouseCursors.click
+                              : SystemMouseCursors.basic,
                           title: InkWell(
                             onTap: () {
                               //navigate to the post page
-                              debugPrint("navigate to the post page");
+                              if (UserData.isLoggedIn) {
+                                searchRepo
+                                    .getPostData(
+                                        state.comments[index].post!.id ?? '')
+                                    .then((value) {
+                                  Navigator.of(context)
+                                      .pushNamed(postPageRoute, arguments: {
+                                    "post": PostsModel.fromJson(value),
+                                    "subredditID":
+                                        state.comments[index].subreddit!.id,
+                                  });
+                                });
+                              }
                             },
                             child: Wrap(
                               direction: Axis.vertical,
@@ -75,7 +90,7 @@ class _CommentsWebSearchState extends State<CommentsWebSearch> {
                                         ),
                                       ),
                                       onPressed: () {
-                                        //navigate to subreddit page
+                                        //TODO: navigate to subreddit page
                                       },
                                     ),
                                     InkWell(
@@ -87,6 +102,24 @@ class _CommentsWebSearchState extends State<CommentsWebSearch> {
                                       ),
                                       onTap: () {
                                         //navigate to the profile user page
+                                        if (UserData.isLoggedIn) {
+                                          if (state.comments[index].postOwner!
+                                                  .userId ==
+                                              UserData.user!.userId) {
+                                            Navigator.pushNamed(
+                                                context, profilePageRoute);
+                                          } else {
+                                            Navigator.pushNamed(
+                                                context, otherProfilePageRoute,
+                                                arguments: state.comments[index]
+                                                    .postOwner!.username);
+                                          }
+                                        } else {
+                                          Navigator.pushNamed(
+                                              context, otherProfilePageRoute,
+                                              arguments: state.comments[index]
+                                                  .postOwner!.username);
+                                        }
                                       },
                                     ),
                                   ],
@@ -121,7 +154,9 @@ class _CommentsWebSearchState extends State<CommentsWebSearch> {
                           ),
                           subtitle: ListTile(
                             style: ListTileStyle.list,
-                            mouseCursor: SystemMouseCursors.click,
+                            mouseCursor: UserData.isLoggedIn
+                                ? SystemMouseCursors.click
+                                : SystemMouseCursors.basic,
                             title: Container(
                               padding: const EdgeInsets.all(20),
                               decoration: BoxDecoration(
@@ -135,11 +170,37 @@ class _CommentsWebSearchState extends State<CommentsWebSearch> {
                                   Wrap(
                                     spacing: 5,
                                     children: [
-                                      Text(
-                                        state.comments[index].user!.username ??
-                                            "",
-                                        style: const TextStyle(
-                                          color: Colors.white,
+                                      InkWell(
+                                        onTap: () {
+                                          //navigate to the profile user page
+                                          if (UserData.isLoggedIn) {
+                                            if (state.comments[index].user!
+                                                    .userId ==
+                                                UserData.user!.userId) {
+                                              Navigator.pushNamed(
+                                                  context, profilePageRoute);
+                                            } else {
+                                              Navigator.pushNamed(context,
+                                                  otherProfilePageRoute,
+                                                  arguments: state
+                                                      .comments[index]
+                                                      .user!
+                                                      .username);
+                                            }
+                                          } else {
+                                            Navigator.pushNamed(
+                                                context, otherProfilePageRoute,
+                                                arguments: state.comments[index]
+                                                    .user!.username);
+                                          }
+                                        },
+                                        child: Text(
+                                          state.comments[index].user!
+                                                  .username ??
+                                              "",
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                          ),
                                         ),
                                       ),
                                       Text(
@@ -167,8 +228,20 @@ class _CommentsWebSearchState extends State<CommentsWebSearch> {
                               ),
                             ),
                             onTap: () {
-                              //navigate to the comment
-                              debugPrint("navigate to the comment");
+                              //navigate to the post page
+                              if (UserData.isLoggedIn) {
+                                searchRepo
+                                    .getPostData(
+                                        state.comments[index].post!.id ?? '')
+                                    .then((value) {
+                                  Navigator.of(context)
+                                      .pushNamed(postPageRoute, arguments: {
+                                    "post": PostsModel.fromJson(value),
+                                    "subredditID":
+                                        state.comments[index].subreddit!.id,
+                                  });
+                                });
+                              }
                             },
                           ),
                         ),

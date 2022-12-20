@@ -23,26 +23,28 @@ class SearchPeopleCubit extends Cubit<SearchPeopleState> {
   }
 
   /// [userId] : [String] The id of the user to follow.
+  /// [word] : [String] The word to search for.
   ///
   /// This function makes the request to the server to follow the user.
   /// This function calls the function [SearchRepo.follow] which makes the request to the server.
-  /// It emits the state [FollowUser] which contains the boolean value of the follow.
+  /// Then it calls the function [searchPeople] to get the users again.
   /// If the user is followed it will be true, otherwise it will be false.
-  void follow(String userId) {
+  void follow(String userId, String word) {
     searchRepo.follow(userId).then((value) {
-      emit(FollowUser(value));
+      searchPeople(word);
     });
   }
 
   /// [userId] : [String] The id of the user to unfollow.
-  /// 
+  /// [word] : [String] The word to search for.
+  ///
   /// This function makes the request to the server to unfollow the user.
   /// This function calls the function [SearchRepo.unfollow] which makes the request to the server.
-  /// It emits the state [FollowUser] which contains the boolean value of the follow.
+  /// Then it calls the function [searchPeople] to get the users again.
   /// If the user is followed it will be true, otherwise it will be false.
-  void unfollow(String userId) {
+  void unfollow(String userId, String word) {
     searchRepo.unfollow(userId).then((value) {
-      emit(FollowUser(value));
+      searchPeople(word);
     });
   }
 }

@@ -23,15 +23,14 @@ class SearchCommunitiesCubit extends Cubit<SearchCommunitiesState> {
   }
 
   /// [communityId] : [String] The id of the community to join.
+  /// [word] : [String] The word to search for.
   ///
   ///  This function makes the request to the server to join the community.
   /// This function calls the function [SearchRepo.joinSubreddit] which makes the request to the server.
-  /// It emits the state [JoinCommunity] which contains the result of the request.
-  /// If the request is successful it emits the state [JoinCommunity] with the value [true].
-  /// If the request is not successful it emits the state [JoinCommunity] with the value [false].
-  void joinCommunity(String communityId) {
+  /// This function calls the function [searchCommunities] to get the communities for the word we search for.
+  void joinCommunity(String communityId, String word) {
     searchRepo.joinSubreddit(communityId).then((value) {
-      emit(JoinCommunity(value));
+      searchCommunities(word);
     });
   }
 
@@ -39,12 +38,10 @@ class SearchCommunitiesCubit extends Cubit<SearchCommunitiesState> {
   ///
   /// This function makes the request to the server to leave the community.
   /// This function calls the function [SearchRepo.leaveSubreddit] which makes the request to the server.
-  /// It emits the state [LeaveCommunity] which contains the result of the request.
-  /// If the request is successful it emits the state [JoinCommunity] with the value [true].
-  /// If the request is not successful it emits the state [JoinCommunity] with the value [false].
-  void leaveCommunity(String communityId) {
+  /// This function calls the function [searchCommunities] to get the communities for the word we search for.
+  void leaveCommunity(String communityId, String word) {
     searchRepo.leaveSubreddit(communityId).then((value) {
-      emit(JoinCommunity(value));
+      searchCommunities(word);
     });
   }
 }

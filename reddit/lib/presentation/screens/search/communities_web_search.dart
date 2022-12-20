@@ -1,30 +1,20 @@
-// ignore_for_file: no_logic_in_create_state
 
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:reddit/business_logic/cubit/cubit/search/cubit/search_communities_cubit.dart';
 import 'package:reddit/data/model/auth_model.dart';
-
-import '../../../business_logic/cubit/cubit/search/cubit/search_cubit.dart';
+import 'package:reddit/presentation/screens/search/search_web.dart';
 import '../../../constants/colors.dart';
 
 class CommunitiesWebSearch extends StatefulWidget {
-  const CommunitiesWebSearch({super.key, this.searchTerm});
-  final String? searchTerm;
-
+  const CommunitiesWebSearch({super.key});
   @override
   State<CommunitiesWebSearch> createState() =>
-      _CommunitiesWebSearchState(searchTerm);
+      _CommunitiesWebSearchState();
 }
 
 class _CommunitiesWebSearchState extends State<CommunitiesWebSearch> {
-  final String? searchTerm;
-
-  _CommunitiesWebSearchState(this.searchTerm);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,7 +33,9 @@ class _CommunitiesWebSearchState extends State<CommunitiesWebSearch> {
                         ),
                         margin: const EdgeInsets.all(10),
                         child: ListTile(
-                          mouseCursor: SystemMouseCursors.click,
+                            mouseCursor: UserData.isLoggedIn
+                                ? SystemMouseCursors.click
+                                : SystemMouseCursors.basic,
                           title: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -78,6 +70,7 @@ class _CommunitiesWebSearchState extends State<CommunitiesWebSearch> {
                                           ],
                                         ),
                                         onTap: () {
+                                          //TODO: go to community
                                           debugPrint("go to community");
                                         },
                                       ),
@@ -97,90 +90,134 @@ class _CommunitiesWebSearchState extends State<CommunitiesWebSearch> {
                                   ),
                                 ],
                               ),
+                              // UserData.isLoggedIn
+                              //     ? BlocBuilder<SearchJoinSubRedditCubit,
+                              //         SearchJoinSubRedditState>(
+                              //         builder: (context, state2) {
+                              //           if (state2 is JoinCommunity) {
+                              //             isJoined = state2.joined;
+                              //             return ElevatedButton(
+                              //               onPressed: () {
+                              //                 //call the function to join the community
+                              //                 if (isJoined) {
+                              //                   //call the function to leave the community
+                              //                   BlocProvider.of<
+                              //                               SearchJoinSubRedditCubit>(
+                              //                           context)
+                              //                       .leaveCommunity(state
+                              //                           .communities[index]
+                              //                           .id!);
+                              //                 } else {
+                              //                   //call the function to join the community
+                              //                   BlocProvider.of<
+                              //                               SearchJoinSubRedditCubit>(
+                              //                           context)
+                              //                       .joinCommunity(state
+                              //                           .communities[index]
+                              //                           .id!);
+                              //                 }
+                              //               },
+                              //               style: ElevatedButton.styleFrom(
+                              //                 backgroundColor:
+                              //                     const Color.fromARGB(
+                              //                         255, 101, 99, 99),
+                              //                 shadowColor: Colors.transparent,
+                              //                 shape: RoundedRectangleBorder(
+                              //                   borderRadius:
+                              //                       BorderRadius.circular(20),
+                              //                 ),
+                              //               ),
+                              //               child: Text(
+                              //                 isJoined ? "Joined" : "Join",
+                              //                 style: const TextStyle(
+                              //                   color: Colors.white,
+                              //                   fontWeight: FontWeight.bold,
+                              //                 ),
+                              //               ),
+                              //             );
+                              //           }
+                              //           return ElevatedButton(
+                              //             onPressed: () {
+                              //               //call the function to join the community
+                              //               if (isJoined) {
+                              //                 //call the function to leave the community
+                              //                 BlocProvider.of<
+                              //                             SearchJoinSubRedditCubit>(
+                              //                         context)
+                              //                     .leaveCommunity(state
+                              //                         .communities[index].id!);
+                              //               } else {
+                              //                 //call the function to join the community
+                              //                 BlocProvider.of<
+                              //                             SearchJoinSubRedditCubit>(
+                              //                         context)
+                              //                     .joinCommunity(state
+                              //                         .communities[index].id!);
+                              //               }
+                              //             },
+                              //             style: ElevatedButton.styleFrom(
+                              //               backgroundColor:
+                              //                   const Color.fromARGB(
+                              //                       255, 101, 99, 99),
+                              //               shadowColor: Colors.transparent,
+                              //               shape: RoundedRectangleBorder(
+                              //                 borderRadius:
+                              //                     BorderRadius.circular(20),
+                              //               ),
+                              //             ),
+                              //             child: Text(
+                              //               isJoined ? "Joined" : "Join",
+                              //               style: const TextStyle(
+                              //                 color: Colors.white,
+                              //                 fontWeight: FontWeight.bold,
+                              //               ),
+                              //             ),
+                              //           );
+                              //         },
+                              //       )
+                              //     : const SizedBox(
+                              //         height: 0,
+                              //       ),
                               UserData.isLoggedIn
-                                  ? BlocBuilder<SearchCommunitiesCubit,
-                                      SearchCommunitiesState>(
-                                      builder: (context, state2) {
-                                        if (state2 is JoinCommunity) {
-                                          isJoined = state2.joined;
-                                          return ElevatedButton(
-                                            onPressed: () {
-                                              //call the function to join the community
-                                              if (isJoined) {
-                                                //call the function to leave the community
-                                                BlocProvider.of<
-                                                            SearchCommunitiesCubit>(
-                                                        context)
-                                                    .leaveCommunity(state
-                                                        .communities[index]
-                                                        .id!);
-                                              } else {
-                                                //call the function to join the community
-                                                BlocProvider.of<
-                                                            SearchCommunitiesCubit>(
-                                                        context)
-                                                    .joinCommunity(state
-                                                        .communities[index]
-                                                        .id!);
-                                              }
-                                            },
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor:
-                                                  const Color.fromARGB(
-                                                      255, 101, 99, 99),
-                                              shadowColor: Colors.transparent,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                              ),
-                                            ),
-                                            child: Text(
-                                              isJoined ? "Joined" : "Join",
-                                              style: const TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          );
+                                  ? ElevatedButton(
+                                      onPressed: () {
+                                        //call the function to join the community
+                                        if (isJoined) {
+                                          //call the function to leave the community
+                                          BlocProvider.of<
+                                                      SearchCommunitiesCubit>(
+                                                  context)
+                                              .leaveCommunity(
+                                                  state.communities[index].id!,
+                                                  SearchWebState.selectedTerm ??
+                                                      "");
+                                        } else {
+                                          //call the function to join the community
+                                          BlocProvider.of<
+                                                      SearchCommunitiesCubit>(
+                                                  context)
+                                              .joinCommunity(
+                                                  state.communities[index].id!,
+                                                  SearchWebState.selectedTerm ??
+                                                      "");
                                         }
-                                        return ElevatedButton(
-                                          onPressed: () {
-                                            //call the function to join the community
-                                            if (isJoined) {
-                                              //call the function to leave the community
-                                              BlocProvider.of<
-                                                          SearchCommunitiesCubit>(
-                                                      context)
-                                                  .leaveCommunity(state
-                                                      .communities[index].id!);
-                                            } else {
-                                              //call the function to join the community
-                                              BlocProvider.of<
-                                                          SearchCommunitiesCubit>(
-                                                      context)
-                                                  .joinCommunity(state
-                                                      .communities[index].id!);
-                                            }
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                                const Color.fromARGB(
-                                                    255, 101, 99, 99),
-                                            shadowColor: Colors.transparent,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                            ),
-                                          ),
-                                          child: Text(
-                                            isJoined ? "Joined" : "Join",
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        );
                                       },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: const Color.fromARGB(
+                                            255, 101, 99, 99),
+                                        shadowColor: Colors.transparent,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        isJoined ? "Joined" : "Join",
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
                                     )
                                   : const SizedBox(
                                       height: 0,
@@ -188,7 +225,7 @@ class _CommunitiesWebSearchState extends State<CommunitiesWebSearch> {
                             ],
                           ),
                           onTap: () {
-                            //navigate to the subreddit page
+                            //TODO:navigate to the subreddit page
                           },
                         ),
                       );

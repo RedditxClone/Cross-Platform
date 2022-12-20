@@ -580,21 +580,6 @@ class AppRouter {
                       create: (context) => SearchCommunitiesCubit(
                           SearchRepo(SearchWebService())),
                     ),
-                    // BlocProvider(
-                    //   create: (context) => searchCubit,
-                    // ),
-                    // BlocProvider(
-                    //   create: (context) => searchPostsCubit,
-                    // ),
-                    // BlocProvider(
-                    //   create: (context) => searchCommentsCubit,
-                    // ),
-                    // BlocProvider(
-                    //   create: (context) => searchUsersCubit,
-                    // ),
-                    // BlocProvider(
-                    //   create: (context) => searchCommunitiesCubit,
-                    // ),
                   ],
                   child: const SearchWeb(),
                 ));

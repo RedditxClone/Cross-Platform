@@ -246,15 +246,15 @@ class SearchRepo {
   Future<bool> leaveSubreddit(String subredditId) async {
     Response res = await searchWebService.leaveSubreddit(subredditId);
     if (res.statusCode == 201) {
-      return true;
+      return false;
     } else {
       debugPrint(res.statusCode.toString());
-      return false;
+      return true;
     }
   }
 
   /// [userId] : the id of user to be followed
-  /// 
+  ///
   /// This function makes the request to the server to follow the user.
   /// This function calls the function [SearchWebService.follow] which makes the request to the server.
   /// Returns [bool] that indicates if the user followed the user or not.
@@ -269,17 +269,31 @@ class SearchRepo {
   }
 
   /// [userId] : the id of user to be unfollowed
-  /// 
+  ///
   /// This function makes the request to the server to unfollow the user.
   /// This function calls the function [SearchWebService.unfollow] which makes the request to the server.
   /// Returns [bool] that indicates if the user unfollowed the user or not.
   Future<bool> unfollow(String userId) async {
     Response res = await searchWebService.unfollow(userId);
     if (res.statusCode == 201) {
-      return true;
+      return false;
     } else {
       debugPrint(res.statusCode.toString());
-      return false;
+      return true;
+    }
+  }
+
+  /// [postId] : [String] The id of the post.
+  /// 
+  /// This function makes the request to the server to get the post data.
+  /// This function calls the function [SearchWebService.getPostData] which makes the request to the server.
+  /// Returns [Future] that contains the post data.
+  Future getPostData(String postId) async {
+    Response res = await searchWebService.getPostData(postId);
+    if (res.statusCode == 200) {
+      return res.data;
+    } else {
+      return null;
     }
   }
 }

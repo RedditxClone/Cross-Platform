@@ -19,16 +19,16 @@ class SearchWeb extends StatefulWidget {
   const SearchWeb({super.key});
 
   @override
-  State<SearchWeb> createState() => _SearchWebState();
+  State<SearchWeb> createState() => SearchWebState();
 }
 
-class _SearchWebState extends State<SearchWeb> {
+class SearchWebState extends State<SearchWeb> {
   static const historyLength = 5; //max number of search history items
   late List<String>
       _searchHistory; //we wiil user this list reversed so the last item will be the first item in the list
   late List<String> _searchHistoryId;
   late FloatingSearchBarController _searchBarController;
-  String? selectedTerm;
+  static String? selectedTerm;
   String? currentQuery;
   @override
   void initState() {
@@ -417,11 +417,8 @@ class _SearchWebState extends State<SearchWeb> {
             _searchBarController.close();
           },
           body: kIsWeb
-              ? SearchTabs(
-                  searchTerm: selectedTerm,
-                )
-              : SearchTabsMobile(
-                  searchTerm: selectedTerm,
+              ? const SearchTabs()
+              : const SearchTabsMobile(
                 ),
           // body: BlocBuilder<SearchCubit, SearchState>(
           //   builder: (context, state) {

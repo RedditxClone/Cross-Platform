@@ -1,25 +1,19 @@
-// ignore_for_file: no_logic_in_create_state
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reddit/constants/colors.dart';
-
+import 'package:reddit/presentation/screens/search/search_web.dart';
 import '../../../business_logic/cubit/cubit/search/cubit/search_people_cubit.dart';
+import '../../../constants/strings.dart';
 import '../../../data/model/auth_model.dart';
 
 class PeopleWebSearch extends StatefulWidget {
-  const PeopleWebSearch({super.key, this.searchTerm});
-  final String? searchTerm;
+  const PeopleWebSearch({super.key});
 
   @override
-  State<PeopleWebSearch> createState() => _PeopleWebSearchState(searchTerm);
+  State<PeopleWebSearch> createState() => _PeopleWebSearchState();
 }
 
 class _PeopleWebSearchState extends State<PeopleWebSearch> {
-  final String? searchTerm;
-
-  _PeopleWebSearchState(this.searchTerm);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,7 +75,25 @@ class _PeopleWebSearchState extends State<PeopleWebSearch> {
                                       ),
                                     ),
                                     onPressed: () {
-                                      //TODO:navigate to subreddit page
+                                      if (UserData.isLoggedIn) {
+                                        if (state.users[index].userId ==
+                                            UserData.user!.userId) {
+                                          Navigator.pushNamed(
+                                              context, profilePageRoute);
+                                        } else {
+                                          Navigator.pushNamed(
+                                              context, otherProfilePageRoute,
+                                              arguments:
+                                                  state.users[index].username);
+                                        }
+                                      } else {
+                                        Navigator.pushNamed(
+                                          context,
+                                          otherProfilePageRoute,
+                                          arguments:
+                                              state.users[index].username,
+                                        );
+                                      }
                                     },
                                   ),
                                   Text(
@@ -94,99 +106,158 @@ class _PeopleWebSearchState extends State<PeopleWebSearch> {
                                 ],
                               ),
                               UserData.isLoggedIn
-                                  ? BlocBuilder<SearchPeopleCubit,
-                                      SearchPeopleState>(
-                                      builder: (context, state2) {
-                                        if (state2 is FollowUser) {
-                                          isFollowed = state2.followed;
-                                          return ElevatedButton(
-                                            onPressed: () {
-                                              //call the function to join the community
-                                              //request to follow the other user only if the user is logged in
-                                              if (isFollowed) {
-                                                //unfollow the user
-                                                BlocProvider.of<
-                                                            SearchPeopleCubit>(
-                                                        context)
-                                                    .unfollow(state
-                                                        .users[index].userId!);
-                                              } else {
-                                                //follow the user
-                                                BlocProvider.of<
-                                                            SearchPeopleCubit>(
-                                                        context)
-                                                    .follow(state
-                                                        .users[index].userId!);
-                                              }
-                                            },
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor:
-                                                  const Color.fromARGB(
-                                                      255, 101, 99, 99),
-                                              shadowColor: Colors.transparent,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                              ),
-                                            ),
-                                            child: Text(
-                                              isFollowed
-                                                  ? "Unfollow"
-                                                  : "Follow",
-                                              style: const TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          );
+                                  ? ElevatedButton(
+                                      onPressed: () {
+                                        //call the function to join the community
+                                        //request to follow the other user only if the user is logged in
+                                        if (isFollowed) {
+                                          //unfollow the user
+                                          BlocProvider.of<SearchPeopleCubit>(
+                                                  context)
+                                              .unfollow(
+                                                  state.users[index].userId!,
+                                                  SearchWebState.selectedTerm ??
+                                                      "");
+                                        } else {
+                                          //follow the user
+                                          BlocProvider.of<SearchPeopleCubit>(
+                                                  context)
+                                              .follow(
+                                                  state.users[index].userId!,
+                                                  SearchWebState.selectedTerm ??
+                                                      "");
                                         }
-                                        return ElevatedButton(
-                                          onPressed: () {
-                                            //call the function to join the community
-                                            //request to follow the other user only if the user is logged in
-                                            if (isFollowed) {
-                                              //unfollow the user
-                                              BlocProvider.of<
-                                                          SearchPeopleCubit>(
-                                                      context)
-                                                  .unfollow(state
-                                                      .users[index].userId!);
-                                            } else {
-                                              //follow the user
-                                              BlocProvider.of<
-                                                          SearchPeopleCubit>(
-                                                      context)
-                                                  .follow(state
-                                                      .users[index].userId!);
-                                            }
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                                const Color.fromARGB(
-                                                    255, 101, 99, 99),
-                                            shadowColor: Colors.transparent,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                            ),
-                                          ),
-                                          child: Text(
-                                            isFollowed ? "Unfollow" : "Follow",
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        );
                                       },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: const Color.fromARGB(
+                                            255, 101, 99, 99),
+                                        shadowColor: Colors.transparent,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        isFollowed ? "Unfollow" : "Follow",
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
                                     )
                                   : const SizedBox(
                                       height: 0,
                                     ),
+                              // UserData.isLoggedIn
+                              //     ? BlocBuilder<SearchFollowCubit,
+                              //         SearchFollowState>(
+                              //         builder: (context, state2) {
+                              //           if (state2 is FollowUser) {
+                              //             isFollowed = state2.followed;
+                              //             return ElevatedButton(
+                              //               onPressed: () {
+                              //                 //call the function to join the community
+                              //                 //request to follow the other user only if the user is logged in
+                              //                 if (isFollowed) {
+                              //                   //unfollow the user
+                              //                   BlocProvider.of<
+                              //                               SearchFollowCubit>(
+                              //                           context)
+                              //                       .unfollow(state
+                              //                           .users[index].userId!);
+                              //                 } else {
+                              //                   //follow the user
+                              //                   BlocProvider.of<
+                              //                               SearchFollowCubit>(
+                              //                           context)
+                              //                       .follow(state
+                              //                           .users[index].userId!);
+                              //                 }
+                              //               },
+                              //               style: ElevatedButton.styleFrom(
+                              //                 backgroundColor:
+                              //                     const Color.fromARGB(
+                              //                         255, 101, 99, 99),
+                              //                 shadowColor: Colors.transparent,
+                              //                 shape: RoundedRectangleBorder(
+                              //                   borderRadius:
+                              //                       BorderRadius.circular(20),
+                              //                 ),
+                              //               ),
+                              //               child: Text(
+                              //                 isFollowed
+                              //                     ? "Unfollow"
+                              //                     : "Follow",
+                              //                 style: const TextStyle(
+                              //                   color: Colors.white,
+                              //                   fontWeight: FontWeight.bold,
+                              //                 ),
+                              //               ),
+                              //             );
+                              //           }
+                              //           return ElevatedButton(
+                              //             onPressed: () {
+                              //               //call the function to join the community
+                              //               //request to follow the other user only if the user is logged in
+                              //               if (isFollowed) {
+                              //                 //unfollow the user
+                              //                 BlocProvider.of<
+                              //                             SearchFollowCubit>(
+                              //                         context)
+                              //                     .unfollow(state
+                              //                         .users[index].userId!);
+                              //               } else {
+                              //                 //follow the user
+                              //                 BlocProvider.of<
+                              //                             SearchFollowCubit>(
+                              //                         context)
+                              //                     .follow(state
+                              //                         .users[index].userId!);
+                              //               }
+                              //             },
+                              //             style: ElevatedButton.styleFrom(
+                              //               backgroundColor:
+                              //                   const Color.fromARGB(
+                              //                       255, 101, 99, 99),
+                              //               shadowColor: Colors.transparent,
+                              //               shape: RoundedRectangleBorder(
+                              //                 borderRadius:
+                              //                     BorderRadius.circular(20),
+                              //               ),
+                              //             ),
+                              //             child: Text(
+                              //               isFollowed ? "Unfollow" : "Follow",
+                              //               style: const TextStyle(
+                              //                 color: Colors.white,
+                              //                 fontWeight: FontWeight.bold,
+                              //               ),
+                              //             ),
+                              //           );
+                              //         },
+                              //       )
+                              //     : const SizedBox(
+                              //         height: 0,
+                              //       ),
                             ],
                           ),
                           onTap: () {
-                            //navigate to the user page
+                            //navigate to the profile user page
+                            if (UserData.isLoggedIn) {
+                              if (state.users[index].userId ==
+                                  UserData.user!.userId) {
+                                Navigator.pushNamed(context, profilePageRoute);
+                              } else {
+                                Navigator.pushNamed(
+                                    context, otherProfilePageRoute,
+                                    arguments: state.users[index].username);
+                              }
+                            } else {
+                              Navigator.pushNamed(
+                                context,
+                                otherProfilePageRoute,
+                                arguments: state.users[index].username,
+                              );
+                            }
                           },
                         ),
                       );

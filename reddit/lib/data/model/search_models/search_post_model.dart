@@ -4,7 +4,7 @@ import 'package:reddit/data/model/search_models/search_communities_model.dart';
 import '../auth_model.dart';
 
 class SearchPostModel {
-  String? _id;
+  String? id;
   String? title;
   int? commentsCount;
   int? votesCount;
@@ -18,7 +18,7 @@ class SearchPostModel {
   bool? nsfw;
   bool? spoiler;
   SearchPostModel.fromJson(Map<String, dynamic> json) {
-    _id = json['_id'] ?? "";
+    id = json['_id'] ?? "";
     title = json['title'] ?? "";
     debugPrint("postTitle $title");
     commentsCount = json['commentCount'] ?? 0;
@@ -48,6 +48,22 @@ class SearchPostModel {
     }
     nsfw = json['nsfw'] ?? false;
     spoiler = json['spoiler'] ?? false;
-    debugPrint("postID $_id");
+    debugPrint("postID $id");
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'title': title,
+      'commentCount': commentsCount,
+      'votesCount': votesCount,
+      'user': user!.toJson(),
+      'subreddit': subreddit!.toJson(),
+      'images': images,
+      'createdDate': creationDate.toString(),
+      'publishedDate': publishDate.toString(),
+      'nsfw': nsfw,
+      'spoiler': spoiler,
+    };
   }
 }

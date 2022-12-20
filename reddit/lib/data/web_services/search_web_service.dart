@@ -192,4 +192,23 @@ class SearchWebService {
       return e.response;
     }
   }
+
+  /// [postId] : [String] The id of the post.
+  /// 
+  /// This function makes the request to the server to get the post data.
+  /// This function calls the function [DioHelper.getDataWithHeaders] which makes the request to the server.
+  /// Returns the response from the server.
+  Future getPostData(String postId) async {
+    try {
+      Response res = await DioHelper.getDataWithHeaders(
+        url: 'post/$postId',
+        query: {},
+        headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+      );
+      return res;
+    } on DioError catch (e) {
+      debugPrint("from getPostData $e");
+      return e.response;
+    }
+  }
 }

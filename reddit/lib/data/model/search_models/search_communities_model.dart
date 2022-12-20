@@ -18,4 +18,16 @@ class SearchComminityModel {
     creationDate =
         DateTime.parse(json['createdDate'] ?? DateTime.now().toString());
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "_id": id,
+      "name": name,
+      "users": users,
+      "joined": joined,
+      "flairList": flairList,
+      "categories": categories,
+      "createdDate": creationDate!.toString(),
+    };
+  }
 }

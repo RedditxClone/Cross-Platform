@@ -9,8 +9,3 @@ class GetSearchCommunities extends SearchCommunitiesState {
   final List<SearchComminityModel> communities;
   GetSearchCommunities(this.communities);
 }
-
-class JoinCommunity extends SearchCommunitiesState {
-  final bool joined;
-  JoinCommunity(this.joined);
-}

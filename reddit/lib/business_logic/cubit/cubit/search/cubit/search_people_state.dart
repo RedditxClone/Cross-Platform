@@ -10,7 +10,3 @@ class GetSearchPeople extends SearchPeopleState {
   GetSearchPeople(this.users);
 }
 
-class FollowUser extends SearchPeopleState {
-  final bool followed;
-  FollowUser(this.followed);
-}
