@@ -2,7 +2,7 @@
 class TrafficStats {
   late String date;
   late int joined;
-  late String left;
+  late int left;
   TrafficStats({required this.date, required this.joined, required this.left});
 
   @override
