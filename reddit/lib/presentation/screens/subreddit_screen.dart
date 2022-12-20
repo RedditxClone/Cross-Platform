@@ -110,9 +110,9 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
     }
     BlocProvider.of<SubredditPageCubit>(context)
         .getSubredditInfo(widget.subredditId);
-    BlocProvider.of<SubredditPageCubit>(context)
-        .getIfJoined(widget.subredditId);
-    BlocProvider.of<SubredditPageCubit>(context).getIfMod(widget.subredditId);
+    // BlocProvider.of<SubredditPageCubit>(context)
+    //     .getIfJoined(widget.subredditId);
+    // BlocProvider.of<SubredditPageCubit>(context).getIfMod(widget.subredditId);
   }
 
   PreferredSizeWidget? _buildAppBar() {
@@ -217,8 +217,8 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                                 InkWell(
                                     onTap: () => Navigator.pushNamed(
                                             context, modqueueRoute, arguments: {
-                                          'name': 'bemoireddit2',
-                                          'id': '639b27bbef88b3df0463d04b'
+                                          'name': subredditModel.name,
+                                          'id': subredditModel.sId
                                         }),
                                     child: Padding(
                                       padding: const EdgeInsets.all(5),
@@ -410,8 +410,9 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
   }
 
   Widget _buildBody(subredditModel, joinedSubreddit, isMod) {
-    isMod = true;
+    // isMod = true;
     joinLeaveButtonText = joinedSubreddit ? "Joined" : "Join";
+    print(joinLeaveButtonText);
     _controller.text = subredditModel.description ?? "";
     // List<dynamic> moderators = subredditModel.moderators!;
     // isMod = moderators.contains(UserData.user!.username);
@@ -538,15 +539,12 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                                                 )),
                                               ),
                                               onPressed: () => isMod
-                                                  ? 
-                                                    Navigator.pushNamed(
-                                                        context, modlistRoute,
-                                                        arguments: {
-                                                          'name':
-                                                              'bemoireddit2',
-                                                          'id':
-                                                              '639b27bbef88b3df0463d04b'
-                                                        })
+                                                  ? Navigator.pushNamed(context,
+                                                      modlistRoute, arguments: {
+                                                      'name':
+                                                          subredditModel.name,
+                                                      'id': subredditModel.sId
+                                                    })
                                                   : joinedSubreddit
                                                       ? BlocProvider.of<
                                                                   SubredditPageCubit>(
@@ -985,7 +983,12 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
       body: BlocConsumer<SubredditPageCubit, SubredditPageState>(
           builder: (context, state) {
         if (state is SubredditPageLoaded) {
-          _subredditModel = (state).subredditModel;
+          _subredditModel = state.subredditModel;
+          _joinedSubreddit = state.isJoined;
+          _isMod = state.isMod;
+          print("_isMod $_isMod");
+          print("_joinedSubreddit $_joinedSubreddit");
+          return _buildBody(_subredditModel, _joinedSubreddit, _isMod);
         } else if (state is SubredditPageLoading) {
           return const Center(
             child: CircularProgressIndicator(

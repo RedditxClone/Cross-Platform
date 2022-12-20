@@ -41,7 +41,7 @@ class SubredditPageCubit extends Cubit<SubredditPageState> {
   }
 
   void joinSubreddit(subredditId) {
-    subredditPageRepository.leaveSubreddit(subredditId).then((value) {
+    subredditPageRepository.joinSubreddit(subredditId).then((value) {
       if (value) {
         emit(JoinedSubreddit());
       } else {
@@ -50,13 +50,16 @@ class SubredditPageCubit extends Cubit<SubredditPageState> {
     });
   }
 
-  void getSubredditInfo(String subredditName) {
+  void getSubredditInfo(String subredditId) {
     emit(SubredditPageLoading());
-    subredditPageRepository.getSubredditInfo(subredditName).then((value) {
+    subredditPageRepository.getSubredditInfo(subredditId).then((value) {
       _subredditModel = value;
-      print("subredditModel in cubit " + _subredditModel.toString());
       print(_subredditModel!.name);
-      emit(SubredditPageLoaded(_subredditModel!));
+      subredditPageRepository.getIfJoined(subredditId).then((isJoined) {
+        subredditPageRepository.getIfMod(subredditId).then((isMod) {
+          emit(SubredditPageLoaded(_subredditModel!, isMod, isJoined));
+        });
+      });
     });
   }
 
@@ -97,21 +100,23 @@ class SubredditPageCubit extends Cubit<SubredditPageState> {
 
   getIfJoined(String subredditId) async {
     if (isClosed) return;
-    final ifJoined = await subredditPageRepository.getIfJoined(subredditId);
-    if (ifJoined) {
-      emit(InSubreddit());
-    } else {
-      emit(OutSubreddit());
-    }
+    subredditPageRepository.getIfJoined(subredditId).then((value) {
+      if (value) {
+        emit(InSubreddit());
+      } else {
+        emit(OutSubreddit());
+      }
+    });
   }
 
   getIfMod(String subredditId) async {
     if (isClosed) return;
-    final ifMod = await subredditPageRepository.getIfMod(subredditId);
-    if (ifMod) {
-      emit(Moderator());
-    } else {
-      emit(NotModerator());
-    }
+    subredditPageRepository.getIfMod(subredditId).then((value) {
+      if (value) {
+        emit(Moderator());
+      } else {
+        emit(NotModerator());
+      }
+    });
   }
 }

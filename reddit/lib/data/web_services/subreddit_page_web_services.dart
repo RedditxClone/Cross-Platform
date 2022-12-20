@@ -155,14 +155,7 @@ class SubredditWebServices {
             headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
 
-      if (response.statusCode == 200) {
-        if (response.data == true) {
-          return true;
-        } else {
-          return false;
-        }
-      }
-      return false;
+      return response.data == 'true' ? true : false;
     } on DioError catch (e) {
       debugPrint(e.response?.statusCode.toString());
       return false;
@@ -175,15 +168,8 @@ class SubredditWebServices {
           options: Options(
             headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
-
-      if (response.statusCode == 200) {
-        if (response.data == true) {
-          return true;
-        } else {
-          return false;
-        }
-      }
-      return false;
+      print(response.statusCode);
+      return response.data == 'true' ? true : false;
     } on DioError catch (e) {
       debugPrint(e.response?.statusCode.toString());
       return false;

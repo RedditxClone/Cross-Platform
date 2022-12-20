@@ -61,7 +61,7 @@ class ModListScreen extends StatelessWidget {
             onPressed: () {
               Navigator.of(context).pushReplacementNamed(
                   subredditPageScreenRoute,
-                  arguments: <String, dynamic>{'sId': ''});
+                  arguments: <String, dynamic>{'sId': subredditId});
             },
           ),
           centerTitle: true,
