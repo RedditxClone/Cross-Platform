@@ -7,7 +7,10 @@ import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_Not_loggedin.da
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 
 class ApprovedWeb extends StatefulWidget {
-  const ApprovedWeb({super.key});
+  final String subredditName;
+  final String subredditId;
+  const ApprovedWeb(
+      {super.key, required this.subredditName, required this.subredditId});
 
   @override
   State<ApprovedWeb> createState() => _ApprovedWebState();
@@ -23,7 +26,7 @@ class _ApprovedWebState extends State<ApprovedWeb> {
           automaticallyImplyLeading: false,
           backgroundColor: defaultAppbarBackgroundColor,
           title: UserData.user != null
-              ? const AppBarWebLoggedIn( screen: 'r/subreddit')
+              ? const AppBarWebLoggedIn(screen: 'r/subreddit')
               : const AppBarWebNotLoggedIn(screen: 'r/subreddit')),
       body: Container(
           color: defaultWebBackgroundColor,
@@ -31,8 +34,12 @@ class _ApprovedWebState extends State<ApprovedWeb> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              LeftModList(screen: 'Approved'),
-              UserManagement(screen: 'Approved')
+              LeftModList(
+                  screen: 'Approved',
+                  subredditName: widget.subredditName,
+                  subredditId: widget.subredditId),
+              UserManagement(
+                  screen: 'Approved', subredditId: widget.subredditId)
             ],
           )),
     );

@@ -10,13 +10,18 @@ class UserInfoAvailable extends UserProfileState {
   UserInfoAvailable(this.userInfo);
 }
 
-class FollowOtherUserSuccess extends UserProfileState {}
+class MyModSubredditsAvailable extends UserProfileState {
+  List<ModeratingSubredditsDrawerModel> modSubreddits;
+  MyModSubredditsAvailable(this.modSubreddits);
+}
 
-class FollowOtherUserNotSuccess extends UserProfileState {}
+// class FollowOtherUserSuccess extends UserProfileState {}
 
-class UnFollowOtherUserSuccess extends UserProfileState {}
+// class FollowOtherUserNotSuccess extends UserProfileState {}
 
-class UnFollowOtherUserNotSuccess extends UserProfileState {}
+// class UnFollowOtherUserSuccess extends UserProfileState {}
+
+// class UnFollowOtherUserNotSuccess extends UserProfileState {}
 
 class UserBlocked extends UserProfileState {}
 

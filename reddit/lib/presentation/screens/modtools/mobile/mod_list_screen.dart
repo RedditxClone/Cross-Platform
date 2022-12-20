@@ -3,7 +3,10 @@ import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
 
 class ModListScreen extends StatelessWidget {
-  const ModListScreen({super.key});
+  final String subredditName;
+  final String subredditId;
+  const ModListScreen(
+      {super.key, required this.subredditName, required this.subredditId});
 
   Widget title(String title) {
     return Column(
@@ -74,9 +77,8 @@ class ModListScreen extends StatelessWidget {
           listItem(
               Icons.mic_external_on_outlined,
               'Approved users',
-              () => Navigator.of(context).pushNamed(
-                    approvedRoute,
-                  )),
+              () => Navigator.of(context).pushNamed(approvedRoute,
+                  arguments: {'name': subredditName, 'id': subredditId})),
           listItem(Icons.speaker_notes_off_outlined, 'Muted users', () {}),
         ],
       ),

@@ -8,8 +8,8 @@ import 'package:reddit/data/model/auth_model.dart';
 
 class UserManagement extends StatefulWidget {
   String screen = '';
-
-  UserManagement({required this.screen, super.key});
+  final String subredditId;
+  UserManagement({required this.screen, required this.subredditId, super.key});
 
   @override
   State<UserManagement> createState() => _UserManagementState();
@@ -23,7 +23,7 @@ class _UserManagementState extends State<UserManagement> {
   void initState() {
     super.initState();
     BlocProvider.of<ModtoolsCubit>(context)
-        .getApprovedUsers('639b27bbef88b3df0463d04b');
+        .getApprovedUsers(widget.subredditId);
   }
 
   Widget emptyUserManagement(context) {
@@ -85,6 +85,8 @@ class _UserManagementState extends State<UserManagement> {
   }
 
   Widget listviewItem(context, index) {
+    Duration date =
+        DateTime.now().difference(DateTime.parse(approvedUsers![index].date));
     return Container(
       decoration: BoxDecoration(
         border: const Border(
@@ -114,14 +116,21 @@ class _UserManagementState extends State<UserManagement> {
                         backgroundImage:
                             NetworkImage(approvedUsers![index].profilePic!)),
                 const SizedBox(width: 10),
-                Text(approvedUsers![index].username??""),
+                Text(approvedUsers![index].username ?? ""),
               ]),
             ),
           ),
         ),
-        const SizedBox(width: 148),
-        const Text('2 months ago',
-            style: TextStyle(fontSize: 13, color: Colors.grey)),
+        SizedBox(width: 148.0 - approvedUsers![index].username!.length * 7),
+        Text(
+            date.inHours > 24
+                ? '${date.inDays} days ago'
+                : date.inMinutes > 60
+                    ? '${date.inHours} hours ago'
+                    : date.inSeconds > 60
+                        ? '${date.inMinutes} minunts ago'
+                        : '${date.inSeconds + 1} seconds ago',
+            style: const TextStyle(fontSize: 13, color: Colors.grey)),
         SizedBox(
             width: MediaQuery.of(context).size.width - 880 > 0
                 ? MediaQuery.of(context).size.width - 880
@@ -135,7 +144,7 @@ class _UserManagementState extends State<UserManagement> {
         InkWell(
             onTap: () => BlocProvider.of<ModtoolsCubit>(context)
                 .removeApprovedUser(
-                    '639b27bbef88b3df0463d04b', approvedUsers![index].username??""),
+                    widget.subredditId, approvedUsers![index].username!),
             child: const Text('Remove',
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)))
       ]),
@@ -267,7 +276,7 @@ class _UserManagementState extends State<UserManagement> {
                           onPressed: () {
                             Navigator.pop(context);
                             BlocProvider.of<ModtoolsCubit>(context)
-                                .addApprovedUser('639b27bbef88b3df0463d04b',
+                                .addApprovedUser(widget.subredditId,
                                     addApprovedUserController.text);
                           },
                           style: ElevatedButton.styleFrom(

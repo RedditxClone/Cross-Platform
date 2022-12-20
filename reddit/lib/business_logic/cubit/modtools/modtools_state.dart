@@ -10,6 +10,11 @@ class ApprovedListAvailable extends ModtoolsState {
   ApprovedListAvailable(this.approved);
 }
 
+class TrafficStatsAvailable extends ModtoolsState {
+  List<TrafficStats> tafficstats;
+  TrafficStatsAvailable(this.tafficstats);
+}
+
 class AddedToApprovedUsers extends ModtoolsState {
   List<User> approved;
   AddedToApprovedUsers(this.approved);
