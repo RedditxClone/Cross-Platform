@@ -21,16 +21,18 @@ class PostsWebServices {
 
   /// `Returns` home page posts.
   /// This function performs `GET` request to the endpoint ``.
-  Future<dynamic> getTimelinePosts() async {
+  Future<dynamic> getTimelinePosts(String sort, int page, int limit) async {
     try {
       // Get random posts if the user is not signed in (Without token)
       // Get joined communities posts if the user is signed in (With token)
       Response response = UserData.user == null
-          ? await dio.get('post/timeline')
+          ? await dio.get('post/timeline',
+              queryParameters: {"sort": sort, "page": page, "limit": limit})
           : await dio.get('post/timeline',
               options: Options(
                 headers: {"Authorization": "Bearer ${UserData.user!.token}"},
-              ));
+              ),
+              queryParameters: {"sort": sort, "page": page, "limit": limit});
       // debugPrint("Timeline posts in web services ${response.data}");
       debugPrint(
           "Timeline posts status code in web services ${response.statusCode}");

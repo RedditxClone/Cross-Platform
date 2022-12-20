@@ -8,8 +8,10 @@ class PostsRepository {
 
   /// Returns [List] of [PostsModel] object that contains the timeline posts whether your are logged in or logged out
   /// after getting it from [PostsWebServices] and mapping it to the model list.
-  Future<List<PostsModel>> getTimelinePosts() async {
-    final posts = await postsDrawerWebServices.getTimelinePosts();
+  Future<List<PostsModel>> getTimelinePosts(
+      String sort, int page, int limit) async {
+    final posts =
+        await postsDrawerWebServices.getTimelinePosts(sort, page, limit);
     // debugPrint("Timeline posts from repo:");
     // debugPrint("$posts");
     return List<PostsModel>.from(posts.map((i) => PostsModel.fromJson(i)));

@@ -7,6 +7,7 @@ import 'package:reddit/business_logic/cubit/messages/messages_cubit.dart';
 import 'package:reddit/business_logic/cubit/modtools/modtools_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_home_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_my_profile_cubit.dart';
+import 'package:reddit/business_logic/cubit/posts/sort_cubit.dart';
 import 'package:reddit/data/model/comments/comment_model.dart';
 import 'package:reddit/data/repository/comments/comments_repository.dart';
 import 'package:reddit/data/web_services/comments/comments_web_services.dart';
@@ -152,6 +153,7 @@ class AppRouter {
   late PostsMyProfileCubit postsMyProfileCubit;
   late CommentsRepository commentsRepository;
   late CommentsCubit commentsCubit;
+  late SortCubit sortCubit;
   AppRouter() {
     // initialise repository and cubit objects
     safetySettingsRepository =
@@ -197,6 +199,7 @@ class AppRouter {
     modtoolsWebServices = ModToolsWebServices();
     modtoolsRepository = ModToolsRepository(modtoolsWebServices);
     modtoolsCubit = ModtoolsCubit(modtoolsRepository);
+    sortCubit = SortCubit();
   }
   Route? generateRoute(RouteSettings settings) {
     final arguments = settings.arguments;
@@ -217,8 +220,11 @@ class AppRouter {
               BlocProvider(
                 create: ((context) => authCubit),
               ),
-              BlocProvider(
-                create: (context) => postsHomeCubit,
+              BlocProvider.value(
+                value: postsHomeCubit,
+              ),
+              BlocProvider.value(
+                value: sortCubit,
               ),
             ],
             child: kIsWeb
@@ -235,8 +241,11 @@ class AppRouter {
         return MaterialPageRoute(
             builder: (_) => MultiBlocProvider(
                   providers: [
-                    BlocProvider(
-                      create: (context) => postsHomeCubit,
+                    BlocProvider.value(
+                      value: postsHomeCubit,
+                    ),
+                    BlocProvider.value(
+                      value: sortCubit,
                     ),
                     BlocProvider.value(
                       value: authCubit,
