@@ -34,110 +34,108 @@ class _SearchTabsState extends State<SearchTabs> {
   @override
   Widget build(BuildContext context) {
     responsive = Responsive(context);
-    return SingleChildScrollView(
-      child: Row(
-        children: [
-          Expanded(
-              flex: responsive.isSmallSizedScreen() ? 0 : 1,
-              child: const SizedBox(width: 1)),
-          Expanded(
-            flex: 6,
-            child: DefaultTabController(
-              initialIndex: 0,
-              length: 4,
-              animationDuration: Duration.zero,
-              child: Container(
-                margin: EdgeInsets.only(
-                    top: responsive.isSmallSizedScreen() ? 0 : 20),
-                height: MediaQuery.of(context).size.height * 1.2,
-                color: Colors.transparent,
-                child: Scaffold(
+    return Row(
+      children: [
+        Expanded(
+            flex: responsive.isSmallSizedScreen() ? 0 : 1,
+            child: const SizedBox(width: 1)),
+        Expanded(
+          flex: 6,
+          child: DefaultTabController(
+            initialIndex: 0,
+            length: 4,
+            animationDuration: Duration.zero,
+            child: Container(
+              margin: EdgeInsets.only(
+                  top: responsive.isSmallSizedScreen() ? 0 : 20),
+              height: MediaQuery.of(context).size.height * 1.2,
+              color: Colors.transparent,
+              child: Scaffold(
+                backgroundColor: Colors.transparent,
+                appBar: AppBar(
+                  elevation: 0,
+                  automaticallyImplyLeading: false,
                   backgroundColor: Colors.transparent,
-                  appBar: AppBar(
-                    elevation: 0,
-                    automaticallyImplyLeading: false,
-                    backgroundColor: Colors.transparent,
-                    bottom: TabBar(
-                      indicator: const UnderlineTabIndicator(
-                        borderSide: BorderSide(width: 2, color: Colors.white),
-                        insets: EdgeInsets.symmetric(horizontal: 25),
-                      ),
-                      padding: EdgeInsets.only(
-                          right: responsive.isXLargeSizedScreen()
-                              ? 500
-                              : responsive.isLargeSizedScreen()
-                                  ? 300
-                                  : responsive.isMediumSizedScreen()
-                                      ? 100
-                                      : 0),
-                      indicatorColor: Colors.white,
-                      labelColor: Colors.white,
-                      unselectedLabelColor:
-                          const Color.fromARGB(255, 131, 122, 122),
-                      tabs: const <Widget>[
-                        Tab(
-                          child: Text(
-                            "Posts",
-                            style: tabTitleStyle,
-                          ),
-                        ),
-                        Tab(
-                          child: Text(
-                            "Comments",
-                            style: tabTitleStyle,
-                          ),
-                        ),
-                        Tab(
-                          child: Text(
-                            "Communities",
-                            style: tabTitleStyle,
-                          ),
-                        ),
-                        Tab(
-                          child: Text(
-                            "People",
-                            style: tabTitleStyle,
-                          ),
-                        ),
-                      ],
+                  bottom: TabBar(
+                    indicator: const UnderlineTabIndicator(
+                      borderSide: BorderSide(width: 2, color: Colors.white),
+                      insets: EdgeInsets.symmetric(horizontal: 25),
                     ),
-                  ),
-                  body: Row(
-                    children: [
-                      Expanded(
-                        // flex: 3,
-                        child: TabBarView(
-                          children: <Widget>[
-                            BlocProvider.value(
-                              value: BlocProvider.of<SearchPostsCubit>(context),
-                              child: const PostsWebSearch(),
-                            ),
-                            BlocProvider.value(
-                              value:
-                                  BlocProvider.of<SearchCommentsCubit>(context),
-                              child: const CommentsWebSearch(),
-                            ),
-                            BlocProvider.value(
-                              value: BlocProvider.of<SearchCommunitiesCubit>(
-                                  context),
-                              child: const CommunitiesWebSearch(),
-                            ),
-                            BlocProvider.value(
-                              value:
-                                  BlocProvider.of<SearchPeopleCubit>(context),
-                              child: const PeopleWebSearch(),
-                            ),
-                          ],
+                    padding: EdgeInsets.only(
+                        right: responsive.isXLargeSizedScreen()
+                            ? 500
+                            : responsive.isLargeSizedScreen()
+                                ? 300
+                                : responsive.isMediumSizedScreen()
+                                    ? 100
+                                    : 0),
+                    indicatorColor: Colors.white,
+                    labelColor: Colors.white,
+                    unselectedLabelColor:
+                        const Color.fromARGB(255, 131, 122, 122),
+                    tabs: const <Widget>[
+                      Tab(
+                        child: Text(
+                          "Posts",
+                          style: tabTitleStyle,
+                        ),
+                      ),
+                      Tab(
+                        child: Text(
+                          "Comments",
+                          style: tabTitleStyle,
+                        ),
+                      ),
+                      Tab(
+                        child: Text(
+                          "Communities",
+                          style: tabTitleStyle,
+                        ),
+                      ),
+                      Tab(
+                        child: Text(
+                          "People",
+                          style: tabTitleStyle,
                         ),
                       ),
                     ],
                   ),
                 ),
+                body: Row(
+                  children: [
+                    Expanded(
+                      // flex: 3,
+                      child: TabBarView(
+                        children: <Widget>[
+                          BlocProvider.value(
+                            value: BlocProvider.of<SearchPostsCubit>(context),
+                            child: const PostsWebSearch(),
+                          ),
+                          BlocProvider.value(
+                            value:
+                                BlocProvider.of<SearchCommentsCubit>(context),
+                            child: const CommentsWebSearch(),
+                          ),
+                          BlocProvider.value(
+                            value: BlocProvider.of<SearchCommunitiesCubit>(
+                                context),
+                            child: const CommunitiesWebSearch(),
+                          ),
+                          BlocProvider.value(
+                            value:
+                                BlocProvider.of<SearchPeopleCubit>(context),
+                            child: const PeopleWebSearch(),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:reddit/business_logic/cubit/cubit/search/cubit/search_posts_cubit.dart';
 import 'package:reddit/constants/colors.dart';
+import 'package:reddit/constants/strings.dart';
 import '../../../constants/theme_colors.dart';
 
 class PostsWebSearch extends StatefulWidget {
@@ -279,114 +280,126 @@ class _PostsWebSearchState extends State<PostsWebSearch> {
       body: BlocBuilder<SearchPostsCubit, SearchPostsState>(
         builder: (context, state) {
           if (state is GetSearchPosts) {
-            return ListView.builder(
-              itemCount: state.posts.length,
-              itemBuilder: (context, index) {
-                return Container(
-                  decoration: BoxDecoration(
-                    color: textFeildColor,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  margin: const EdgeInsets.all(10),
-                  child: ListTile(
-                    onTap: () {
-                      //navigate to post page
-                    },
-                    mouseCursor: SystemMouseCursors.click,
-                    title: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Wrap(
-                          direction: Axis.vertical,
-                          spacing: 15,
-                          children: [
-                            Wrap(
-                              direction: Axis.vertical,
-                              children: [
-                                TextButton.icon(
-                                  style: TextButton.styleFrom(
-                                    padding: const EdgeInsets.all(0),
-                                    backgroundColor: Colors.transparent,
-                                    foregroundColor: Colors.transparent,
+            return state.posts.isNotEmpty
+                ? ListView.builder(
+                    itemCount: state.posts.length,
+                    itemBuilder: (context, index) {
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: textFeildColor,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        margin: const EdgeInsets.all(10),
+                        child: ListTile(
+                          onTap: () {
+                            //navigate to post page
+                          },
+                          mouseCursor: SystemMouseCursors.click,
+                          title: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Wrap(
+                                direction: Axis.vertical,
+                                spacing: 15,
+                                children: [
+                                  Wrap(
+                                    direction: Axis.vertical,
+                                    children: [
+                                      TextButton.icon(
+                                        style: TextButton.styleFrom(
+                                          padding: const EdgeInsets.all(0),
+                                          backgroundColor: Colors.transparent,
+                                          foregroundColor: Colors.transparent,
+                                        ),
+                                        icon: CircleAvatar(
+                                          backgroundColor: Colors.red,
+                                          radius: 10,
+                                          child: Logo(
+                                            Logos.reddit,
+                                            color: Colors.white,
+                                            size: 15,
+                                          ),
+                                        ),
+                                        label: Text(
+                                          "r/${state.posts[index].subreddit!.name ?? ""}",
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          //navigate to subreddit page
+                                        },
+                                      ),
+                                      InkWell(
+                                        child: Text(
+                                          "u/${state.posts[index].user!.username ?? ""} ${state.posts[index].postedFrom} ago",
+                                          style: const TextStyle(
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                        onTap: () {
+                                          //navigate to the profile user page
+                                        },
+                                      ),
+                                    ],
                                   ),
-                                  icon: CircleAvatar(
-                                    backgroundColor: Colors.red,
-                                    radius: 10,
-                                    child: Logo(
-                                      Logos.reddit,
-                                      color: Colors.white,
-                                      size: 15,
-                                    ),
-                                  ),
-                                  label: Text(
-                                    "r/${state.posts[index].subreddit!.name ?? ""}",
+                                  Text(
+                                    state.posts[index].title ?? "",
                                     style: const TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
                                     ),
+                                    overflow: TextOverflow.fade,
                                   ),
-                                  onPressed: () {
-                                    //navigate to subreddit page
-                                  },
-                                ),
-                                InkWell(
-                                  child: Text(
-                                    "u/${state.posts[index].user!.username ?? ""} ${state.posts[index].postedFrom} ago",
-                                    style: const TextStyle(
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                  onTap: () {
-                                    //navigate to the profile user page
-                                  },
-                                ),
-                              ],
-                            ),
-                            Text(
-                              state.posts[index].title ?? "",
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
+                                  Wrap(
+                                    spacing: 10,
+                                    children: [
+                                      Text(
+                                        "${state.posts[index].votesCount} upvotes",
+                                        style: const TextStyle(
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                      Text(
+                                        "${state.posts[index].commentsCount} comments",
+                                        style: const TextStyle(
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                ],
                               ),
-                              overflow: TextOverflow.fade,
-                            ),
-                            Wrap(
-                              spacing: 10,
-                              children: [
-                                Text(
-                                  "${state.posts[index].votesCount} upvotes",
-                                  style: const TextStyle(
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                                Text(
-                                  "${state.posts[index].commentsCount} comments",
-                                  style: const TextStyle(
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ],
-                            )
-                          ],
+                              Container(
+                                child: state.posts[index].images!.isEmpty
+                                    ? null
+                                    : Image.network(
+                                        imagesUrl +
+                                            state.posts[index].images![0],
+                                        height: kIsWeb ? 200 : 100,
+                                        width: kIsWeb ? 200 : 100,
+                                        fit: BoxFit.fill,
+                                      ),
+                              )
+                            ],
+                          ),
                         ),
-                        Container(
-                          child: state.posts[index].images!.isEmpty
-                              ? null
-                              : Image.network(
-                                  // imagesUrl + state.posts[index].images![0],
-                                  'https://i.redd.it/n0gyalhf192a1.jpg',
-                                  height: kIsWeb ? 200 : 100,
-                                  width: kIsWeb ? 200 : 100,
-                                  fit: BoxFit.fill,
-                                ),
-                        )
-                      ],
+                      );
+                    },
+                  )
+                : Container(
+                    margin: const EdgeInsets.all(20),
+                    child: const Text(
+                      "No Posts found !!",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                );
-              },
-            );
+                  );
           }
           return Container(
             padding: const EdgeInsets.all(20),

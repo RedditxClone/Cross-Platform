@@ -19,15 +19,14 @@ class SearchPostModel {
   bool? spoiler;
   SearchPostModel.fromJson(Map<String, dynamic> json) {
     _id = json['_id'] ?? "";
-    debugPrint("postID $_id");
     title = json['title'] ?? "";
     debugPrint("postTitle $title");
     commentsCount = json['commentCount'] ?? 0;
     debugPrint("postCommentsCount $commentsCount");
     votesCount = json['votesCount'] ?? 0;
     debugPrint("postVotesCount $votesCount");
+    debugPrint("postUser ${json['user']}");
     user = User.fromJson(json['user'] ?? {});
-    debugPrint("postUser ${user!.username}");
     subreddit = SearchComminityModel.fromJson(json['subreddit'] ?? {});
     debugPrint("postSubreddit ${subreddit!.name}");
     images = List<String>.from(json['images'] ?? []);

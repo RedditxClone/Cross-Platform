@@ -41,8 +41,9 @@ class User {
     userId = json['_id'] ?? "";
     username = json['username'] ?? "";
     email = json['email'] ?? "";
-    profilePic =
-        json['profilePhoto'] == '' ? '' : imagesUrl + json['profilePhoto'];
+    profilePic = json['profilePhoto'] == null || json['profilePhoto'] == ''
+        ? ''
+        : imagesUrl + json['profilePhoto'];
     coverPhoto = json['coverPhoto'] == null || json['coverPhoto'] == ''
         ? ''
         : imagesUrl + json['coverPhoto'];
@@ -62,6 +63,7 @@ class User {
     isFollowed = json['isFollowed'] ?? false;
     isBlocked = json['isBlocked'] ?? false;
     createdAt = json['createdAt'] ?? "";
+    debugPrint("finish with user");
   }
   Map<String, dynamic> toJson() {
     return {

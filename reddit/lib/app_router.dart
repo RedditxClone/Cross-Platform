@@ -561,20 +561,40 @@ class AppRouter {
             builder: (_) => MultiBlocProvider(
                   providers: [
                     BlocProvider(
-                      create: (context) => searchCubit,
+                      create: (context) =>
+                          SearchCubit(SearchRepo(SearchWebService())),
                     ),
                     BlocProvider(
-                      create: (context) => searchPostsCubit,
+                      create: (context) =>
+                          SearchPostsCubit(SearchRepo(SearchWebService())),
                     ),
                     BlocProvider(
-                      create: (context) => searchCommentsCubit,
+                      create: (context) =>
+                          SearchCommentsCubit(SearchRepo(SearchWebService())),
                     ),
                     BlocProvider(
-                      create: (context) => searchUsersCubit,
+                      create: (context) =>
+                          SearchPeopleCubit(SearchRepo(SearchWebService())),
                     ),
                     BlocProvider(
-                      create: (context) => searchCommunitiesCubit,
+                      create: (context) => SearchCommunitiesCubit(
+                          SearchRepo(SearchWebService())),
                     ),
+                    // BlocProvider(
+                    //   create: (context) => searchCubit,
+                    // ),
+                    // BlocProvider(
+                    //   create: (context) => searchPostsCubit,
+                    // ),
+                    // BlocProvider(
+                    //   create: (context) => searchCommentsCubit,
+                    // ),
+                    // BlocProvider(
+                    //   create: (context) => searchUsersCubit,
+                    // ),
+                    // BlocProvider(
+                    //   create: (context) => searchCommunitiesCubit,
+                    // ),
                   ],
                   child: const SearchWeb(),
                 ));

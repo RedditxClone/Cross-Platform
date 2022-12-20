@@ -16,6 +16,7 @@ import 'package:reddit/presentation/widgets/posts/posts_web.dart';
 
 import '../../../business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
 import '../../../business_logic/cubit/left_drawer/left_drawer_cubit.dart';
+import '../../../constants/strings.dart';
 import '../../../helper/utils/shared_keys.dart';
 import '../../../helper/utils/shared_pref.dart';
 
@@ -157,7 +158,9 @@ class _HomePageState extends State<HomePage> {
             child: buildHomeAppBar(),
           ),
           'appbar_action': IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(context, searchRouteWeb);
+              },
               icon: const Icon(Icons.search_outlined,
                   color: Colors.grey, size: 40)),
         };

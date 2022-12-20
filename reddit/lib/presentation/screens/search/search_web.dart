@@ -354,8 +354,9 @@ class _SearchWebState extends State<SearchWeb> {
                                                 maxLines: 1,
                                                 overflow: TextOverflow.ellipsis,
                                                 style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.white),
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                ),
                                               ),
                                               leading:
                                                   term["profilePhoto"] == ""
@@ -416,10 +417,8 @@ class _SearchWebState extends State<SearchWeb> {
             _searchBarController.close();
           },
           body: kIsWeb
-              ? FloatingSearchBarScrollNotifier(
-                  child: SearchTabs(
-                    searchTerm: selectedTerm,
-                  ),
+              ? SearchTabs(
+                  searchTerm: selectedTerm,
                 )
               : SearchTabsMobile(
                   searchTerm: selectedTerm,

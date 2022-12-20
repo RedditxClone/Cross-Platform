@@ -31,160 +31,180 @@ class _CommunitiesWebSearchState extends State<CommunitiesWebSearch> {
       body: BlocBuilder<SearchCommunitiesCubit, SearchCommunitiesState>(
         builder: (context, state) {
           if (state is GetSearchCommunities) {
-            return ListView.builder(
-              itemCount: state.communities.length,
-              itemBuilder: (context, index) {
-                bool isJoined = state.communities[index].joined ?? false;
-                return Container(
-                  decoration: BoxDecoration(
-                    color: textFeildColor,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  margin: const EdgeInsets.all(10),
-                  child: ListTile(
-                    mouseCursor: SystemMouseCursors.click,
-                    title: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Wrap(
-                          direction: Axis.vertical,
-                          spacing: 10,
-                          children: [
-                            Wrap(
-                              spacing: 15,
-                              children: [
-                                InkWell(
-                                  child: Wrap(
-                                    spacing: 10,
+            return state.communities.isNotEmpty
+                ? ListView.builder(
+                    itemCount: state.communities.length,
+                    itemBuilder: (context, index) {
+                      bool isJoined = state.communities[index].joined ?? false;
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: textFeildColor,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        margin: const EdgeInsets.all(10),
+                        child: ListTile(
+                          mouseCursor: SystemMouseCursors.click,
+                          title: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Wrap(
+                                direction: Axis.vertical,
+                                spacing: 15,
+                                children: [
+                                  Wrap(
+                                    direction: Axis.vertical,
+                                    spacing: 5,
                                     children: [
-                                      CircleAvatar(
-                                        backgroundColor: Colors.red,
-                                        radius: 10,
-                                        child: Logo(
-                                          Logos.reddit,
-                                          color: Colors.white,
-                                          size: 15,
+                                      InkWell(
+                                        child: Wrap(
+                                          spacing: 10,
+                                          children: [
+                                            CircleAvatar(
+                                              backgroundColor: Colors.white,
+                                              radius: 10,
+                                              child: Logo(
+                                                Logos.reddit,
+                                                color: Colors.black,
+                                                size: 15,
+                                              ),
+                                            ),
+                                            Text(
+                                              "r/${state.communities[index].name ?? ""}",
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
                                         ),
+                                        onTap: () {
+                                          debugPrint("go to community");
+                                        },
                                       ),
                                       Text(
-                                        "r/${state.communities[index].name ?? ""}",
+                                        "${state.communities[index].users ?? 0} members",
                                         style: const TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey,
                                         ),
                                       ),
                                     ],
                                   ),
-                                  onTap: () {
-                                    debugPrint("go to community");
-                                  },
-                                ),
-                                Text(
-                                  "${state.communities[index].users ?? 0} members",
-                                  style: const TextStyle(
-                                    color: Colors.grey,
+                                  Text(
+                                    "Created at ${state.communities[index].creationDate!.day} / ${state.communities[index].creationDate!.month} / ${state.communities[index].creationDate!.year}",
+                                    style: const TextStyle(
+                                      color: Colors.grey,
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                            Text(
-                              "Created at ${state.communities[index].creationDate!.day} / ${state.communities[index].creationDate!.month} / ${state.communities[index].creationDate!.year}",
-                              style: const TextStyle(
-                                color: Colors.grey,
+                                ],
                               ),
-                            ),
-                          ],
-                        ),
-                        UserData.isLoggedIn
-                            ? BlocBuilder<SearchCommunitiesCubit,
-                                SearchCommunitiesState>(
-                                builder: (context, state2) {
-                                  if (state2 is JoinCommunity) {
-                                    isJoined = state2.joined;
-                                    return ElevatedButton(
-                                      onPressed: () {
-                                        //call the function to join the community
-                                        if (isJoined) {
-                                          //call the function to leave the community
-                                          BlocProvider.of<
-                                                      SearchCommunitiesCubit>(
-                                                  context)
-                                              .leaveCommunity(
-                                                  state.communities[index].id!);
-                                        } else {
-                                          //call the function to join the community
-                                          BlocProvider.of<
-                                                      SearchCommunitiesCubit>(
-                                                  context)
-                                              .joinCommunity(
-                                                  state.communities[index].id!);
+                              UserData.isLoggedIn
+                                  ? BlocBuilder<SearchCommunitiesCubit,
+                                      SearchCommunitiesState>(
+                                      builder: (context, state2) {
+                                        if (state2 is JoinCommunity) {
+                                          isJoined = state2.joined;
+                                          return ElevatedButton(
+                                            onPressed: () {
+                                              //call the function to join the community
+                                              if (isJoined) {
+                                                //call the function to leave the community
+                                                BlocProvider.of<
+                                                            SearchCommunitiesCubit>(
+                                                        context)
+                                                    .leaveCommunity(state
+                                                        .communities[index]
+                                                        .id!);
+                                              } else {
+                                                //call the function to join the community
+                                                BlocProvider.of<
+                                                            SearchCommunitiesCubit>(
+                                                        context)
+                                                    .joinCommunity(state
+                                                        .communities[index]
+                                                        .id!);
+                                              }
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  const Color.fromARGB(
+                                                      255, 101, 99, 99),
+                                              shadowColor: Colors.transparent,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                              ),
+                                            ),
+                                            child: Text(
+                                              isJoined ? "Joined" : "Join",
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          );
                                         }
+                                        return ElevatedButton(
+                                          onPressed: () {
+                                            //call the function to join the community
+                                            if (isJoined) {
+                                              //call the function to leave the community
+                                              BlocProvider.of<
+                                                          SearchCommunitiesCubit>(
+                                                      context)
+                                                  .leaveCommunity(state
+                                                      .communities[index].id!);
+                                            } else {
+                                              //call the function to join the community
+                                              BlocProvider.of<
+                                                          SearchCommunitiesCubit>(
+                                                      context)
+                                                  .joinCommunity(state
+                                                      .communities[index].id!);
+                                            }
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                const Color.fromARGB(
+                                                    255, 101, 99, 99),
+                                            shadowColor: Colors.transparent,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                            ),
+                                          ),
+                                          child: Text(
+                                            isJoined ? "Joined" : "Join",
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        );
                                       },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: const Color.fromARGB(
-                                            255, 101, 99, 99),
-                                        shadowColor: Colors.transparent,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                        ),
-                                      ),
-                                      child: Text(
-                                        isJoined ? "Joined" : "Join",
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                  return ElevatedButton(
-                                    onPressed: () {
-                                      //call the function to join the community
-                                      if (isJoined) {
-                                        //call the function to leave the community
-                                        BlocProvider.of<SearchCommunitiesCubit>(
-                                                context)
-                                            .leaveCommunity(
-                                                state.communities[index].id!);
-                                      } else {
-                                        //call the function to join the community
-                                        BlocProvider.of<SearchCommunitiesCubit>(
-                                                context)
-                                            .joinCommunity(
-                                                state.communities[index].id!);
-                                      }
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color.fromARGB(
-                                          255, 101, 99, 99),
-                                      shadowColor: Colors.transparent,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
+                                    )
+                                  : const SizedBox(
+                                      height: 0,
                                     ),
-                                    child: Text(
-                                      isJoined ? "Joined" : "Join",
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  );
-                                },
-                              )
-                            : const SizedBox(
-                                height: 0,
-                              ),
-                      ],
-                    ),
-                    onTap: () {
-                      //navigate to the subreddit page
+                            ],
+                          ),
+                          onTap: () {
+                            //navigate to the subreddit page
+                          },
+                        ),
+                      );
                     },
-                  ),
-                );
-              },
-            );
+                  )
+                : Container(
+                    margin: const EdgeInsets.all(20),
+                    child: const Text(
+                      "No communities found !!",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  );
           }
           return Container(
             padding: const EdgeInsets.all(20),
