@@ -280,6 +280,36 @@ class _HomeWebState extends State<HomeWeb> {
     );
   }
 
+  Widget _rightCardNotLoggedin() {
+    return SizedBox(
+      height: 150,
+      // padding: const EdgeInsets.only(top: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: const [
+                Text('User Agreement', style: TextStyle(color: Colors.grey)),
+                Text('Content Policy', style: TextStyle(color: Colors.grey))
+              ]),
+          Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: const [
+                Text('Privacy Policy', style: TextStyle(color: Colors.grey)),
+                Text('Moderator Code Of Conduct',
+                    style: TextStyle(color: Colors.grey))
+              ]),
+          const SizedBox(height: 10),
+          const Divider(height: 1, color: Colors.white),
+          const SizedBox(height: 10),
+          const Text('Redditx Inc © 2022. All rights reserved',
+              style: TextStyle(color: Colors.grey))
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     responsive = Responsive(context);
@@ -393,7 +423,11 @@ class _HomeWebState extends State<HomeWeb> {
                           child: Padding(
                             padding: const EdgeInsets.only(top: 15),
                             child: Column(
-                              children: [_rightCard()],
+                              children: [
+                                UserData.isLoggedIn
+                                    ? _rightCard()
+                                    : _rightCardNotLoggedin()
+                              ],
                             ),
                           )),
                   Expanded(

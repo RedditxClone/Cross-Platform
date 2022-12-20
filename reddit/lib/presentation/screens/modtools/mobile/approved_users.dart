@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:reddit/business_logic/cubit/messages/messages_cubit.dart';
@@ -10,7 +8,10 @@ import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/data/model/auth_model.dart';
 
 class ApprovedUsersScreen extends StatefulWidget {
-  const ApprovedUsersScreen({super.key});
+  final String subredditId;
+  final String subredditName;
+  const ApprovedUsersScreen(
+      {super.key, required this.subredditName, required this.subredditId});
 
   @override
   State<ApprovedUsersScreen> createState() => _ApprovedUsersScreenState();
@@ -24,7 +25,7 @@ class _ApprovedUsersScreenState extends State<ApprovedUsersScreen> {
   @override
   void initState() {
     BlocProvider.of<ModtoolsCubit>(context)
-        .getApprovedUsers('639b27bbef88b3df0463d04b');
+        .getApprovedUsers(widget.subredditId);
     super.initState();
   }
 
@@ -191,8 +192,8 @@ class _ApprovedUsersScreenState extends State<ApprovedUsersScreen> {
                     onPressed: () {
                       Navigator.pop(context);
                       BlocProvider.of<ModtoolsCubit>(context)
-                          .removeApprovedUser('639b27bbef88b3df0463d04b',
-                              approvedUsers![index].username ?? "");
+                          .removeApprovedUser(widget.subredditId,
+                              approvedUsers![index].username!);
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -276,10 +277,14 @@ class _ApprovedUsersScreenState extends State<ApprovedUsersScreen> {
         backgroundColor: defaultSecondaryColor,
         leading: const BackButton(),
         centerTitle: true,
-        title: const Text('Aproved Users'),
+        title: const Text('Approved Users'),
         actions: [
           IconButton(
-              onPressed: () => Navigator.pushNamed(context, addApprovedRoute),
+              onPressed: () => Navigator.pushNamed(context, addApprovedRoute,
+                      arguments: {
+                        'id': widget.subredditId,
+                        'name': widget.subredditName
+                      }),
               icon: const Icon(Icons.add))
         ],
       ),

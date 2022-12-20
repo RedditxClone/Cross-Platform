@@ -4,6 +4,7 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:intl/intl.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_user_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/sort_cubit.dart';
+import 'package:reddit/business_logic/cubit/user_profile/follow_unfollow_cubit.dart';
 import 'package:reddit/business_logic/cubit/user_profile/user_profile_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/strings.dart';
@@ -191,8 +192,8 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
     return ElevatedButton(
       onPressed: () {
         UserData.isLoggedIn
-            ? BlocProvider.of<UserProfileCubit>(context)
-                .follow(otherUser!.userId ?? "")
+            ? BlocProvider.of<FollowUnfollowCubit>(context)
+                .follow(otherUser!.userId!)
             : Navigator.pushNamed(context, loginPage);
       },
       style: const ButtonStyle(
@@ -226,8 +227,8 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
 
   Widget _unfollow() {
     return OutlinedButton(
-      onPressed: () => BlocProvider.of<UserProfileCubit>(context)
-          .unfollow(otherUser!.userId ?? ""),
+      onPressed: () => BlocProvider.of<FollowUnfollowCubit>(context)
+          .unfollow(otherUser!.userId!),
       style: OutlinedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
           side: const BorderSide(width: 1, color: Colors.white),
@@ -353,7 +354,8 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
                     width: 165,
                     height: 50,
                     padding: const EdgeInsets.all(10),
-                    child: BlocBuilder<UserProfileCubit, UserProfileState>(
+                    child:
+                        BlocBuilder<FollowUnfollowCubit, FollowUnfollowState>(
                       builder: (context, state) {
                         if (state is FollowOtherUserSuccess) {
                           return _unfollow();
@@ -712,86 +714,98 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
               ? const AppBarWebLoggedIn(screen: 'u/user_name')
               : const AppBarWebNotLoggedIn(screen: 'u/user')),
       body: DefaultTabController(
-        length: 3,
-        child: Scaffold(
-          appBar: AppBar(
-            elevation: 0,
-            toolbarHeight: 0,
-            backgroundColor: defaultAppbarBackgroundColor,
-            shape: const Border(
-                bottom: BorderSide(color: Colors.grey, width: 0.5)),
-            bottom: TabBar(
-              onTap: (index) {
-                setState(() {
-                  _isOverviewTab = index == 0 ? true : false;
-                });
-              },
-              padding: _isOverviewTab
-                  ? EdgeInsets.symmetric(
-                      horizontal: MediaQuery.of(context).size.width * 0.3 > 300
-                          ? MediaQuery.of(context).size.width * 0.3
-                          : MediaQuery.of(context).size.width * 0.2 > 100 &&
-                                  MediaQuery.of(context).size.width * 0.3 <= 300
-                              ? MediaQuery.of(context).size.width * 0.05
-                              : 5)
-                  : EdgeInsets.fromLTRB(
-                      5,
-                      0,
-                      MediaQuery.of(context).size.width * 0.5 > 300
-                          ? MediaQuery.of(context).size.width * 0.5
-                          : MediaQuery.of(context).size.width * 0.3 > 100 &&
-                                  MediaQuery.of(context).size.width * 0.5 <= 300
-                              ? MediaQuery.of(context).size.width * 0.05
-                              : 5,
-                      0),
-              indicatorColor: Colors.white,
-              tabs: const [
-                Tab(icon: Text('OVERVIEW', style: TextStyle(fontSize: 13))),
-                Tab(icon: Text('POSTS', style: TextStyle(fontSize: 13))),
-                Tab(icon: Text('COMMENTS', style: TextStyle(fontSize: 13))),
-              ],
+          length: 3,
+          child: Scaffold(
+            appBar: AppBar(
+              elevation: 0,
+              toolbarHeight: 0,
+              backgroundColor: defaultAppbarBackgroundColor,
+              shape: const Border(
+                  bottom: BorderSide(color: Colors.grey, width: 0.5)),
+              bottom: TabBar(
+                onTap: (index) {
+                  setState(() {
+                    _isOverviewTab = index == 0 ? true : false;
+                  });
+                },
+                padding: _isOverviewTab
+                    ? EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.3 >
+                                300
+                            ? MediaQuery.of(context).size.width * 0.3
+                            : MediaQuery.of(context).size.width * 0.2 > 100 &&
+                                    MediaQuery.of(context).size.width * 0.3 <=
+                                        300
+                                ? MediaQuery.of(context).size.width * 0.05
+                                : 5)
+                    : EdgeInsets.fromLTRB(
+                        5,
+                        0,
+                        MediaQuery.of(context).size.width * 0.5 > 300
+                            ? MediaQuery.of(context).size.width * 0.5
+                            : MediaQuery.of(context).size.width * 0.3 > 100 &&
+                                    MediaQuery.of(context).size.width * 0.5 <=
+                                        300
+                                ? MediaQuery.of(context).size.width * 0.05
+                                : 5,
+                        0),
+                indicatorColor: Colors.white,
+                tabs: const [
+                  Tab(icon: Text('OVERVIEW', style: TextStyle(fontSize: 13))),
+                  Tab(icon: Text('POSTS', style: TextStyle(fontSize: 13))),
+                  Tab(icon: Text('COMMENTS', style: TextStyle(fontSize: 13))),
+                ],
+              ),
             ),
-          ),
-          body: BlocListener<UserProfileCubit, UserProfileState>(
-              listener: (context, state) {
-            if (state is FollowOtherUserSuccess) {
-              displayMsg(context, Colors.blue,
-                  ' Successfully followed u/${otherUser!.username}');
-            } else if (state is FollowOtherUserNotSuccess) {
-              displayMsg(context, Colors.red,
-                  'An error has occured. please try again later');
-            } else if (state is UnFollowOtherUserSuccess) {
-              displayMsg(context, Colors.blue,
-                  ' Successfully unfollowed u/${otherUser!.username}');
-            } else if (state is UnFollowOtherUserNotSuccess) {
-              displayMsg(context, Colors.red,
-                  'An error has occured. please try again later');
-            } else if (state is UserBlocked) {
-              displayMsg(context, Colors.blue,
-                  ' ${otherUser!.username} is now blocked');
-            } else if (state is ErrorOccured) {
-              displayMsg(context, Colors.red, 'An error has occured');
-            }
-          }, child: BlocBuilder<UserProfileCubit, UserProfileState>(
-            builder: (context, state) {
-              if (state is UserInfoAvailable) {
-                otherUser = state.userInfo;
-                BlocProvider.of<PostsUserCubit>(context)
-                    .getUserPosts(state.userInfo.userId ?? "", limit: 50);
-                return _buildBody();
-              } else if (state is FollowOtherUserSuccess ||
-                  state is FollowOtherUserNotSuccess ||
-                  state is UnFollowOtherUserSuccess ||
-                  state is UnFollowOtherUserNotSuccess ||
-                  state is UserBlocked ||
-                  state is ErrorOccured) {
-                return _buildBody();
-              }
-              return const Center(child: CircularProgressIndicator());
-            },
+            body: MultiBlocListener(
+              listeners: [
+                BlocListener<UserProfileCubit, UserProfileState>(
+                    listener: (context, state) {
+                  if (state is UserBlocked) {
+                    displayMsg(context, Colors.blue,
+                        ' ${otherUser!.username} is now blocked');
+                  } else if (state is ErrorOccured) {
+                    displayMsg(context, Colors.red, 'An error has occured');
+                  }
+                }),
+                BlocListener<FollowUnfollowCubit, FollowUnfollowState>(
+                  listener: (context, state) {
+                    if (state is FollowOtherUserSuccess) {
+                      displayMsg(context, Colors.blue,
+                          ' Successfully followed u/${otherUser!.username}');
+                    } else if (state is FollowOtherUserNotSuccess) {
+                      displayMsg(context, Colors.red,
+                          'An error has occured. please try again later');
+                    } else if (state is UnFollowOtherUserSuccess) {
+                      displayMsg(context, Colors.blue,
+                          ' Successfully unfollowed u/${otherUser!.username}');
+                    } else if (state is UnFollowOtherUserNotSuccess) {
+                      displayMsg(context, Colors.red,
+                          'An error has occured. please try again later');
+                    }
+                  },
+                ),
+              ],
+              child: BlocBuilder<UserProfileCubit, UserProfileState>(
+                builder: (context, state) {
+                  if (state is UserInfoAvailable) {
+                    otherUser = state.userInfo;
+                    BlocProvider.of<PostsUserCubit>(context)
+                        .getUserPosts(state.userInfo.userId!, limit: 50);
+                    return _buildBody();
+                  } else if (state is FollowOtherUserSuccess ||
+                      state is FollowOtherUserNotSuccess ||
+                      state is UnFollowOtherUserSuccess ||
+                      state is UnFollowOtherUserNotSuccess ||
+                      state is UserBlocked ||
+                      state is ErrorOccured) {
+                    return _buildBody();
+                  }
+                  return const Center(child: CircularProgressIndicator());
+                },
+              ),
+            ),
           )),
-        ),
-      ),
     );
   }
 }
