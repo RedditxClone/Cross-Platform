@@ -24,19 +24,19 @@ class AccountSettingsScreen extends StatefulWidget {
 class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
   /// Account settings model retrieved from backend
   AccountSettingsModel? accountSettings;
-  late int _isMan;
+  int _isMan = 3;
   String _country = "";
   // get these value from server
-  late String _email = "bemoi.erian@gmail.com";
-  late String _username = "bemoierian";
+  String _email = "";
+  String _username = "";
   final Uri _countryLearnMoreUrl =
       Uri.parse('https://reddithelp.com/hc/en-us/articles/360062429491');
   late Object? arguments;
   _AccountSettingsScreenState(this.arguments) {
-    Map<String, Object>? argMap = arguments as Map<String, Object>?;
-    _email = argMap == null ? "" : argMap["email"] as String? ?? "";
-    _username = argMap == null ? "" : argMap["username"] as String? ?? "";
-    _isMan = argMap == null ? 3 : argMap["gender"] as int? ?? 3;
+    // Map<String, Object>? argMap = arguments as Map<String, Object>?;
+    _email = UserData.user!.email ?? "";
+    _username = UserData.user!.username ?? "";
+    _isMan = 3;
   }
 
   /// Calling bloc BlocProvider inside initState
