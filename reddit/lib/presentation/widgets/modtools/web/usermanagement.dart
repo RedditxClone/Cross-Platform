@@ -8,8 +8,8 @@ import 'package:reddit/data/model/auth_model.dart';
 
 class UserManagement extends StatefulWidget {
   String screen = '';
-
-  UserManagement({required this.screen, super.key});
+  final String subredditId;
+  UserManagement({required this.screen, required this.subredditId, super.key});
 
   @override
   State<UserManagement> createState() => _UserManagementState();
@@ -23,7 +23,7 @@ class _UserManagementState extends State<UserManagement> {
   void initState() {
     super.initState();
     BlocProvider.of<ModtoolsCubit>(context)
-        .getApprovedUsers('639b27bbef88b3df0463d04b');
+        .getApprovedUsers(widget.subredditId);
   }
 
   Widget emptyUserManagement(context) {
@@ -144,7 +144,7 @@ class _UserManagementState extends State<UserManagement> {
         InkWell(
             onTap: () => BlocProvider.of<ModtoolsCubit>(context)
                 .removeApprovedUser(
-                    '639b27bbef88b3df0463d04b', approvedUsers![index].username),
+                    widget.subredditId, approvedUsers![index].username),
             child: const Text('Remove',
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)))
       ]),
@@ -276,7 +276,7 @@ class _UserManagementState extends State<UserManagement> {
                           onPressed: () {
                             Navigator.pop(context);
                             BlocProvider.of<ModtoolsCubit>(context)
-                                .addApprovedUser('639b27bbef88b3df0463d04b',
+                                .addApprovedUser(widget.subredditId,
                                     addApprovedUserController.text);
                           },
                           style: ElevatedButton.styleFrom(

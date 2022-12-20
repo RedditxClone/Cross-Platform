@@ -8,10 +8,10 @@ import 'package:reddit/data/model/modtools/taffic_stats_model.dart';
 
 class TrafficStatsWidget extends StatefulWidget {
   String screen = '';
-  final String subredditId;
+  final String subredditName;
 
   TrafficStatsWidget(
-      {required this.screen, required this.subredditId, super.key});
+      {required this.screen, required this.subredditName, super.key});
 
   @override
   State<TrafficStatsWidget> createState() => _TrafficStatsWidgetState();
@@ -23,8 +23,7 @@ class _TrafficStatsWidgetState extends State<TrafficStatsWidget> {
   List<FlSpot> left = [];
   @override
   void initState() {
-    BlocProvider.of<ModtoolsCubit>(context)
-        .getStatistics('639b27bbef88b3df0463d04b');
+    BlocProvider.of<ModtoolsCubit>(context).getStatistics(widget.subredditName);
     super.initState();
   }
 
@@ -71,21 +70,6 @@ class _TrafficStatsWidgetState extends State<TrafficStatsWidget> {
           case 6:
             text = DateFormat.MMMMd().format(DateTime.now());
             break;
-          // case 7:
-          //   text = 'Aug';
-          //   break;
-          // case 8:
-          //   text = 'Sep';
-          //   break;
-          // case 9:
-          //   text = 'Oct';
-          //   break;
-          // case 10:
-          //   text = 'Nov';
-          //   break;
-          // case 11:
-          //   text = 'Dec';
-          //   break;
         }
 
         return Text(text);

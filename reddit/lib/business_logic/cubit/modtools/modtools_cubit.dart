@@ -17,65 +17,64 @@ class ModtoolsCubit extends Cubit<ModtoolsState> {
   /// [subredditID] is the id of subreddit to which we get the edited posts list
   /// [subredditName] is the name of subreddit to which we get the edited posts list
   /// This function emits state [EditedPostsReady] on initState of the `Queue` widget.
-  void getEditedPosts(String subredditID, String subredditName) {
+  void getEditedPosts(String subredditName) {
     if (isClosed) return;
     emit(Loading());
-    repository.getEditedPosts(subredditID, subredditName).then((posts) {
+    repository.getEditedPosts(subredditName).then((posts) {
       emit(EditedPostsReady(posts));
       modToolsPosts = posts;
     });
   }
 
-  /// [subredditID] is the id of subreddit to which we get the spammed posts list
+  /// [subredditName] is the id of subreddit to which we get the spammed posts list
   /// [subredditName] is the name of subreddit to which we get the spammed posts list
   /// This function emits state [EditedPostsReady] on initState of the `Queue` widget.
-  void getSpammedPosts(String subredditID, String subredditName) {
+  void getSpammedPosts(String subredditName) {
     if (isClosed) return;
     emit(Loading());
-    repository.getSpammedPosts(subredditID, subredditName).then((posts) {
+    repository.getSpammedPosts(subredditName).then((posts) {
       emit(SpammedPostsReady(posts));
       modToolsPosts = posts;
     });
   }
 
-  /// [subredditID] is the id of subreddit to which we get the unmoderated posts list
   /// [subredditName] is the name of subreddit to which we get the unmoderated posts list
   /// This function emits state [EditedPostsReady] on initState of the `Queue` widget.
-  void getUnmoderatedPosts(String subredditID, String subredditName) {
+  void getUnmoderatedPosts(String subredditName) {
     if (isClosed) return;
     emit(Loading());
-    repository.getUnmoderatedPosts(subredditID, subredditName).then((posts) {
+    repository.getUnmoderatedPosts(subredditName).then((posts) {
       emit(UnmoderatedPostsReady(posts));
       modToolsPosts = posts;
     });
   }
 
-  /// [subredditID] is the id of subreddit to which we get the traffic stats
+  /// [subredditName] is the name of subreddit to which we get the traffic stats
   /// This function emits state [TrafficStatsAvailable] on initState of the `Traffic stats` page.
-  void getStatistics(String subredditID) {
+  void getStatistics(String subredditName) {
     if (isClosed) return;
     emit(Loading());
-    repository.getStatistics(subredditID).then((statistics) {
+    repository.getStatistics(subredditName).then((statistics) {
       emit(TrafficStatsAvailable(statistics));
     });
   }
 
-  /// [subredditID] is the id of subreddit to which we get the approved list
+  /// [subredditId] is the id of subreddit to which we get the approved list
   /// This function emits state [ApprovedListAvailable] on initState of the `UserManagement` widget.
-  void getApprovedUsers(String subredditID) {
+  void getApprovedUsers(String subredditId) {
     if (isClosed) return;
     emit(Loading());
-    repository.getAprroved(subredditID).then((aprrovedList) {
+    repository.getAprroved(subredditId).then((aprrovedList) {
       approvedUsers.clear();
       approvedUsers.addAll(aprrovedList.map((user) => User.fromJson(user)));
       emit(ApprovedListAvailable(approvedUsers));
     });
   }
 
-  /// [subredditID] is the id of subreddit to insert an approved user
+  /// [subredditId] is the id of subreddit to insert an approved user
   /// [username] is the username of the user to be inserted in the approved list
   /// This function emits state [AddedToApprovedUsers] on adding a new user to the approved list or if the user already existed.
-  void addApprovedUser(String subredditID, String username) {
+  void addApprovedUser(String subredditId, String username) {
     if (isClosed) return;
     bool usernameExist = false;
     approvedUsers.forEach((user) {
@@ -85,7 +84,7 @@ class ModtoolsCubit extends Cubit<ModtoolsState> {
     });
 
     if (usernameExist) {
-      repository.getAprroved(subredditID).then((aprrovedList) {
+      repository.getAprroved(subredditId).then((aprrovedList) {
         approvedUsers.clear();
         approvedUsers.addAll(aprrovedList.map((user) => User.fromJson(user)));
         emit(AddedToApprovedUsers(approvedUsers));
@@ -93,9 +92,9 @@ class ModtoolsCubit extends Cubit<ModtoolsState> {
         return;
       });
     } else {
-      repository.addApprovedUser(subredditID, username).then((statusCode) {
+      repository.addApprovedUser(subredditId, username).then((statusCode) {
         if (statusCode == 201) {
-          repository.getAprroved(subredditID).then((aprrovedList) {
+          repository.getAprroved(subredditId).then((aprrovedList) {
             approvedUsers.clear();
             approvedUsers
                 .addAll(aprrovedList.map((user) => User.fromJson(user)));
@@ -108,13 +107,13 @@ class ModtoolsCubit extends Cubit<ModtoolsState> {
     }
   }
 
-  /// [subredditID] is the id of subreddit to remove an approved user
+  /// [subredditId] is the id of subreddit to remove an approved user
   /// [username] is the username of the user to be removed from the approved list
   /// This function emits state [RemovedFromApprovedUsers] removing a user from the approved list.
-  void removeApprovedUser(String subredditID, String username) {
+  void removeApprovedUser(String subredditId, String username) {
     if (isClosed) return;
-    repository.removeApprovedUser(subredditID, username).then((statusCode) {
-      repository.getAprroved(subredditID).then((aprrovedList) {
+    repository.removeApprovedUser(subredditId, username).then((statusCode) {
+      repository.getAprroved(subredditId).then((aprrovedList) {
         approvedUsers.clear();
         approvedUsers.addAll(aprrovedList.map((user) => User.fromJson(user)));
         emit(RemovedFromApprovedUsers(approvedUsers));

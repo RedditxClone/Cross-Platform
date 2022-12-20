@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reddit/business_logic/cubit/modtools/modtools_cubit.dart';
-import 'package:reddit/business_logic/cubit/posts/post_actions_cubit.dart';
 import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/presentation/widgets/posts/posts_web.dart';
@@ -20,13 +19,13 @@ class _QueuesWidgetState extends State<QueuesWidget> {
   void initState() {
     if (widget.screen == 'Edited') {
       BlocProvider.of<ModtoolsCubit>(context)
-          .getEditedPosts('639b27bbef88b3df0463d04b', widget.subredditName);
+          .getEditedPosts(widget.subredditName);
     } else if (widget.screen == 'Spam') {
       BlocProvider.of<ModtoolsCubit>(context)
-          .getSpammedPosts('639b27bbef88b3df0463d04b', widget.subredditName);
+          .getSpammedPosts(widget.subredditName);
     } else if (widget.screen == 'Unmoderated') {
-      BlocProvider.of<ModtoolsCubit>(context).getUnmoderatedPosts(
-          '639b27bbef88b3df0463d04b', widget.subredditName);
+      BlocProvider.of<ModtoolsCubit>(context)
+          .getUnmoderatedPosts(widget.subredditName);
     }
     super.initState();
   }

@@ -8,7 +8,9 @@ import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 
 class EditedWeb extends StatefulWidget {
   String subredditName;
-  EditedWeb({super.key, required this.subredditName});
+  final String subredditId;
+  EditedWeb(
+      {super.key, required this.subredditName, required this.subredditId});
 
   @override
   State<EditedWeb> createState() => _EditedWebState();
@@ -34,7 +36,7 @@ class _EditedWebState extends State<EditedWeb> {
               LeftModList(
                   screen: 'Edited',
                   subredditName: widget.subredditName,
-                  subredditId: ''),
+                  subredditId: widget.subredditId),
               QueuesWidget(
                   screen: 'Edited', subredditName: widget.subredditName)
             ],

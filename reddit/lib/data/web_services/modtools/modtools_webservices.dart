@@ -19,14 +19,14 @@ class ModToolsWebServices {
     dio = Dio(options);
   }
 
-  /// [subredditId] is the id of subreddit to get the edited posts
+  /// [subredditName] is the name of subreddit to get the edited posts
   /// `Returns` edited posts to the modtools of the subreddit.
   /// This function performs `GET` request to the endpoint ``.
-  Future<dynamic> getEditedPosts(String subredditId) async {
+  Future<dynamic> getEditedPosts(String subredditName) async {
     try {
       // Get random posts if the user is not signed in (Without token)
       // Get joined communities posts if the user is signed in (With token)
-      Response response = await dio.get('subreddit/$subredditId/edited',
+      Response response = await dio.get('subreddit/$subredditName/edited',
           options: Options(
             headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
@@ -49,14 +49,14 @@ class ModToolsWebServices {
     }
   }
 
-  /// [subredditId] is the id of subreddit to get the spammed posts
+  /// [subredditName] is the name of subreddit to get the spammed posts
   /// `Returns` spammed posts to the modtools of the subreddit.
   /// This function performs `GET` request to the endpoint ``.
-  Future<dynamic> getSpammedPosts(String subredditId) async {
+  Future<dynamic> getSpammedPosts(String subredditName) async {
     try {
       // Get random posts if the user is not signed in (Without token)
       // Get joined communities posts if the user is signed in (With token)
-      Response response = await dio.get('subreddit/$subredditId/spammed',
+      Response response = await dio.get('subreddit/$subredditName/spammed',
           options: Options(
             headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
@@ -79,10 +79,11 @@ class ModToolsWebServices {
     }
   }
 
-  Future<List<dynamic>> getStatistics(String subredditId) async {
+  /// [subredditName] is the name of subreddit to get the statistics
+  Future<List<dynamic>> getStatistics(String subredditName) async {
     try {
       Response response = await dio.get(
-          'subreddit/$subredditId/statistics/week',
+          'subreddit/$subredditName/statistics/week',
           options: UserData.isLoggedIn
               ? Options(
                   headers: {"Authorization": "Bearer ${UserData.user!.token}"},
@@ -98,14 +99,14 @@ class ModToolsWebServices {
     }
   }
 
-  /// [subredditId] is the id of subreddit to get the unmoderated posts
+  /// [subredditName] is the name of subreddit to get the unmoderated posts
   /// `Returns` unmoderated posts to the modtools of the subreddit.
   /// This function performs `GET` request to the endpoint ``.
-  Future<dynamic> getUnmoderatedPosts(String subredditId) async {
+  Future<dynamic> getUnmoderatedPosts(String subredditName) async {
     try {
       // Get random posts if the user is not signed in (Without token)
       // Get joined communities posts if the user is signed in (With token)
-      Response response = await dio.get('subreddit/$subredditId/unmoderated',
+      Response response = await dio.get('subreddit/$subredditName/unmoderated',
           options: Options(
             headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
@@ -128,11 +129,11 @@ class ModToolsWebServices {
     }
   }
 
-  /// [subredditID] is the id of subreddit to which we get the approved list
+  /// [subredditId] is the id of subreddit to get the approved list
   /// Returns approved users in modtools as [List] of `Map<String,dynamic>`
-  Future<dynamic> getApproved(String subredditID) async {
+  Future<dynamic> getApproved(String subredditId) async {
     try {
-      Response response = await dio.get('subreddit/$subredditID/user/approve',
+      Response response = await dio.get('subreddit/$subredditId/user/approve',
           options: Options(
             headers: {"Authorization": "Bearer  ${UserData.user!.token}"},
           ));
@@ -144,12 +145,12 @@ class ModToolsWebServices {
     }
   }
 
-  /// [subredditID] is the id of subreddit to insert an approved user
+  /// [subredditId] is the id of subreddit to insert an approved user
   /// [username] is the username of the user to be inserted in the approved list
   /// Returns status code 201 if insert is successfull
-  Future<dynamic> addApprovedUser(String subredditID, String username) async {
+  Future<dynamic> addApprovedUser(String subredditId, String username) async {
     try {
-      Response response = await dio.post('subreddit/$subredditID/user/approve',
+      Response response = await dio.post('subreddit/$subredditId/user/approve',
           data: {"username": username},
           options: Options(
             headers: {"Authorization": "Bearer  ${UserData.user!.token}"},
@@ -163,14 +164,14 @@ class ModToolsWebServices {
     }
   }
 
-  /// [subredditID] is the id of subreddit to remove an approved user
+  /// [subredditId] is the id of subreddit to remove an approved user
   /// [username] is the username of the user to be removed from the approved list
   /// Returns status code 201 if remove is successfull
   Future<dynamic> removeApprovedUser(
-      String subredditID, String username) async {
+      String subredditId, String username) async {
     try {
       Response response =
-          await dio.delete('subreddit/$subredditID/user/$username/approve',
+          await dio.delete('subreddit/$subredditId/user/$username/approve',
               options: Options(
                 headers: {"Authorization": "Bearer  ${UserData.user!.token}"},
               ));

@@ -7,8 +7,10 @@ import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_Not_loggedin.da
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 
 class TrafficStatsWeb extends StatefulWidget {
+  final String subredditName;
   final String subredditId;
-  const TrafficStatsWeb({super.key, required this.subredditId});
+  const TrafficStatsWeb(
+      {super.key, required this.subredditName, required this.subredditId});
 
   @override
   State<TrafficStatsWeb> createState() => _TrafficStatsWebState();
@@ -33,10 +35,10 @@ class _TrafficStatsWebState extends State<TrafficStatsWeb> {
             children: [
               LeftModList(
                   screen: 'Traffic stats',
-                  subredditName: '',
+                  subredditName: widget.subredditName,
                   subredditId: widget.subredditId),
               TrafficStatsWidget(
-                  screen: 'Traffic stats', subredditId: widget.subredditId)
+                  screen: 'Traffic stats', subredditName: widget.subredditName)
             ],
           )),
     );

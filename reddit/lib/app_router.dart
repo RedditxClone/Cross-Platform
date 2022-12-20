@@ -331,16 +331,22 @@ class AppRouter {
       //------------------------------MOD LIST-------------------------------------
       //---------------------------------------------------------------------------
       case modlistRoute:
+        final subreddit = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (_) => BlocProvider.value(
-                value: modtoolsCubit, child: const ModListScreen()));
+                value: modtoolsCubit,
+                child: ModListScreen(
+                    subredditName: subreddit['name']!,
+                    subredditId: subreddit['id']!)));
 
       case modqueueRoute:
         final subreddit = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (_) => BlocProvider.value(
                 value: modtoolsCubit,
-                child: ModQueueWeb(subredditName: subreddit['name']!)));
+                child: ModQueueWeb(
+                    subredditName: subreddit['name']!,
+                    subredditId: subreddit['id']!)));
 
       case spamRoute:
         final subreddit = settings.arguments as Map<String, String>;
@@ -348,7 +354,9 @@ class AppRouter {
             builder: (_) => BlocProvider.value(
                 value: modtoolsCubit,
                 child: kIsWeb
-                    ? SpamWeb(subredditName: subreddit['name']!)
+                    ? SpamWeb(
+                        subredditName: subreddit['name']!,
+                        subredditId: subreddit['id']!)
                     : null));
       case unmoderatedRoute:
         final subreddit = settings.arguments as Map<String, String>;
@@ -356,15 +364,20 @@ class AppRouter {
             builder: (_) => BlocProvider.value(
                 value: modtoolsCubit,
                 child: kIsWeb
-                    ? UnmoderatedWeb(subredditName: subreddit['name']!)
+                    ? UnmoderatedWeb(
+                        subredditName: subreddit['name']!,
+                        subredditId: subreddit['id']!)
                     : null));
 
       case addApprovedRoute:
+        final subreddit = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (_) => BlocProvider.value(
-                value: modtoolsCubit, child: AddApprovedUserScreen()));
+                value: modtoolsCubit,
+                child: AddApprovedUserScreen(subredditId: subreddit['id']!)));
 
       case approvedRoute:
+        final subreddit = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (_) => MultiBlocProvider(
                     providers: [
@@ -372,8 +385,10 @@ class AppRouter {
                       BlocProvider.value(value: messagesCubitApproved),
                     ],
                     child: kIsWeb
-                        ? const ApprovedWeb()
-                        : const ApprovedUsersScreen()));
+                        ? ApprovedWeb(
+                            subredditName: subreddit['name']!,
+                            subredditId: subreddit['id']!)
+                        : ApprovedUsersScreen(subredditId: subreddit['id']!)));
 
       case editedRoute:
         final subreddit = settings.arguments as Map<String, String>;
@@ -381,7 +396,9 @@ class AppRouter {
             builder: (_) => BlocProvider.value(
                 value: modtoolsCubit,
                 child: kIsWeb
-                    ? EditedWeb(subredditName: subreddit['name']!)
+                    ? EditedWeb(
+                        subredditName: subreddit['name']!,
+                        subredditId: subreddit['id']!)
                     : null));
 
       case tafficRoute:
@@ -391,8 +408,8 @@ class AppRouter {
                 value: modtoolsCubit,
                 child: kIsWeb
                     ? TrafficStatsWeb(
-                        subredditId: subreddit['id']!,
-                      )
+                        subredditName: subreddit['name']!,
+                        subredditId: subreddit['id']!)
                     : null));
       //---------------------------------------------------------------------------
       case historyPageScreenRoute:

@@ -8,7 +8,9 @@ import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 
 class ModQueueWeb extends StatefulWidget {
   String subredditName;
-  ModQueueWeb({super.key, required this.subredditName});
+  final String subredditId;
+  ModQueueWeb(
+      {super.key, required this.subredditName, required this.subredditId});
 
   @override
   State<ModQueueWeb> createState() => _ModQueueWebState();
@@ -34,7 +36,7 @@ class _ModQueueWebState extends State<ModQueueWeb> {
               LeftModList(
                   screen: 'Mod queue',
                   subredditName: widget.subredditName,
-                  subredditId: ''),
+                  subredditId: widget.subredditId),
               QueuesWidget(
                   screen: 'Mod Queue', subredditName: widget.subredditName)
             ],

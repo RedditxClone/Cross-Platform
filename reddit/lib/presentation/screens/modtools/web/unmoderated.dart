@@ -8,7 +8,9 @@ import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 
 class UnmoderatedWeb extends StatefulWidget {
   String subredditName;
-  UnmoderatedWeb({super.key, required this.subredditName});
+  final String subredditId;
+  UnmoderatedWeb(
+      {super.key, required this.subredditName, required this.subredditId});
 
   @override
   State<UnmoderatedWeb> createState() => _UnmoderatedWebWebState();
@@ -34,7 +36,7 @@ class _UnmoderatedWebWebState extends State<UnmoderatedWeb> {
               LeftModList(
                   screen: 'Unmoderated',
                   subredditName: widget.subredditName,
-                  subredditId: ''),
+                  subredditId: widget.subredditId),
               QueuesWidget(
                   screen: 'Unmoderated', subredditName: widget.subredditName)
             ],
