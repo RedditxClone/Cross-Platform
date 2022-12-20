@@ -1,8 +1,8 @@
 class FlairModel {
-  late String fId;
-  late String text;
-  late String backgroundColor;
-  late String textColor;
+  String? fId;
+  String? text;
+  String? backgroundColor;
+  String? textColor;
 
   FlairModel(
       {required fId,
