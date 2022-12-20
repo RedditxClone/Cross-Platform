@@ -10,6 +10,7 @@ import 'package:reddit/business_logic/cubit/posts/posts_my_profile_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_popular_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_user_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/sort_cubit.dart';
+import 'package:reddit/business_logic/cubit/user_profile/follow_unfollow_cubit.dart';
 import 'package:reddit/data/repository/comments/comments_repository.dart';
 import 'package:reddit/data/web_services/comments/comments_web_services.dart';
 import 'package:reddit/data/repository/modtools/modtools_repository.dart';
@@ -141,12 +142,13 @@ class AppRouter {
   late UserProfileCubit userProfileCubit;
   late MessagesWebServices messagesWebServices;
   late MessagesRepository messagesRepository;
-  late MessagesCubit messagesCubit_approved;
-  late MessagesCubit messagesCubit_profile;
+  late MessagesCubit messagesCubitApproved;
+  late MessagesCubit messagesCubitProfile;
 
   late ModToolsWebServices modtoolsWebServices;
   late ModToolsRepository modtoolsRepository;
   late ModtoolsCubit modtoolsCubit;
+  late FollowUnfollowCubit followUnfollowCubit;
 
   late PostsWebServices postsWebServices;
   late PostsRepository postsRepository;
@@ -198,11 +200,12 @@ class AppRouter {
     userProfileWebServices = UserProfileWebServices();
     userProfileRepository = UserProfileRepository(userProfileWebServices);
     userProfileCubit = UserProfileCubit(userProfileRepository);
+    followUnfollowCubit = FollowUnfollowCubit(userProfileRepository);
 
     messagesWebServices = MessagesWebServices();
     messagesRepository = MessagesRepository(messagesWebServices);
-    messagesCubit_approved = MessagesCubit(messagesRepository);
-    messagesCubit_profile = MessagesCubit(messagesRepository);
+    messagesCubitApproved = MessagesCubit(messagesRepository);
+    messagesCubitProfile = MessagesCubit(messagesRepository);
 
     modtoolsWebServices = ModToolsWebServices();
     modtoolsRepository = ModToolsRepository(modtoolsWebServices);
@@ -308,8 +311,9 @@ class AppRouter {
             providers: [
               BlocProvider.value(value: userProfileCubit),
               BlocProvider.value(value: settingsCubit),
-              BlocProvider.value(value: messagesCubit_profile),
+              BlocProvider.value(value: messagesCubitProfile),
               BlocProvider.value(value: postsUserCubit),
+              BlocProvider.value(value: followUnfollowCubit),
               BlocProvider.value(value: otherProfileSortCubit),
             ],
             child: kIsWeb
@@ -365,7 +369,7 @@ class AppRouter {
             builder: (_) => MultiBlocProvider(
                     providers: [
                       BlocProvider.value(value: modtoolsCubit),
-                      BlocProvider.value(value: messagesCubit_approved),
+                      BlocProvider.value(value: messagesCubitApproved),
                     ],
                     child: kIsWeb
                         ? const ApprovedWeb()
@@ -588,7 +592,7 @@ class AppRouter {
         String username = arguments as String;
         return MaterialPageRoute(
             builder: (_) => BlocProvider(
-                  create: (BuildContext context) => messagesCubit_profile,
+                  create: (BuildContext context) => messagesCubitProfile,
                   child: SendMessageWeb(username: username),
                 ));
 

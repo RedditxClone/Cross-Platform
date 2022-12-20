@@ -52,31 +52,31 @@ class UserProfileCubit extends Cubit<UserProfileState> {
   ///
   /// Emits sate [FollowOtherUserSuccess] on successfully following this user and [FollowOtherUserNotSuccess] if the follow failed
   ///
-  void follow(String userID) {
-    if (isClosed) return;
-    userProfileRepository.follow(userID).then((value) {
-      if (value == 201) {
-        emit(FollowOtherUserSuccess());
-      } else {
-        emit(FollowOtherUserNotSuccess());
-      }
-    });
-  }
+  // void follow(String userID) {
+  //   if (isClosed) return;
+  //   userProfileRepository.follow(userID).then((value) {
+  //     if (value == 201) {
+  //       emit(FollowOtherUserSuccess());
+  //     } else {
+  //       emit(FollowOtherUserNotSuccess());
+  //     }
+  //   });
+  // }
 
   /// [userID] : The ID of the user to be followed
   ///
   /// Emits sate [UnFollowOtherUserSuccess] on successfully following this user and [UnFollowOtherUserNotSuccess] if the follow failed
   ///
-  void unfollow(String userID) {
-    if (isClosed) return;
-    userProfileRepository.unfollow(userID).then((value) {
-      if (value == 201) {
-        emit(UnFollowOtherUserSuccess());
-      } else {
-        emit(UnFollowOtherUserNotSuccess());
-      }
-    });
-  }
+  // void unfollow(String userID) {
+  //   if (isClosed) return;
+  //   userProfileRepository.unfollow(userID).then((value) {
+  //     if (value == 201) {
+  //       emit(UnFollowOtherUserSuccess());
+  //     } else {
+  //       emit(UnFollowOtherUserNotSuccess());
+  //     }
+  //   });
+  // }
 
   /// [username] : Username of the user to be blocked.
   ///

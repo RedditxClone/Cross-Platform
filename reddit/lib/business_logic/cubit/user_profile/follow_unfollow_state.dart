@@ -12,7 +12,3 @@ class FollowOtherUserNotSuccess extends FollowUnfollowState {}
 class UnFollowOtherUserSuccess extends FollowUnfollowState {}
 
 class UnFollowOtherUserNotSuccess extends FollowUnfollowState {}
-
-class UserBlocked extends FollowUnfollowState {}
-
-class ErrorOccured extends FollowUnfollowState {}
