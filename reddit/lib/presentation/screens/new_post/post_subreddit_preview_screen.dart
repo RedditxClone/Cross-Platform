@@ -94,7 +94,9 @@ class _PostSubredditPreviewScreenState
                             ),
                             child: TextButton(
                               onPressed: () {
-                                Navigator.pop(context);
+                                Navigator.pushNamed(
+                                    context, postToMobileScreenRoute,
+                                    arguments: _postModel);
                               },
                               child: Row(
                                 children: [
@@ -203,8 +205,12 @@ class _PostSubredditPreviewScreenState
                   children: [
                     TextButton(
                         style: TextButton.styleFrom(
-                            backgroundColor: const Color(0xff181818),
-                            foregroundColor: darkFontColor,
+                            backgroundColor: _postModel.nsfw
+                                ? lightFontColor
+                                : const Color(0xff181818),
+                            foregroundColor: _postModel.nsfw
+                                ? const Color(0xff181818)
+                                : darkFontColor,
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20))),
                         onPressed: () {
@@ -223,8 +229,12 @@ class _PostSubredditPreviewScreenState
                     ),
                     TextButton(
                         style: TextButton.styleFrom(
-                            backgroundColor: const Color(0xff181818),
-                            foregroundColor: darkFontColor,
+                            backgroundColor: _postModel.spoiler
+                                ? lightFontColor
+                                : const Color(0xff181818),
+                            foregroundColor: _postModel.spoiler
+                                ? const Color(0xff181818)
+                                : darkFontColor,
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20))),
                         onPressed: () {

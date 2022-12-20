@@ -130,16 +130,11 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         if (state is NextButtonPressed) {
           _postModel.title = _titleController.text.toString();
           _postModel.text = _bodyController.text.toString();
-          print("in first: " + _postModel.title + " " + _postModel.text);
-          _postModel = await Navigator.pushNamed(
-                  context, postToMobileScreenRoute, arguments: _postModel)
-              as PostModel;
+          Navigator.pushNamed(context, postToMobileScreenRoute,
+              arguments: _postModel);
         }
       },
       builder: (context, state) {
-        if (_postModel.subredditId != '')
-          print("returned " + _postModel.subredditId);
-
         _enable = _selectedTypeIndex == 2 && _titleController.text.isNotEmpty ||
             _selectedTypeIndex == 3 &&
                 _validURL &&

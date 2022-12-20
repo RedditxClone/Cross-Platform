@@ -62,6 +62,25 @@ class _PostFlairScreenState extends State<PostFlairScreen> {
               padding: const EdgeInsets.all(8.0),
               child: SingleChildScrollView(
                   child: Column(children: [
+                RadioListTile(
+                  dense: true,
+                  contentPadding: EdgeInsets.zero,
+                  activeColor: Colors.blue,
+                  title: Text(
+                    "None",
+                    style: const TextStyle(
+                        fontSize: statementFontSize,
+                        color: lightFontColor,
+                        fontWeight: FontWeight.w500),
+                  ),
+                  groupValue: _groupValue,
+                  value: 0,
+                  onChanged: (value) {
+                    _groupValue = value as int;
+
+                    BlocProvider.of<PostFlairCubit>(context).flairChanged();
+                  },
+                ),
                 for (int i = 0; i < widget.flairList.length; i++)
                   RadioListTile(
                     dense: true,
