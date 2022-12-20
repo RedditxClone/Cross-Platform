@@ -49,4 +49,15 @@ class PostsRepository {
     // debugPrint("$posts");
     return List<PostsModel>.from(posts.map((i) => PostsModel.fromJson(i)));
   }
+
+  /// Returns [List] of [PostsModel] object that contains the logged in user's profile posts
+  /// after getting it from [PostsWebServices] and mapping it to the model list.
+  Future<List<PostsModel>> getSubredditPosts(
+      String name, String sort, int page, int limit) async {
+    final posts =
+        await postsDrawerWebServices.getSubredditPosts(name, sort, page, limit);
+    // debugPrint("My profile posts from repo:");
+    // debugPrint("$posts");
+    return List<PostsModel>.from(posts.map((i) => PostsModel.fromJson(i)));
+  }
 }
