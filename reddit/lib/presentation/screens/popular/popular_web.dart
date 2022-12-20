@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reddit/business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
+import 'package:reddit/business_logic/cubit/posts/posts_popular_cubit.dart';
+import 'package:reddit/business_logic/cubit/posts/sort_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
@@ -9,8 +11,6 @@ import 'package:reddit/presentation/widgets/home_widgets/left_list_not_logged_in
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_Not_loggedin.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 import 'package:reddit/presentation/widgets/posts/posts_web.dart';
-
-import '../../../business_logic/cubit/posts/posts_home_cubit.dart';
 
 class PopularWeb extends StatefulWidget {
   const PopularWeb({Key? key}) : super(key: key);
@@ -26,140 +26,150 @@ class _PopularWebState extends State<PopularWeb> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<PostsHomeCubit>(context).getTimelinePosts();
+    BlocProvider.of<PostsPopularCubit>(context).getPopularPosts(sort: "best");
     isLoggedIn = UserData.user != null;
   }
 
   String sortBy = 'best';
 
   Widget _sortBy() {
-    return Container(
-      // sort posts
-      height: 70,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5), color: defaultSecondaryColor),
-      margin: const EdgeInsets.only(bottom: 15),
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Row(
-          children: [
-            ElevatedButton(
-                onPressed: () {
-                  // TODO : sort by new
-                  setState(() {
-                    sortBy = 'best';
-                  });
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.all(15),
-                  backgroundColor: sortBy == 'best'
-                      ? const Color.fromARGB(255, 68, 68, 68)
-                      : Colors.transparent,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0)),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    sortBy == 'best'
-                        ? const Icon(Icons.rocket)
-                        : const Icon(Icons.rocket_outlined),
-                    const SizedBox(width: 5),
-                    const Text(
-                      'Best',
-                      style: TextStyle(fontSize: 17),
-                    )
-                  ],
-                )),
-            const SizedBox(width: 10),
-            ElevatedButton(
-                onPressed: () {
-                  // TODO : sort by new
-                  setState(() {
-                    sortBy = 'new';
-                  });
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.all(15),
-                  backgroundColor: sortBy == 'new'
-                      ? const Color.fromARGB(255, 68, 68, 68)
-                      : Colors.transparent,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0)),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    sortBy == 'new'
-                        ? const Icon(Icons.new_releases_sharp)
-                        : const Icon(Icons.new_releases_outlined),
-                    const SizedBox(width: 5),
-                    const Text(
-                      'New',
-                      style: TextStyle(fontSize: 17),
-                    )
-                  ],
-                )),
-            const SizedBox(width: 10),
-            ElevatedButton(
-                onPressed: () {
-                  // TODO : sort by hot
-                  setState(() {
-                    sortBy = 'hot';
-                  });
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.all(15),
-                  backgroundColor: sortBy == 'hot'
-                      ? const Color.fromARGB(255, 68, 68, 68)
-                      : Colors.transparent,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0)),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    sortBy == 'hot'
-                        ? const Icon(Icons.local_fire_department)
-                        : const Icon(Icons.local_fire_department_outlined),
-                    const SizedBox(width: 5),
-                    const Text(
-                      'Hot',
-                      style: TextStyle(fontSize: 17),
-                    )
-                  ],
-                )),
-            const SizedBox(width: 10),
-            ElevatedButton(
-                onPressed: () {
-                  // TODO : sort by top
-                  setState(() {
-                    sortBy = 'top';
-                  });
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.all(15),
-                  backgroundColor: sortBy == 'top'
-                      ? const Color.fromARGB(255, 68, 68, 68)
-                      : Colors.transparent,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0)),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: const [
-                    Icon(Icons.trending_up_rounded),
-                    SizedBox(width: 5),
-                    Text(
-                      'Top',
-                      style: TextStyle(fontSize: 17),
-                    )
-                  ],
-                )),
-            const SizedBox(width: 10),
-          ],
-        ),
-      ),
+    return BlocBuilder<SortCubit, SortState>(
+      builder: (context, state) {
+        if (state is SortBest) {
+          sortBy = 'best';
+          BlocProvider.of<PostsPopularCubit>(context)
+              .getPopularPosts(sort: sortBy);
+        } else if (state is SortNew) {
+          sortBy = 'new';
+          BlocProvider.of<PostsPopularCubit>(context)
+              .getPopularPosts(sort: sortBy);
+        } else if (state is SortHot) {
+          sortBy = 'hot';
+          BlocProvider.of<PostsPopularCubit>(context)
+              .getPopularPosts(sort: sortBy);
+        } else if (state is SortTop) {
+          sortBy = 'top';
+          BlocProvider.of<PostsPopularCubit>(context)
+              .getPopularPosts(sort: sortBy);
+        }
+        return Container(
+          // sort posts
+          height: 70,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: defaultSecondaryColor),
+          margin: const EdgeInsets.only(bottom: 15),
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Row(
+              children: [
+                ElevatedButton(
+                    onPressed: () {
+                      BlocProvider.of<SortCubit>(context).sort("best");
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.all(15),
+                      backgroundColor: sortBy == 'best'
+                          ? const Color.fromARGB(255, 68, 68, 68)
+                          : Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        sortBy == 'best'
+                            ? const Icon(Icons.rocket)
+                            : const Icon(Icons.rocket_outlined),
+                        const SizedBox(width: 5),
+                        const Text(
+                          'Best',
+                          style: TextStyle(fontSize: 17),
+                        )
+                      ],
+                    )),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                    onPressed: () {
+                      BlocProvider.of<SortCubit>(context).sort("new");
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.all(15),
+                      backgroundColor: sortBy == 'new'
+                          ? const Color.fromARGB(255, 68, 68, 68)
+                          : Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        sortBy == 'new'
+                            ? const Icon(Icons.new_releases_sharp)
+                            : const Icon(Icons.new_releases_outlined),
+                        const SizedBox(width: 5),
+                        const Text(
+                          'New',
+                          style: TextStyle(fontSize: 17),
+                        )
+                      ],
+                    )),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                    onPressed: () {
+                      BlocProvider.of<SortCubit>(context).sort("hot");
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.all(15),
+                      backgroundColor: sortBy == 'hot'
+                          ? const Color.fromARGB(255, 68, 68, 68)
+                          : Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        sortBy == 'hot'
+                            ? const Icon(Icons.local_fire_department)
+                            : const Icon(Icons.local_fire_department_outlined),
+                        const SizedBox(width: 5),
+                        const Text(
+                          'Hot',
+                          style: TextStyle(fontSize: 17),
+                        )
+                      ],
+                    )),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                    onPressed: () {
+                      BlocProvider.of<SortCubit>(context).sort("top");
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.all(15),
+                      backgroundColor: sortBy == 'top'
+                          ? const Color.fromARGB(255, 68, 68, 68)
+                          : Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: const [
+                        Icon(Icons.trending_up_rounded),
+                        SizedBox(width: 5),
+                        Text(
+                          'Top',
+                          style: TextStyle(fontSize: 17),
+                        )
+                      ],
+                    )),
+                const SizedBox(width: 10),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -342,16 +352,71 @@ class _PopularWebState extends State<PopularWeb> {
                                                   color: Colors.white)),
                                           SizedBox(height: 10),
                                           _sortBy(),
-                                          BlocBuilder<PostsHomeCubit,
-                                              PostsHomeState>(
+                                          BlocBuilder<PostsPopularCubit,
+                                              PostsPopularState>(
                                             builder: (context, state) {
-                                              if (state is PostsLoaded) {
-                                                return Column(children: [
-                                                  ...state.posts!
-                                                      .map((e) => PostsWeb(
-                                                          postsModel: e))
-                                                      .toList()
-                                                ]);
+                                              if (state is PopularPostsLoaded) {
+                                                if (state.posts!.isNotEmpty) {
+                                                  return Column(children: [
+                                                    ...state.posts!
+                                                        .map((e) => PostsWeb(
+                                                            postsModel: e))
+                                                        .toList()
+                                                  ]);
+                                                }
+                                                return Center(
+                                                  child: Column(children: [
+                                                    Padding(
+                                                      padding: const EdgeInsets
+                                                              .symmetric(
+                                                          vertical: 20),
+                                                      child: Image.asset(
+                                                        "assets/images/comments.jpg",
+                                                        scale: 3,
+                                                      ),
+                                                    ),
+                                                    const Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              vertical: 10),
+                                                      child: Text(
+                                                        "Be the first to create a post",
+                                                        style: TextStyle(
+                                                            fontSize: 17,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                      ),
+                                                    ),
+                                                    Row(
+                                                      children: [
+                                                        Expanded(
+                                                            flex: 3,
+                                                            child: Container()),
+                                                        const Expanded(
+                                                          flex: 20,
+                                                          child: Padding(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                    vertical:
+                                                                        10),
+                                                            child: Text(
+                                                              "No posts are available yet. Create a post or join a community!",
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Expanded(
+                                                            flex: 3,
+                                                            child: Container()),
+                                                      ],
+                                                    ),
+                                                  ]),
+                                                );
                                               }
                                               return Container();
                                             },

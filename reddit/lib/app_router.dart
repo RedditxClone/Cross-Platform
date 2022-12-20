@@ -9,6 +9,9 @@ import 'package:reddit/business_logic/cubit/messages/messages_cubit.dart';
 import 'package:reddit/business_logic/cubit/modtools/modtools_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_home_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_my_profile_cubit.dart';
+import 'package:reddit/business_logic/cubit/posts/posts_popular_cubit.dart';
+import 'package:reddit/business_logic/cubit/posts/posts_user_cubit.dart';
+import 'package:reddit/business_logic/cubit/posts/sort_cubit.dart';
 import 'package:reddit/data/model/comments/comment_model.dart';
 import 'package:reddit/data/repository/comments/comments_repository.dart';
 import 'package:reddit/data/web_services/comments/comments_web_services.dart';
@@ -166,9 +169,15 @@ class AppRouter {
   late PostsWebServices postsWebServices;
   late PostsRepository postsRepository;
   late PostsHomeCubit postsHomeCubit;
+  late PostsPopularCubit postsPopularCubit;
   late PostsMyProfileCubit postsMyProfileCubit;
+  late PostsUserCubit postsUserCubit;
   late CommentsRepository commentsRepository;
   late CommentsCubit commentsCubit;
+  late SortCubit homeSortCubit;
+  late SortCubit popularSortCubit;
+  late SortCubit myProfileSortCubit;
+  late SortCubit otherProfileSortCubit;
   AppRouter() {
     // initialise repository and cubit objects
     safetySettingsRepository =
@@ -199,7 +208,9 @@ class AppRouter {
     postsWebServices = PostsWebServices();
     postsRepository = PostsRepository(postsWebServices);
     postsHomeCubit = PostsHomeCubit(postsRepository);
+    postsPopularCubit = PostsPopularCubit(postsRepository);
     postsMyProfileCubit = PostsMyProfileCubit(postsRepository);
+    postsUserCubit = PostsUserCubit(postsRepository);
     commentsRepository = CommentsRepository(CommentsWebServices());
     commentsCubit = CommentsCubit(commentsRepository);
     userProfileWebServices = UserProfileWebServices();
@@ -220,6 +231,10 @@ class AppRouter {
     modtoolsWebServices = ModToolsWebServices();
     modtoolsRepository = ModToolsRepository(modtoolsWebServices);
     modtoolsCubit = ModtoolsCubit(modtoolsRepository);
+    homeSortCubit = SortCubit();
+    otherProfileSortCubit = SortCubit();
+    myProfileSortCubit = SortCubit();
+    popularSortCubit = SortCubit();
   }
   Route? generateRoute(RouteSettings settings) {
     final arguments = settings.arguments;
@@ -240,15 +255,25 @@ class AppRouter {
               BlocProvider(
                 create: ((context) => authCubit),
               ),
-              BlocProvider(
-                create: (context) => postsHomeCubit,
+              BlocProvider.value(
+                value: postsHomeCubit,
+              ),
+              BlocProvider.value(
+                value: homeSortCubit,
               ),
             ],
             child: kIsWeb
-                ? const HomePageWeb()
-                : BlocProvider(
-                    create: (context) => LeftDrawerCubit(
-                        LeftDrawerRepository(LeftDrawerWebServices())),
+                ? HomePageWeb()
+                : MultiBlocProvider(
+                    providers: [
+                      BlocProvider(
+                        create: (context) => LeftDrawerCubit(
+                            LeftDrawerRepository(LeftDrawerWebServices())),
+                      ),
+                      BlocProvider.value(
+                        value: postsPopularCubit,
+                      ),
+                    ],
                     child: HomePage(),
                   ),
           ),
@@ -258,14 +283,17 @@ class AppRouter {
         return MaterialPageRoute(
             builder: (_) => MultiBlocProvider(
                   providers: [
-                    BlocProvider(
-                      create: (context) => postsHomeCubit,
+                    BlocProvider.value(
+                      value: postsPopularCubit,
+                    ),
+                    BlocProvider.value(
+                      value: popularSortCubit,
                     ),
                     BlocProvider.value(
                       value: authCubit,
                     ),
                   ],
-                  child: PopularWeb(),
+                  child: const PopularWeb(),
                   // child: kIsWeb ? const PopularWeb() : const Popular(),
                 ));
 
@@ -277,6 +305,9 @@ class AppRouter {
                       BlocProvider(
                         create: (context) => postsMyProfileCubit,
                       ),
+                      BlocProvider.value(
+                        value: myProfileSortCubit,
+                      ),
                     ],
                     child: const ProfilePageWeb(),
                   )
@@ -287,6 +318,9 @@ class AppRouter {
                       ),
                       BlocProvider(
                         create: (context) => postsMyProfileCubit,
+                      ),
+                      BlocProvider.value(
+                        value: myProfileSortCubit,
                       ),
                     ],
                     child: const ProfileScreen(),
@@ -300,6 +334,8 @@ class AppRouter {
               BlocProvider.value(value: userProfileCubit),
               BlocProvider.value(value: settingsCubit),
               BlocProvider.value(value: messagesCubit_profile),
+              BlocProvider.value(value: postsUserCubit),
+              BlocProvider.value(value: otherProfileSortCubit),
             ],
             child: kIsWeb
                 ? OtherProfilePageWeb(userID: userID)

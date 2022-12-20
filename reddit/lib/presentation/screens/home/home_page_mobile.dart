@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reddit/business_logic/cubit/end_drawer/end_drawer_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_home_cubit.dart';
+import 'package:reddit/business_logic/cubit/posts/posts_popular_cubit.dart';
 import 'package:reddit/data/repository/end_drawer/end_drawer_repository.dart';
 import 'package:reddit/data/web_services/settings_web_services.dart';
 import 'package:reddit/data/model/auth_model.dart';
@@ -119,7 +120,7 @@ class _HomePageState extends State<HomePage> {
                       child: CircularProgressIndicator.adaptive());
                 })
               : BlocBuilder<AuthCubit, AuthState>(builder: (context, state) {
-                  BlocProvider.of<PostsHomeCubit>(context).getTimelinePosts();
+                  BlocProvider.of<PostsPopularCubit>(context).getPopularPosts();
                   if (state is Login ||
                       state is GetTheUserData ||
                       state is SignedIn) {
@@ -302,9 +303,48 @@ class _HomePageState extends State<HomePage> {
     return BlocBuilder<PostsHomeCubit, PostsHomeState>(
       builder: (context, state) {
         if (state is PostsLoaded) {
-          return ListView(children: [
-            ...state.posts!.map((e) => PostsWeb(postsModel: e)).toList()
-          ]);
+          if (state.posts!.isNotEmpty) {
+            return ListView(children: [
+              ...state.posts!.map((e) => PostsWeb(postsModel: e)).toList()
+            ]);
+          }
+          return Center(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: Image.asset(
+                    "assets/images/comments.jpg",
+                    scale: 3,
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  child: Text(
+                    "Be the first to create a post",
+                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Row(
+                  children: [
+                    Expanded(flex: 3, child: Container()),
+                    const Expanded(
+                      flex: 20,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10),
+                        child: Text(
+                          "No posts are available yet. Create a post or join a community!",
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                    Expanded(flex: 3, child: Container()),
+                  ],
+                ),
+              ],
+            ),
+          );
         }
         return const Center(child: CircularProgressIndicator());
       },
@@ -313,37 +353,54 @@ class _HomePageState extends State<HomePage> {
 
   Widget popularPosts() {
     double cardHeight = 100;
-    return BlocBuilder<PostsHomeCubit, PostsHomeState>(
+    return BlocBuilder<PostsPopularCubit, PostsPopularState>(
       builder: (context, state) {
-        if (state is PostsLoaded) {
-          return ListView(
-            children: [
-              Column(
+        if (state is PopularPostsLoaded) {
+          if (state.posts!.isNotEmpty) {
+            return ListView(
+              children: [
+                Column(
+                  children: [
+                    ...state.posts!.map((e) => PostsWeb(postsModel: e)).toList()
+                  ],
+                ),
+              ],
+            );
+          }
+          return Center(
+            child: Column(children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: Image.asset(
+                  "assets/images/comments.jpg",
+                  scale: 3,
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 10),
+                child: Text(
+                  "Be the first to create a post",
+                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              Row(
                 children: [
-                  // SizedBox(
-                  //   height: cardHeight,
-                  //   child: ListView(
-                  //     scrollDirection: Axis.horizontal,
-                  //     children: List.generate(
-                  //       10,
-                  //       (int index) {
-                  //         return Card(
-                  //           key: const Key('row-card'),
-                  //           color: Colors.blue,
-                  //           child: SizedBox(
-                  //             width: 150.0,
-                  //             height: cardHeight,
-                  //             child: Center(child: Text("$index")),
-                  //           ),
-                  //         );
-                  //       },
-                  //     ),
-                  //   ),
-                  // ),
-                  ...state.posts!.map((e) => PostsWeb(postsModel: e)).toList()
+                  Expanded(flex: 3, child: Container()),
+                  const Expanded(
+                    flex: 20,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      child: Text(
+                        "No posts are available yet. Create a post or join a community!",
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                  Expanded(flex: 3, child: Container()),
                 ],
               ),
-            ],
+            ]),
           );
         }
         return const Center(child: CircularProgressIndicator());
