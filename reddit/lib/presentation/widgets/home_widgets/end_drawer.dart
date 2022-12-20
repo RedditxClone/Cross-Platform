@@ -15,6 +15,11 @@ import '../../../data/repository/create_community_repository.dart';
 import '../../../data/web_services/create_community_web_services.dart';
 import '../../screens/create_community_screen.dart';
 
+import '../../../business_logic/cubit/create_community_cubit.dart';
+import '../../../data/repository/create_community_repository.dart';
+import '../../../data/web_services/create_community_web_services.dart';
+import '../../screens/create_community_screen.dart';
+
 /// Class that build the UI of the homepage end drawer
 class EndDrawer extends StatelessWidget {
   late final int _karma;
