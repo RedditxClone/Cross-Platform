@@ -120,4 +120,72 @@ class ModtoolsCubit extends Cubit<ModtoolsState> {
       });
     });
   }
+
+  /// [subredditId] is the id of subreddit to which we get the moderators list
+  ///
+  /// This function emits state [ModeratorsListAvailable]
+  void getModerators(String subredditId) {
+    if (isClosed) return;
+    repository.getModerators(subredditId).then((moderatorsList) {
+      emit(ModeratorsListAvailable(moderatorsList));
+    });
+  }
+
+  /// [subredditId] is the id of subreddit to which we add a moderator
+  /// [username] is the username of the user to be added as a moderator
+  ///
+  /// This function emits state [AddedToModerators] on adding a new moderator or if the user already existed.
+  void addModerator(String subredditId, String username) {
+    repository.addModerator(subredditId, username).then((value) {
+      emit(AddedToModerators(value));
+    });
+  }
+
+  /// [subredditId] is the id of subreddit to add new user to the muted list
+  /// [username] is the username of the user to be added to the muted list
+  /// [muteReason] is the reason for muting the user
+  ///
+  /// This function emits state [MuteUser] on adding a new user to the muted list or if the user already existed.
+  void muteUser(String subredditId, String username, String muteReason) {
+    repository.muteUser(subredditId, username, muteReason).then((value) {
+      emit(MuteUser(value));
+    });
+  }
+
+  /// [subredditId] is the id of subreddit to get the muted list
+  ///
+  /// This function emits state [MutedListAvailable]
+  void getMutedUsers(String subredditId) {
+    repository.getMutedUsers(subredditId).then((value) {
+      emit(MutedListAvailable(value));
+    });
+  }
+
+  /// [subredditId] is the id of subreddit to get the banned list
+  ///
+  /// This function emits state [BannedListAvailable]
+  void getBannedUsers(String subredditId) {
+    repository.getBannedUsers(subredditId).then((value) {
+      emit(BannedListAvailable(value));
+    });
+  }
+
+  /// [subredditId] is the id of subreddit to add new user to the banned list
+  /// [username] is the username of the user to be added to the banned list
+  /// [banReason] is the reason for banning the user
+  /// [banDays] is the duration for which the user is banned
+  /// [modNote] is the note for banning the user
+  /// [banMessage] is the message to be sent to the user
+  /// [permanent] is the boolean value to ban the user permanently
+  ///
+  /// This function emits state [BanUser] on adding a new user to the banned list or if the user already existed.
+  void banUser(String subredditId, String username, String banReason,
+      int banDays, String modNote, String banMessage, bool permanent) {
+    repository
+        .banUser(subredditId, username, banReason, banDays, modNote, banMessage,
+            permanent)
+        .then((value) {
+      emit(BanUser(value));
+    });
+  }
 }
