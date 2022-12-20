@@ -7,7 +7,7 @@ import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_Not_loggedin.da
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 
 class EditedWeb extends StatefulWidget {
-  String subredditName = '';
+  String subredditName;
   EditedWeb({super.key, required this.subredditName});
 
   @override
@@ -32,7 +32,9 @@ class _EditedWebState extends State<EditedWeb> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               LeftModList(
-                  screen: 'Edited', subredditName: widget.subredditName),
+                  screen: 'Edited',
+                  subredditName: widget.subredditName,
+                  subredditId: ''),
               QueuesWidget(
                   screen: 'Edited', subredditName: widget.subredditName)
             ],

@@ -5,7 +5,12 @@ import 'package:reddit/constants/theme_colors.dart';
 class LeftModList extends StatefulWidget {
   String screen = '';
   final String subredditName;
-  LeftModList({required this.screen, required this.subredditName, super.key});
+  final String subredditId;
+  LeftModList(
+      {required this.screen,
+      required this.subredditName,
+      required this.subredditId,
+      super.key});
 
   @override
   State<LeftModList> createState() => _LeftModListState();
@@ -46,7 +51,10 @@ class _LeftModListState extends State<LeftModList> {
           padding: const EdgeInsets.symmetric(vertical: 10),
           child: InkWell(
               onTap: () => Navigator.pushReplacementNamed(context, routeName,
-                  arguments: widget.subredditName),
+                      arguments: {
+                        'name': widget.subredditName,
+                        'id': widget.subredditId
+                      }),
               child: Row(children: [
                 const SizedBox(width: 20),
                 Text(title, style: const TextStyle(fontSize: 14))

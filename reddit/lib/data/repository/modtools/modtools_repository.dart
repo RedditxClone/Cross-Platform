@@ -1,9 +1,12 @@
+import 'package:reddit/data/model/modtools/taffic_stats_model.dart';
 import 'package:reddit/data/model/posts/posts_model.dart';
 import 'package:reddit/data/web_services/modtools/modtools_webservices.dart';
 
 class ModToolsRepository {
   final ModToolsWebServices webServices;
+
   ModToolsRepository(this.webServices);
+  late List<TrafficStats> trafficStats;
 
   /// [subredditId] is the id of subreddit to get the edited posts
   /// [subredditName] is the name of subreddit to get the edited posts
@@ -45,6 +48,14 @@ class ModToolsRepository {
       temp.subreddit!.name = subredditName;
       return temp;
     }));
+  }
+
+  /// [subredditID] is the id of subreddit to which we get the traffic stats
+  /// Returns [List] of the approved users in modtools
+  Future<List<TrafficStats>> getStatistics(String subredditID) async {
+    final statistics = await webServices.getStatistics(subredditID);
+    trafficStats = statistics.map((i) => TrafficStats.fromJson(i)).toList();
+    return trafficStats;
   }
 
   /// [subredditID] is the id of subreddit to which we get the approved list

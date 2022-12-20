@@ -7,7 +7,7 @@ import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_Not_loggedin.da
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 
 class ModQueueWeb extends StatefulWidget {
-  String subredditName = '';
+  String subredditName;
   ModQueueWeb({super.key, required this.subredditName});
 
   @override
@@ -32,7 +32,9 @@ class _ModQueueWebState extends State<ModQueueWeb> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               LeftModList(
-                  screen: 'Mod queue', subredditName: widget.subredditName),
+                  screen: 'Mod queue',
+                  subredditName: widget.subredditName,
+                  subredditId: ''),
               QueuesWidget(
                   screen: 'Mod Queue', subredditName: widget.subredditName)
             ],

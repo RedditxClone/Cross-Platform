@@ -79,6 +79,25 @@ class ModToolsWebServices {
     }
   }
 
+  Future<List<dynamic>> getStatistics(String subredditId) async {
+    try {
+      Response response = await dio.get(
+          'subreddit/$subredditId/statistics/week',
+          options: UserData.isLoggedIn
+              ? Options(
+                  headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+                )
+              : null);
+      return response.data;
+    } catch (e) {
+      if (e is DioError) {
+        debugPrint("Status code is ${e.response!.data}");
+      }
+      debugPrint("$e");
+      return [];
+    }
+  }
+
   /// [subredditId] is the id of subreddit to get the unmoderated posts
   /// `Returns` unmoderated posts to the modtools of the subreddit.
   /// This function performs `GET` request to the endpoint ``.

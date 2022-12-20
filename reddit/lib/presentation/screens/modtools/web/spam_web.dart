@@ -7,7 +7,7 @@ import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_Not_loggedin.da
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 
 class SpamWeb extends StatefulWidget {
-  String subredditName = '';
+  String subredditName;
   SpamWeb({super.key, required this.subredditName});
 
   @override
@@ -31,7 +31,10 @@ class _SpamWebState extends State<SpamWeb> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              LeftModList(screen: 'Spam', subredditName: widget.subredditName),
+              LeftModList(
+                  screen: 'Spam',
+                  subredditName: widget.subredditName,
+                  subredditId: ''),
               QueuesWidget(screen: 'Spam', subredditName: widget.subredditName)
             ],
           )),

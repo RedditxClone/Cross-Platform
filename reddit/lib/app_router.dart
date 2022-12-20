@@ -297,25 +297,27 @@ class AppRouter {
                 value: modtoolsCubit, child: const ModListScreen()));
 
       case modqueueRoute:
-        final subredditName = settings.arguments as String;
+        final subreddit = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (_) => BlocProvider.value(
                 value: modtoolsCubit,
-                child: ModQueueWeb(subredditName: subredditName)));
+                child: ModQueueWeb(subredditName: subreddit['name']!)));
 
       case spamRoute:
-        final subredditName = settings.arguments as String;
-        return MaterialPageRoute(
-            builder: (_) => BlocProvider.value(
-                value: modtoolsCubit,
-                child: kIsWeb ? SpamWeb(subredditName: subredditName) : null));
-      case unmoderatedRoute:
-        final subredditName = settings.arguments as String;
+        final subreddit = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (_) => BlocProvider.value(
                 value: modtoolsCubit,
                 child: kIsWeb
-                    ? UnmoderatedWeb(subredditName: subredditName)
+                    ? SpamWeb(subredditName: subreddit['name']!)
+                    : null));
+      case unmoderatedRoute:
+        final subreddit = settings.arguments as Map<String, String>;
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider.value(
+                value: modtoolsCubit,
+                child: kIsWeb
+                    ? UnmoderatedWeb(subredditName: subreddit['name']!)
                     : null));
 
       case addApprovedRoute:
@@ -335,18 +337,24 @@ class AppRouter {
                         : const ApprovedUsersScreen()));
 
       case editedRoute:
-        final subredditName = settings.arguments as String;
+        final subreddit = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (_) => BlocProvider.value(
                 value: modtoolsCubit,
-                child:
-                    kIsWeb ? EditedWeb(subredditName: subredditName) : null));
+                child: kIsWeb
+                    ? EditedWeb(subredditName: subreddit['name']!)
+                    : null));
 
       case tafficRoute:
+        final subreddit = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (_) => BlocProvider.value(
-                value: subredditPageCubit,
-                child: kIsWeb ? const TrafficStatsWeb() : null));
+                value: modtoolsCubit,
+                child: kIsWeb
+                    ? TrafficStatsWeb(
+                        subredditId: subreddit['id']!,
+                      )
+                    : null));
       //---------------------------------------------------------------------------
       case historyPageScreenRoute:
         return MaterialPageRoute(

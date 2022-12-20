@@ -2,9 +2,9 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
 import 'package:reddit/data/model/auth_model.dart';
+import 'package:reddit/data/model/modtools/taffic_stats_model.dart';
 import 'package:reddit/data/model/posts/posts_model.dart';
 import 'package:reddit/data/repository/modtools/modtools_repository.dart';
-import 'package:reddit/data/repository/posts/posts_repository.dart';
 
 part 'modtools_state.dart';
 
@@ -47,6 +47,16 @@ class ModtoolsCubit extends Cubit<ModtoolsState> {
     repository.getUnmoderatedPosts(subredditID, subredditName).then((posts) {
       emit(UnmoderatedPostsReady(posts));
       modToolsPosts = posts;
+    });
+  }
+
+  /// [subredditID] is the id of subreddit to which we get the traffic stats
+  /// This function emits state [TrafficStatsAvailable] on initState of the `Traffic stats` page.
+  void getStatistics(String subredditID) {
+    if (isClosed) return;
+    emit(Loading());
+    repository.getStatistics(subredditID).then((statistics) {
+      emit(TrafficStatsAvailable(statistics));
     });
   }
 

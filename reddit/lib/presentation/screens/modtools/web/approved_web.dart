@@ -31,7 +31,8 @@ class _ApprovedWebState extends State<ApprovedWeb> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              LeftModList(screen: 'Approved', subredditName: ''),
+              LeftModList(
+                  screen: 'Approved', subredditName: '', subredditId: ''),
               UserManagement(screen: 'Approved')
             ],
           )),

@@ -1,28 +1,28 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reddit/business_logic/cubit/modtools/modtools_cubit.dart';
 import 'package:reddit/constants/theme_colors.dart';
-import 'package:reddit/data/model/auth_model.dart';
 
 class TrafficStatsWidget extends StatefulWidget {
   String screen = '';
+  final String subredditId;
 
-  TrafficStatsWidget({required this.screen, super.key});
+  TrafficStatsWidget(
+      {required this.screen, required this.subredditId, super.key});
 
   @override
   State<TrafficStatsWidget> createState() => _TrafficStatsWidgetState();
 }
 
 class _TrafficStatsWidgetState extends State<TrafficStatsWidget> {
-  User otherUser = User.fromJson({
-    'username': "username",
-      'email': "email",
-      'profilePhoto': "profilePic",
-      'token': "token",
-      'authType': "type",
-      '_id': "userId",
-      'displayName': "displayName",
-      'cakeDay': false,
-  });
+  @override
+  void initState() {
+    BlocProvider.of<ModtoolsCubit>(context)
+        .getStatistics('639b27bbef88b3df0463d04b');
+    super.initState();
+  }
+
   Widget _buildTable() {
     return Container(
       height: 1000,
