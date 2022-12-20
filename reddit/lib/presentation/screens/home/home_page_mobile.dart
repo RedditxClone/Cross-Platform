@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reddit/business_logic/cubit/end_drawer/end_drawer_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_home_cubit.dart';
+import 'package:reddit/business_logic/cubit/posts/posts_popular_cubit.dart';
 import 'package:reddit/data/repository/end_drawer/end_drawer_repository.dart';
 import 'package:reddit/data/web_services/settings_web_services.dart';
 import 'package:reddit/data/model/auth_model.dart';
@@ -118,7 +119,7 @@ class _HomePageState extends State<HomePage> {
                       child: CircularProgressIndicator.adaptive());
                 })
               : BlocBuilder<AuthCubit, AuthState>(builder: (context, state) {
-                  BlocProvider.of<PostsHomeCubit>(context).getTimelinePosts();
+                  BlocProvider.of<PostsPopularCubit>(context).getPopularPosts();
                   if (state is Login ||
                       state is GetTheUserData ||
                       state is SignedIn) {
@@ -310,9 +311,9 @@ class _HomePageState extends State<HomePage> {
 
   Widget popularPosts() {
     double cardHeight = 100;
-    return BlocBuilder<PostsHomeCubit, PostsHomeState>(
+    return BlocBuilder<PostsPopularCubit, PostsPopularState>(
       builder: (context, state) {
-        if (state is PostsLoaded) {
+        if (state is PopularPostsLoaded) {
           return ListView(
             children: [
               Column(

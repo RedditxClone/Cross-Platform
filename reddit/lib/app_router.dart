@@ -234,9 +234,16 @@ class AppRouter {
             ],
             child: kIsWeb
                 ? HomePageWeb()
-                : BlocProvider(
-                    create: (context) => LeftDrawerCubit(
-                        LeftDrawerRepository(LeftDrawerWebServices())),
+                : MultiBlocProvider(
+                    providers: [
+                      BlocProvider(
+                        create: (context) => LeftDrawerCubit(
+                            LeftDrawerRepository(LeftDrawerWebServices())),
+                      ),
+                      BlocProvider.value(
+                        value: postsPopularCubit,
+                      ),
+                    ],
                     child: HomePage(),
                   ),
           ),
