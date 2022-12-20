@@ -56,6 +56,41 @@ class PostsWebServices {
 
   /// `Returns` home page posts.
   /// This function performs `GET` request to the endpoint ``.
+  Future<dynamic> getPopularPosts(String sort, int page, int limit) async {
+    try {
+      // Get random posts if the user is not signed in (Without token)
+      // Get joined communities posts if the user is signed in (With token)
+      Response response = UserData.user == null
+          ? await dio.get('post/popular',
+              queryParameters: {"sort": sort, "page": page, "limit": limit})
+          : await dio.get('post/popular',
+              options: Options(
+                headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+              ),
+              queryParameters: {"sort": sort, "page": page, "limit": limit});
+      // debugPrint("Timeline posts in web services ${response.data}");
+      debugPrint(
+          "Popular posts status code in web services ${response.statusCode}");
+      return response.data;
+    } catch (e) {
+      if (e is DioError) {
+        if (e.response != null) {
+          debugPrint(
+              "Error in popular posts, status code ${e.response!.statusCode!}");
+          if (e.response!.statusCode == 403) {
+            debugPrint("Unauthorized");
+          }
+        }
+        debugPrint("$e");
+      } else {
+        debugPrint("$e");
+      }
+      return [];
+    }
+  }
+
+  /// `Returns` home page posts.
+  /// This function performs `GET` request to the endpoint ``.
   Future<dynamic> getMyProfilePosts() async {
     try {
       Response response = await dio.get('post/me',

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reddit/business_logic/cubit/posts/posts_popular_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/sort_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/strings.dart';
@@ -26,7 +27,7 @@ class _PopularWebState extends State<PopularWeb> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<PostsHomeCubit>(context).getTimelinePosts(sort: "best");
+    BlocProvider.of<PostsPopularCubit>(context).getPopularPosts(sort: "best");
     isLoggedIn = UserData.user != null;
   }
 
@@ -37,20 +38,20 @@ class _PopularWebState extends State<PopularWeb> {
       builder: (context, state) {
         if (state is SortBest) {
           sortBy = 'best';
-          BlocProvider.of<PostsHomeCubit>(context)
-              .getTimelinePosts(sort: sortBy);
+          BlocProvider.of<PostsPopularCubit>(context)
+              .getPopularPosts(sort: sortBy);
         } else if (state is SortNew) {
           sortBy = 'new';
-          BlocProvider.of<PostsHomeCubit>(context)
-              .getTimelinePosts(sort: sortBy);
+          BlocProvider.of<PostsPopularCubit>(context)
+              .getPopularPosts(sort: sortBy);
         } else if (state is SortHot) {
           sortBy = 'hot';
-          BlocProvider.of<PostsHomeCubit>(context)
-              .getTimelinePosts(sort: sortBy);
+          BlocProvider.of<PostsPopularCubit>(context)
+              .getPopularPosts(sort: sortBy);
         } else if (state is SortTop) {
           sortBy = 'top';
-          BlocProvider.of<PostsHomeCubit>(context)
-              .getTimelinePosts(sort: sortBy);
+          BlocProvider.of<PostsPopularCubit>(context)
+              .getPopularPosts(sort: sortBy);
         }
         return Container(
           // sort posts
@@ -340,10 +341,10 @@ class _PopularWebState extends State<PopularWeb> {
                                                   color: Colors.white)),
                                           SizedBox(height: 10),
                                           _sortBy(),
-                                          BlocBuilder<PostsHomeCubit,
-                                              PostsHomeState>(
+                                          BlocBuilder<PostsPopularCubit,
+                                              PostsPopularState>(
                                             builder: (context, state) {
-                                              if (state is PostsLoaded) {
+                                              if (state is PopularPostsLoaded) {
                                                 return Column(children: [
                                                   ...state.posts!
                                                       .map((e) => PostsWeb(

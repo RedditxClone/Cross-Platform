@@ -7,6 +7,7 @@ import 'package:reddit/business_logic/cubit/messages/messages_cubit.dart';
 import 'package:reddit/business_logic/cubit/modtools/modtools_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_home_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_my_profile_cubit.dart';
+import 'package:reddit/business_logic/cubit/posts/posts_popular_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/sort_cubit.dart';
 import 'package:reddit/data/model/comments/comment_model.dart';
 import 'package:reddit/data/repository/comments/comments_repository.dart';
@@ -150,6 +151,7 @@ class AppRouter {
   late PostsWebServices postsWebServices;
   late PostsRepository postsRepository;
   late PostsHomeCubit postsHomeCubit;
+  late PostsPopularCubit postsPopularCubit;
   late PostsMyProfileCubit postsMyProfileCubit;
   late CommentsRepository commentsRepository;
   late CommentsCubit commentsCubit;
@@ -185,6 +187,7 @@ class AppRouter {
     postsWebServices = PostsWebServices();
     postsRepository = PostsRepository(postsWebServices);
     postsHomeCubit = PostsHomeCubit(postsRepository);
+    postsPopularCubit = PostsPopularCubit(postsRepository);
     postsMyProfileCubit = PostsMyProfileCubit(postsRepository);
     commentsRepository = CommentsRepository(CommentsWebServices());
     commentsCubit = CommentsCubit(commentsRepository);
@@ -244,7 +247,7 @@ class AppRouter {
             builder: (_) => MultiBlocProvider(
                   providers: [
                     BlocProvider.value(
-                      value: postsHomeCubit,
+                      value: postsPopularCubit,
                     ),
                     BlocProvider.value(
                       value: popularSortCubit,
