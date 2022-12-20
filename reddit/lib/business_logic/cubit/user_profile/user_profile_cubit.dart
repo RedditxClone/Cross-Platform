@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:reddit/data/model/auth_model.dart';
+import 'package:reddit/data/model/left_drawer/moderating_subreddits_left_drawer_model.dart';
 import 'package:reddit/data/repository/user_profile/user_profile_repository.dart';
 
 part 'user_profile_state.dart';
@@ -10,6 +11,7 @@ class UserProfileCubit extends Cubit<UserProfileState> {
   UserProfileCubit(this.userProfileRepository) : super(UserProfileInitial());
 
   late User userInfo;
+  // late List<ModeratingSubredditsDrawerModel> modSubreddits;
 
   /// [userID] : The ID of the user we are inside his profile
   ///
@@ -21,6 +23,28 @@ class UserProfileCubit extends Cubit<UserProfileState> {
       userInfo = value;
       print(value);
       emit(UserInfoAvailable(userInfo));
+    });
+  }
+
+  void getMyModeratedSubreddits() {
+    if (isClosed) return;
+    userProfileRepository.getMyModeratedSubreddits().then((value) {
+      emit(MyModSubredditsAvailable(value));
+    });
+  }
+
+  /// [subredditId] : the id of subreddit to leave
+  ///
+  /// Emits sate [MyModSubredditsAvailable] on successfully leaving subreddit
+  ///
+  void leaveSubreddit(String subredditId) {
+    if (isClosed) return;
+    userProfileRepository.leaveSubreddit(subredditId).then((statusCode) {
+      if (statusCode == 200) {
+        userProfileRepository.getMyModeratedSubreddits().then((value) {
+          emit(MyModSubredditsAvailable(value));
+        });
+      }
     });
   }
 

@@ -10,6 +10,11 @@ class UserInfoAvailable extends UserProfileState {
   UserInfoAvailable(this.userInfo);
 }
 
+class MyModSubredditsAvailable extends UserProfileState {
+  List<ModeratingSubredditsDrawerModel> modSubreddits;
+  MyModSubredditsAvailable(this.modSubreddits);
+}
+
 class FollowOtherUserSuccess extends UserProfileState {}
 
 class FollowOtherUserNotSuccess extends UserProfileState {}

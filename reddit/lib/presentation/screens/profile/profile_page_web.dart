@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_my_profile_cubit.dart';
 import 'package:reddit/business_logic/cubit/settings/settings_cubit.dart';
+import 'package:reddit/business_logic/cubit/user_profile/user_profile_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
@@ -27,6 +28,7 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
     // TODO: implement initState
     super.initState();
     BlocProvider.of<PostsMyProfileCubit>(context).getMyProfilePosts();
+    BlocProvider.of<UserProfileCubit>(context).getMyModeratedSubreddits();
   }
 
   late Responsive _responsive;
@@ -513,6 +515,59 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
     );
   }
 
+  Widget _modSubreddit(String subredditName, members, subredditId) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        //----------------------my moderator communities----------------------------
+        Row(
+          children: [
+            const CircleAvatar(
+                radius: 20,
+                backgroundColor: Colors.blue,
+                child: Icon(
+                  Icons.person,
+                  size: 15,
+                )),
+            const SizedBox(width: 10),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'r/$subredditName',
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 5),
+                Text('$members members'),
+              ],
+            )
+          ],
+        ),
+        OutlinedButton(
+            onHover: ((value) {
+              setState(() {
+                _outlineButtonLabel = value ? 'Leave' : 'Joined';
+              });
+            }),
+            onPressed: () => BlocProvider.of<UserProfileCubit>(context)
+                .leaveSubreddit(
+                    subredditId), // TODO : on press => leave subreddit
+            style: ButtonStyle(
+              shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.0))),
+            ),
+            child: Text(
+              _outlineButtonLabel,
+              style: const TextStyle(
+                  fontSize: 17,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.bold),
+            ))
+      ],
+    );
+  }
+
   Widget _buildSecondProflieCard() {
     return Padding(
       padding: const EdgeInsets.all(15),
@@ -525,49 +580,22 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
               style: TextStyle(color: Colors.grey, fontSize: 16),
             ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              //----------------------my moderator communities----------------------------
-              Row(
-                children: [
-                  const CircleAvatar(
-                      radius: 20,
-                      backgroundColor: Colors.blue,
-                      child: Icon(
-                        Icons.person,
-                        size: 15,
-                      )),
-                  const SizedBox(width: 10),
-                  Column(
-                    children: const [
-                      Text('r/redditsx_'),
-                      SizedBox(height: 5),
-                      Text('4 members'),
-                    ],
-                  )
-                ],
-              ),
-              OutlinedButton(
-                  onHover: ((value) {
-                    setState(() {
-                      _outlineButtonLabel = value ? 'Leave' : 'Joined';
-                    });
-                  }),
-                  onPressed: () {}, // TODO : on press => leave subreddit
-                  style: ButtonStyle(
-                    shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30.0))),
-                  ),
-                  child: Text(
-                    _outlineButtonLabel,
-                    style: const TextStyle(
-                        fontSize: 17,
-                        color: Colors.grey,
-                        fontWeight: FontWeight.bold),
-                  ))
-            ],
-          )
+          BlocBuilder<UserProfileCubit, UserProfileState>(
+            builder: (context, state) {
+              if (state is MyModSubredditsAvailable) {
+                state.modSubreddits;
+
+                return Column(
+                  children: state.modSubreddits.map(
+                    (e) {
+                      return _modSubreddit(e.name!, 1, e.sId);
+                    },
+                  ).toList(),
+                );
+              }
+              return Container();
+            },
+          ),
         ],
       ),
     );

@@ -252,6 +252,7 @@ class AppRouter {
                     providers: [
                       BlocProvider(create: (context) => postsMyProfileCubit),
                       BlocProvider.value(value: settingsCubit),
+                      BlocProvider.value(value: userProfileCubit),
                     ],
                     child: const ProfilePageWeb(),
                   )
