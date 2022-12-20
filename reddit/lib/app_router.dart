@@ -241,48 +241,6 @@ class AppRouter {
                 value: subredditPageCubit,
                 child: kIsWeb ? const TrafficStatsWeb() : null));
       //---------------------------------------------------------------------------
-      //---------------------------------------------------------------------------
-      //------------------------------MOD LIST-------------------------------------
-      //---------------------------------------------------------------------------
-      case modlistRoute:
-        return MaterialPageRoute(
-            builder: (_) => BlocProvider.value(
-                value: subredditPageCubit, child: const ModListScreen()));
-
-      case modqueueRoute:
-        return MaterialPageRoute(
-            builder: (_) => BlocProvider.value(
-                value: subredditPageCubit, child: const ModQueueWeb()));
-
-      case spamRoute:
-        return MaterialPageRoute(
-            builder: (_) => BlocProvider.value(
-                value: subredditPageCubit,
-                child: kIsWeb ? const SpamWeb() : null));
-      case unmoderatedRoute:
-        return MaterialPageRoute(
-            builder: (_) => BlocProvider.value(
-                value: subredditPageCubit,
-                child: kIsWeb ? const UnmoderatedWeb() : null));
-
-      case approvedRoute:
-        return MaterialPageRoute(
-            builder: (_) => BlocProvider.value(
-                value: subredditPageCubit,
-                child: kIsWeb ? const ApprovedWeb() : null));
-
-      case editedRoute:
-        return MaterialPageRoute(
-            builder: (_) => BlocProvider.value(
-                value: subredditPageCubit,
-                child: kIsWeb ? const EditedWeb() : null));
-
-      case tafficRoute:
-        return MaterialPageRoute(
-            builder: (_) => BlocProvider.value(
-                value: subredditPageCubit,
-                child: kIsWeb ? const TrafficStatsWeb() : null));
-      //---------------------------------------------------------------------------
       case historyPageScreenRoute:
         return MaterialPageRoute(
             builder: (_) => BlocProvider.value(
