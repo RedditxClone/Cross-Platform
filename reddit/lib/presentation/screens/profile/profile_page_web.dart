@@ -24,10 +24,17 @@ class ProfilePageWeb extends StatefulWidget {
 }
 
 class _ProfilePageWebState extends State<ProfilePageWeb> {
-  String _outlineButtonLabel = 'Joined';
+  List<String> outlineButtonLabel = [
+    'Joined',
+    'Joined',
+    'Joined',
+    'Joined',
+    'Joined',
+    'Joined',
+    'Joined'
+  ];
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     BlocProvider.of<PostsMyProfileCubit>(context).getMyProfilePosts();
     BlocProvider.of<UserProfileCubit>(context).getMyModeratedSubreddits();
@@ -530,7 +537,7 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
     );
   }
 
-  Widget _modSubreddit(String subredditName, members, subredditId) {
+  Widget _modSubreddit(String subredditName, members, subredditId, i) {
     return Container(
       height: 50,
       child: Row(
@@ -573,7 +580,7 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
           OutlinedButton(
               onHover: ((value) {
                 setState(() {
-                  _outlineButtonLabel = value ? 'Leave' : 'Joined';
+                  outlineButtonLabel[i] = value ? 'Leave' : 'Joined';
                 });
               }),
               onPressed: () => BlocProvider.of<UserProfileCubit>(context)
@@ -584,7 +591,7 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
                     borderRadius: BorderRadius.circular(30.0))),
               ),
               child: Text(
-                _outlineButtonLabel,
+                outlineButtonLabel[i],
                 style: const TextStyle(
                     fontSize: 14,
                     color: Colors.grey,
@@ -612,11 +619,13 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
               if (state is MyModSubredditsAvailable) {
                 state.modSubreddits;
                 // h = state.modSubreddits* 200;
+                int i = -1;
                 return Container(
                   child: Column(
                     children: state.modSubreddits.map(
                       (e) {
-                        return _modSubreddit(e.name!, 1, e.sId);
+                        i++;
+                        return _modSubreddit(e.name!, 1, e.sId, i);
                       },
                     ).toList(),
                   ),
