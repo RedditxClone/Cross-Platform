@@ -24,7 +24,7 @@ class FollowUnfollowCubit extends Cubit<FollowUnfollowState> {
     });
   }
 
-  /// [userID] : The ID of the user to be followed
+  /// [userID] : The ID of the user to be unfollowed
   ///
   /// Emits sate [UnFollowOtherUserSuccess] on successfully following this user and [UnFollowOtherUserNotSuccess] if the follow failed
   ///

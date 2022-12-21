@@ -11,12 +11,10 @@ class UserProfileCubit extends Cubit<UserProfileState> {
   UserProfileCubit(this.userProfileRepository) : super(UserProfileInitial());
 
   late User userInfo;
-  // late List<ModeratingSubredditsDrawerModel> modSubreddits;
 
   /// [userID] : The ID of the user we are inside his profile
   ///
-  /// Emits sate [UserInfoAvailable] on getting user info
-  ///
+  /// Emits state [UserInfoAvailable] on getting user info
   void getUserInfo(String userID) {
     if (isClosed) return;
     userProfileRepository.getUserInfo(userID).then((value) {
@@ -26,6 +24,7 @@ class UserProfileCubit extends Cubit<UserProfileState> {
     });
   }
 
+  /// Emits state [MyModSubredditsAvailable] on getting the subreddits to which the user is a moderator
   void getMyModeratedSubreddits() {
     if (isClosed) return;
     userProfileRepository.getMyModeratedSubreddits().then((value) {
@@ -33,10 +32,9 @@ class UserProfileCubit extends Cubit<UserProfileState> {
     });
   }
 
-  /// [subredditId] : the id of subreddit to leave
+  /// [subredditId] : the id of subreddit to leave.
   ///
-  /// Emits sate [MyModSubredditsAvailable] on successfully leaving subreddit
-  ///
+  /// Emits state [MyModSubredditsAvailable] on successfully leaving subreddit that returns the new subreddit list after modification.
   void leaveSubreddit(String subredditId) {
     if (isClosed) return;
     userProfileRepository.leaveSubreddit(subredditId).then((statusCode) {
@@ -48,39 +46,9 @@ class UserProfileCubit extends Cubit<UserProfileState> {
     });
   }
 
-  /// [userID] : The ID of the user to be followed
-  ///
-  /// Emits sate [FollowOtherUserSuccess] on successfully following this user and [FollowOtherUserNotSuccess] if the follow failed
-  ///
-  // void follow(String userID) {
-  //   if (isClosed) return;
-  //   userProfileRepository.follow(userID).then((value) {
-  //     if (value == 201) {
-  //       emit(FollowOtherUserSuccess());
-  //     } else {
-  //       emit(FollowOtherUserNotSuccess());
-  //     }
-  //   });
-  // }
-
-  /// [userID] : The ID of the user to be followed
-  ///
-  /// Emits sate [UnFollowOtherUserSuccess] on successfully following this user and [UnFollowOtherUserNotSuccess] if the follow failed
-  ///
-  // void unfollow(String userID) {
-  //   if (isClosed) return;
-  //   userProfileRepository.unfollow(userID).then((value) {
-  //     if (value == 201) {
-  //       emit(UnFollowOtherUserSuccess());
-  //     } else {
-  //       emit(UnFollowOtherUserNotSuccess());
-  //     }
-  //   });
-  // }
-
   /// [username] : Username of the user to be blocked.
   ///
-  /// Emits sate [UserBlocked] on blocking a user (if existed) and [ErrorOccured] if not found or if and error occured.
+  /// Emits state [UserBlocked] on blocking a user (if existed), [ErrorOccured] if not found or if and error occured.
   void blockUser(String username) async {
     if (isClosed) return;
     userProfileRepository.blockUser(username).then((statuscode) {
