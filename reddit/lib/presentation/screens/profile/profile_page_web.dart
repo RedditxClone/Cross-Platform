@@ -24,6 +24,7 @@ class ProfilePageWeb extends StatefulWidget {
 }
 
 class _ProfilePageWebState extends State<ProfilePageWeb> {
+  String _outlineButtonLabel = 'Joined';
   @override
   void initState() {
     // TODO: implement initState
@@ -33,7 +34,7 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
   }
 
   late Responsive _responsive;
-  String _outlineButtonLabel = 'Joined';
+  double h = 120;
   String sortBy = 'new';
   bool _isOverviewTab = true;
   Widget socialLinks(Widget icon, String lable) {
@@ -348,7 +349,7 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
         ),
         Text(
             UserData.user!.displayName == ''
-                ? UserData.user!.username??""
+                ? UserData.user!.username ?? ""
                 : UserData.user!.displayName!,
             style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
         Text('u/${UserData.user!.username} . 1m',
@@ -530,60 +531,67 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
   }
 
   Widget _modSubreddit(String subredditName, members, subredditId) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        //----------------------my moderator communities----------------------------
-        Row(
-          children: [
-            const CircleAvatar(
-              radius: 20,
-              backgroundColor: Colors.white,
-              child: CircleAvatar(
-                  radius: 17,
-                  backgroundColor: Colors.blue,
-                  child: Icon(
-                    Icons.group_outlined,
-                    size: 25,
-                    color: Colors.white,
-                  )),
-            ),
-            const SizedBox(width: 10),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'r/$subredditName',
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 5),
-                Text('$members members'),
-              ],
-            )
-          ],
-        ),
-        OutlinedButton(
-            onHover: ((value) {
-              setState(() {
-                _outlineButtonLabel = value ? 'Leave' : 'Joined';
-              });
-            }),
-            onPressed: () => BlocProvider.of<UserProfileCubit>(context)
-                .leaveSubreddit(
-                    subredditId), // TODO : on press => leave subreddit
-            style: ButtonStyle(
-              shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30.0))),
-            ),
-            child: Text(
-              _outlineButtonLabel,
-              style: const TextStyle(
-                  fontSize: 17,
-                  color: Colors.grey,
-                  fontWeight: FontWeight.bold),
-            ))
-      ],
+    return Container(
+      height: 50,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          //----------------------my moderator communities----------------------------
+          Row(
+            children: [
+              const CircleAvatar(
+                radius: 20,
+                backgroundColor: Colors.white,
+                child: CircleAvatar(
+                    radius: 17,
+                    backgroundColor: Colors.blue,
+                    child: Icon(
+                      Icons.group_outlined,
+                      size: 25,
+                      color: Colors.white,
+                    )),
+              ),
+              const SizedBox(width: 10),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'r/$subredditName',
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    '$members members',
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                ],
+              )
+            ],
+          ),
+          OutlinedButton(
+              onHover: ((value) {
+                setState(() {
+                  _outlineButtonLabel = value ? 'Leave' : 'Joined';
+                });
+              }),
+              onPressed: () => BlocProvider.of<UserProfileCubit>(context)
+                  .leaveSubreddit(
+                      subredditId), // TODO : on press => leave subreddit
+              style: ButtonStyle(
+                shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0))),
+              ),
+              child: Text(
+                _outlineButtonLabel,
+                style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey,
+                    fontWeight: FontWeight.bold),
+              ))
+        ],
+      ),
     );
   }
 
@@ -593,26 +601,25 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          const Expanded(
-            child: Text(
-              'You\'re a moderator of these communities',
-              style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold),
-            ),
+          const Text(
+            'You\'re a moderator of these communities',
+            style: TextStyle(
+                color: Colors.grey, fontSize: 15, fontWeight: FontWeight.bold),
           ),
+          const SizedBox(height: 20),
           BlocBuilder<UserProfileCubit, UserProfileState>(
             builder: (context, state) {
               if (state is MyModSubredditsAvailable) {
                 state.modSubreddits;
-
-                return Column(
-                  children: state.modSubreddits.map(
-                    (e) {
-                      return _modSubreddit(e.name!, 1, e.sId);
-                    },
-                  ).toList(),
+                // h = state.modSubreddits* 200;
+                return Container(
+                  child: Column(
+                    children: state.modSubreddits.map(
+                      (e) {
+                        return _modSubreddit(e.name!, 1, e.sId);
+                      },
+                    ).toList(),
+                  ),
                 );
               }
               return Container();
@@ -680,7 +687,7 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
                                   child: _buildProfileCard(),
                                 ),
                                 Container(
-                                  height: 120,
+                                  height: 270,
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(5),
                                       color: defaultSecondaryColor),
@@ -835,7 +842,7 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
                       ),
                       Container(
                         width: 320,
-                        height: 120,
+                        height: 270,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5),
                             color: defaultSecondaryColor),
