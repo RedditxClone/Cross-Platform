@@ -40,7 +40,7 @@ class UserProfileCubit extends Cubit<UserProfileState> {
   void leaveSubreddit(String subredditId) {
     if (isClosed) return;
     userProfileRepository.leaveSubreddit(subredditId).then((statusCode) {
-      if (statusCode == 200) {
+      if (statusCode == 201) {
         userProfileRepository.getMyModeratedSubreddits().then((value) {
           emit(MyModSubredditsAvailable(value));
         });

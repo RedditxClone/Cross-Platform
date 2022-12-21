@@ -39,6 +39,8 @@ class ModeratingSubredditsDrawerModel {
   List<String>? panedUsers;
   List<String>? mutedUsers;
   List<String>? approvedUsers;
+  int? users;
+  bool? isJoined;
   int? iV;
 
   ModeratingSubredditsDrawerModel(
@@ -82,6 +84,8 @@ class ModeratingSubredditsDrawerModel {
       this.panedUsers,
       this.mutedUsers,
       this.approvedUsers,
+      this.users,
+      this.isJoined,
       this.iV});
 
   ModeratingSubredditsDrawerModel.fromJson(Map<String, dynamic> json) {
@@ -93,6 +97,8 @@ class ModeratingSubredditsDrawerModel {
     sId = json['_id'];
     name = json['name'];
     type = json['type'];
+    users = json['users'] ?? 0;
+    isJoined = json['joined'] ?? false;
     usersPermissions = json['usersPermissions'];
     acceptPostingRequests = json['acceptPostingRequests'];
     allowPostCrosspost = json['allowPostCrosspost'];
@@ -185,6 +191,8 @@ class ModeratingSubredditsDrawerModel {
     data['panedUsers'] = this.panedUsers;
     data['mutedUsers'] = this.mutedUsers;
     data['approvedUsers'] = this.approvedUsers;
+    data['users'] = this.users;
+    data['joined'] = this.isJoined;
     data['__v'] = this.iV;
     return data;
   }
