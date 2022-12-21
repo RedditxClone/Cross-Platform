@@ -171,7 +171,7 @@ class _HomeWebState extends State<HomeWeb> {
       height: 53,
       padding: const EdgeInsets.all(10),
       child: ElevatedButton(
-        onPressed: () {}, // TODO : navigate to add new post
+        onPressed: () => Navigator.pushNamed(context, createPostScreenRoute),
         style: ButtonStyle(
           backgroundColor:
               MaterialStateProperty.all(Colors.white.withOpacity(0.7)),

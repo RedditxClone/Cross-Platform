@@ -499,7 +499,8 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
           height: 51,
           padding: const EdgeInsets.all(10),
           child: ElevatedButton(
-            onPressed: () {}, // TODO : navigate to add new post
+            onPressed: () =>
+                Navigator.pushNamed(context, createPostScreenRoute),
             style: ButtonStyle(
               backgroundColor:
                   MaterialStatePropertyAll(Colors.white.withOpacity(0.5)),
