@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:bloc_test/bloc_test.dart';
@@ -19,6 +20,7 @@ void main() async {
   late SettingsRepository profileSettingsRepository;
   late SettingsCubit profileSettingsCubit;
   File file = File('/test/asd.jpg');
+  Uint8List webImg = Uint8List(8);
   User? testUser;
   ProfileSettings? settingsFromRepository;
   Map<String, String>? patchResponse1;
@@ -84,7 +86,7 @@ void main() async {
       expect: () => [isA<SettingsAvailable>()],
     );
     blocTest<SettingsCubit, SettingsState>(
-      'Settings loaded state is emitted correctly after updating settings',
+      'Settings loaded state is emitted correctly after updating cover photo from mobile',
       setUp: () {
         when(() =>
                 mockProfileSettingsWebService.updateImage(file.path, 'cover'))
@@ -99,7 +101,7 @@ void main() async {
       expect: () => [isA<SettingsChanged>()],
     );
     blocTest<SettingsCubit, SettingsState>(
-      'Settings loaded state is emitted correctly after updating settings',
+      'Settings loaded state is emitted correctly after updating profile photo from mobile',
       setUp: () {
         when(() =>
                 mockProfileSettingsWebService.updateImage(file.path, 'profile'))
@@ -111,6 +113,36 @@ void main() async {
       },
       act: (SettingsCubit cubit) =>
           cubit.changeProfilephoto(settingsFromRepository!, file.path),
+      expect: () => [isA<SettingsChanged>()],
+    );
+    blocTest<SettingsCubit, SettingsState>(
+      'Settings loaded state is emitted correctly after updating profile photo from web',
+      setUp: () {
+        when(() =>
+                mockProfileSettingsWebService.updateImageWeb(webImg, 'profile'))
+            .thenAnswer((_) async =>
+                {"profilePhoto": "$patchResponse2['profilePhoto']"});
+      },
+      build: () {
+        return profileSettingsCubit;
+      },
+      act: (SettingsCubit cubit) =>
+          cubit.changeProfilephotoWeb(settingsFromRepository!, webImg),
+      expect: () => [isA<SettingsChanged>()],
+    );
+    blocTest<SettingsCubit, SettingsState>(
+      'Settings loaded state is emitted correctly after updating cover photo from web',
+      setUp: () {
+        when(() =>
+                mockProfileSettingsWebService.updateImageWeb(webImg, 'cover'))
+            .thenAnswer(
+                (_) async => {"coverPhoto": "$patchResponse1['coverPhoto']"});
+      },
+      build: () {
+        return profileSettingsCubit;
+      },
+      act: (SettingsCubit cubit) =>
+          cubit.changeCoverphotoWeb(settingsFromRepository!, webImg),
       expect: () => [isA<SettingsChanged>()],
     );
   });
