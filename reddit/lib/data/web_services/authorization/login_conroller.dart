@@ -1,8 +1,8 @@
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/services.dart';
+import 'package:oauth2/oauth2.dart';
 
-// import 'package:oauth2/oauth2.dart' as oauth2;
-// import'package:flutter/services.dart';
 class GoogleSingInApi {
   static const clientIdWeb =
       '731962970730-93vd9ao2c9ckhmguioje6ar6jmjk3cic.apps.googleusercontent.com';
@@ -54,8 +54,8 @@ class GoogleSingInApi {
       token = await googleSignInWeb.currentUser?.authentication
           .then((value) => value.idToken);
     } else {
-      var googleAuth = await _googleSignInMob.currentUser?.authentication;
-      token = googleAuth?.idToken;
+      token = await _googleSignInMob.currentUser?.authentication
+          .then((value) => value.idToken);
     }
     return token;
   }
@@ -98,6 +98,10 @@ class GoogleSingInApi {
 // }
 
 class GithubAuthenticator {
-  // CredentialsStorage? _credentialsStore;
-
+  //credentials is used to hold the access token we want to get from github
+  Future<Credentials?> getSignedInCredentials() async {
+    try {
+      return null;
+    } catch (e) {}
+  }
 }
