@@ -118,5 +118,18 @@ void main() async {
       act: (UserProfileCubit cubit) => cubit.blockUser('username'),
       expect: () => [isA<UserBlocked>()],
     );
+    blocTest<UserProfileCubit, UserProfileState>(
+      'ErrorOccured state is emitted correctly after failing to block a user from his profile and get status code 400 from server',
+      setUp: () {
+        when(() => mockProfileWebService.blockUser('username')).thenAnswer(
+          (_) async => 400,
+        );
+      },
+      build: () {
+        return userProfileCubit;
+      },
+      act: (UserProfileCubit cubit) => cubit.blockUser('username'),
+      expect: () => [isA<ErrorOccured>()],
+    );
   });
 }
