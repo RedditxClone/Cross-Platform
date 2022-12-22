@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reddit/business_logic/cubit/create_community_cubit.dart';
 import 'package:reddit/constants/strings.dart';
-import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/data/repository/create_community_repository.dart';
 import 'package:reddit/data/web_services/create_community_web_services.dart';
 import 'package:reddit/presentation/screens/create_community_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../../../business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
 
 class PopupMenuLoggedIn extends StatelessWidget {
   const PopupMenuLoggedIn({Key? key}) : super(key: key);
@@ -170,7 +171,7 @@ class PopupMenuLoggedIn extends StatelessWidget {
             _launchUrl('https://www.reddithelp.com/hc/en-us');
             break;
           case 7:
-            UserData.logout();
+            BlocProvider.of<AuthCubit>(context).logout();
             debugPrint("after logout func");
             Navigator.pushReplacementNamed(context, popularPageRoute);
             break;

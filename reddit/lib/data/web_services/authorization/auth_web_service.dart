@@ -2,20 +2,10 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:http_parser/http_parser.dart';
-import 'package:reddit/constants/strings.dart';
 import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/helper/dio.dart';
 
 class AuthWebService {
-  final Dio _dio = Dio(
-    BaseOptions(
-      baseUrl: 'https://github.com/login/oauth/',
-      receiveDataWhenStatusError: true,
-      sendTimeout: 5000,
-      receiveTimeout: 5000,
-    ),
-  );
-
   /// [username] : The username of the user.
   /// [password] : The password of the user.
   /// [email] : The email of the user.
@@ -69,22 +59,24 @@ class AuthWebService {
       });
       return res;
     } on DioError catch (e) {
-      debugPrint("from login $e");
+      debugPrint("from login with google $e");
       return e.response;
     }
   }
 
-  /// [googleToken] : The token of the user from google.
+  /// [githubToken] : The token of the user from google.
   ///
   /// This function makes the request to the server to login the user with google.
   /// This function calls the function [DioHelper.postData] which makes the request to the server.
   /// Returns the response from the server.
-  Future loginWithGitHub(String googleToken) async {
+  Future loginWithGitHub(String githubToken) async {
     try {
-      var res = _dio.get('authorize?client_id=$gitHubClientID');
+      var res = await DioHelper.postData(url: 'auth/github', data: {
+        "token": githubToken,
+      });
       return res;
     } on DioError catch (e) {
-      debugPrint("from login $e");
+      debugPrint("from loginWithGitHub $e");
       return e.response;
     }
   }
