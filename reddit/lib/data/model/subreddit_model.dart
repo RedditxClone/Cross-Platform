@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:reddit/data/model/flair_model.dart';
 
@@ -87,9 +88,11 @@ class SubredditModel {
       iV});
 
   SubredditModel.fromJson(Map<String, dynamic> json) {
-    icon = json['icon'] == null || json['icon'] == ''
-        ? null
-        : imagesUrl + json['icon'];
+    icon = kIsWeb
+        ? (json['icon'] == null || json['icon'] == ''
+            ? null
+            : imagesUrl + json['icon'])
+        : json['icon'];
     description = json['description'];
     memberCount = json['memberCount'];
     name = json['name'];
