@@ -351,9 +351,13 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                                       color: Color(0xff4db6f7),
                                     ),
                                   ),
-                                  onTap: () => Navigator.pushNamed(
-                                      context, otherProfilePageRoute,
-                                      arguments: text),
+                                  onTap: () => UserData.user != null &&
+                                          text == UserData.user!.username
+                                      ? Navigator.pushNamed(
+                                          context, profilePageRoute)
+                                      : Navigator.pushNamed(
+                                          context, otherProfilePageRoute,
+                                          arguments: text),
                                 ),
                               ),
                               const SizedBox(

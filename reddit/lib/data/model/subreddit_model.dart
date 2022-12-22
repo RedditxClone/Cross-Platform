@@ -1,3 +1,4 @@
+import 'package:reddit/constants/strings.dart';
 import 'package:reddit/data/model/flair_model.dart';
 
 class SubredditModel {
@@ -86,7 +87,9 @@ class SubredditModel {
       iV});
 
   SubredditModel.fromJson(Map<String, dynamic> json) {
-    icon = json['icon'];
+    icon = json['icon'] == null || json['icon'] == ''
+        ? null
+        : imagesUrl + json['icon'];
     description = json['description'];
     memberCount = json['memberCount'];
     name = json['name'];
@@ -122,7 +125,7 @@ class SubredditModel {
         flairList!.add(FlairModel.fromJson(flair));
       });
     }
-    moderators = json['moderators']as List<dynamic>?;
+    moderators = json['moderators'] as List<dynamic>?;
     categories = json['categories'] as List<dynamic>?;
     createdDate = json['createdDate'] != null
         ? DateTime.tryParse(json['createdDate']) ?? DateTime.now()
