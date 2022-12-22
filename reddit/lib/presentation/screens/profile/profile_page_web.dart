@@ -548,17 +548,24 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
           //----------------------my moderator communities----------------------------
           Row(
             children: [
-              const CircleAvatar(
-                radius: 20,
-                backgroundColor: Colors.white,
-                child: CircleAvatar(
-                    radius: 17,
-                    backgroundColor: Colors.blue,
-                    child: Icon(
-                      Icons.group_outlined,
-                      size: 25,
-                      color: Colors.white,
-                    )),
+              GestureDetector(
+                onTap: () => Navigator.pushNamed(
+                    context, subredditPageScreenRoute,
+                    arguments: {
+                      'sId': subredditId,
+                    }),
+                child: const CircleAvatar(
+                  radius: 20,
+                  backgroundColor: Colors.white,
+                  child: CircleAvatar(
+                      radius: 17,
+                      backgroundColor: Colors.blue,
+                      child: Icon(
+                        Icons.group_outlined,
+                        size: 25,
+                        color: Colors.white,
+                      )),
+                ),
               ),
               const SizedBox(width: 10),
               Column(
@@ -567,10 +574,18 @@ class _ProfilePageWebState extends State<ProfilePageWeb> {
                 children: [
                   Container(
                     width: 115,
-                    child: Text(
-                      'r/$subredditName',
-                      overflow: TextOverflow.fade,
-                      style: const TextStyle(fontSize: 12),
+                    child: GestureDetector(
+                      onTap: () => Navigator.pushNamed(
+                          context, subredditPageScreenRoute,
+                          arguments: {
+                            'sId': subredditId,
+                          }),
+                      child: Text(
+                        'r/$subredditName',
+                        overflow: TextOverflow.fade,
+                        style:
+                            const TextStyle(fontSize: 12, color: Colors.white),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 5),
