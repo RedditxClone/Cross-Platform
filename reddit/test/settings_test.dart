@@ -15,13 +15,14 @@ class MockAccountSettingsCubit extends MockCubit<SettingsState>
     implements SettingsCubit {}
 
 void main() async {
-  late MockAccountSettingsWebService mockAccountSettingsWebService;
-  late SettingsRepository accountSettingsRepository;
-  late SettingsCubit accountSettingsCubit;
+  late MockAccountSettingsWebService mockProfileSettingsWebService;
+  late SettingsRepository profileSettingsRepository;
+  late SettingsCubit profileSettingsCubit;
   File file = File('/test/asd.jpg');
   User? testUser;
   ProfileSettings? settingsFromRepository;
-  Map<String, String>? patchResponse;
+  Map<String, String>? patchResponse1;
+  Map<String, String>? patchResponse2;
   Map<String, dynamic>? settingsFromWebServices;
   setUp(() {
     testUser = User.fromJson({
@@ -56,30 +57,28 @@ void main() async {
         allowPeopleToFollowYou: true,
         activeInCommunitiesVisibility: true,
         contentVisibility: true);
-    patchResponse = {'coverphoto': ''};
+    patchResponse1 = {'coverPhoto': ''};
+    patchResponse2 = {'profilePhoto': ''};
     UserData.user = testUser;
     UserData.profileSettings = settingsFromRepository;
   });
 
   group("State test", () {
     setUp(() {
-      mockAccountSettingsWebService = MockAccountSettingsWebService();
-      accountSettingsRepository =
-          SettingsRepository(mockAccountSettingsWebService);
-      accountSettingsCubit = SettingsCubit(accountSettingsRepository);
+      mockProfileSettingsWebService = MockAccountSettingsWebService();
+      profileSettingsRepository =
+          SettingsRepository(mockProfileSettingsWebService);
+      profileSettingsCubit = SettingsCubit(profileSettingsRepository);
     });
-    // Calling getAccountSettings() function returns the correct state
-    // AccountSettingsLoading means that the request is sent and we are waiting for the response
-    // AccountSettingsLoaded means that the response is received and UI is built based on this responce
     blocTest<SettingsCubit, SettingsState>(
       'Settings loaded state is emitted correctly after getting settings data from server',
       setUp: () {
-        when(() => mockAccountSettingsWebService.getUserSettings()).thenAnswer(
+        when(() => mockProfileSettingsWebService.getUserSettings()).thenAnswer(
           (_) async => settingsFromWebServices,
         );
       },
       build: () {
-        return accountSettingsCubit;
+        return profileSettingsCubit;
       },
       act: (SettingsCubit cubit) => cubit.getUserSettings(),
       expect: () => [isA<SettingsAvailable>()],
@@ -88,25 +87,40 @@ void main() async {
       'Settings loaded state is emitted correctly after updating settings',
       setUp: () {
         when(() =>
-                mockAccountSettingsWebService.updateImage(file.path, 'cover'))
+                mockProfileSettingsWebService.updateImage(file.path, 'cover'))
             .thenAnswer(
-                (_) async => {"coverPhoto": "$patchResponse['coverPhoto']"});
+                (_) async => {"coverPhoto": "$patchResponse1['coverPhoto']"});
       },
       build: () {
-        return accountSettingsCubit;
+        return profileSettingsCubit;
       },
       act: (SettingsCubit cubit) =>
           cubit.changeCoverphoto(settingsFromRepository!, file.path),
+      expect: () => [isA<SettingsChanged>()],
+    );
+    blocTest<SettingsCubit, SettingsState>(
+      'Settings loaded state is emitted correctly after updating settings',
+      setUp: () {
+        when(() =>
+                mockProfileSettingsWebService.updateImage(file.path, 'profile'))
+            .thenAnswer((_) async =>
+                {"profilePhoto": "$patchResponse2['profilePhoto']"});
+      },
+      build: () {
+        return profileSettingsCubit;
+      },
+      act: (SettingsCubit cubit) =>
+          cubit.changeProfilephoto(settingsFromRepository!, file.path),
       expect: () => [isA<SettingsChanged>()],
     );
   });
   // Test if mapping from Json to model is correct
   group('Model test', () {
     setUp(() {
-      mockAccountSettingsWebService = MockAccountSettingsWebService();
-      accountSettingsRepository =
-          SettingsRepository(mockAccountSettingsWebService);
-      accountSettingsCubit = SettingsCubit(accountSettingsRepository);
+      mockProfileSettingsWebService = MockAccountSettingsWebService();
+      profileSettingsRepository =
+          SettingsRepository(mockProfileSettingsWebService);
+      profileSettingsCubit = SettingsCubit(profileSettingsRepository);
     });
     test('Model is generated correctly', () {
       expect(ProfileSettings.fromjson(settingsFromWebServices!),
