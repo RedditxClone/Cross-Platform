@@ -11,7 +11,9 @@ class SubredditPageLoaded extends SubredditPageState {
   final SubredditModel subredditModel;
   final bool isMod;
   final bool isJoined;
-  SubredditPageLoaded(this.subredditModel, this.isMod, this.isJoined);
+  SubredditPageLoaded(this.subredditModel, this.isMod, this.isJoined) {
+    debugPrint("in state" + subredditModel.toString());
+  }
 }
 
 class PostsInPageLoading extends SubredditPageState {}
@@ -48,9 +50,9 @@ class SubredditIconUpdating extends SubredditPageState {}
 
 class SubredditIconUpdateFailed extends SubredditPageState {}
 
-class SubredditIconLoaded extends SubredditPageState {
+class SubredditIconUpdated extends SubredditPageState {
   final String subredditIcon;
-  SubredditIconLoaded(this.subredditIcon);
+  SubredditIconUpdated(this.subredditIcon);
 }
 
 class ToggleSwitch extends SubredditPageState {}
