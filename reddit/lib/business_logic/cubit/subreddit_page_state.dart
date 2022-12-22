@@ -11,7 +11,9 @@ class SubredditPageLoaded extends SubredditPageState {
   final SubredditModel subredditModel;
   final bool isMod;
   final bool isJoined;
-  SubredditPageLoaded(this.subredditModel, this.isMod, this.isJoined);
+  SubredditPageLoaded(this.subredditModel, this.isMod, this.isJoined) {
+    debugPrint("in state" + subredditModel.toString());
+  }
 }
 
 class PostsInPageLoading extends SubredditPageState {}

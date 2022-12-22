@@ -54,7 +54,7 @@ class SubredditPageCubit extends Cubit<SubredditPageState> {
     emit(SubredditPageLoading());
     subredditPageRepository.getSubredditInfo(subredditId).then((value) {
       _subredditModel = value;
-      print(_subredditModel!.name);
+      print(_subredditModel.toString());
       subredditPageRepository.getIfJoined(subredditId).then((isJoined) {
         subredditPageRepository.getIfMod(subredditId).then((isMod) {
           emit(SubredditPageLoaded(_subredditModel!, isMod, isJoined));

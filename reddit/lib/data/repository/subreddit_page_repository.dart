@@ -22,10 +22,22 @@ class SubredditPageRepository {
   //   return postModelList;
   // }
 
-  Future<SubredditModel> getSubredditInfo(String subredditName) async {
-    final data = await subredditWebServices.getSubredditInfo(subredditName);
+  Future<SubredditModel> getSubredditInfo(String subredditId) async {
+    final data = await subredditWebServices.getSubredditInfo(subredditId);
     print("data: " + data.toString());
-    return SubredditModel.fromJson((data));
+    if (kIsWeb) {
+      SubredditModel subredditModel;
+
+      if (data['error'] != null) {
+        subredditModel = SubredditModel(sId: subredditId);
+      } else {
+        subredditModel = SubredditModel.fromJson((data));
+      }
+      debugPrint(subredditModel.toString());
+      return subredditModel;
+    } else {
+      return SubredditModel.fromJson((data));
+    }
   }
 
   // Future<String> getSubredditIcon(String subreddit) async {

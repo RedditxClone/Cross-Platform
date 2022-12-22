@@ -30,17 +30,31 @@ class SubredditWebServices {
   }
 
   Future<dynamic> getSubredditInfo(String subredditId) async {
-    try {
-      print(subredditId);
-      Response response = await dio.get("subreddit/$subredditId",
-          options: Options(
-            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
-          ));
-
-      return response.data;
-    } on DioError catch (e) {
-      debugPrint(e.response!.statusCode.toString());
-      return {};
+    if (kIsWeb) {
+      try {
+        debugPrint(subredditId);
+        Response response = await dio.get("subreddit/$subredditId",
+            options: Options(
+              headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+            ));
+        debugPrint(response.data.toString());
+        return response.data;
+      } catch (e) {
+        debugPrint(e.toString());
+        return {'error': true};
+      }
+    } else {
+      try {
+        print(subredditId);
+        Response response = await dio.get("subreddit/$subredditId",
+            options: Options(
+              headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+            ));
+        return response.data;
+      } on DioError catch (e) {
+        debugPrint(e.response!.statusCode.toString());
+        return {};
+      }
     }
   }
 
@@ -149,30 +163,60 @@ class SubredditWebServices {
   }
 
   Future<bool> getIfMod(String subredditId) async {
-    try {
-      Response response = await dio.get('subreddit/$subredditId/moderation/me',
-          options: Options(
-            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
-          ));
+    if (kIsWeb) {
+      try {
+        Response response =
+            await dio.get('subreddit/$subredditId/moderation/me',
+                options: Options(
+                  headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+                ));
 
-      return response.data == 'true' ? true : false;
-    } on DioError catch (e) {
-      debugPrint(e.response?.statusCode.toString());
-      return false;
+        return response.data == 'true' ? true : false;
+      } catch (e) {
+        debugPrint(e.toString());
+        return false;
+      }
+    } else {
+      try {
+        Response response =
+            await dio.get('subreddit/$subredditId/moderation/me',
+                options: Options(
+                  headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+                ));
+
+        return response.data == 'true' ? true : false;
+      } on DioError catch (e) {
+        debugPrint(e.response?.statusCode.toString());
+        return false;
+      }
     }
   }
 
   Future<bool> getIfJoined(String subredditId) async {
-    try {
-      Response response = await dio.get('subreddit/$subredditId/join/me',
-          options: Options(
-            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
-          ));
-      print(response.statusCode);
-      return response.data == 'true' ? true : false;
-    } on DioError catch (e) {
-      debugPrint(e.response?.statusCode.toString());
-      return false;
+    if (kIsWeb) {
+      try {
+        Response response = await dio.get('subreddit/$subredditId/join/me',
+            options: Options(
+              headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+            ));
+        print(response.statusCode);
+        return response.data == 'true' ? true : false;
+      } catch (e) {
+        debugPrint(e.toString());
+        return false;
+      }
+    } else {
+      try {
+        Response response = await dio.get('subreddit/$subredditId/join/me',
+            options: Options(
+              headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+            ));
+        print(response.statusCode);
+        return response.data == 'true' ? true : false;
+      } on DioError catch (e) {
+        debugPrint(e.response?.statusCode.toString());
+        return false;
+      }
     }
   }
 }
