@@ -2,9 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:reddit/business_logic/cubit/modtools/modtools_cubit.dart';
-import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/data/model/modtools/taffic_stats_model.dart';
-import 'package:reddit/data/model/posts/posts_model.dart';
 import 'package:reddit/data/repository/modtools/modtools_repository.dart';
 import 'package:reddit/data/web_services/modtools/modtools_webservices.dart';
 
@@ -19,99 +17,16 @@ void main() async {
   late ModtoolsCubit modToolsCubit;
   List<Map<String, dynamic>>? postsFromWebServices;
   List<dynamic>? statisticsFromWebServices;
-  List<PostsModel> postsFromRepository;
   List<TrafficStats> statisticsFromRepository;
   List<dynamic>? approvedUsersFromWebServices;
   statisticsFromRepository = [TrafficStats(date: '', joined: 0, left: 0)];
-  postsFromRepository = [
-    PostsModel(
-      sId: "",
-      text: "",
-      userId: "",
-      title: "",
-      type: "",
-      publishedDate: "",
-      replyNotifications: false,
-      votesCount: 0,
-      commentCount: 0,
-      isSaved: false,
-      nsfw: false,
-      spoiler: false,
-      commentsLocked: false,
-      editCheckedBy: null,
-      voteType: null,
-      approvedBy: null,
-      spammedBy: null,
-      spammedAt: null,
-      removedBy: null,
-      removedAt: null,
-      approvedAt: null,
-      images: [],
-      subreddit: PostSubreddit.fromJson({
-        "id": "",
-        "name": "",
-        "isJoin": false,
-        "joinDate": null,
-        "membersCount": 0,
-        "isModerator": false
-      }),
-      user: PostUser.fromJson({
-        "id": "",
-        "photo": "",
-        "username": "",
-        "name": "",
-        "isFollowed": false,
-        "cakeDay": true
-      }),
-    )
-  ];
+
   group("State test", () {
     setUp(() {
       mockModtoolsWebService = MockModtoolsWebService();
       modToolsRepository = ModToolsRepository(mockModtoolsWebService);
       modToolsCubit = ModtoolsCubit(modToolsRepository);
-      postsFromRepository = [
-        PostsModel(
-          sId: "",
-          text: "",
-          userId: "",
-          title: "",
-          type: "",
-          publishedDate: "",
-          replyNotifications: false,
-          votesCount: 0,
-          commentCount: 0,
-          isSaved: false,
-          nsfw: false,
-          spoiler: false,
-          commentsLocked: false,
-          editCheckedBy: null,
-          voteType: null,
-          approvedBy: null,
-          spammedBy: null,
-          spammedAt: null,
-          removedBy: null,
-          removedAt: null,
-          approvedAt: null,
-          images: [],
-          subreddit: PostSubreddit.fromJson({
-            "id": "",
-            "name": "",
-            "isJoin": false,
-            "joinDate": null,
-            "membersCount": 0,
-            "isModerator": false
-          }),
-          user: PostUser.fromJson({
-            "id": "",
-            "photo": "",
-            "username": "",
-            "name": "",
-            "isFollowed": false,
-            "cakeDay": true
-          }),
-        )
-      ];
+
       postsFromWebServices = [
         {
           "_id": "",
@@ -169,9 +84,6 @@ void main() async {
         }
       ];
     });
-    // Calling getAccountSettings() function returns the correct state
-    // AccountSettingsLoading means that the request is sent and we are waiting for the response
-    // AccountSettingsLoaded means that the response is received and UI is built based on this responce
     blocTest<ModtoolsCubit, ModtoolsState>(
       'SpammedPostsReady state is emitted correctly after getting spammed posts from server',
       setUp: () {
