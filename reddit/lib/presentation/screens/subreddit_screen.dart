@@ -93,7 +93,9 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
     super.initState();
     if (widget._newSubreddit) {
       _subredditModel = widget.subredditModel!;
-      _subredditModel!.memberCount = 1;
+      if (kIsWeb) {
+        _subredditModel!.memberCount = 1;
+      }
       _joinedSubreddit = true;
       _isMod = true;
       return;
