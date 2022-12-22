@@ -25,8 +25,12 @@ class DiscoverPageModel {
   /// The repository (discover_page_repository) calls this function.
   /// It's parameter is json item to be sent to Web Server.
   DiscoverPageModel.fromJson(Map<String, dynamic> json) {
-    postId = json['postId'];
-    imageUrl = json['imageUrl'];
-    subredditName = json['subredditName'];
+    postId = json['id'];
+    String tempImageUrl = json['image'];
+    imageUrl = tempImageUrl.substring(1);
+    nameFromJson(json['subredditInfo']);
+  }
+  nameFromJson(Map<String, dynamic> json) {
+    subredditName = json['name'];
   }
 }

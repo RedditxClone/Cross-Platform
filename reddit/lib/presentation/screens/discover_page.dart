@@ -68,7 +68,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                     image: DecorationImage(
                   colorFilter: ColorFilter.mode(
                       Colors.black.withOpacity(0.3), BlendMode.darken),
-                  image: NetworkImage(imageUrl),
+                  image: AssetImage(imageUrl),
                   fit: BoxFit.fill,
                 )),
               ), //Post Image
