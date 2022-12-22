@@ -75,18 +75,16 @@ class SubredditWebServices {
       String subredditId, Uint8List updatedIcon) async {
     try {
       FormData formData = FormData.fromMap({
-        "photo": MultipartFile.fromBytes(updatedIcon,
+        "icon": MultipartFile.fromBytes(updatedIcon,
             contentType: MediaType('application', 'json'), filename: 'photo')
       });
-      Response response = await dio.post('subreddit/r/$subredditId/icon',
+      Response response = await dio.post('subreddit/$subredditId/icon',
           data: formData,
           options: Options(
             headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
-      debugPrint("update picture status code " +
-          response.statusCode.toString() +
-          " new image link : " +
-          response.data);
+      debugPrint(
+          "update picture status code ${response.statusCode.toString()} new image link : ${response.data}");
       return response.data;
     } catch (e) {
       debugPrint(e.toString());

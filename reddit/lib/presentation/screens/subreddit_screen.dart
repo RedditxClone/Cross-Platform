@@ -449,6 +449,7 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
   }
 
   Widget _buildBody(subredditModel, joinedSubreddit, isMod) {
+    isMod = true;
     joinLeaveButtonText = joinedSubreddit ? "Joined" : "Join";
     _controller.text = subredditModel.description ?? "";
     return _mobilePlatform
@@ -1062,6 +1063,13 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
       appBar: _buildAppBar(),
       body: BlocConsumer<SubredditPageCubit, SubredditPageState>(
           builder: (context, state) {
+        if (state is SubredditIconUpdated) {
+          _displayMsg(
+              context, Colors.blue, "Sucessfully updated community icon!");
+        }
+        if (state is SubredditIconUpdateFailed) {
+          _displayMsg(context, Colors.red, "Failed to updated community icon!");
+        }
         if (state is SubredditPageLoaded) {
           _subredditModel = state.subredditModel;
           _joinedSubreddit = state.isJoined;
@@ -1123,11 +1131,6 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
       }, listener: (context, state) {
         if (state is SubredditIconUpdated) {
           _subredditModel!.icon = (state).subredditIcon;
-          _displayMsg(
-              context, Colors.blue, "Sucessfully updated community icon!");
-        }
-        if (state is SubredditIconUpdateFailed) {
-          _displayMsg(context, Colors.red, "Failed to updated community icon!");
         }
       }),
       endDrawer: BlocProvider(
@@ -1280,7 +1283,7 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
       setState(() {
         BlocProvider.of<SubredditPageCubit>(context)
             .updateSubredditIcon(_subredditModel!.sId!, imageBytes);
-        _displayMsg(context, Colors.blue, 'Changes Saved');
+        // _displayMsg(context, Colors.blue, 'Changes Saved');
       });
     } on PlatformException catch (e) {
       debugPrint(e.toString());

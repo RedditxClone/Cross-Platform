@@ -61,7 +61,7 @@ class SubredditPageRepository {
       String subredditId, Uint8List updatedIcon) async {
     final newVal = await subredditWebServices.updateSubredditIcon(
         subredditId, updatedIcon);
-    return imagesUrl + newVal['subredditPhoto'];
+    return imagesUrl + newVal['icon'];
   }
 
   // getSubredditDescription(String subredditName) async {
