@@ -40,6 +40,7 @@ class UserProfileWebServices {
     }
   }
 
+  /// get the subreddits that the user is moderating
   Future<dynamic> getMyModeratedSubreddits() async {
     try {
       Response response = await dio.get('subreddit/moderation/me',
@@ -58,6 +59,11 @@ class UserProfileWebServices {
     }
   }
 
+  /// [subredditId] : the id of the subreddit to be left
+  /// `Returns` statusCode of the request:
+  /// - 201: left successfully
+  /// - 400: user is not inside subreddit
+  /// - 401: user is not logged in
   Future<dynamic> leaveSubreddit(String subredditId) async {
     try {
       Response response = await dio.post('subreddit/$subredditId/leave',
@@ -77,7 +83,7 @@ class UserProfileWebServices {
   }
 
   /// [userId] : the id of user to be followed
-  /// `Returns` [statusCode] of the request:
+  /// `Returns` statusCode of the request:
   /// - 201: you have followed the user successfully
   /// - 400: either you are following the user or there is a block between you and the user
   /// - 401: user is not logged in
@@ -99,7 +105,7 @@ class UserProfileWebServices {
   }
 
   /// [userId] : the id of user to be unfollowed
-  /// `Returns` [response.statusCode] of the request:
+  /// `Returns` status of the request:
   /// - 201: you have unfollowed the user successfully
   /// - 400: either you are not following the user or there is a block between you and the user or wrong user id
   /// - 401: user is not logged in

@@ -12,6 +12,7 @@ class MessagesCubit extends Cubit<MessagesState> {
   /// This function emits :
   /// - [EmptyUsername] :  username is empty
   /// - [EmptySubject]  :  subject is empty
+  /// - [EmptyBody]     :  body is empty (on mobile only)
   /// - [CouldNotSend]  :  the user you want to send this message is blocking you or he does not recieve private messages
   /// - [NoSuchUser]    :  the user you want to send this message does not exist
   /// - [MessageSent]   :  message created successfully
