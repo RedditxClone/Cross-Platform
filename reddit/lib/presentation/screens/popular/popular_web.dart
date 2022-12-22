@@ -30,7 +30,8 @@ class _PopularWebState extends State<PopularWeb> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<PostsPopularCubit>(context).getPopularPosts(sort: "best");
+    BlocProvider.of<PostsPopularCubit>(context)
+        .getPopularPosts(sort: "best", limit: 20);
     isLoggedIn = UserData.user != null;
   }
 
@@ -42,19 +43,19 @@ class _PopularWebState extends State<PopularWeb> {
         if (state is SortBest) {
           sortBy = 'best';
           BlocProvider.of<PostsPopularCubit>(context)
-              .getPopularPosts(sort: sortBy);
+              .getPopularPosts(sort: sortBy, limit: 20);
         } else if (state is SortNew) {
           sortBy = 'new';
           BlocProvider.of<PostsPopularCubit>(context)
-              .getPopularPosts(sort: sortBy);
+              .getPopularPosts(sort: sortBy, limit: 20);
         } else if (state is SortHot) {
           sortBy = 'hot';
           BlocProvider.of<PostsPopularCubit>(context)
-              .getPopularPosts(sort: sortBy);
+              .getPopularPosts(sort: sortBy, limit: 20);
         } else if (state is SortTop) {
           sortBy = 'top';
           BlocProvider.of<PostsPopularCubit>(context)
-              .getPopularPosts(sort: sortBy);
+              .getPopularPosts(sort: sortBy, limit: 20);
         }
         return Container(
           // sort posts
