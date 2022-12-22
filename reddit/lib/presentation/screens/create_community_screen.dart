@@ -30,7 +30,6 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
       defaultTargetPlatform == TargetPlatform.android ||
           defaultTargetPlatform == TargetPlatform.iOS;
   late CreateCommunityModel _createCommunityModel;
-
   final _communityNameController = TextEditingController();
   // 0 -> no warning, 1 -> empty_name, 2 -> special_characters
   int _warningText = 0;
@@ -501,7 +500,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                                   activeColor: Colors.blue,
                                   value: "public",
                                   groupValue:
-                                      _createCommunityModel.communityType,
+                                      _types[_selectedTypeIndex].toLowerCase(),
                                   title: Row(
                                     children: [
                                       Icon(
@@ -532,6 +531,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                                     ],
                                   ),
                                   onChanged: (value) {
+                                    _selectedTypeIndex = 0;
                                     _createCommunityModel.communityType =
                                         value.toString();
                                     BlocProvider.of<CreateCommunityCubit>(
@@ -544,7 +544,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                                   activeColor: Colors.blue,
                                   value: "restricted",
                                   groupValue:
-                                      _createCommunityModel.communityType,
+                                      _types[_selectedTypeIndex].toLowerCase(),
                                   title: Row(
                                     children: [
                                       Icon(_typesIcons[2],
@@ -573,6 +573,8 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                                     ],
                                   ),
                                   onChanged: (value) {
+                                    _selectedTypeIndex = 2;
+
                                     _createCommunityModel.communityType =
                                         value.toString();
                                     BlocProvider.of<CreateCommunityCubit>(
@@ -585,7 +587,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                                   activeColor: Colors.blue,
                                   value: "private",
                                   groupValue:
-                                      _createCommunityModel.communityType,
+                                      _types[_selectedTypeIndex].toLowerCase(),
                                   title: Row(
                                     children: [
                                       Icon(_typesIcons[1],
@@ -614,6 +616,8 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                                     ],
                                   ),
                                   onChanged: (value) {
+                                    _selectedTypeIndex = 1;
+
                                     _createCommunityModel.communityType =
                                         value.toString();
                                     BlocProvider.of<CreateCommunityCubit>(

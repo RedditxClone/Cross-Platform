@@ -9,15 +9,18 @@ class MessagesCubit extends Cubit<MessagesState> {
   final MessagesRepository messageRepository;
   MessagesCubit(this.messageRepository) : super(MessagesInitial());
 
+  /// [subject]  : the subject of the message
+  /// [body]     : the body of the message
+  /// [username] :  username to sent the message to.
   /// This function emits :
   /// - [EmptyUsername] :  username is empty
   /// - [EmptySubject]  :  subject is empty
+  /// - [EmptyBody]     :  body is empty (on mobile only)
   /// - [CouldNotSend]  :  the user you want to send this message is blocking you or he does not recieve private messages
   /// - [NoSuchUser]    :  the user you want to send this message does not exist
   /// - [MessageSent]   :  message created successfully
   void sendMessage(String subject, String body, String username) {
     if (isClosed) return;
-    print('inside message cubit');
     Map<String, dynamic> messageData = {
       'subject': subject,
       'body': body,

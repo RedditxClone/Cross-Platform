@@ -82,14 +82,12 @@ class _TrafficStatsWidgetState extends State<TrafficStatsWidget> {
     joined.add(const FlSpot(0, 0));
     trafficStats.forEach((element) {
       joined.add(FlSpot(index, element.joined as double));
-      // print('joined point : ($index , ${element.joined as double})');
       index--;
     });
     index = 6;
     left.add(const FlSpot(0, 0));
     trafficStats.forEach((element) {
       left.add(FlSpot(index, element.left as double));
-      // print('left point : ($index , ${element.left as double})');
       index--;
     });
   }

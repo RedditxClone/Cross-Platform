@@ -729,7 +729,7 @@ class _HomePageWebState extends State<HomePageWeb> {
             WidgetsBinding.instance
                 .addPostFrameCallback((_) => showDialogToChooseGender());
             BlocProvider.of<PostsHomeCubit>(context)
-                .getTimelinePosts(sort: "best");
+                .getTimelinePosts(sort: "best", limit: 20);
 
             return const HomeWeb();
           } else if (state is SignedInWithProfilePhoto) {
@@ -738,12 +738,12 @@ class _HomePageWebState extends State<HomePageWeb> {
             debugPrint(
                 "user in the home page ${UserData.profileSettings!.profile}");
             BlocProvider.of<PostsHomeCubit>(context)
-                .getTimelinePosts(sort: "best");
+                .getTimelinePosts(sort: "best", limit: 20);
 
             return const HomeWeb();
           } else if (state is Login) {
             BlocProvider.of<PostsHomeCubit>(context)
-                .getTimelinePosts(sort: "best");
+                .getTimelinePosts(sort: "best", limit: 20);
 
             return const HomeWeb();
           } else if (state is GetTheUserData) {
@@ -751,13 +751,13 @@ class _HomePageWebState extends State<HomePageWeb> {
               debugPrint("user is nottttttttttttttttttttttttt null");
               UserData.initUser(state.userDataJson);
               BlocProvider.of<PostsHomeCubit>(context)
-                  .getTimelinePosts(sort: "best");
+                  .getTimelinePosts(sort: "best", limit: 20);
 
               return const HomeWeb();
             }
           } else if (state is NotLoggedIn) {
             BlocProvider.of<PostsHomeCubit>(context)
-                .getTimelinePosts(sort: "best");
+                .getTimelinePosts(sort: "best", limit: 20);
 
             return const HomeWeb();
           }

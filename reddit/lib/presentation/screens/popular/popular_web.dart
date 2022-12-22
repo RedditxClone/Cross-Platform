@@ -5,6 +5,7 @@ import 'package:reddit/business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_popular_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/sort_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
+import 'package:reddit/constants/strings.dart';
 import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/data/repository/create_community_repository.dart';
@@ -29,7 +30,8 @@ class _PopularWebState extends State<PopularWeb> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<PostsPopularCubit>(context).getPopularPosts(sort: "best");
+    BlocProvider.of<PostsPopularCubit>(context)
+        .getPopularPosts(sort: "best", limit: 20);
     isLoggedIn = UserData.user != null;
   }
 
@@ -41,19 +43,19 @@ class _PopularWebState extends State<PopularWeb> {
         if (state is SortBest) {
           sortBy = 'best';
           BlocProvider.of<PostsPopularCubit>(context)
-              .getPopularPosts(sort: sortBy);
+              .getPopularPosts(sort: sortBy, limit: 20);
         } else if (state is SortNew) {
           sortBy = 'new';
           BlocProvider.of<PostsPopularCubit>(context)
-              .getPopularPosts(sort: sortBy);
+              .getPopularPosts(sort: sortBy, limit: 20);
         } else if (state is SortHot) {
           sortBy = 'hot';
           BlocProvider.of<PostsPopularCubit>(context)
-              .getPopularPosts(sort: sortBy);
+              .getPopularPosts(sort: sortBy, limit: 20);
         } else if (state is SortTop) {
           sortBy = 'top';
           BlocProvider.of<PostsPopularCubit>(context)
-              .getPopularPosts(sort: sortBy);
+              .getPopularPosts(sort: sortBy, limit: 20);
         }
         return Container(
           // sort posts
@@ -182,7 +184,7 @@ class _PopularWebState extends State<PopularWeb> {
       height: 53,
       padding: const EdgeInsets.all(10),
       child: ElevatedButton(
-        onPressed: () {}, // TODO : navigate to add new post
+        onPressed: () => Navigator.pushNamed(context, createPostScreenRoute),
         style: ButtonStyle(
           backgroundColor:
               MaterialStateProperty.all(Colors.white.withOpacity(0.7)),

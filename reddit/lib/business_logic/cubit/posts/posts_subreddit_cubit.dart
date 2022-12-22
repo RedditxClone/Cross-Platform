@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
 import 'package:reddit/data/model/posts/posts_model.dart';
 import 'package:reddit/data/repository/posts/posts_repository.dart';
@@ -15,7 +16,7 @@ class PostsSubredditCubit extends Cubit<PostsSubredditState> {
   /// state [SubredditPostsLoaded] when posts are loaded successfully.
   /// This function calls the function [PostsRepository.getSubredditPosts] to get the subreddit posts.
   void getSubredditPosts(String name,
-      {String sort = "new", int page = 1, int limit = 50}) {
+      {String sort = kIsWeb ? "hot" : "new", int page = 1, int limit = 50}) {
     // To avoid state error when you leave the page
     // debugPrint("Sort: $sort");
     if (isClosed) return;

@@ -121,6 +121,9 @@ class _QueuesWidgetState extends State<QueuesWidget> {
                   const SizedBox(height: 10),
                   BlocBuilder<ModtoolsCubit, ModtoolsState>(
                     builder: (context, state) {
+                      if (widget.screen == 'Mod Queue') {
+                        return emptyQueue();
+                      }
                       if (state is EditedPostsReady) {
                         if (state.posts.isNotEmpty &&
                             widget.screen == 'Edited') {
