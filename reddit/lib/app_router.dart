@@ -137,6 +137,12 @@ import 'package:reddit/presentation/screens/login_screen.dart';
 import 'package:reddit/presentation/screens/signup_page.dart';
 import 'package:reddit/presentation/screens/signup_page2.dart';
 import 'package:reddit/presentation/screens/signup_screen.dart';
+import 'package:reddit/presentation/screens/messages/inbox.dart';
+import 'package:reddit/presentation/screens/messages/sent.dart';
+import 'package:reddit/data/repository/message_screen_repository.dart';
+import 'package:reddit/data/web_services/message_screen_web_services.dart';
+import 'package:reddit/business_logic/cubit/cubit/inbox_screen_cubit.dart';
+import 'package:reddit/business_logic/cubit/cubit/sent_screen_cubit.dart';
 
 class AppRouter {
   // platform
@@ -181,6 +187,10 @@ class AppRouter {
   late MessagesRepository messagesRepository;
   late MessagesCubit messagesCubitApproved;
   late MessagesCubit messagesCubitProfile;
+  late MessageScreenWebServices messageScreenWebServices;
+  late MessageScreenRepository messageScreenRepository;
+  late InboxScreenCubit inboxScreenCubit;
+  late SentScreenCubit sentScreenCubit;
 
   late ModToolsWebServices modtoolsWebServices;
   late ModToolsRepository modtoolsRepository;
@@ -259,6 +269,11 @@ class AppRouter {
     messagesRepository = MessagesRepository(messagesWebServices);
     messagesCubitApproved = MessagesCubit(messagesRepository);
     messagesCubitProfile = MessagesCubit(messagesRepository);
+    messageScreenWebServices = MessageScreenWebServices();
+    messageScreenRepository = MessageScreenRepository(
+        messageScreenWebServices: messageScreenWebServices);
+    sentScreenCubit = SentScreenCubit(messageScreenRepository);
+    inboxScreenCubit = InboxScreenCubit(messageScreenRepository);
 
     modtoolsWebServices = ModToolsWebServices();
     modtoolsRepository = ModToolsRepository(modtoolsWebServices);
@@ -376,6 +391,8 @@ class AppRouter {
               BlocProvider.value(value: userProfileCubit),
               BlocProvider.value(value: settingsCubit),
               BlocProvider.value(value: messagesCubitProfile),
+              BlocProvider.value(value: inboxScreenCubit),
+              BlocProvider.value(value: sentScreenCubit),
               BlocProvider.value(value: postsUserCubit),
               BlocProvider.value(value: followUnfollowCubit),
               BlocProvider.value(value: otherProfileSortCubit),
@@ -785,6 +802,26 @@ class AppRouter {
                   create: (BuildContext context) => messagesCubitProfile,
                   child: SendMessageWeb(username: username),
                 ));
+      case inboxRoute:
+        if (!isMobile) {
+          return MaterialPageRoute(
+              builder: (_) => BlocProvider(
+                    create: (BuildContext context) => inboxScreenCubit,
+                    child: const InboxWeb(),
+                  ));
+        } else {
+          break;
+        }
+      case sentRoute:
+        if (!isMobile) {
+          return MaterialPageRoute(
+              builder: (_) => BlocProvider(
+                    create: (BuildContext context) => sentScreenCubit,
+                    child: const SentWeb(),
+                  ));
+        } else {
+          break;
+        }
       case createPostScreenRoute:
         return MaterialPageRoute(
             builder: (_) => BlocProvider(
