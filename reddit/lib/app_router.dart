@@ -46,6 +46,7 @@ import 'package:reddit/presentation/screens/modtools/web/spam_web.dart';
 import 'package:reddit/presentation/screens/modtools/web/traffic_stats.dart';
 import 'package:reddit/presentation/screens/modtools/web/unmoderated.dart';
 import 'package:reddit/presentation/screens/new_post/create_post_screen.dart';
+import 'package:reddit/presentation/screens/new_post/create_post_screen_web.dart';
 // import 'package:reddit/presentation/screens/profile/other_user_orfile_screen.dart';
 import 'package:reddit/presentation/screens/search/search_web.dart';
 import 'business_logic/cubit/cubit/search/cubit/search_cubit.dart';
@@ -789,7 +790,9 @@ class AppRouter {
         return MaterialPageRoute(
             builder: (_) => BlocProvider(
                   create: (BuildContext context) => createPostCubit,
-                  child: const CreatePostScreen(),
+                  child: (kIsWeb)
+                      ? const CreatePostScreenWeb()
+                      : const CreatePostScreen(),
                 ));
 
       case postToMobileScreenRoute:
