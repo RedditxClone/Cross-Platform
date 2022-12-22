@@ -449,7 +449,6 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
   }
 
   Widget _buildBody(subredditModel, joinedSubreddit, isMod) {
-    isMod = true;
     joinLeaveButtonText = joinedSubreddit ? "Joined" : "Join";
     _controller.text = subredditModel.description ?? "";
     return _mobilePlatform
