@@ -105,6 +105,7 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
     super.initState();
     if (widget._newSubreddit) {
       _subredditModel = widget.subredditModel!;
+      _subredditModel!.memberCount = 1;
       _joinedSubreddit = true;
       _isMod = true;
       return;
@@ -235,12 +236,6 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                                         ),
                                       ]),
                                     )),
-                                IconButton(
-                                    onPressed: () {},
-                                    icon: const Icon(
-                                      Icons.more_horiz,
-                                      color: darkFontColor,
-                                    ))
                               ],
                             )
                           ],
@@ -277,6 +272,10 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                             )
                           ],
                         ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        _communityType(subredditModel.type!),
                         const SizedBox(
                           height: 10,
                         ),
@@ -397,7 +396,7 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
           _selectedMode = mode;
           _selectedModeIcon = icon;
           BlocProvider.of<PostsSubredditCubit>(context)
-              .getSubredditPosts(_subredditModel!.name!);
+              .getSubredditPosts(_subredditModel!.name!, sort: _selectedMode);
         },
         icon: Icon(icon),
       );
@@ -772,57 +771,54 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        Transform.scale(
-                                          scale: 3,
-                                          child: IconButton(
-                                            alignment: Alignment.topCenter,
-                                            icon: CircleAvatar(
-                                                radius: 60,
-                                                backgroundColor: Colors.blue,
-                                                foregroundImage:
-                                                    subredditModel.icon != null
-                                                        ? NetworkImage(
-                                                            subredditModel
-                                                                .icon!,
-                                                          )
-                                                        : null,
-                                                child: _updatingIcon
-                                                    ? const Center(
-                                                        child:
-                                                            CircularProgressIndicator(
-                                                                color: Colors
-                                                                    .blue),
-                                                      )
-                                                    : subredditModel.icon ==
-                                                            null
-                                                        ? CircleAvatar(
-                                                            backgroundColor:
-                                                                Colors.white,
-                                                            radius: 60,
-                                                            child: Text(
-                                                              "r/",
-                                                              style: GoogleFonts
-                                                                  .ibmPlexSans(
-                                                                      color: Colors
-                                                                          .blue,
-                                                                      fontSize:
-                                                                          24,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w800),
-                                                            ),
-                                                          )
-                                                        : null),
-                                            onPressed: isMod
-                                                ? () {
-                                                    _fetchImage();
-                                                  }
-                                                : () {},
-                                            style: TextButton.styleFrom(
-                                              shape: const CircleBorder(),
-                                              backgroundColor:
-                                                  Colors.transparent,
-                                            ),
+                                        SizedBox(
+                                          height: 50,
+                                        ),
+                                        TextButton.icon(
+                                          label: Text(''),
+                                          icon: CircleAvatar(
+                                              radius: 45,
+                                              backgroundColor: Colors.white,
+                                              foregroundImage:
+                                                  subredditModel.icon != null
+                                                      ? NetworkImage(
+                                                          subredditModel.icon!,
+                                                        )
+                                                      : null,
+                                              child: _updatingIcon
+                                                  ? const Center(
+                                                      child:
+                                                          CircularProgressIndicator(
+                                                              color:
+                                                                  Colors.blue),
+                                                    )
+                                                  : subredditModel.icon == null
+                                                      ? CircleAvatar(
+                                                          backgroundColor:
+                                                              Colors.blue,
+                                                          radius: 40,
+                                                          child: Text(
+                                                            "r/",
+                                                            style: GoogleFonts
+                                                                .ibmPlexSans(
+                                                                    color: Colors
+                                                                        .white,
+                                                                    fontSize:
+                                                                        40,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w800),
+                                                          ),
+                                                        )
+                                                      : null),
+                                          onPressed: isMod
+                                              ? () {
+                                                  _fetchImage();
+                                                }
+                                              : () {},
+                                          style: TextButton.styleFrom(
+                                            shape: const CircleBorder(),
+                                            backgroundColor: Colors.transparent,
                                           ),
                                         ),
                                         if (isMod)
@@ -1099,10 +1095,16 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
         if (state is LeftSubreddit) {
           _joinedSubreddit = false;
           joinLeaveButtonText = "Join";
+          if (kIsWeb) {
+            _subredditModel!.memberCount = _subredditModel!.memberCount! - 1;
+          }
         }
         if (state is JoinedSubreddit) {
           joinLeaveButtonText = "Joined";
           _joinedSubreddit = true;
+          if (kIsWeb) {
+            _subredditModel!.memberCount = _subredditModel!.memberCount! + 1;
+          }
         }
         if (_subredditModel != null &&
             _isMod != null &&
@@ -1242,5 +1244,29 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                 ),
               ],
             )));
+  }
+
+  Widget _communityType(String type) {
+    IconData icon = type.toLowerCase() == 'public'
+        ? Icons.person
+        : type.toLowerCase() == 'restricted'
+            ? Icons.remove_red_eye_outlined
+            : Icons.lock_rounded;
+    String text = type.replaceFirst(type[0], type[0].toUpperCase());
+    return Row(
+      children: [
+        Icon(
+          icon,
+          color: lightFontColor,
+        ),
+        const SizedBox(
+          width: 4,
+        ),
+        Text(
+          text,
+          style: const TextStyle(color: lightFontColor),
+        )
+      ],
+    );
   }
 }
