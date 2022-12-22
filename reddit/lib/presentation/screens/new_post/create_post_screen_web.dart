@@ -11,15 +11,19 @@ import 'package:zefyrka/zefyrka.dart';
 import '../../../constants/colors.dart';
 import '../../../constants/font_sizes.dart';
 import '../../../constants/strings.dart';
+import '../../../constants/theme_colors.dart';
+import '../../../data/model/auth_model.dart';
+import '../../widgets/nav_bars/app_bar_web_Not_loggedin.dart';
+import '../../widgets/nav_bars/app_bar_web_loggedin.dart';
 
-class CreatePostScreen extends StatefulWidget {
-  const CreatePostScreen({super.key});
+class CreatePostScreenWeb extends StatefulWidget {
+  const CreatePostScreenWeb({super.key});
 
   @override
-  State<CreatePostScreen> createState() => _CreatePostScreenState();
+  State<CreatePostScreenWeb> createState() => _CreatePostScreenWebState();
 }
 
-class _CreatePostScreenState extends State<CreatePostScreen> {
+class _CreatePostScreenWebState extends State<CreatePostScreenWeb> {
   bool _validURL = false;
 
   var _picker;
@@ -122,89 +126,101 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<CreatePostCubit, CreatePostState>(
-        listener: (context, state) async {
-      if (state is NextButtonPressed) {
-        _postModel.title = _titleController.text.toString();
-        _postModel.text = _selectedTypeIndex == 2
-            ? _bodyController.text.toString()
-            : _urlController.text.toString();
-        Navigator.pushNamed(context, postToMobileScreenRoute,
-            arguments: _postModel);
-      }
-    }, builder: (context, state) {
-      _enable = _selectedTypeIndex == 2 && _titleController.text.isNotEmpty ||
-          _selectedTypeIndex == 3 &&
-              _validURL &&
-              _titleController.text.isNotEmpty;
-      return SingleChildScrollView(
-          child: LayoutBuilder(builder: (context, constraints) {
-        var width = constraints.maxWidth;
-        return Padding(
-          padding: const EdgeInsets.only(top: 10.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                  flex: 2,
-                  child:
-                      // (state is PostsInPageLoading)
-                      // ? const Center(
-                      // child: CircularProgressIndicator(
-                      // color: darkFontColor),
-                      // )
-                      // :
-                      Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 2, bottom: 10.0),
-                          child: Container(
-                              padding: const EdgeInsets.only(left: 8),
-                              decoration: BoxDecoration(
-                                  color: cardsColor,
-                                  borderRadius: BorderRadius.circular(3)),
-                              child: const TextField(
-                                decoration: InputDecoration(
-                                    fillColor: textFeildColor,
-                                    icon: Icon(Icons.reddit,
-                                        color: darkFontColor),
-                                    hintStyle: TextStyle(color: darkFontColor),
-                                    hintText: "Create post"),
-                              )),
-                        ),
-                        Center(
-                            child: Column(
-                          children: [
-                            ZefyrToolbar.basic(controller: _zefyrController),
-                            Expanded(
-                              child: ZefyrEditor(
-                                controller: _zefyrController,
-                              ),
-                            ),
-                          ],
-                        ))
-                      ])),
-              width > 700
-                  ? Expanded(flex: 1, child: Text("user card"))
-                  : Container()
-            ],
-          ),
-        );
-      }));
-      // return
-      // Center(
-      //     child: Column(
-      //   children: [
-      //     ZefyrToolbar.basic(controller: _zefyrController),
-      //     Expanded(
-      //       child: ZefyrEditor(
-      //         controller: _zefyrController,
-      //       ),
-      //     ),
-      //   ],
-      // ))
-      // ;
-    });
+    return Scaffold(
+      appBar: _buildAppBar(),
+      body: BlocConsumer<CreatePostCubit, CreatePostState>(
+          listener: (context, state) async {
+        if (state is NextButtonPressed) {
+          _postModel.title = _titleController.text.toString();
+          _postModel.text = _selectedTypeIndex == 2
+              ? _bodyController.text.toString()
+              : _urlController.text.toString();
+          Navigator.pushNamed(context, postToMobileScreenRoute,
+              arguments: _postModel);
+        }
+      }, builder: (context, state) {
+        _enable = _selectedTypeIndex == 2 && _titleController.text.isNotEmpty ||
+            _selectedTypeIndex == 3 &&
+                _validURL &&
+                _titleController.text.isNotEmpty;
+        return SingleChildScrollView(
+            child: LayoutBuilder(builder: (context, constraints) {
+          var width = constraints.maxWidth;
+          return Padding(
+            padding: EdgeInsets.symmetric(
+                horizontal: width > 900 ? (width - 870) / 2 : 30),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                    flex: 2,
+                    child:
+                        // (state is PostsInPageLoading)
+                        // ? const Center(
+                        // child: CircularProgressIndicator(
+                        // color: darkFontColor),
+                        // )
+                        // :
+                        Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                          Padding(
+                              padding:
+                                  const EdgeInsets.only(top: 2, bottom: 10.0),
+                              child: Container(
+                                  padding: const EdgeInsets.only(left: 8),
+                                  decoration: BoxDecoration(
+                                      color: cardsColor,
+                                      borderRadius: BorderRadius.circular(3)),
+                                  child: Column(
+                                    children: [
+                                      ZefyrToolbar.basic(
+                                          controller: _zefyrController),
+                                      ZefyrEditor(
+                                        controller: _zefyrController,
+                                      ),
+                                    ],
+                                  ))),
+                          // Column(
+                          //   children: [
+                          //     ZefyrToolbar.basic(controller: _zefyrController),
+                          //     ZefyrEditor(
+                          //       controller: _zefyrController,
+                          //     ),
+                          //   ],
+                          // )
+                        ])),
+                width > 700
+                    ? Expanded(flex: 1, child: Text("user card"))
+                    : Container()
+              ],
+            ),
+          );
+        }));
+        // return
+        // Center(
+        //     child: Column(
+        //   children: [
+        //     ZefyrToolbar.basic(controller: _zefyrController),
+        //     Expanded(
+        //       child: ZefyrEditor(
+        //         controller: _zefyrController,
+        //       ),
+        //     ),
+        //   ],
+        // ))
+        // ;
+      }),
+    );
+  }
+
+  _buildAppBar() {
+    return AppBar(
+        shape: const Border(bottom: BorderSide(color: Colors.grey, width: 0.3)),
+        automaticallyImplyLeading: false,
+        backgroundColor: defaultAppbarBackgroundColor,
+        title: UserData.user != null
+            ? const AppBarWebLoggedIn(screen: 'Create Post')
+            : const AppBarWebNotLoggedIn(screen: 'Create Post'));
   }
 }
