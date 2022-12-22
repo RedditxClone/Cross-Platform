@@ -316,7 +316,8 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                                   Radius.circular(20),
                                 )),
                               ),
-                              onPressed: () {},
+                              onPressed: () => Navigator.pushNamed(
+                                  context, createPostScreenRoute),
                               child: const Text("Create Post")),
                         ),
                         const SizedBox(height: 10),
@@ -966,7 +967,10 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                                                   color: cardsColor,
                                                   borderRadius:
                                                       BorderRadius.circular(3)),
-                                              child: const TextField(
+                                              child: TextField(
+                                                onTap: () =>
+                                                    Navigator.pushNamed(context,
+                                                        createPostScreenRoute),
                                                 decoration: InputDecoration(
                                                     fillColor: textFeildColor,
                                                     icon: Icon(Icons.reddit,
