@@ -142,36 +142,36 @@ void main() async {
         },
         expect: () => [isA<PostHidden>()],
       );
+      blocTest<PostActionsCubit, PostActionsState>(
+        'Post unhide state emitted correctly when user is logged in and server responded with success',
+        setUp: () {
+          when(() => mockPostActionsWebService.unhidePost("123")).thenAnswer(
+            (_) async => 201,
+          );
+        },
+        build: () {
+          return postActionsCubit;
+        },
+        act: (PostActionsCubit cubit) {
+          cubit.unhidePost("123");
+        },
+        expect: () => [isA<PostUnhidden>()],
+      );
+      blocTest<PostActionsCubit, PostActionsState>(
+        'Post spam state emitted correctly when user is logged in and server responded with success',
+        setUp: () {
+          when(() => mockPostActionsWebService.spamPost("123")).thenAnswer(
+            (_) async => 201,
+          );
+        },
+        build: () {
+          return postActionsCubit;
+        },
+        act: (PostActionsCubit cubit) {
+          cubit.spamPost("123");
+        },
+        expect: () => [isA<Spammed>()],
+      );
     });
-    blocTest<PostActionsCubit, PostActionsState>(
-      'Post unhide state emitted correctly when user is logged in and server responded with success',
-      setUp: () {
-        when(() => mockPostActionsWebService.unhidePost("123")).thenAnswer(
-          (_) async => 201,
-        );
-      },
-      build: () {
-        return postActionsCubit;
-      },
-      act: (PostActionsCubit cubit) {
-        cubit.unhidePost("123");
-      },
-      expect: () => [isA<PostUnhidden>()],
-    );
-    blocTest<PostActionsCubit, PostActionsState>(
-      'Post spam state emitted correctly when user is logged in and server responded with success',
-      setUp: () {
-        when(() => mockPostActionsWebService.spamPost("123")).thenAnswer(
-          (_) async => 201,
-        );
-      },
-      build: () {
-        return postActionsCubit;
-      },
-      act: (PostActionsCubit cubit) {
-        cubit.spamPost("123");
-      },
-      expect: () => [isA<Spammed>()],
-    );
   });
 }

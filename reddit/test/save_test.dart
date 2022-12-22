@@ -1,6 +1,7 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:reddit/business_logic/cubit/posts/save_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/vote_cubit.dart';
 import 'package:reddit/data/model/auth_model.dart';
 import 'package:reddit/data/model/posts/vote_model.dart';
@@ -13,62 +14,44 @@ class MockPostActionsWebService extends Mock implements PostActionsWebServices {
 void main() async {
   late MockPostActionsWebService mockPostActionsWebService;
   late PostActionsRepository postActionsRepository;
-  late VoteCubit voteCubit;
-  final votesFromWebServices = {"votesCount": 1};
-  final voteModelTest = VoteModel(votesCount: 1);
-  group("Vote post/comment state test", () {
+  late SaveCubit saveCubit;
+
+  group("Save post state test", () {
     setUp(() {
       mockPostActionsWebService = MockPostActionsWebService();
       postActionsRepository = PostActionsRepository(mockPostActionsWebService);
-      voteCubit = VoteCubit(postActionsRepository);
+      saveCubit = SaveCubit(postActionsRepository);
     });
     group("Signed out", () {
-      blocTest<VoteCubit, VoteState>(
-        'Up vote state emitted correctly when user is not logged in',
+      blocTest<SaveCubit, SaveState>(
+        'Save state emitted correctly when user is not logged in',
         setUp: () {
-          when(() => mockPostActionsWebService.upVote("123")).thenAnswer(
+          when(() => mockPostActionsWebService.savePost("123")).thenAnswer(
             (_) async => 403,
           );
         },
         build: () {
-          return voteCubit;
+          return saveCubit;
         },
-        act: (VoteCubit cubit) {
-          cubit.upVote("123");
+        act: (SaveCubit cubit) {
+          cubit.savePost("123");
         },
-        expect: () => [isA<VoteError>()],
+        expect: () => [isA<SaveError>()],
       );
-      // Calling hidePost() function returns the correct state
-      blocTest<VoteCubit, VoteState>(
-        'Unvote state emitted correctly when user is not logged in',
+      blocTest<SaveCubit, SaveState>(
+        'Unsave Post state emitted correctly when user is not logged in',
         setUp: () {
-          when(() => mockPostActionsWebService.unVote("123")).thenAnswer(
+          when(() => mockPostActionsWebService.unsavePost("123")).thenAnswer(
             (_) async => 403,
           );
         },
         build: () {
-          return voteCubit;
+          return saveCubit;
         },
-        act: (VoteCubit cubit) {
-          cubit.unVote("123");
+        act: (SaveCubit cubit) {
+          cubit.unsavePost("123");
         },
-        expect: () => [isA<VoteError>()],
-      );
-      // Calling spamPost() function returns the correct state
-      blocTest<VoteCubit, VoteState>(
-        'Down vote state emitted correctly when user is not logged in',
-        setUp: () {
-          when(() => mockPostActionsWebService.downVote("123")).thenAnswer(
-            (_) async => 403,
-          );
-        },
-        build: () {
-          return voteCubit;
-        },
-        act: (VoteCubit cubit) {
-          cubit.downVote("123");
-        },
-        expect: () => [isA<VoteError>()],
+        expect: () => [isA<UnsaveError>()],
       );
     });
     group("Signed in", () {
@@ -129,59 +112,37 @@ void main() async {
           "createdAt": "2022-12-22T18:24:10.012Z"
         });
       });
-      blocTest<VoteCubit, VoteState>(
-        'Up vote emitted correctly when user is logged in and server responded with success',
-        setUp: () {
-          when(() => mockPostActionsWebService.upVote("123")).thenAnswer(
-            (_) async => votesFromWebServices,
-          );
-        },
-        build: () {
-          return voteCubit;
-        },
-        act: (VoteCubit cubit) {
-          cubit.upVote("123");
-        },
-        expect: () => [isA<UpVoted>()],
-      );
-      blocTest<VoteCubit, VoteState>(
-        'Unvote state emitted correctly when user is logged in and server responded with success',
-        setUp: () {
-          when(() => mockPostActionsWebService.unVote("123")).thenAnswer(
-            (_) async => votesFromWebServices,
-          );
-        },
-        build: () {
-          return voteCubit;
-        },
-        act: (VoteCubit cubit) {
-          cubit.unVote("123");
-        },
-        expect: () => [isA<UnVoted>()],
-      );
-      blocTest<VoteCubit, VoteState>(
-        'Down vote state emitted correctly when user is logged in and server responded with success',
-        setUp: () {
-          when(() => mockPostActionsWebService.downVote("123")).thenAnswer(
-            (_) async => votesFromWebServices,
-          );
-        },
-        build: () {
-          return voteCubit;
-        },
-        act: (VoteCubit cubit) {
-          cubit.downVote("123");
-        },
-        expect: () => [isA<DownVoted>()],
-      );
-    });
-  });
-  VoteModel modelFromJson;
 
-  group('Votes model test', () {
-    test('Votes Model is generated correctly', () {
-      modelFromJson = VoteModel.fromJson(votesFromWebServices);
-      expect(modelFromJson.votesCount, voteModelTest.votesCount);
+      blocTest<SaveCubit, SaveState>(
+        'Save state emitted correctly when user is logged in and server responded with success',
+        setUp: () {
+          when(() => mockPostActionsWebService.savePost("123")).thenAnswer(
+            (_) async => 200,
+          );
+        },
+        build: () {
+          return saveCubit;
+        },
+        act: (SaveCubit cubit) {
+          cubit.savePost("123");
+        },
+        expect: () => [isA<Saved>()],
+      );
+      blocTest<SaveCubit, SaveState>(
+        'Unsave state emitted correctly when user is logged in and server responded with success',
+        setUp: () {
+          when(() => mockPostActionsWebService.unsavePost("123")).thenAnswer(
+            (_) async => 200,
+          );
+        },
+        build: () {
+          return saveCubit;
+        },
+        act: (SaveCubit cubit) {
+          cubit.unsavePost("123");
+        },
+        expect: () => [isA<Unsaved>()],
+      );
     });
   });
 }
