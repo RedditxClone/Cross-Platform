@@ -50,9 +50,9 @@ class SubredditIconUpdating extends SubredditPageState {}
 
 class SubredditIconUpdateFailed extends SubredditPageState {}
 
-class SubredditIconLoaded extends SubredditPageState {
+class SubredditIconUpdated extends SubredditPageState {
   final String subredditIcon;
-  SubredditIconLoaded(this.subredditIcon);
+  SubredditIconUpdated(this.subredditIcon);
 }
 
 class ToggleSwitch extends SubredditPageState {}

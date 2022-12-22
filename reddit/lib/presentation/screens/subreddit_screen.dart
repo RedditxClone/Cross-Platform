@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -79,19 +80,6 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
       backgroundColor: Colors.transparent,
       elevation: 0,
     ));
-  }
-
-  _fetchImage() async {
-    // Pick an image
-    try {
-      final image = await _picker.pickImage(source: ImageSource.gallery);
-      if (image == null) return;
-      _pickedImage = await image.readAsBytes();
-      BlocProvider.of<SubredditPageCubit>(context)
-          .updateSubredditIcon(_subredditModel!.sId!, _pickedImage);
-    } catch (e) {
-      print(e);
-    }
   }
 
   final bool _mobilePlatform =
@@ -202,6 +190,9 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 5),
                     child: Column(
                       children: [
+                        SizedBox(
+                          height: 2,
+                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -212,32 +203,34 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                                   fontSize: 15,
                                   fontWeight: FontWeight.w500),
                             ),
-                            Row(
-                              children: [
-                                InkWell(
-                                    onTap: () => Navigator.pushNamed(
-                                            context, modqueueRoute, arguments: {
-                                          'name': subredditModel.name,
-                                          'id': subredditModel.sId
-                                        }),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(5),
-                                      child: Row(children: const [
-                                        Icon(
-                                          Icons.shield_outlined,
-                                          color: darkFontColor,
-                                        ),
-                                        Text(
-                                          "Mod tools",
-                                          style: TextStyle(
-                                              color: darkFontColor,
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                      ]),
-                                    )),
-                              ],
-                            )
+                            if (isMod!)
+                              Row(
+                                children: [
+                                  InkWell(
+                                      onTap: () => Navigator.pushNamed(
+                                              context, modqueueRoute,
+                                              arguments: {
+                                                'name': subredditModel.name,
+                                                'id': subredditModel.sId
+                                              }),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(5),
+                                        child: Row(children: const [
+                                          Icon(
+                                            Icons.shield_outlined,
+                                            color: darkFontColor,
+                                          ),
+                                          Text(
+                                            "Mod tools",
+                                            style: TextStyle(
+                                                color: darkFontColor,
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                        ]),
+                                      )),
+                                ],
+                              )
                           ],
                         ),
                         const SizedBox(
@@ -247,7 +240,7 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                             subredditModel.description!.isNotEmpty)
                           TextField(
                             maxLines: null,
-                            readOnly: isMod! ? false : true,
+                            readOnly: isMod ? false : true,
                             controller: _controller,
                             decoration: const InputDecoration(
                                 focusColor: Colors.transparent,
@@ -813,7 +806,8 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                                                       : null),
                                           onPressed: isMod
                                               ? () {
-                                                  _fetchImage();
+                                                  pickImageWeb(
+                                                      ImageSource.gallery);
                                                 }
                                               : () {},
                                           style: TextButton.styleFrom(
@@ -823,11 +817,17 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                                         ),
                                         if (isMod)
                                           InkWell(
-                                            onTap: (() => _fetchImage()),
-                                            child: const Text(
-                                              "Update icon",
-                                              style: TextStyle(
-                                                  color: lightFontColor),
+                                            onTap: () {
+                                              pickImageWeb(ImageSource.gallery);
+                                            },
+                                            child: const Padding(
+                                              padding:
+                                                  EdgeInsets.only(top: 5.0),
+                                              child: Text(
+                                                "Update icon",
+                                                style: TextStyle(
+                                                    color: lightFontColor),
+                                              ),
                                             ),
                                           ),
                                       ],
@@ -1077,7 +1077,7 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
         if (state is SubredditIconUpdating) {
           _updatingIcon = true;
         }
-        if (state is SubredditIconLoaded) {
+        if (state is SubredditIconUpdated) {
           _updatingIcon = false;
         }
         if (state is InSubreddit) {
@@ -1119,8 +1119,8 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
         }
         // return Container();
       }, listener: (context, state) {
-        if (state is SubredditIconLoaded) {
-          // _subredditModel.icon = (state).subredditIcon;
+        if (state is SubredditIconUpdated) {
+          _subredditModel!.icon = (state).subredditIcon;
           _displayMsg(
               context, Colors.blue, "Sucessfully updated community icon!");
         }
@@ -1268,5 +1268,21 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
         )
       ],
     );
+  }
+
+  Future pickImageWeb(ImageSource src) async {
+    try {
+      final imagePicker = await ImagePicker().pickImage(source: src);
+      if (imagePicker == null) return;
+      Uint8List imageBytes = await imagePicker.readAsBytes();
+      setState(() {
+        BlocProvider.of<SubredditPageCubit>(context)
+            .updateSubredditIcon(_subredditModel!.sId!, imageBytes);
+        _displayMsg(context, Colors.blue, 'Changes Saved');
+      });
+    } on PlatformException catch (e) {
+      debugPrint(e.toString());
+      _displayMsg(context, Colors.red, 'Could not load image');
+    }
   }
 }

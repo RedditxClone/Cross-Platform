@@ -71,30 +71,26 @@ class SubredditWebServices {
   //   }
   // }
 
-  Future<bool> updateSubredditIcon(
+  Future<dynamic> updateSubredditIcon(
       String subredditId, Uint8List updatedIcon) async {
-    final fields = {
-      'file': MultipartFile.fromBytes(updatedIcon,
-          contentType: MediaType('application', 'json'), filename: "icon.jpg")
-    };
-    final formData = FormData.fromMap(fields);
-    debugPrint(formData.fields.toString());
     try {
+      FormData formData = FormData.fromMap({
+        "photo": MultipartFile.fromBytes(updatedIcon,
+            contentType: MediaType('application', 'json'), filename: 'photo')
+      });
       Response response = await dio.post('subreddit/r/$subredditId/icon',
           data: formData,
           options: Options(
             headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
-
-      if (response.statusCode == 201) {
-        return true;
-      } else {
-        debugPrint(response.statusCode.toString());
-        return false;
-      }
+      debugPrint("update picture status code " +
+          response.statusCode.toString() +
+          " new image link : " +
+          response.data);
+      return response.data;
     } catch (e) {
       debugPrint(e.toString());
-      return false;
+      return '';
     }
   }
 

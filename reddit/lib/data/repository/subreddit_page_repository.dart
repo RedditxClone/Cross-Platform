@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:reddit/data/model/post_model.dart';
 import 'package:reddit/data/model/subreddit_model.dart';
 
+import '../../constants/strings.dart';
 import '../web_services/subreddit_page_web_services.dart';
 
 class SubredditPageRepository {
@@ -56,11 +57,11 @@ class SubredditPageRepository {
     return left;
   }
 
-  Future<bool> updateSubredditIcon(
-      String subredditName, Uint8List updatedIcon) async {
-    final bool updated = await subredditWebServices.updateSubredditIcon(
-        subredditName, updatedIcon);
-    return updated;
+  Future<dynamic> updateSubredditIcon(
+      String subredditId, Uint8List updatedIcon) async {
+    final newVal = await subredditWebServices.updateSubredditIcon(
+        subredditId, updatedIcon);
+    return imagesUrl + newVal['subredditPhoto'];
   }
 
   // getSubredditDescription(String subredditName) async {
