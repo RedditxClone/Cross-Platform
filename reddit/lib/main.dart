@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/constants/strings.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:reddit/presentation/screens/signup_page.dart';
 import 'app_router.dart';
+import 'data/model/auth_model.dart';
 import 'helper/dio.dart';
 import 'helper/utils/shared_pref.dart';
 
-void main() {
-  runApp(MyApp(appRouter: AppRouter()));
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   DioHelper.init();
-  PreferenceUtils.init();
+  await PreferenceUtils.init();
+  runApp(MyApp(appRouter: AppRouter()));
 }
 
 class MyApp extends StatelessWidget {
   final AppRouter appRouter;
-  MyApp({Key? key, required this.appRouter}) : super(key: key);
+  const MyApp({Key? key, required this.appRouter}) : super(key: key);
 
-  bool isLoggedIn = false;
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -40,11 +40,13 @@ class MyApp extends StatelessWidget {
       themeMode: ThemeMode.dark,
       debugShowCheckedModeBanner: false,
       onGenerateRoute: appRouter.generateRoute,
-      // initialRoute: SIGNU_PAGE1,
+      // initialRoute: searchRouteWeb,
+      // initialRoute: tafficRoute,
 
       initialRoute: kIsWeb
-          ? (isLoggedIn ? homePageRoute : popularPageRoute)
+          ? (UserData.isLogged() ? homePageRoute : popularPageRoute)
           : homePageRoute,
+
       // onGenerateInitialRoutes: (String initialRouteName) {
       //   return [
       //     appRouter.generateRoute(RouteSettings(

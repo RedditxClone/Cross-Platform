@@ -1,18 +1,20 @@
 // ignore_for_file: use_build_context_synchronously
-
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:reddit/business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
+import 'package:reddit/business_logic/cubit/posts/posts_home_cubit.dart';
 import 'package:reddit/constants/theme_colors.dart';
 import 'package:reddit/data/model/auth_model.dart';
+import 'package:reddit/data/web_services/authorization/auth_web_service.dart';
+import 'package:reddit/helper/utils/shared_keys.dart';
 import 'package:reddit/presentation/screens/home/home_web.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_Not_loggedin.dart';
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
-import '../../../helper/dio.dart';
+import '../../../../data/repository/auth_repo.dart';
+import '../../../helper/utils/shared_pref.dart';
 
 class HomePageWeb extends StatefulWidget {
   const HomePageWeb({Key? key}) : super(key: key);
@@ -22,12 +24,13 @@ class HomePageWeb extends StatefulWidget {
 }
 
 class _HomePageWebState extends State<HomePageWeb> {
-  late bool isLoggedIn;
-
+  late AuthRepo authRepo;
   @override
   void initState() {
     super.initState();
-    isLoggedIn = UserData.user != null;
+    BlocProvider.of<AuthCubit>(context)
+        .getUserData(PreferenceUtils.getString(SharedPrefKeys.token));
+    authRepo = AuthRepo(AuthWebService());
   }
 
   Map<String, String> interests = {
@@ -51,43 +54,19 @@ class _HomePageWebState extends State<HomePageWeb> {
   };
   Map<String, dynamic> selectedInterests = {};
   Uint8List? imgCover;
+  int intersetsCount = 0;
 
   //this function is used to add the user interests to the database
-  void addInterests() async {
-    UserData.user?.interests = selectedInterests;
-    debugPrint("after storing${UserData.user?.interests}");
-    DioHelper.patchData(
-        url: 'user/me/prefs',
-        data: selectedInterests,
-        options: Options(
-          headers: {
-            "Authorization":
-                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzN2ZlNjM4NWUwYjU4M2Y0YTc5ZTM0ZiIsImlhdCI6MTY2OTkwNjQyMiwiZXhwIjoxNjcwNzcwNDIyfQ.Jukdcxvc1j8i78uNshWkPPpBBwh9mMFRoQT6hGgLrY4"
-          },
-        )).then((value) {
-      if (value.statusCode == 200) {
+  void addInterests() {
+    authRepo
+        .addInterests(selectedInterests, UserData.user!.token ?? "")
+        .then((value) {
+      if (value) {
         Navigator.of(context).pop();
         showDialogToChooseProfilePicture();
       } else {
-        SnackBar(
-          content: Row(
-            children: const [
-              Icon(
-                Icons.error,
-                color: Colors.red,
-              ),
-              SizedBox(
-                width: 10,
-              ),
-              Text(
-                'Error in storing your data please try again',
-                style: TextStyle(
-                  color: Colors.red,
-                ),
-              ),
-            ],
-          ),
-        );
+        displayMsg(
+            context, Colors.red, 'Error in storing your data please try again');
       }
     });
     debugPrint("interests added");
@@ -96,66 +75,15 @@ class _HomePageWebState extends State<HomePageWeb> {
   //This function takes the selected gender and sends it to the server
   //gender will be null if not selected
   void selectGender(String gender) async {
-    UserData.user?.gender = gender;
-    DioHelper.patchData(
-        url: 'user/me/prefs',
-        data: {
-          "gender": gender,
-        },
-        options: Options(
-          headers: {
-            "Authorization":
-                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzN2ZlNjM4NWUwYjU4M2Y0YTc5ZTM0ZiIsImlhdCI6MTY2OTkwNjQyMiwiZXhwIjoxNjcwNzcwNDIyfQ.Jukdcxvc1j8i78uNshWkPPpBBwh9mMFRoQT6hGgLrY4"
-          },
-        )).then((res) {
-      if (res.statusCode == 200) {
+    authRepo.genderInSignup(gender, UserData.user!.token!).then((updated) {
+      if (updated) {
         debugPrint("success gender");
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: const [
-                Icon(
-                  Icons.reddit,
-                  color: Colors.green,
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                Text(
-                  'Data add successfully',
-                  style: TextStyle(
-                    color: Colors.black,
-                    backgroundColor: Colors.white,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
+        displayMsg(context, Colors.blue, ' Logged in successfully');
         Navigator.of(context).pop();
         showDialogToChooseInterests();
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: const [
-                Icon(
-                  Icons.error,
-                  color: Colors.red,
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                Text(
-                  'Error in storing your data please try again',
-                  style: TextStyle(
-                    color: Colors.red,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
+        displayMsg(context, Colors.red,
+            ' Error in storing your data please try again');
       }
     });
   }
@@ -164,8 +92,6 @@ class _HomePageWebState extends State<HomePageWeb> {
   void showDialogToChooseGender() {
     var buttonColor1 = const Color.fromARGB(255, 237, 237, 237);
     var buttonColor2 = const Color.fromARGB(255, 237, 237, 237);
-    // var buttonColor3 = const Color.fromARGB(255, 237, 237, 237);
-    // var buttonColor4 = const Color.fromARGB(255, 237, 237, 237);
     bool choosed = false;
     showDialog(
       barrierDismissible: false,
@@ -176,7 +102,7 @@ class _HomePageWebState extends State<HomePageWeb> {
             data: ThemeData.light(),
             child: AlertDialog(
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(40),
+                borderRadius: BorderRadius.circular(20),
               ),
               icon: const Icon(
                 Icons.reddit,
@@ -324,92 +250,6 @@ class _HomePageWebState extends State<HomePageWeb> {
                         ),
                       ),
                     ),
-                    // Padding(
-                    //   padding: const EdgeInsets.all(8.0),
-                    //   child: ElevatedButton(
-                    //     onPressed: () {
-                    //       setState(() {
-                    //         if (!choosed) {
-                    //           buttonColor3 ==
-                    //                   const Color.fromARGB(255, 82, 46, 46)
-                    //               ? null
-                    //               : selectGender("Non-binary");
-                    //           buttonColor3 =
-                    //               const Color.fromARGB(255, 82, 46, 46);
-                    //           choosed = true;
-                    //         }
-                    //       });
-                    //     },
-                    //     style: ElevatedButton.styleFrom(
-                    //       foregroundColor: Colors.grey,
-                    //       backgroundColor: buttonColor3,
-                    //       shape: RoundedRectangleBorder(
-                    //         borderRadius: BorderRadius.circular(30),
-                    //         side: BorderSide(
-                    //           color: buttonColor3 ==
-                    //                   const Color.fromARGB(255, 82, 46, 46)
-                    //               ? Colors.red
-                    //               : buttonColor3,
-                    //         ),
-                    //       ),
-                    //     ),
-                    //     child: Container(
-                    //       padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                    //       width: MediaQuery.of(dialogContext).size.width,
-                    //       child: const Text(
-                    //         "Non-binary",
-                    //         style: TextStyle(
-                    //           fontSize: 20,
-                    //           color: Colors.black,
-                    //         ),
-                    //         textAlign: TextAlign.center,
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
-                    // Padding(
-                    //   padding: const EdgeInsets.all(8.0),
-                    //   child: ElevatedButton(
-                    //     onPressed: () {
-                    //       setState(() {
-                    //         if (!choosed) {
-                    //           buttonColor4 ==
-                    //                   const Color.fromARGB(255, 82, 46, 46)
-                    //               ? null
-                    //               : selectGender("I prefer not to say");
-                    //           buttonColor4 =
-                    //               const Color.fromARGB(255, 82, 46, 46);
-                    //           choosed = true;
-                    //         }
-                    //       });
-                    //     },
-                    //     style: ElevatedButton.styleFrom(
-                    //       foregroundColor: Colors.grey,
-                    //       backgroundColor: buttonColor4,
-                    //       shape: RoundedRectangleBorder(
-                    //         borderRadius: BorderRadius.circular(30),
-                    //         side: BorderSide(
-                    //           color: buttonColor4 ==
-                    //                   const Color.fromARGB(255, 82, 46, 46)
-                    //               ? Colors.red
-                    //               : buttonColor4,
-                    //         ),
-                    //       ),
-                    //     ),
-                    //     child: Container(
-                    //       padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                    //       width: MediaQuery.of(dialogContext).size.width,
-                    //       child: const Text(
-                    //         "I prefer not to say",
-                    //         style: TextStyle(
-                    //           fontSize: 20,
-                    //           color: Colors.black,
-                    //         ),
-                    //         textAlign: TextAlign.center,
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
                   ],
                 ),
               ),
@@ -420,10 +260,10 @@ class _HomePageWebState extends State<HomePageWeb> {
     );
   }
 
-  int intersetsCount = 0;
 //This function will show the dialog to choose interests
   void showDialogToChooseInterests() {
     selectedInterests.clear();
+    intersetsCount = 0;
     showDialog(
       barrierDismissible: false,
       context: context,
@@ -433,7 +273,7 @@ class _HomePageWebState extends State<HomePageWeb> {
             data: ThemeData.light(),
             child: AlertDialog(
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(40),
+                borderRadius: BorderRadius.circular(20),
               ),
               icon: AppBar(
                 elevation: 0,
@@ -557,7 +397,7 @@ class _HomePageWebState extends State<HomePageWeb> {
                               shape: MaterialStatePropertyAll(
                                 RoundedRectangleBorder(
                                   borderRadius: BorderRadius.all(
-                                    Radius.circular(25),
+                                    Radius.circular(30),
                                   ),
                                 ),
                               ),
@@ -623,7 +463,8 @@ class _HomePageWebState extends State<HomePageWeb> {
       imgCover = await imagePicker.readAsBytes();
       // BlocProvider.of<AuthCubit>(context)
       //     .changeProfilephotoWeb(UserData.user, imgCover!);
-      // displayMsg(context, Colors.blue, 'Changes Saved');
+      authRepo.updateImageWeb('profile', imgCover!);
+      displayMsg(context, Colors.blue, 'Changes Saved');
     } on PlatformException catch (e) {
       debugPrint("Error in pickImageWeb: ${e.toString()}");
     }
@@ -640,7 +481,7 @@ class _HomePageWebState extends State<HomePageWeb> {
             data: ThemeData.light(),
             child: AlertDialog(
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(40),
+                borderRadius: BorderRadius.circular(20),
               ),
               icon: AppBar(
                 elevation: 0,
@@ -722,7 +563,9 @@ class _HomePageWebState extends State<HomePageWeb> {
                             shape: BoxShape.circle,
                           ),
                           child: imgCover != null
-                              ? ClipOval(
+                              ? CircleAvatar(
+                                  radius: 250,
+                                  backgroundImage: MemoryImage(imgCover!),
                                   child: InkWell(
                                     onTap: () {
                                       pickImageWeb(ImageSource.gallery)
@@ -731,50 +574,36 @@ class _HomePageWebState extends State<HomePageWeb> {
                                           setState(() {
                                             BlocProvider.of<AuthCubit>(context)
                                                 .changeProfilephotoWeb(
-                                                    UserData.user, imgCover!);
+                                                    imgCover!);
                                             displayMsg(context, Colors.blue,
                                                 'Changes Saved');
                                           });
                                         }
                                       });
                                     },
-                                    child: Image.memory(
-                                      imgCover!,
-                                      fit: BoxFit.fill,
-                                    ),
                                   ),
                                 )
-                              : ElevatedButton(
-                                  onPressed: () {
-                                    pickImageWeb(ImageSource.gallery)
-                                        .then((value) {
-                                      if (value) {
-                                        setState(() {
-                                          BlocProvider.of<AuthCubit>(context)
-                                              .changeProfilephotoWeb(
-                                                  UserData.user, imgCover!);
-                                          displayMsg(context, Colors.blue,
-                                              'Changes Saved');
-                                        });
-                                      }
-                                    });
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(80.0),
-                                    ),
-                                  ),
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 20, horizontal: 5),
-                                    child: const Icon(
-                                      Icons.person,
-                                      size: 40,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ),
+                              : CircleAvatar(
+                                  backgroundColor: Colors.grey,
+                                  radius: 250,
+                                  child: InkWell(
+                                    onTap: () {
+                                      pickImageWeb(ImageSource.gallery)
+                                          .then((value) {
+                                        if (value) {
+                                          setState(() {
+                                            BlocProvider.of<AuthCubit>(context)
+                                                .changeProfilephotoWeb(
+                                                    imgCover!);
+                                            displayMsg(context, Colors.blue,
+                                                'Changes Saved');
+                                          });
+                                        }
+                                      });
+                                    },
+                                    child: const Icon(Icons.person,
+                                        size: 150, color: Colors.black),
+                                  )),
                         ),
                       ],
                     ),
@@ -786,10 +615,6 @@ class _HomePageWebState extends State<HomePageWeb> {
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.pop(c);
-                          // Navigator.of(context).pushReplacementNamed(
-                          //   homePageRoute,
-                          //   arguments: user,
-                          // );
                         },
                         style: const ButtonStyle(
                           shape: MaterialStatePropertyAll(
@@ -879,31 +704,65 @@ class _HomePageWebState extends State<HomePageWeb> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          shape:
-              const Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
-          automaticallyImplyLeading: false,
-          backgroundColor: defaultAppbarBackgroundColor,
-          title: isLoggedIn
-              ? AppBarWebLoggedIn(user: UserData.user!, screen: 'Home')
-              : const AppBarWebNotLoggedIn(screen: 'Home')),
+        shape: const Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
+        automaticallyImplyLeading: false,
+        backgroundColor: defaultAppbarBackgroundColor,
+        title: BlocBuilder<AuthCubit, AuthState>(
+          builder: (context, state) {
+            if (state is Login ||
+                state is GetTheUserData ||
+                state is SignedIn ||
+                state is SignedInWithProfilePhoto) {
+              debugPrint("state is signed in");
+              return const AppBarWebLoggedIn(screen: 'Home');
+            } else {
+              debugPrint("state is not signed in");
+              return const AppBarWebNotLoggedIn(screen: 'Home');
+            }
+          },
+        ),
+      ),
       body: BlocBuilder<AuthCubit, AuthState>(
         builder: (context, state) {
-          debugPrint("user in the home page ${UserData.user?.email}");
           if (state is SignedIn) {
             debugPrint("state is signed in");
             WidgetsBinding.instance
                 .addPostFrameCallback((_) => showDialogToChooseGender());
-            return HomeWeb(isLoggedIn: isLoggedIn);
+            BlocProvider.of<PostsHomeCubit>(context)
+                .getTimelinePosts(sort: "best");
+
+            return const HomeWeb();
           } else if (state is SignedInWithProfilePhoto) {
             debugPrint("state is SignedInWithProfilePhoto");
-            UserData.user!.profilePic = state.user?.profilePic;
-            debugPrint("user in the home page ${UserData.user?.profilePic}");
-            return HomeWeb(isLoggedIn: isLoggedIn);
+            UserData.profileSettings!.profile = state.imgUrl;
+            debugPrint(
+                "user in the home page ${UserData.profileSettings!.profile}");
+            BlocProvider.of<PostsHomeCubit>(context)
+                .getTimelinePosts(sort: "best");
+
+            return const HomeWeb();
           } else if (state is Login) {
-            return HomeWeb(isLoggedIn: isLoggedIn);
+            BlocProvider.of<PostsHomeCubit>(context)
+                .getTimelinePosts(sort: "best");
+
+            return const HomeWeb();
+          } else if (state is GetTheUserData) {
+            if (state.userDataJson != {}) {
+              debugPrint("user is nottttttttttttttttttttttttt null");
+              UserData.initUser(state.userDataJson);
+              BlocProvider.of<PostsHomeCubit>(context)
+                  .getTimelinePosts(sort: "best");
+
+              return const HomeWeb();
+            }
+          } else if (state is NotLoggedIn) {
+            BlocProvider.of<PostsHomeCubit>(context)
+                .getTimelinePosts(sort: "best");
+
+            return const HomeWeb();
           }
           return const Center(
-            child: CircularProgressIndicator(),
+            child: CircularProgressIndicator.adaptive(),
           );
         },
       ),

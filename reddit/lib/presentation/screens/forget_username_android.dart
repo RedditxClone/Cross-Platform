@@ -1,9 +1,10 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:reddit/business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../constants/strings.dart';
-import '../../helper/dio.dart';
 
 class ForgetUsernameAndroid extends StatefulWidget {
   const ForgetUsernameAndroid({super.key});
@@ -40,40 +41,12 @@ class _ForgetUsernameAndroidState extends State<ForgetUsernameAndroid> {
     emailController.text = "";
   }
 
-  void emailMe() async {
-    await DioHelper.postData(url: "/api/auth/forget-username", data: {
-      "email": emailController.text,
-    }).then((value) {
-      if (value.statusCode == 201) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                Logo(
-                  Logos.reddit,
-                  color: Colors.green,
-                  size: 25,
-                ),
-                SizedBox(width: MediaQuery.of(context).size.width * 0.01),
-                const Text("Email sent successfully"),
-              ],
-            ),
-          ),
-        );
-        Navigator.of(context).pushReplacementNamed(loginScreen);
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Your email is not registered"),
-          ),
-        );
-      }
-    });
+  void emailMe() {
+    BlocProvider.of<AuthCubit>(context).forgetUsername(emailController.text);
   }
 
   @override
   Widget build(BuildContext context) {
-    //initialize the textfields to be empty when the bottom sheet is opened
     var appBar = AppBar(
       centerTitle: true,
       title: CircleAvatar(
@@ -96,10 +69,8 @@ class _ForgetUsernameAndroidState extends State<ForgetUsernameAndroid> {
         ),
       ],
     );
-
-    return Scaffold(
-      appBar: appBar,
-      body: SingleChildScrollView(
+    Widget mainBody() {
+      return SingleChildScrollView(
         child: Column(
           children: [
             Container(
@@ -166,6 +137,9 @@ class _ForgetUsernameAndroidState extends State<ForgetUsernameAndroid> {
                       });
                     },
                     textInputAction: TextInputAction.done,
+                    onEditingComplete: () {
+                      emailMe();
+                    },
                   ),
                 ],
               ),
@@ -248,6 +222,57 @@ class _ForgetUsernameAndroidState extends State<ForgetUsernameAndroid> {
             ),
           ],
         ),
+      );
+    }
+
+    return Scaffold(
+      appBar: appBar,
+      body: BlocListener<AuthCubit, AuthState>(
+        child: mainBody(),
+        listener: (context, state) {
+          if (state is ForgetUsername) {
+            if (state.isSent) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Row(
+                    children: [
+                      Logo(
+                        Logos.reddit,
+                        color: Colors.green,
+                        size: 25,
+                      ),
+                      SizedBox(width: MediaQuery.of(context).size.width * 0.01),
+                      const Text("Email sent successfully"),
+                    ],
+                  ),
+                ),
+              );
+              Navigator.of(context).pushReplacementNamed(loginScreen);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Row(
+                    children: [
+                      const Icon(
+                        Icons.error,
+                        color: Colors.red,
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.01,
+                      ),
+                      const Text(
+                        'Your email is not registered',
+                        style: TextStyle(
+                          color: Colors.red,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
+          }
+        },
       ),
     );
   }

@@ -1,8 +1,11 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:reddit/data/model/change_password_model.dart';
+import 'package:reddit/data/model/left_drawer/joined_subreddits_drawer_model.dart';
+import 'package:reddit/data/model/left_drawer/moderating_subreddits_left_drawer_model.dart';
 
-import '../../model/left_drawer/left_drawer_model.dart';
+import '../../model/left_drawer/following_users_drawer_model.dart';
 import '../../web_services/left_drawer/left_drawer_web_services.dart';
 
 class LeftDrawerRepository {
@@ -10,34 +13,37 @@ class LeftDrawerRepository {
 
   LeftDrawerRepository(this.leftDrawerWebServices);
 
-  /// Returns [List] of [LeftDrawerModel] object that contains the communities you are currently moderating
+  /// Returns [List] of [FollowingUsersDrawerModel] object that contains the communities you are currently moderating
   /// after getting it from [LeftDrawerWebServices] and mapping it to the model list.
-  Future<List<LeftDrawerModel>> getModeratingCommunities() async {
+  Future<List<ModeratingSubredditsDrawerModel>>
+      getModeratingCommunities() async {
     final moderatingCommunities =
         await leftDrawerWebServices.getModeratingCommunities();
-    print("Moderating Communities from repo:");
-    print("$moderatingCommunities");
-    return List<LeftDrawerModel>.from(jsonDecode(moderatingCommunities)
-        .map((i) => LeftDrawerModel.fromJson(i)));
+    // debugPrint("Moderating Communities from repo:");
+    // debugPrint("$moderatingCommunities");
+    return List<ModeratingSubredditsDrawerModel>.from(moderatingCommunities
+        .map((i) => ModeratingSubredditsDrawerModel.fromJson(i)));
   }
 
-  /// Returns [List] of [LeftDrawerModel] object that contains the communities you are currently joined in
+  /// Returns [List] of [JoinedSubredditsDrawerModel] object that contains the communities you are currently joined in
   /// after getting it from [LeftDrawerWebServices] and mapping it to the model list.
-  Future<List<LeftDrawerModel>> getYourCommunities() async {
+  Future<List<JoinedSubredditsDrawerModel>> getYourCommunities() async {
     final yourCommunities = await leftDrawerWebServices.getYourCommunities();
-    print("Your Communities from repo:");
-    print("$yourCommunities");
-    return List<LeftDrawerModel>.from(
-        jsonDecode(yourCommunities).map((i) => LeftDrawerModel.fromJson(i)));
+    // debugPrint("Your Communities from repo:");
+    // debugPrint("$yourCommunities");
+    return List<JoinedSubredditsDrawerModel>.from(
+        yourCommunities.map((i) => JoinedSubredditsDrawerModel.fromJson(i)));
   }
 
-  /// Returns [List] of [LeftDrawerModel] object that contains the users you are currently following
+  /// Returns [FollowingUsersDrawerModel] object that contains the users you are currently following
   /// after getting it from [LeftDrawerWebServices] and mapping it to the model list.
-  Future<List<LeftDrawerModel>> getFollowingUsers() async {
+  Future<FollowingUsersDrawerModel> getFollowingUsers() async {
     final following = await leftDrawerWebServices.getFollowingUsers();
-    print("Following from repo:");
-    print("$following");
-    return List<LeftDrawerModel>.from(
-        jsonDecode(following).map((i) => LeftDrawerModel.fromJson(i)));
+    // debugPrint("Following from repo:");
+    // debugPrint("$following");
+    return FollowingUsersDrawerModel.fromJson(following);
+
+    // return List<LeftDrawerModel>.from(
+    //     jsonDecode(following).map((i) => LeftDrawerModel.fromJson(i)));
   }
 }

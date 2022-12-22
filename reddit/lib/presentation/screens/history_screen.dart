@@ -11,8 +11,7 @@ import '../../constants/colors.dart';
 import '../../constants/font_sizes.dart';
 
 class HistoryPageScreen extends StatefulWidget {
-  const HistoryPageScreen({super.key, required this.userID});
-  final String userID;
+  const HistoryPageScreen({super.key});
   @override
   State<HistoryPageScreen> createState() => _HistoryPageScreenState();
 }
@@ -26,15 +25,13 @@ class _HistoryPageScreenState extends State<HistoryPageScreen> {
   final bool _mobilePlatform =
       defaultTargetPlatform == TargetPlatform.android ||
           defaultTargetPlatform == TargetPlatform.iOS;
-  late String userID;
   late List<PostModel> _postModelList;
   _HistoryPageScreenState();
   @override
   void initState() {
     super.initState();
-    userID = widget.userID;
     BlocProvider.of<HistoryPageCubit>(context)
-        .getHistoryPage(userID, "upvoted");
+        .getHistoryPage("upvoted");
   }
 
   PreferredSizeWidget? _buildAppBar() {
@@ -279,7 +276,7 @@ class _HistoryPageScreenState extends State<HistoryPageScreen> {
                             _selectedMode = "recent";
                             _selectedModeIcon = Icons.timelapse_outlined;
                             BlocProvider.of<HistoryPageCubit>(context)
-                                .getHistoryPage(userID, _selectedMode);
+                                .getHistoryPage( _selectedMode);
                             Navigator.of(context).pop();
                           }
                         : () {
@@ -315,7 +312,7 @@ class _HistoryPageScreenState extends State<HistoryPageScreen> {
                             _selectedMode = "upvoted";
                             _selectedModeIcon = Icons.trending_up;
                             BlocProvider.of<HistoryPageCubit>(context)
-                                .getHistoryPage(userID, _selectedMode);
+                                .getHistoryPage( _selectedMode);
                             Navigator.of(context).pop();
                           }
                         : () {
@@ -349,7 +346,7 @@ class _HistoryPageScreenState extends State<HistoryPageScreen> {
                       _selectedMode = "downvoted";
                       _selectedModeIcon = Icons.trending_down;
                       BlocProvider.of<HistoryPageCubit>(context)
-                          .getHistoryPage(userID, _selectedMode);
+                          .getHistoryPage( _selectedMode);
                       Navigator.of(context).pop();
                     }),
                   ),
@@ -378,7 +375,7 @@ class _HistoryPageScreenState extends State<HistoryPageScreen> {
                       _selectedMode = "hidden";
                       _selectedModeIcon = Icons.hide_source;
                       BlocProvider.of<HistoryPageCubit>(context)
-                          .getHistoryPage(userID, _selectedMode);
+                          .getHistoryPage( _selectedMode);
                       Navigator.of(context).pop();
                     }),
                   ),
@@ -402,7 +399,7 @@ class _HistoryPageScreenState extends State<HistoryPageScreen> {
       onPressed: () {
         _selectedMode = mode;
         _selectedModeIcon = icon;
-        BlocProvider.of<HistoryPageCubit>(context).getHistoryPage(userID, mode);
+        BlocProvider.of<HistoryPageCubit>(context).getHistoryPage( mode);
       },
       icon: Icon(icon),
     );

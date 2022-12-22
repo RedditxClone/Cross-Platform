@@ -5,7 +5,6 @@ import 'package:reddit/presentation/widgets/nav_bars/popup_menu_not_logged_in.da
 
 class AppBarWebNotLoggedIn extends StatefulWidget {
   final String screen;
-
   const AppBarWebNotLoggedIn({Key? key, required this.screen})
       : super(key: key);
 
@@ -14,14 +13,36 @@ class AppBarWebNotLoggedIn extends StatefulWidget {
 }
 
 class _AppBarWebNotLoggedInState extends State<AppBarWebNotLoggedIn> {
+  late FocusNode searchFocusNode;
+  @override
+  void initState() {
+    super.initState();
+    searchFocusNode = FocusNode();
+    searchFocusNode.addListener(_onFocusChangeSearch);
+  }
+
+  void _onFocusChangeSearch() {
+    if (searchFocusNode.hasFocus) {
+      searchFocusNode.unfocus();
+      Navigator.pushNamed(context, searchRouteWeb);
+    }
+    debugPrint("Focus on search: ${searchFocusNode.hasFocus}");
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    searchFocusNode.dispose();
+    searchFocusNode.removeListener(_onFocusChangeSearch);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         InkWell(
-          onTap: () => Navigator.pushReplacementNamed(context, homePageRoute,
-              arguments: null),
+          onTap: () => Navigator.pushReplacementNamed(context, homePageRoute),
           hoverColor: Colors.transparent,
           child: Row(
             children: [
@@ -38,9 +59,8 @@ class _AppBarWebNotLoggedInState extends State<AppBarWebNotLoggedIn> {
         SizedBox(
           width: 80,
           child: InkWell(
-            onTap: () => Navigator.pushReplacementNamed(
-                context, popularPageRoute,
-                arguments: null),
+            onTap: () =>
+                Navigator.pushNamed(context, popularPageRoute, arguments: null),
             hoverColor: Colors.transparent,
             child: Row(
               children: [
@@ -56,10 +76,31 @@ class _AppBarWebNotLoggedInState extends State<AppBarWebNotLoggedIn> {
             ),
           ),
         ),
+        // SizedBox(
+        //   width: 80,
+        //   child: InkWell(
+        //     onTap: () =>
+        //         Navigator.pushNamed(context, popularPageRoute, arguments: null),
+        //     hoverColor: Colors.transparent,
+        //     child: Row(
+        //       children: [
+        //         const Icon(Icons.arrow_circle_up_rounded, size: 25),
+        //         const SizedBox(width: 4),
+        //         MediaQuery.of(context).size.width > 1000
+        //             ? Text(
+        //                 widget.screen,
+        //                 style: const TextStyle(fontSize: 13),
+        //               )
+        //             : const SizedBox(width: 0)
+        //       ],
+        //     ),
+        //   ),
+        // ),
         SizedBox(
           width: 0.38 * MediaQuery.of(context).size.width,
           height: 40,
           child: TextField(
+              focusNode: searchFocusNode,
               textAlignVertical: TextAlignVertical.center,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
@@ -82,7 +123,8 @@ class _AppBarWebNotLoggedInState extends State<AppBarWebNotLoggedIn> {
           children: [
             MediaQuery.of(context).size.width > 800
                 ? OutlinedButton(
-                    onPressed: () => Navigator.pushNamed(context, SIGNU_PAGE1),
+                    onPressed: () =>
+                        Navigator.of(context).pushNamed(SIGNU_PAGE1),
                     style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                             vertical: 15, horizontal: 25),
@@ -98,7 +140,7 @@ class _AppBarWebNotLoggedInState extends State<AppBarWebNotLoggedIn> {
             const SizedBox(width: 20),
             MediaQuery.of(context).size.width > 800
                 ? ElevatedButton(
-                    onPressed: () => Navigator.pushNamed(context, loginPage),
+                    onPressed: () => Navigator.of(context).pushNamed(loginPage),
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(

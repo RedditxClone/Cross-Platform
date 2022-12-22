@@ -46,7 +46,7 @@ class AccountSettingsModel {
     over18 = json['adultContent'];
     emailUpvotePost = json['upvotePosts'];
     emailUpvoteComment = json['upvoteComments'];
-    gender = json['gender'] == "" ? "male" : json['gender'];
+    gender = json['gender'];
     // ???
     emailMessages = json['email_messages'] ?? false;
     defaultCommentSort = json['default_comment_sort'] ?? 0;

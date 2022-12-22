@@ -1,9 +1,10 @@
 import 'package:flutter/foundation.dart';
+import 'package:reddit/data/model/auth_model.dart';
 
 /// This class represents the data model of safety settings
 class SafetySettings {
   late String disroptiveSettings;
-  List<dynamic> blocked = [];
+  List<User> blocked = [];
   late bool showUnInSearch;
   late bool personalizeAllOfReddit;
   late bool personalizeAdsInformation;

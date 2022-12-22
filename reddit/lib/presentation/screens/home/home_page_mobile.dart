@@ -2,42 +2,46 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reddit/business_logic/cubit/end_drawer/end_drawer_cubit.dart';
+import 'package:reddit/business_logic/cubit/posts/posts_home_cubit.dart';
+import 'package:reddit/business_logic/cubit/posts/posts_popular_cubit.dart';
 import 'package:reddit/data/repository/end_drawer/end_drawer_repository.dart';
-import 'package:reddit/data/repository/left_drawer/left_drawer_repository.dart';
-import 'package:reddit/data/web_services/left_drawer/left_drawer_web_services.dart';
 import 'package:reddit/data/web_services/settings_web_services.dart';
-import 'package:reddit/constants/strings.dart';
 import 'package:reddit/data/model/auth_model.dart';
-import 'package:reddit/presentation/screens/home/home.dart';
-import 'package:reddit/presentation/screens/home/home_not_loggedin_mobile.dart';
-import 'package:reddit/presentation/screens/popular/popular.dart';
 import 'package:reddit/presentation/screens/test_home_screens/chat.dart';
 import 'package:reddit/presentation/screens/test_home_screens/explore.dart';
 import 'package:reddit/presentation/screens/test_home_screens/notifications.dart';
 import 'package:reddit/presentation/widgets/home_widgets/end_drawer.dart';
 import 'package:reddit/presentation/widgets/home_widgets/left_drawer.dart';
 import 'package:reddit/presentation/widgets/posts/add_post.dart';
+import 'package:reddit/presentation/widgets/posts/posts_web.dart';
 
+import '../../../business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
 import '../../../business_logic/cubit/left_drawer/left_drawer_cubit.dart';
+import '../../../constants/strings.dart';
+import '../../../helper/utils/shared_keys.dart';
+import '../../../helper/utils/shared_pref.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage( {Key? key}) : super(key: key);
+  HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  _HomePageState();
-  int _selectedPageIndex = 0;
-  String _screen = 'Home';
+  late int _selectedPageIndex = 0;
+  late String _screen;
   IconData dropDownArrow = Icons.keyboard_arrow_down;
-  late bool isLoggedin;
+
+  _HomePageState() {
+    _selectedPageIndex = 0;
+    _screen = 'Home';
+  }
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    isLoggedin = UserData.user != null;
+    BlocProvider.of<AuthCubit>(context)
+        .getUserData(PreferenceUtils.getString(SharedPrefKeys.token));
   }
 
   Widget buildHomeAppBar() {
@@ -84,10 +88,69 @@ class _HomePageState extends State<HomePage> {
       case 0:
         return {
           'page': _screen == 'Home'
-              ? isLoggedin
-                  ? const Home()
-                  : const HomeNotLoggedIn()
-              : const Popular(),
+              ? BlocBuilder<AuthCubit, AuthState>(builder: (context, state) {
+                  BlocProvider.of<PostsHomeCubit>(context).getTimelinePosts();
+                  if (state is Login ||
+                      state is GetTheUserData ||
+                      state is SignedIn) {
+                    if (state is Login && state.userDataJson != {}) {
+                      debugPrint("user is nottttttttttttttttttttttttt null");
+                      UserData.initUser(state.userDataJson);
+                      debugPrint("user is ${UserData.isLogged()}");
+                      BlocProvider.of<LeftDrawerCubit>(context)
+                          .getLeftDrawerData();
+
+                      return homePosts();
+                    } else if (state is GetTheUserData &&
+                        state.userDataJson != {}) {
+                      UserData.initUser(state.userDataJson);
+                      BlocProvider.of<LeftDrawerCubit>(context)
+                          .getLeftDrawerData();
+                      return homePosts();
+                    } else if (state is SignedIn && state.userDataJson != {}) {
+                      BlocProvider.of<LeftDrawerCubit>(context)
+                          .getLeftDrawerData();
+
+                      return homePosts();
+                    }
+                  } else if (state is NotLoggedIn) {
+                    return homePosts();
+                  }
+                  return const Center(
+                      child: CircularProgressIndicator.adaptive());
+                })
+              : BlocBuilder<AuthCubit, AuthState>(builder: (context, state) {
+                  BlocProvider.of<PostsPopularCubit>(context).getPopularPosts();
+                  if (state is Login ||
+                      state is GetTheUserData ||
+                      state is SignedIn) {
+                    if (state is Login && state.userDataJson != {}) {
+                      debugPrint("user is nottttttttttttttttttttttttt null");
+                      UserData.initUser(state.userDataJson);
+                      debugPrint("user is ${UserData.isLogged()}");
+                      BlocProvider.of<LeftDrawerCubit>(context)
+                          .getLeftDrawerData();
+
+                      return popularPosts();
+                    } else if (state is GetTheUserData &&
+                        state.userDataJson != {}) {
+                      UserData.initUser(state.userDataJson);
+                      BlocProvider.of<LeftDrawerCubit>(context)
+                          .getLeftDrawerData();
+
+                      return popularPosts();
+                    } else if (state is SignedIn && state.userDataJson != {}) {
+                      BlocProvider.of<LeftDrawerCubit>(context)
+                          .getLeftDrawerData();
+
+                      return popularPosts();
+                    }
+                  } else if (state is NotLoggedIn) {
+                    return popularPosts();
+                  }
+                  return const Center(
+                      child: CircularProgressIndicator.adaptive());
+                }),
           'appbar_title': Container(
             decoration: BoxDecoration(
               color: const Color.fromRGBO(90, 90, 90, 100),
@@ -96,7 +159,9 @@ class _HomePageState extends State<HomePage> {
             child: buildHomeAppBar(),
           ),
           'appbar_action': IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(context, searchRouteWeb);
+              },
               icon: const Icon(Icons.search_outlined,
                   color: Colors.grey, size: 40)),
         };
@@ -143,6 +208,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _switchpage(int index) {
+    if (index == 2) {
+      index = 0;
+      Navigator.pushNamed(context, createPostScreenRoute);
+    }
     setState(() {
       _selectedPageIndex = index;
     });
@@ -167,24 +236,41 @@ class _HomePageState extends State<HomePage> {
         // ignore: prefer_const_literals_to_create_immutables
         actions: [
           getPage(_selectedPageIndex)['appbar_action'] as Widget,
-          Builder(builder: (context) {
-            return IconButton(
-                key: const Key('user-icon'),
-                onPressed: () {
-                  Scaffold.of(context).openEndDrawer();
-                },
-                icon: CircleAvatar(
-                    child: isLoggedin && UserData.user!.profilePic != null
-                        ? Image.network(
-                            UserData.user!.profilePic!,
-                            fit: BoxFit.cover,
-                          )
-                        : Icon(Icons.person,
-                            color: isLoggedin && UserData.user!.profilePic == null
-                                ? Colors.orange
-                                : Colors.grey,
-                            size: 25)));
-          })
+          BlocBuilder<AuthCubit, AuthState>(
+            builder: (context, state) {
+              if (state is Login ||
+                  state is GetTheUserData ||
+                  state is SignedIn ||
+                  state is SignedInWithProfilePhoto) {
+                return IconButton(
+                  key: const Key('user-icon'),
+                  onPressed: () {
+                    Scaffold.of(context).openEndDrawer();
+                  },
+                  icon: UserData.profileSettings!.profile.isEmpty
+                      ? const Icon(
+                          Icons.person,
+                        )
+                      : CircleAvatar(
+                          backgroundImage: NetworkImage(
+                          UserData.user!.profilePic!,
+                        )),
+                );
+              } else {
+                return IconButton(
+                    key: const Key('user-icon'),
+                    onPressed: () {
+                      Scaffold.of(context).openEndDrawer();
+                    },
+                    icon: const CircleAvatar(
+                        child: Icon(
+                      Icons.person,
+                      color: Colors.grey,
+                      size: 25,
+                    )));
+              }
+            },
+          )
         ],
       ),
       //--------------------------Body--------------------------//
@@ -205,23 +291,124 @@ class _HomePageState extends State<HomePage> {
             bottomNavBarItem(
                 4, Icons.notifications, Icons.notifications_outlined),
           ]),
-      drawer: BlocProvider(
-        create: (context) =>
-            LeftDrawerCubit(LeftDrawerRepository(LeftDrawerWebServices())),
-        child: LeftDrawer(isLoggedin),
-      ),
+      drawer: LeftDrawer(),
       endDrawer: BlocProvider(
         create: (context) =>
             EndDrawerCubit(EndDrawerRepository(SettingsWebServices())),
         child: EndDrawer(
-            isLoggedin,
-            UserData.user == null ? "" : UserData.user!.name ?? "",
-            UserData.user == null ? "" : UserData.user!.profilePic ?? "",
-            2,
-            35,
-            true,
-            UserData.user == null ? "" : UserData.user!.email ?? ""),
+          2,
+          35,
+        ),
       ),
+    );
+  }
+
+  Widget homePosts() {
+    return BlocBuilder<PostsHomeCubit, PostsHomeState>(
+      builder: (context, state) {
+        if (state is PostsLoaded) {
+          if (state.posts!.isNotEmpty) {
+            return ListView(children: [
+              ...state.posts!.map((e) => PostsWeb(postsModel: e)).toList()
+            ]);
+          }
+          return Center(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: Image.asset(
+                    "assets/images/comments.jpg",
+                    scale: 3,
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  child: Text(
+                    "Be the first to create a post",
+                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Row(
+                  children: [
+                    Expanded(flex: 3, child: Container()),
+                    const Expanded(
+                      flex: 20,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10),
+                        child: Text(
+                          "No posts are available yet. Create a post or join a community!",
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                    Expanded(flex: 3, child: Container()),
+                  ],
+                ),
+              ],
+            ),
+          );
+        }
+        return const Center(child: CircularProgressIndicator());
+      },
+    );
+  }
+
+  Widget popularPosts() {
+    double cardHeight = 100;
+    return BlocBuilder<PostsPopularCubit, PostsPopularState>(
+      builder: (context, state) {
+        if (state is PopularPostsLoaded) {
+          if (state.posts!.isNotEmpty) {
+            return ListView(
+              children: [
+                Column(
+                  children: [
+                    ...state.posts!.map((e) => PostsWeb(postsModel: e)).toList()
+                  ],
+                ),
+              ],
+            );
+          }
+          return Center(
+            child: Column(children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: Image.asset(
+                  "assets/images/comments.jpg",
+                  scale: 3,
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 10),
+                child: Text(
+                  "Be the first to create a post",
+                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              Row(
+                children: [
+                  Expanded(flex: 3, child: Container()),
+                  const Expanded(
+                    flex: 20,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      child: Text(
+                        "No posts are available yet. Create a post or join a community!",
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                  Expanded(flex: 3, child: Container()),
+                ],
+              ),
+            ]),
+          );
+        }
+        return const Center(child: CircularProgressIndicator());
+      },
     );
   }
 }

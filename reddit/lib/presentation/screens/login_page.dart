@@ -1,11 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
-
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:reddit/business_logic/cubit/cubit/auth/cubit/auth_cubit.dart';
-import 'package:reddit/helper/dio.dart';
 import 'package:url_launcher/link.dart';
 
 import '../../constants/strings.dart';
@@ -44,7 +41,6 @@ class _LoginWebState extends State<LoginWeb> {
   @override
   void initState() {
     super.initState();
-    FacebookSignInApi.init();
     usernameFocusNode.addListener(_onFocusChangeUsername);
     passwordFocusNode.addListener(_onFocusChangePassword);
     usernameFocusNode.requestFocus();
@@ -69,49 +65,40 @@ class _LoginWebState extends State<LoginWeb> {
   }
 
   //this an async fucntion to log in with google account and store the result in database
-  Future signInWithGoogle() async {
+  void signInWithGoogle() async {
     try {
       var googleAccount = await GoogleSingInApi.loginWeb();
       if (googleAccount != null) {
-        DioHelper.postData(url: 'auth/signup', data: {
-          "userId": googleAccount.id,
-          "email": googleAccount.email,
-          "name": googleAccount.displayName,
-          "imageUrl": googleAccount.photoUrl,
-          "_type": "google",
-          "serverAuthCode": googleAccount.serverAuthCode,
-        }).then((value) {
-          if (value.statusCode == 201) {
-            newUser = User.fromJson(jsonDecode(value.data));
-            Navigator.of(context).pushReplacementNamed(
-              homePageRoute,
-              arguments: newUser,
-            );
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Row(
-                  children: [
-                    const Icon(
-                      Icons.error,
+        var googleToken = await GoogleSingInApi.getGoogleToken();
+        if (googleToken != null) {
+          debugPrint("Google Token: $googleToken");
+          BlocProvider.of<AuthCubit>(context).loginWithGoogle(googleToken);
+        } else {
+          debugPrint("token is null");
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: [
+                  const Icon(
+                    Icons.error,
+                    color: Colors.red,
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.01,
+                  ),
+                  const Text(
+                    "Error in Signing in with Google",
+                    style: TextStyle(
                       color: Colors.red,
                     ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.01,
-                    ),
-                    const Text(
-                      "Error in Signing in with Google",
-                      style: TextStyle(
-                        color: Colors.red,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            );
-          }
-        });
+            ),
+          );
+        }
       } else {
+        debugPrint("google account is null");
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Row(
@@ -135,6 +122,7 @@ class _LoginWebState extends State<LoginWeb> {
         );
       }
     } catch (e) {
+      debugPrint("error in google sign in $e");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Row(
@@ -159,52 +147,52 @@ class _LoginWebState extends State<LoginWeb> {
     }
   }
 
-//this an async fucntion to log in with facebook account and store the result in database
-  Future signInWithFacebook() async {
+//this an async fucntion to log in with github account and store the result in database
+  Future signInWithGithub() async {
     try {
-      var loginResult = await FacebookSignInApi.login();
-      if (loginResult != null) {
-        var fbUser = await FacebookSignInApi
-            .getUserData(); //post request to add user data
-        DioHelper.postData(url: 'auth/signup', data: {
-          "name": fbUser['name'] as String,
-          "email": fbUser['email'] as String,
-          "imageUrl": fbUser['picture']['data']['url'] as String,
-          "userId": loginResult.accessToken?.userId,
-          "_type": "facebook",
-          "accessToken": loginResult.accessToken?.token,
-        }).then((value) {
-          if (value.statusCode == 201) {
-            newUser = User.fromJson(jsonDecode(value.data));
-            Navigator.of(context).pushReplacementNamed(
-              homePageRoute,
-              arguments: newUser,
-            );
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Row(
-                  children: [
-                    const Icon(
-                      Icons.error,
-                      color: Colors.red,
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.01,
-                    ),
-                    const Text(
-                      "Error in Signing in with Facebook",
-                      style: TextStyle(
-                        color: Colors.red,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }
-        });
-      }
+      // var loginResult = await FacebookSignInApi.login();
+      // if (loginResult != null) {
+      //   var fbUser = await FacebookSignInApi
+      //       .getUserData(); //post request to add user data
+      //   DioHelper.postData(url: 'auth/signup', data: {
+      //     "name": fbUser['name'] as String,
+      //     "email": fbUser['email'] as String,
+      //     "imageUrl": fbUser['picture']['data']['url'] as String,
+      //     "userId": loginResult.accessToken?.userId,
+      //     "_type": "facebook",
+      //     "accessToken": loginResult.accessToken?.token,
+      //   }).then((value) {
+      //     if (value.statusCode == 201) {
+      //       newUser = User.fromJson(jsonDecode(value.data));
+      //       Navigator.of(context).pushReplacementNamed(
+      //         homePageRoute,
+      //         arguments: newUser,
+      //       );
+      //     } else {
+      //       ScaffoldMessenger.of(context).showSnackBar(
+      //         SnackBar(
+      //           content: Row(
+      //             children: [
+      //               const Icon(
+      //                 Icons.error,
+      //                 color: Colors.red,
+      //               ),
+      //               SizedBox(
+      //                 width: MediaQuery.of(context).size.width * 0.01,
+      //               ),
+      //               const Text(
+      //                 "Error in Signing in with Facebook",
+      //                 style: TextStyle(
+      //                   color: Colors.red,
+      //                 ),
+      //               ),
+      //             ],
+      //           ),
+      //         ),
+      //       );
+      //     }
+      //   });
+      // }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -218,7 +206,7 @@ class _LoginWebState extends State<LoginWeb> {
                 width: MediaQuery.of(context).size.width * 0.01,
               ),
               const Text(
-                "Error in Signing in with Facebook",
+                "Error in Signing in with github",
                 style: TextStyle(
                   color: Colors.red,
                 ),
@@ -230,14 +218,14 @@ class _LoginWebState extends State<LoginWeb> {
     }
   }
 
-//This function creates buttonns for login with google and facebook
+//This function creates buttonns for login with google and github
 //it takes a string that determines the function of the button depends on the passed value
-//is it for google or facebook
+//is it for google or github
   Widget createContinueWithButton(String lable) {
     return OutlinedButton.icon(
-      onPressed: lable == 'google' ? signInWithGoogle : signInWithFacebook,
+      onPressed: lable == 'google' ? signInWithGoogle : signInWithGithub,
       icon: Logo(
-        lable == 'google' ? Logos.google : Logos.facebook_logo,
+        lable == 'google' ? Logos.google : Logos.github,
         size: 20,
       ),
       label: Text("Continue with $lable",
@@ -248,10 +236,7 @@ class _LoginWebState extends State<LoginWeb> {
           )),
       style: ButtonStyle(
         side: MaterialStateProperty.all(
-          const BorderSide(
-            color: Color.fromARGB(255, 9, 51, 85),
-            width: 1,
-          ),
+          const BorderSide(color: Color.fromARGB(255, 9, 51, 85), width: 1),
         ),
         shape: MaterialStateProperty.all(
           RoundedRectangleBorder(
@@ -261,7 +246,7 @@ class _LoginWebState extends State<LoginWeb> {
         padding: MaterialStateProperty.all(
           lable == 'google'
               ? const EdgeInsets.fromLTRB(39, 20, 39, 20)
-              : const EdgeInsets.fromLTRB(30, 20, 30, 20),
+              : const EdgeInsets.fromLTRB(30, 20, 52, 20),
         ),
       ),
     );
@@ -269,20 +254,6 @@ class _LoginWebState extends State<LoginWeb> {
 
   void continueLogin() {
     if (loginCorrect) {
-      // DioHelper.postData(url: "/api/auth/login", data: {
-      //   "username": usernameController.text,
-      //   "password": passwordController.text,
-      // }).then((value) {
-      //   if (value.statusCode == 201) {
-      //     newUser = User.fromJson(jsonDecode(value.data));
-      //     Navigator.of(context).pushReplacementNamed(homePageRoute,
-      //         arguments: newUser); //navigate to home page
-      //   } else {
-      //     setState(() {
-      //       loginCorrect = false;
-      //     });
-      //   }
-      // });
       BlocProvider.of<AuthCubit>(context)
           .login(passwordController.text, usernameController.text);
     } else {
@@ -380,7 +351,7 @@ class _LoginWebState extends State<LoginWeb> {
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.01,
                     ),
-                    createContinueWithButton("facebook"),
+                    createContinueWithButton("github"),
                   ],
                 ),
                 SizedBox(
@@ -693,8 +664,9 @@ class _LoginWebState extends State<LoginWeb> {
         child: mainBody(),
         listener: (context, state) {
           if (state is Login) {
-            if (state.user != null) {
-              UserData.initUser(state.user); //this couldn't be null
+            if (state.userDataJson.isNotEmpty) {
+              debugPrint("login success");
+              UserData.initUser(state.userDataJson);
               Navigator.of(context).pushReplacementNamed(
                 homePageRoute,
               );
@@ -716,7 +688,7 @@ class _LoginWebState extends State<LoginWeb> {
                         width: MediaQuery.of(context).size.width * 0.01,
                       ),
                       const Text(
-                        'Username or password is incorrect',
+                        'Please check your data and try again',
                         style: TextStyle(
                           color: Colors.red,
                         ),

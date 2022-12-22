@@ -5,12 +5,13 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:reddit/constants/strings.dart';
+import 'package:reddit/data/model/auth_model.dart';
 
 /// This class is responsible of performing profile settings requests to the REST API
 class SettingsWebServices {
   late Dio dio;
   bool isMockerServer = useMockServerForAllWebServices;
-  String token = '';
+
   SettingsWebServices() {
     BaseOptions options = BaseOptions(
       baseUrl: isMockerServer ? mockUrl : baseUrl,
@@ -30,7 +31,7 @@ class SettingsWebServices {
     try {
       Response response = await dio.get('user/me/prefs',
           options: Options(
-            headers: {"Authorization": "Bearer $token"},
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
       debugPrint(response.statusCode.toString());
       return response.data;
@@ -47,22 +48,33 @@ class SettingsWebServices {
   ///
   /// This function Performs patch request to the endpoint `baseUrl/user/me/`[key] to update an image and get the
   /// from the new path the API.
-  Future<dynamic> updateImage(File file, String key) async {
+  Future<dynamic> updateImage(String filepath, String key) async {
     try {
-      String fileName = file.path.split('/').last;
-      FormData formData = FormData.fromMap({
-        "file": await MultipartFile.fromFile(file.path, filename: fileName)
-      });
-      Response response = await dio.patch('user/me/$key',
+      print("file name : " + filepath);
+      FormData formData = FormData.fromMap(
+          {"photo": await MultipartFile.fromFile(filepath, filename: 'photo')});
+      Response response = await dio.post('user/me/$key',
           data: formData,
           options: Options(
-            headers: {"Authorization": "Bearer $token"},
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
-      debugPrint(response.statusCode.toString());
+      debugPrint("update picture status code " +
+          response.statusCode.toString() +
+          " new image link : " +
+          response.data['${key}Photo']);
+
       return response.data;
     } catch (e) {
-      // print(e.toString());
-      return '';
+      if (e is DioError) {
+        // print(e);
+        if (e is DioError) {
+          debugPrint("Status code is ${e.response!.data}");
+        } else {
+          debugPrint("$e");
+        }
+      }
+      print(e.toString());
+      return "";
     }
   }
 
@@ -77,15 +89,18 @@ class SettingsWebServices {
   Future<dynamic> updateImageWeb(Uint8List fileAsBytes, String key) async {
     try {
       FormData formData = FormData.fromMap({
-        "file": MultipartFile.fromBytes(fileAsBytes,
-            contentType: MediaType('application', 'json'), filename: key)
+        "photo": MultipartFile.fromBytes(fileAsBytes,
+            contentType: MediaType('application', 'json'), filename: 'photo')
       });
-      Response response = await dio.patch('user/me/$key',
+      Response response = await dio.post('user/me/$key',
           data: formData,
           options: Options(
-            headers: {"Authorization": "Bearer $token"},
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
-      debugPrint(response.statusCode.toString());
+      debugPrint("update picture status code " +
+          response.statusCode.toString() +
+          " new image link : " +
+          response.data['${key}Photo']);
       return response.data;
     } catch (e) {
       debugPrint(e.toString());
@@ -101,14 +116,13 @@ class SettingsWebServices {
   /// This function Performs patch request to the endpoint `baseUrl/user/me/prefs` to update some user's profile settings.
   Future<dynamic> updatePrefs(Map changed) async {
     try {
-      Response response = await dio.patch(
-          '/// Returns status code 200 if success and 401 if an error occured',
+      Response response = await dio.patch('user/me/prefs',
           data: changed,
           options: Options(
-            headers: {"Authorization": "Bearer $token"},
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
       debugPrint(response.statusCode.toString());
-      return response.data;
+      return response.statusCode;
     } catch (e) {
       return null;
     }

@@ -1,17 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:reddit/constants/strings.dart';
-import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
-import 'package:http_parser/http_parser.dart';
+import 'package:reddit/data/model/auth_model.dart';
 
 /// Web Services for Updating User Preferences (feed settings)
 ///
 ///This class is responsible of performing feed settings requests to the REST API
 class FeedSettingWebServices {
   late Dio dio;
-  String token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzODhhNjFiNWUwYjU4M2Y0YTc5ZTQxYSIsImlhdCI6MTY2OTg5OTgwMywiZXhwIjoxNjcwNzYzODAzfQ.19uD_QlcThGaS_lZ0iE92q0771WwJSB2jgWfJPTWkn8";
   //String mockUrl = "https://89bbb438-a7b6-4a06-9fdd-45dcf61198d3.mock.pstmn.io/";
   ///Setting Dio Options.
   FeedSettingWebServices() {
@@ -32,7 +28,7 @@ class FeedSettingWebServices {
     try {
       Response response = await dio.get('user/me/prefs',
           options: Options(
-            headers: {"Authorization": "Bearer $token"},
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
       debugPrint('status code : ${response.statusCode}');
       print(response.data);
@@ -54,7 +50,7 @@ class FeedSettingWebServices {
       Response response = await dio.patch('user/me/prefs',
           data: newFeedSettingMap,
           options: Options(
-            headers: {"Authorization": "Bearer $token"},
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
           ));
       if (response.statusCode == 200) {
         // ignore: avoid_print

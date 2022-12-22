@@ -12,10 +12,10 @@ class HistoryPageCubit extends Cubit<HistoryPageState> {
   HistoryPageCubit(this.subredditPageRepository)
       : super(SubredditPageInitial());
 
-  void getHistoryPage(String userID, String mode) {
+  void getHistoryPage(String mode) {
     emit(HistoryPagePostsLoading());
 
-    subredditPageRepository.getPostsInHistoryPage(userID, mode).then((value) {
+    subredditPageRepository.getPostsInHistoryPage(mode).then((value) {
       _postsInPageModels = value;
       emit(HistoryPagePostsLoaded(_postsInPageModels!));
     });
