@@ -14,8 +14,9 @@ class ModtoolsCubit extends Cubit<ModtoolsState> {
   List<PostsModel> modToolsPosts = [];
   ModtoolsCubit(this.repository) : super(ModtoolsInitial());
 
-  /// [subredditID] is the id of subreddit to which we get the edited posts list
-  /// [subredditName] is the name of subreddit to which we get the edited posts list
+  /// [subredditName] is the name of subreddit to which we get the edited posts list.
+  ///
+  /// emits state [Loading] untill posts are available
   /// This function emits state [EditedPostsReady] on initState of the `Queue` widget.
   void getEditedPosts(String subredditName) {
     if (isClosed) return;
@@ -26,8 +27,9 @@ class ModtoolsCubit extends Cubit<ModtoolsState> {
     });
   }
 
-  /// [subredditName] is the id of subreddit to which we get the spammed posts list
-  /// [subredditName] is the name of subreddit to which we get the spammed posts list
+  /// [subredditName] is the name of subreddit to which we get the spammed posts list.
+  ///
+  /// emits state [Loading] untill posts are available
   /// This function emits state [EditedPostsReady] on initState of the `Queue` widget.
   void getSpammedPosts(String subredditName) {
     if (isClosed) return;
@@ -38,7 +40,9 @@ class ModtoolsCubit extends Cubit<ModtoolsState> {
     });
   }
 
-  /// [subredditName] is the name of subreddit to which we get the unmoderated posts list
+  /// [subredditName] is the name of subreddit to which we get the unmoderated posts list.
+  ///
+  /// emits state [Loading] untill posts are available
   /// This function emits state [EditedPostsReady] on initState of the `Queue` widget.
   void getUnmoderatedPosts(String subredditName) {
     if (isClosed) return;
@@ -49,7 +53,9 @@ class ModtoolsCubit extends Cubit<ModtoolsState> {
     });
   }
 
-  /// [subredditName] is the name of subreddit to which we get the traffic stats
+  /// [subredditName] is the name of subreddit to which we get the traffic stats.
+  ///
+  /// emits state [Loading] untill statistics are available
   /// This function emits state [TrafficStatsAvailable] on initState of the `Traffic stats` page.
   void getStatistics(String subredditName) {
     if (isClosed) return;
@@ -60,6 +66,8 @@ class ModtoolsCubit extends Cubit<ModtoolsState> {
   }
 
   /// [subredditId] is the id of subreddit to which we get the approved list
+  ///
+  /// emits state [Loading] untill approved users are available
   /// This function emits state [ApprovedListAvailable] on initState of the `UserManagement` widget.
   void getApprovedUsers(String subredditId) {
     if (isClosed) return;
@@ -73,7 +81,9 @@ class ModtoolsCubit extends Cubit<ModtoolsState> {
 
   /// [subredditId] is the id of subreddit to insert an approved user
   /// [username] is the username of the user to be inserted in the approved list
-  /// This function emits state [AddedToApprovedUsers] on adding a new user to the approved list or if the user already existed.
+  ///
+  /// emits state [WrongUsername] if the username entered is not available
+  /// This function emits state [AddedToApprovedUsers] on adding a new user to the approved list `or` if the user already existed.
   void addApprovedUser(String subredditId, String username) {
     if (isClosed) return;
     bool usernameExist = false;
@@ -109,7 +119,8 @@ class ModtoolsCubit extends Cubit<ModtoolsState> {
 
   /// [subredditId] is the id of subreddit to remove an approved user
   /// [username] is the username of the user to be removed from the approved list
-  /// This function emits state [RemovedFromApprovedUsers] removing a user from the approved list.
+  ///
+  /// This function emits state [RemovedFromApprovedUsers] on removing a user from the approved list.
   void removeApprovedUser(String subredditId, String username) {
     if (isClosed) return;
     repository.removeApprovedUser(subredditId, username).then((statusCode) {
@@ -123,7 +134,7 @@ class ModtoolsCubit extends Cubit<ModtoolsState> {
 
   /// [subredditId] is the id of subreddit to which we get the moderators list
   ///
-  /// This function emits state [ModeratorsListAvailable]
+  /// This function emits state [ModeratorsListAvailable] on getting moderators of the subreddit
   void getModerators(String subredditId) {
     if (isClosed) return;
     repository.getModerators(subredditId).then((moderatorsList) {

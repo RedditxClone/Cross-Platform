@@ -15,14 +15,6 @@ class MyModSubredditsAvailable extends UserProfileState {
   MyModSubredditsAvailable(this.modSubreddits);
 }
 
-// class FollowOtherUserSuccess extends UserProfileState {}
-
-// class FollowOtherUserNotSuccess extends UserProfileState {}
-
-// class UnFollowOtherUserSuccess extends UserProfileState {}
-
-// class UnFollowOtherUserNotSuccess extends UserProfileState {}
-
 class UserBlocked extends UserProfileState {}
 
 class ErrorOccured extends UserProfileState {}

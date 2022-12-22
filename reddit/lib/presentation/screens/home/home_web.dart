@@ -30,19 +30,19 @@ class _HomeWebState extends State<HomeWeb> {
         if (state is SortBest) {
           sortBy = 'best';
           BlocProvider.of<PostsHomeCubit>(context)
-              .getTimelinePosts(sort: sortBy);
+              .getTimelinePosts(sort: sortBy, limit: 20);
         } else if (state is SortNew) {
           sortBy = 'new';
           BlocProvider.of<PostsHomeCubit>(context)
-              .getTimelinePosts(sort: sortBy);
+              .getTimelinePosts(sort: sortBy, limit: 20);
         } else if (state is SortHot) {
           sortBy = 'hot';
           BlocProvider.of<PostsHomeCubit>(context)
-              .getTimelinePosts(sort: sortBy);
+              .getTimelinePosts(sort: sortBy, limit: 20);
         } else if (state is SortTop) {
           sortBy = 'top';
           BlocProvider.of<PostsHomeCubit>(context)
-              .getTimelinePosts(sort: sortBy);
+              .getTimelinePosts(sort: sortBy, limit: 20);
         }
         return Container(
           // sort posts
@@ -171,7 +171,7 @@ class _HomeWebState extends State<HomeWeb> {
       height: 53,
       padding: const EdgeInsets.all(10),
       child: ElevatedButton(
-        onPressed: () => Navigator.pushNamed(context, createPostScreenRoute), 
+        onPressed: () => Navigator.pushNamed(context, createPostScreenRoute),
         style: ButtonStyle(
           backgroundColor:
               MaterialStateProperty.all(Colors.white.withOpacity(0.7)),

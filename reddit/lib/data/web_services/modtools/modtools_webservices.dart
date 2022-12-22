@@ -100,8 +100,9 @@ class ModToolsWebServices {
   }
 
   /// [subredditName] is the name of subreddit to get the unmoderated posts
+  ///
   /// `Returns` unmoderated posts to the modtools of the subreddit.
-  /// This function performs `GET` request to the endpoint ``.
+  /// This function performs `GET` request to the endpoint `subreddit/`[subredditName]`/unmoderated`.
   Future<dynamic> getUnmoderatedPosts(String subredditName) async {
     try {
       // Get random posts if the user is not signed in (Without token)
@@ -130,6 +131,7 @@ class ModToolsWebServices {
   }
 
   /// [subredditId] is the id of subreddit to get the approved list
+  ///
   /// Returns approved users in modtools as [List] of `Map<String,dynamic>`
   Future<dynamic> getApproved(String subredditId) async {
     try {
@@ -147,6 +149,7 @@ class ModToolsWebServices {
 
   /// [subredditId] is the id of subreddit to insert an approved user
   /// [username] is the username of the user to be inserted in the approved list
+  ///
   /// Returns status code 201 if insert is successfull
   Future<dynamic> addApprovedUser(String subredditId, String username) async {
     try {
@@ -166,6 +169,7 @@ class ModToolsWebServices {
 
   /// [subredditId] is the id of subreddit to remove an approved user
   /// [username] is the username of the user to be removed from the approved list
+  ///
   /// Returns status code 201 if remove is successfull
   Future<dynamic> removeApprovedUser(
       String subredditId, String username) async {

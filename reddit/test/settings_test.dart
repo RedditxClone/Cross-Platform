@@ -25,39 +25,40 @@ void main() async {
   Map<String, dynamic>? settingsFromWebServices;
   setUp(() {
     testUser = User.fromJson({
-      "userId": '1',
-      "username": 'mark_yasser',
-      "displayName": 'mark',
-      "email": 'mark@hotmail.com',
-      "profilePic": null
+      "_id": "2",
+      "profilePhoto": "",
+      "coverPhoto": "",
+      "username": "ahmed123",
+      "createdAt": "2022-12-17T20:16:17.143Z",
+      "isBlocked": false,
+      "isFollowed": true,
+      "about": "",
+      "displayName": "",
+      "socialLinks": [],
+      "nsfw": false
     });
     settingsFromWebServices = {
-      "profilephoto":
-          "https://image.shutterstock.com/mosaic_250/2780032/1854697390/stock-photo-head-shot-young-attractive-businessman-in-glasses-standing-in-modern-office-pose-for-camera-1854697390.jpg",
-      "coverphoto":
-          "https://images.fineartamerica.com/images/artworkimages/mediumlarge/2/1-mcway-waterfall-with-small-cove-ingmar-wesemann.jpg",
-      "nsfw": true,
+      "coverPhoto": "",
+      "profilePhoto": "",
       "displayName": "Markos",
-      "about": "I am a computer engineer student",
-      "allowFollow": false,
+      "about": "i am mark yasser, computer eng student",
+      "nsfw": true,
+      "allowFollow": true,
+      "contentVisibility": true,
       "activeInCommunitiesVisibility": true,
-      "contentVisibility": false
-    };
-    patchResponse = {
-      'coverphoto':
-          'https://images.unsplash.com/photo-1504805572947-34fad45aed93?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8Y292ZXIlMjBwaG90b3xlbnwwfHwwfHw%3D&w=1000&q=80'
     };
     settingsFromRepository = ProfileSettings(
-        profile:
-            'https://image.shutterstock.com/mosaic_250/2780032/1854697390/stock-photo-head-shot-young-attractive-businessman-in-glasses-standing-in-modern-office-pose-for-camera-1854697390.jpg',
-        cover:
-            'https://images.fineartamerica.com/images/artworkimages/mediumlarge/2/1-mcway-waterfall-with-small-cove-ingmar-wesemann.jpg',
+        profile: '',
+        cover: '',
         displayName: 'Markos',
-        about: 'I am a computer engineer student',
+        about: 'i am mark yasser, computer eng student',
         nsfw: true,
-        allowPeopleToFollowYou: false,
+        allowPeopleToFollowYou: true,
         activeInCommunitiesVisibility: true,
-        contentVisibility: false);
+        contentVisibility: true);
+    patchResponse = {'coverphoto': ''};
+    UserData.user = testUser;
+    UserData.profileSettings = settingsFromRepository;
   });
 
   group("State test", () {
@@ -86,10 +87,10 @@ void main() async {
     blocTest<SettingsCubit, SettingsState>(
       'Settings loaded state is emitted correctly after updating settings',
       setUp: () {
-        when(() => mockAccountSettingsWebService.updateImage(
-                file.path, 'coverphoto'))
+        when(() =>
+                mockAccountSettingsWebService.updateImage(file.path, 'cover'))
             .thenAnswer(
-                (_) async => {"coverphoto": "$patchResponse['coverphoto']"});
+                (_) async => {"coverPhoto": "$patchResponse['coverPhoto']"});
       },
       build: () {
         return accountSettingsCubit;
@@ -108,10 +109,8 @@ void main() async {
       accountSettingsCubit = SettingsCubit(accountSettingsRepository);
     });
     test('Model is generated correctly', () {
-      expect(
-        ProfileSettings.fromjson(settingsFromWebServices!),
-        settingsFromRepository,
-      );
+      expect(ProfileSettings.fromjson(settingsFromWebServices!),
+          settingsFromRepository);
     });
   });
 }

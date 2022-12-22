@@ -422,7 +422,7 @@ class AppRouter {
                     subredditId: subreddit['id']!)));
 
       case modqueueRoute:
-        final subreddit = settings.arguments as Map<String, String>;
+        final subreddit = settings.arguments as Map<String, String?>;
         return MaterialPageRoute(
             builder: (_) => BlocProvider.value(
                 value: modtoolsCubit,

@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:bloc_test/bloc_test.dart';
@@ -55,9 +54,12 @@ void main() async {
           (_) async => settingsFromWebServices,
         );
         when(() => mockSafetySettingsWebService.getBlockedUsers()).thenAnswer(
-          (_) async => {
-            "blocked": ["mark"]
-          },
+          (_) async => [
+            {
+              "_id": "1",
+              "blocked": {"_id": "0", "username": "dummy", "profilePhoto": ""}
+            }
+          ],
         );
       },
       build: () {
@@ -91,43 +93,4 @@ void main() async {
       );
     });
   });
-
-  /// Check if the data shown on UI is the same as the data comming from server.
-  /// Check if update settings function is called when updating any value from UI.
-  // group("UI data matches response data", () {
-  //   setUp(() {
-  //     mockSafetySettingsCubit = MockSafetySettingsCubit();
-  //     when(() => mockSafetySettingsCubit.state)
-  //         .thenReturn(SafetySettingsAvailable(safetySettingsFromRepository));
-  //   });
-  //   testWidgets('Safety settings screen', (WidgetTester tester) async {
-  //     await tester.pumpWidget(
-  //       MultiBlocProvider(
-  //         providers: [
-  //           BlocProvider<SafetySettingsCubit>(
-  //             create: (context) => mockSafetySettingsCubit,
-  //           )
-  //         ],
-  //         child: const MaterialApp(
-  //             home: Scaffold(
-  //                 body: SingleChildScrollView(child: SafetySettingsWeb()))),
-  //       ),
-  //     );
-  //     // Allow people to follow you toggle is displayed correctly
-  //     expect(
-  //         find.byWidgetPredicate((widget) =>
-  //             widget is SwitchListTile &&
-  //             widget.key == const Key("showUnInSearch") &&
-  //             widget.value == safetySettingsFromRepository.showUnInSearch),
-  //         findsOneWidget);
-  //     // Update settings function is called after pressing on the switch
-  //     await tester.ensureVisible(find.byKey(const Key("showUnInSearch")));
-  //     await tester.pumpAndSettle();
-  //     await tester.tap(find.byKey(const Key("showUnInSearch")));
-  //     verify(() => mockSafetySettingsCubit.updateSettings(
-  //             safetySettingsFromRepository,
-  //             {"showInSearch": safetySettingsFromRepository.showUnInSearch}))
-  //         .called(1);
-  //   });
-  // });
 }
