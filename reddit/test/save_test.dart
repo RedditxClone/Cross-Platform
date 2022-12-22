@@ -2,9 +2,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:reddit/business_logic/cubit/posts/save_cubit.dart';
-import 'package:reddit/business_logic/cubit/posts/vote_cubit.dart';
 import 'package:reddit/data/model/auth_model.dart';
-import 'package:reddit/data/model/posts/vote_model.dart';
 import 'package:reddit/data/repository/posts/post_actions_repository.dart';
 import 'package:reddit/data/web_services/posts/post_actions_web_services.dart';
 

@@ -14,10 +14,10 @@ void main() async {
   late PostsUserCubit postsUserCubit;
   const postsFromWebServices = [
     {
-      "_id": "63a468ee8030bcf173731e93",
-      "text": "thet is a new post",
+      "_id": "",
+      "text": "",
       "votesCount": 0,
-      "userId": "638f9b2231186b7fd21bae78",
+      "userId": "",
       "spammedBy": null,
       "spammedAt": null,
       "removedBy": null,
@@ -35,10 +35,10 @@ void main() async {
       "type": "Post",
       "publishedDate": "2022-12-22T14:25:50.435Z",
       "user": {
-        "id": "638f9b2231186b7fd21bae78",
-        "photo": "assets/profilePhotos/638f9b2231186b7fd21bae78.jpeg",
-        "username": "bemoi1",
-        "name": "bemoi_erian",
+        "id": "",
+        "photo": "",
+        "username": "",
+        "name": "",
         "isFollowed": false,
         "cakeDay": true
       },
@@ -47,8 +47,8 @@ void main() async {
       "voteType": null,
       "isSaved": false,
       "subredditInfo": {
-        "id": "639771faa875316ad8d9f3e4",
-        "name": "bemoireddit",
+        "id": "",
+        "name": "",
         "isJoin": true,
         "joinDate": null,
         "membersCount": 0,
@@ -57,10 +57,10 @@ void main() async {
     }
   ];
   final postsModelTest = PostsModel(
-    sId: "63a468ee8030bcf173731e93",
-    text: "thet is a new post",
+    sId: "",
+    text: "",
     votesCount: 0,
-    userId: "638f9b2231186b7fd21bae78",
+    userId: "",
     spammedBy: null,
     spammedAt: null,
     removedBy: null,
@@ -76,20 +76,13 @@ void main() async {
     type: "Post",
     publishedDate: "2022-12-22T14:25:50.435Z",
     user: PostUser(
-        id: "638f9b2231186b7fd21bae78",
-        photo: "assets/profilePhotos/638f9b2231186b7fd21bae78.jpeg",
-        username: "bemoi1",
-        isFollowed: false,
-        cakeDay: true),
+        id: "", photo: "", username: "", isFollowed: false, cakeDay: true),
     replyNotifications: false,
     images: [],
     voteType: null,
     isSaved: false,
-    subreddit: PostSubreddit(
-        id: "639771faa875316ad8d9f3e4",
-        name: "bemoireddit",
-        isJoin: true,
-        isModerator: false),
+    subreddit:
+        PostSubreddit(id: "", name: "", isJoin: true, isModerator: false),
   );
 
   group("Posts my profile state test", () {
