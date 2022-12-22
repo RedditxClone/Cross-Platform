@@ -15,6 +15,8 @@ import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_Not_loggedin.da
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 import 'package:reddit/presentation/widgets/posts/posts_web.dart';
 
+import '../../../constants/strings.dart';
+
 class PopularWeb extends StatefulWidget {
   const PopularWeb({Key? key}) : super(key: key);
 
@@ -182,7 +184,7 @@ class _PopularWebState extends State<PopularWeb> {
       height: 53,
       padding: const EdgeInsets.all(10),
       child: ElevatedButton(
-        onPressed: () {}, // TODO : navigate to add new post
+        onPressed: () => Navigator.pushNamed(context, createPostScreenRoute), 
         style: ButtonStyle(
           backgroundColor:
               MaterialStateProperty.all(Colors.white.withOpacity(0.7)),
