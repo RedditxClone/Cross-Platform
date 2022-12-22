@@ -2,9 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:reddit/business_logic/cubit/user_profile/user_profile_cubit.dart';
-import 'package:reddit/data/model/auth_model.dart';
-import 'package:reddit/data/model/left_drawer/moderating_subreddits_left_drawer_model.dart';
-import 'package:reddit/data/model/modtools/taffic_stats_model.dart';
 import 'package:reddit/data/repository/user_profile/user_profile_repository.dart';
 import 'package:reddit/data/web_services/user_profile/user_profile_webservices.dart';
 
@@ -15,7 +12,7 @@ class MockProfileCubit extends MockCubit<UserProfileState>
 
 void main() async {
   late MockProfileWebService mockProfileWebService;
-  late UserProfileRepository modToolsRepository;
+  late UserProfileRepository profileRepository;
 
   late UserProfileCubit userProfileCubit;
   Map<String, dynamic> userinfoFromWebServices;
@@ -48,8 +45,8 @@ void main() async {
   group("State test", () {
     setUp(() {
       mockProfileWebService = MockProfileWebService();
-      modToolsRepository = UserProfileRepository(mockProfileWebService);
-      userProfileCubit = UserProfileCubit(modToolsRepository);
+      profileRepository = UserProfileRepository(mockProfileWebService);
+      userProfileCubit = UserProfileCubit(profileRepository);
       userinfoFromWebServices = {
         "_id": "",
         "profilePhoto": "",
