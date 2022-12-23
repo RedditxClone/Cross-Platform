@@ -38,7 +38,7 @@ class AuthRepo {
   /// This function makes the request to the server to log in the user.
   /// and checks on the status code if 201 then sets the user and returns it.
   /// This function calls the function [AuthWebService.login] which makes the request to the server.
-  /// RETURNS [User] : the user data.
+  /// RETURNS [Map] : the user data.
   Future<Map<String, dynamic>> login(String password, String username) async {
     await authWebService.login(password, username).then((value) {
       if (value.statusCode == 201) {
@@ -56,67 +56,31 @@ class AuthRepo {
   /// This function makes the request to the server to log in the user with google.
   /// and checks on the status code if 201 then sets the user and returns it.
   /// This function calls the function [AuthWebService.loginWithGoogle] which makes the request to the server.
-  /// RETURNS [User] : the user data.
+  /// RETURNS [Map] : the user data.
   Future<Map<String, dynamic>> loginWithGoogle(String googleToken) async {
-    // Response res = await authWebService.loginWithGoogle(googleToken);
-    // if (res.statusCode == 201) {
-    //   user = res.data;
-    // } else {
-    //   user = {};
-    // }
-    // return user;
-    return {
-      "_id": "638f22afb3b5edb0aa8d46ba",
-      "token": googleToken,
-      "username": "bbnpo",
-      "email": "ewxcf@kjdlasd.com",
-      "authType": "google",
-      "profilePhoto": "",
-      "coverPhoto": "",
-      "countryCode": "",
-      "gender": "",
-      "accountClosed": false,
-      "displayName": "",
-      "about": "",
-      "socialLinks": [],
-      "nsfw": false,
-      "allowFollow": true,
-      "contentVisibility": true,
-      "activeInCommunitiesVisibility": true,
-      "badCommentAutoCollapse": "off",
-      "showInSearch": true,
-      "adultContent": false,
-      "autoPlayMedia": true,
-      "personalizeAllOfReddit": true,
-      "personalizeAdsInformation": true,
-      "personalizeAdsYourActivity": true,
-      "personalizeRecGeneralLocation": true,
-      "personalizeRecOurPartners": true,
-      "useTwoFactorAuthentication": true,
-      "suggestedSort": "hot",
-      "inboxMessages": true,
-      "mentions": true,
-      "commentsOnPost": true,
-      "upvotePosts": true,
-      "upvoteComments": true,
-      "repliesComments": true,
-      "activityComments": true,
-      "activityOnThreads": true,
-      "newFollowers": true,
-      "newPostFlair": true,
-      "newUserFlair": true,
-      "pinnedPosts": true,
-      "postsYouFollow": true,
-      "commentsYouFollow": true,
-      "redditAnnouncements": true,
-      "cakeDay": true,
-      "acceptPms": "everyone",
-      "whitelisted": [],
-      "safeBrowsingMode": false,
-      "chatRequest": true,
-      "newFollower": false,
-      "unSubscribe": false
-    };
+    Response res = await authWebService.loginWithGoogle(googleToken);
+    if (res.statusCode == 201) {
+      user = res.data;
+    } else {
+      user = {};
+    }
+    return user;
+  }
+
+  /// [githubToken] : The token of the user from github.
+  ///
+  /// This function makes the request to the server to log in the user with github.
+  /// and checks on the status code if 201 then sets the user and returns it.
+  /// This function calls the function [AuthWebService.loginWithGitHub] which makes the request to the server.
+  /// RETURNS [Map] : the user data.
+  Future<Map<String, dynamic>> loginWithGithub(String githubToken) async {
+    Response res = await authWebService.loginWithGitHub(githubToken);
+    if (res.statusCode == 201) {
+      user = res.data;
+    } else {
+      user = {};
+    }
+    return user;
   }
 
   /// [username] : The username of the user.
