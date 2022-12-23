@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:reddit/data/model/post_model.dart';
 import 'package:reddit/data/model/subreddit_model.dart';
@@ -18,9 +19,18 @@ class CreatePostRepository {
     debugPrint("in repo");
     Map<String, dynamic> data = newpostData.toJson();
     debugPrint("before call web services");
-    print(data);
+    debugPrint(data.toString());
     final bool ifCreated = await postWebServices.submitPost(data);
     return ifCreated;
+  }
+
+  Future<dynamic> submitPostWeb(PostModel newpostData) async {
+    debugPrint("in repo");
+    Map<String, dynamic> data = newpostData.toJson();
+    debugPrint("before call web services");
+    debugPrint(data.toString());
+    final id = await postWebServices.submitPostWeb(data);
+    return id;
   }
 
   /// `Returns` [List] of the user joined subreddits.
@@ -28,18 +38,52 @@ class CreatePostRepository {
   /// If there are no subreddits it returns empty list.
   Future<List<SubredditModel>> getUserJoinedSubreddits() async {
     final joinedSubreddits = await postWebServices.getUserJoinedSubreddits();
-    print("newVal: " + joinedSubreddits.toString());
+    debugPrint("newVal: $joinedSubreddits");
     List<SubredditModel> subreddits = [];
     for (var subreddit in joinedSubreddits) {
       subreddits.add(SubredditModel.fromJson(subreddit));
-      print("subreddits:" + subreddits.toString());
+      debugPrint("subreddits:$subreddits");
     }
     final modSubreddits = await postWebServices.getUserModSubreddits();
     for (var subreddit in modSubreddits) {
       subreddits.add(SubredditModel.fromJson(subreddit));
-      print("subreddits:" + subreddits.toString());
+      debugPrint("subreddits:$subreddits");
     }
 
     return subreddits;
+  }
+
+  Future<Map<String, SubredditModel>> getUserJoinedSubredditsWeb() async {
+    final joinedSubreddits = await postWebServices.getUserJoinedSubreddits();
+    debugPrint("newVal: $joinedSubreddits");
+    SubredditModel model;
+    Map<String, SubredditModel> subreddits = {};
+    for (var subreddit in joinedSubreddits) {
+      model = SubredditModel.fromJson(subreddit);
+      subreddits[model.sId!] = model;
+      debugPrint("subreddits:$subreddits");
+    }
+    final modSubreddits = await postWebServices.getUserModSubreddits();
+    for (var subreddit in modSubreddits) {
+      model = SubredditModel.fromJson(subreddit);
+      if (!subreddits.containsKey(model.sId!)) {
+        subreddits[model.sId!] = model;
+      }
+      debugPrint("subreddits:$subreddits");
+    }
+
+    return subreddits;
+  }
+
+  /// [postModel] : a [PostModel] that identifies the post contains that media.
+  /// [media] : a [Uint8List] that represents media to be posted.
+  /// `Returns` `true` if media uploaded successfully or `false` if an error occured.
+  ///
+  /// This function makes the request to the server to create new post.
+  ///  It calls the function [CreatePostWebServices.postImageAndVideo] which makes the request to the server.
+
+  Future<dynamic> postImageAndVideo(String postId, Uint8List media) async {
+    final status = await postWebServices.postImageAndVideo(postId, media);
+    return status;
   }
 }

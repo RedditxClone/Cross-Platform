@@ -4,6 +4,7 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:intl/intl.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_user_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/sort_cubit.dart';
+import 'package:reddit/business_logic/cubit/user_profile/block_cubit.dart';
 import 'package:reddit/business_logic/cubit/user_profile/follow_unfollow_cubit.dart';
 import 'package:reddit/business_logic/cubit/user_profile/user_profile_cubit.dart';
 import 'package:reddit/constants/responsive.dart';
@@ -423,7 +424,7 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
                       UserData.isLoggedIn
                           ? _moreOptions(
                               'Block User',
-                              () => BlocProvider.of<UserProfileCubit>(context)
+                              () => BlocProvider.of<BlockCubit>(context)
                                   .blockUser(otherUser!.userId ?? ""))
                           : const SizedBox(width: 0, height: 0)
                     ],
@@ -758,12 +759,12 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
             ),
             body: MultiBlocListener(
               listeners: [
-                BlocListener<UserProfileCubit, UserProfileState>(
+                BlocListener<BlockCubit, BlockState>(
                     listener: (context, state) {
-                  if (state is UserBlocked) {
+                  if (state is UserBlockedSuccessfully) {
                     displayMsg(context, Colors.blue,
                         ' ${otherUser!.username} is now blocked');
-                  } else if (state is ErrorOccured) {
+                  } else if (state is Error) {
                     displayMsg(context, Colors.red, 'An error has occured');
                   }
                 }),
@@ -795,9 +796,7 @@ class _OtherProfilePageWebState extends State<OtherProfilePageWeb> {
                   } else if (state is FollowOtherUserSuccess ||
                       state is FollowOtherUserNotSuccess ||
                       state is UnFollowOtherUserSuccess ||
-                      state is UnFollowOtherUserNotSuccess ||
-                      state is UserBlocked ||
-                      state is ErrorOccured) {
+                      state is UnFollowOtherUserNotSuccess) {
                     return _buildBody();
                   }
                   return const Center(child: CircularProgressIndicator());

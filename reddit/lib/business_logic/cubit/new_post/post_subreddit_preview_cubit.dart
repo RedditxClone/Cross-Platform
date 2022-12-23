@@ -1,4 +1,6 @@
 import 'package:bloc/bloc.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
@@ -20,6 +22,36 @@ class PostSubredditPreviewCubit extends Cubit<PostSubredditPreviewState> {
         debugPrint("submitted successfully=============");
       } else {
         emit(CreatePostFailedToCreate());
+      }
+    });
+  }
+
+  void submitPostWeb(PostModel postModel) {
+    if (isClosed) return;
+    createPostRepository.submitPostWeb(postModel).then((id) {
+      if (id != '') {
+        emit(createdInWeb(id));
+        debugPrint("submitted successfully");
+      } else {
+        emit(errorInCreationWeb());
+      }
+    });
+  }
+
+  void postImageAndVideo(PostModel postModel, Uint8List media) {
+    if (isClosed) return;
+    createPostRepository.submitPostWeb(postModel).then((id) {
+      if (id != '') {
+        createPostRepository
+            .postImageAndVideo(id, media)
+            .then((status) {
+              if(status == 'success') {
+            emit(createdInWeb(id));
+            debugPrint("submitted successfully");
+          } else {
+            emit(errorInCreationWeb());
+          }
+        });
       }
     });
   }

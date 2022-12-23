@@ -13,6 +13,7 @@ import 'package:reddit/business_logic/cubit/posts/posts_popular_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_subreddit_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_user_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/sort_cubit.dart';
+import 'package:reddit/business_logic/cubit/user_profile/block_cubit.dart';
 import 'package:reddit/data/model/comments/comment_model.dart';
 import 'package:reddit/business_logic/cubit/user_profile/follow_unfollow_cubit.dart';
 import 'package:reddit/data/repository/comments/comments_repository.dart';
@@ -40,12 +41,16 @@ import 'package:reddit/presentation/screens/modtools/mobile/moderators.dart';
 import 'package:reddit/presentation/screens/modtools/mobile/mute_user_screen.dart';
 import 'package:reddit/presentation/screens/modtools/mobile/muted_users_screen.dart';
 import 'package:reddit/presentation/screens/modtools/web/approved_web.dart';
+import 'package:reddit/presentation/screens/modtools/web/banned_users_page.dart';
 import 'package:reddit/presentation/screens/modtools/web/edited_web.dart';
+import 'package:reddit/presentation/screens/modtools/web/moderators_page.dart';
 import 'package:reddit/presentation/screens/modtools/web/modqueue_web.dart';
+import 'package:reddit/presentation/screens/modtools/web/muted_users_page.dart';
 import 'package:reddit/presentation/screens/modtools/web/spam_web.dart';
 import 'package:reddit/presentation/screens/modtools/web/traffic_stats.dart';
 import 'package:reddit/presentation/screens/modtools/web/unmoderated.dart';
 import 'package:reddit/presentation/screens/new_post/create_post_screen.dart';
+import 'package:reddit/presentation/screens/new_post/create_post_screen_web.dart';
 // import 'package:reddit/presentation/screens/profile/other_user_orfile_screen.dart';
 import 'package:reddit/presentation/screens/search/search_web.dart';
 import 'business_logic/cubit/cubit/search/cubit/search_cubit.dart';
@@ -137,6 +142,12 @@ import 'package:reddit/presentation/screens/login_screen.dart';
 import 'package:reddit/presentation/screens/signup_page.dart';
 import 'package:reddit/presentation/screens/signup_page2.dart';
 import 'package:reddit/presentation/screens/signup_screen.dart';
+import 'package:reddit/presentation/screens/messages/inbox.dart';
+import 'package:reddit/presentation/screens/messages/sent.dart';
+import 'package:reddit/data/repository/message_screen_repository.dart';
+import 'package:reddit/data/web_services/message_screen_web_services.dart';
+import 'package:reddit/business_logic/cubit/cubit/inbox_screen_cubit.dart';
+import 'package:reddit/business_logic/cubit/cubit/sent_screen_cubit.dart';
 
 class AppRouter {
   // platform
@@ -181,11 +192,16 @@ class AppRouter {
   late MessagesRepository messagesRepository;
   late MessagesCubit messagesCubitApproved;
   late MessagesCubit messagesCubitProfile;
+  late MessageScreenWebServices messageScreenWebServices;
+  late MessageScreenRepository messageScreenRepository;
+  late InboxScreenCubit inboxScreenCubit;
+  late SentScreenCubit sentScreenCubit;
 
   late ModToolsWebServices modtoolsWebServices;
   late ModToolsRepository modtoolsRepository;
   late ModtoolsCubit modtoolsCubit;
   late FollowUnfollowCubit followUnfollowCubit;
+  late BlockCubit blockCubit;
 
   late PostsWebServices postsWebServices;
   late PostsRepository postsRepository;
@@ -248,6 +264,7 @@ class AppRouter {
     userProfileRepository = UserProfileRepository(userProfileWebServices);
     userProfileCubit = UserProfileCubit(userProfileRepository);
     followUnfollowCubit = FollowUnfollowCubit(userProfileRepository);
+    blockCubit = BlockCubit(userProfileRepository);
     searchCubit = SearchCubit(SearchRepo(SearchWebService()));
     searchPostsCubit = SearchPostsCubit(SearchRepo(SearchWebService()));
     searchCommentsCubit = SearchCommentsCubit(SearchRepo(SearchWebService()));
@@ -259,6 +276,11 @@ class AppRouter {
     messagesRepository = MessagesRepository(messagesWebServices);
     messagesCubitApproved = MessagesCubit(messagesRepository);
     messagesCubitProfile = MessagesCubit(messagesRepository);
+    messageScreenWebServices = MessageScreenWebServices();
+    messageScreenRepository = MessageScreenRepository(
+        messageScreenWebServices: messageScreenWebServices);
+    sentScreenCubit = SentScreenCubit(messageScreenRepository);
+    inboxScreenCubit = InboxScreenCubit(messageScreenRepository);
 
     modtoolsWebServices = ModToolsWebServices();
     modtoolsRepository = ModToolsRepository(modtoolsWebServices);
@@ -291,9 +313,13 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => MultiBlocProvider(
             providers: [
-              BlocProvider(
-                create: ((context) => authCubit),
-              ),
+              kIsWeb
+                  ? BlocProvider.value(
+                      value: authCubit,
+                    )
+                  : BlocProvider(
+                      create: (context) => authCubit,
+                    ),
               BlocProvider.value(
                 value: postsHomeCubit,
               ),
@@ -376,8 +402,11 @@ class AppRouter {
               BlocProvider.value(value: userProfileCubit),
               BlocProvider.value(value: settingsCubit),
               BlocProvider.value(value: messagesCubitProfile),
+              BlocProvider.value(value: inboxScreenCubit),
+              BlocProvider.value(value: sentScreenCubit),
               BlocProvider.value(value: postsUserCubit),
               BlocProvider.value(value: followUnfollowCubit),
+              BlocProvider.value(value: blockCubit),
               BlocProvider.value(value: otherProfileSortCubit),
             ],
             child: kIsWeb
@@ -421,7 +450,7 @@ class AppRouter {
                     subredditId: subreddit['id']!)));
 
       case modqueueRoute:
-        final subreddit = settings.arguments as Map<String, String>;
+        final subreddit = settings.arguments as Map<String, String?>;
         return MaterialPageRoute(
             builder: (_) => BlocProvider.value(
                 value: modtoolsCubit,
@@ -504,7 +533,7 @@ class AppRouter {
                       BlocProvider.value(value: modtoolsCubit),
                     ],
                     child: kIsWeb
-                        ? ApprovedWeb(
+                        ? ModeratorsPage(
                             subredditName: subreddit['name']!,
                             subredditId: subreddit['id']!)
                         : ModeratorsScreen(
@@ -518,7 +547,7 @@ class AppRouter {
                       BlocProvider.value(value: modtoolsCubit),
                     ],
                     child: kIsWeb
-                        ? ApprovedWeb(
+                        ? BannedUsersPage(
                             subredditName: subreddit['name']!,
                             subredditId: subreddit['id']!)
                         : BannedUsersScreen(
@@ -532,7 +561,7 @@ class AppRouter {
                       BlocProvider.value(value: modtoolsCubit),
                     ],
                     child: kIsWeb
-                        ? ApprovedWeb(
+                        ? MuttedUsersPage(
                             subredditName: subreddit['name']!,
                             subredditId: subreddit['id']!)
                         : MutedUsersScreen(
@@ -785,12 +814,49 @@ class AppRouter {
                   create: (BuildContext context) => messagesCubitProfile,
                   child: SendMessageWeb(username: username),
                 ));
+      case inboxRoute:
+        if (!isMobile) {
+          return MaterialPageRoute(
+              builder: (_) => BlocProvider(
+                    create: (BuildContext context) => inboxScreenCubit,
+                    child: const InboxWeb(),
+                  ));
+        } else {
+          break;
+        }
+      case sentRoute:
+        if (!isMobile) {
+          return MaterialPageRoute(
+              builder: (_) => BlocProvider(
+                    create: (BuildContext context) => sentScreenCubit,
+                    child: const SentWeb(),
+                  ));
+        } else {
+          break;
+        }
       case createPostScreenRoute:
-        return MaterialPageRoute(
-            builder: (_) => BlocProvider(
-                  create: (BuildContext context) => createPostCubit,
-                  child: const CreatePostScreen(),
-                ));
+        return (kIsWeb)
+            ? MaterialPageRoute(
+                builder: (_) => MultiBlocProvider(providers: [
+                      BlocProvider(
+                        create: (BuildContext context) => createPostCubit,
+                      ),
+                      BlocProvider(
+                        create: (BuildContext context) => postToCubit,
+                      ),
+                      BlocProvider(
+                        create: (BuildContext context) =>
+                            postSubredditPreviewCubit,
+                      ),
+                      BlocProvider(
+                        create: (BuildContext context) => postFlairCubit,
+                      )
+                    ], child: const CreatePostScreenWeb()))
+            : MaterialPageRoute(
+                builder: (_) => BlocProvider(
+                      create: (BuildContext context) => createPostCubit,
+                      child: const CreatePostScreen(),
+                    ));
 
       case postToMobileScreenRoute:
         PostModel newPostModel = arguments as PostModel;

@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
 
 import '../../../data/repository/new_post_repository.dart';
@@ -11,9 +12,11 @@ class PostToCubit extends Cubit<PostToState> {
 
   void getUserJoinedSubreddits() async {
     if (isClosed) return;
+    var userJoinedSubreddits;
     emit(UserJoinedSubredditsUploading());
-    final userJoinedSubreddits =
-        await createPostRepository.getUserJoinedSubreddits();
+    userJoinedSubreddits = kIsWeb
+        ? await createPostRepository.getUserJoinedSubredditsWeb()
+        : await createPostRepository.getUserJoinedSubreddits();
     emit(UserJoinedSubredditsUploaded(userJoinedSubreddits));
   }
 

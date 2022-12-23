@@ -79,7 +79,7 @@ class _BanUserScreenState extends State<BanUserScreen> {
       });
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

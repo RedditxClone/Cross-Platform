@@ -253,19 +253,9 @@ class _LoginWebState extends State<LoginWeb> {
   }
 
   void continueLogin() {
-    if (loginCorrect) {
+    debugPrint("login button pressed");
       BlocProvider.of<AuthCubit>(context)
           .login(passwordController.text, usernameController.text);
-    } else {
-      if (!loginCorrect) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Username or Password incorrect"),
-          ),
-        );
-        return;
-      }
-    }
   }
 
   Widget mainBody() {

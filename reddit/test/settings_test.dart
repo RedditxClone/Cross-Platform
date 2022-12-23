@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:bloc_test/bloc_test.dart';
@@ -15,103 +16,147 @@ class MockAccountSettingsCubit extends MockCubit<SettingsState>
     implements SettingsCubit {}
 
 void main() async {
-  late MockAccountSettingsWebService mockAccountSettingsWebService;
-  late SettingsRepository accountSettingsRepository;
-  late SettingsCubit accountSettingsCubit;
+  late MockAccountSettingsWebService mockProfileSettingsWebService;
+  late SettingsRepository profileSettingsRepository;
+  late SettingsCubit profileSettingsCubit;
   File file = File('/test/asd.jpg');
+  Uint8List webImg = Uint8List(8);
   User? testUser;
   ProfileSettings? settingsFromRepository;
-  Map<String, String>? patchResponse;
+  Map<String, String>? patchResponse1;
+  Map<String, String>? patchResponse2;
   Map<String, dynamic>? settingsFromWebServices;
   setUp(() {
     testUser = User.fromJson({
-      "userId": '1',
-      "username": 'mark_yasser',
-      "displayName": 'mark',
-      "email": 'mark@hotmail.com',
-      "profilePic": null
+      "_id": "2",
+      "profilePhoto": "",
+      "coverPhoto": "",
+      "username": "ahmed123",
+      "createdAt": "2022-12-17T20:16:17.143Z",
+      "isBlocked": false,
+      "isFollowed": true,
+      "about": "",
+      "displayName": "",
+      "socialLinks": [],
+      "nsfw": false
     });
     settingsFromWebServices = {
-      "profilephoto":
-          "https://image.shutterstock.com/mosaic_250/2780032/1854697390/stock-photo-head-shot-young-attractive-businessman-in-glasses-standing-in-modern-office-pose-for-camera-1854697390.jpg",
-      "coverphoto":
-          "https://images.fineartamerica.com/images/artworkimages/mediumlarge/2/1-mcway-waterfall-with-small-cove-ingmar-wesemann.jpg",
-      "nsfw": true,
+      "coverPhoto": "",
+      "profilePhoto": "",
       "displayName": "Markos",
-      "about": "I am a computer engineer student",
-      "allowFollow": false,
+      "about": "i am mark yasser, computer eng student",
+      "nsfw": true,
+      "allowFollow": true,
+      "contentVisibility": true,
       "activeInCommunitiesVisibility": true,
-      "contentVisibility": false
-    };
-    patchResponse = {
-      'coverphoto':
-          'https://images.unsplash.com/photo-1504805572947-34fad45aed93?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8Y292ZXIlMjBwaG90b3xlbnwwfHwwfHw%3D&w=1000&q=80'
     };
     settingsFromRepository = ProfileSettings(
-        profile:
-            'https://image.shutterstock.com/mosaic_250/2780032/1854697390/stock-photo-head-shot-young-attractive-businessman-in-glasses-standing-in-modern-office-pose-for-camera-1854697390.jpg',
-        cover:
-            'https://images.fineartamerica.com/images/artworkimages/mediumlarge/2/1-mcway-waterfall-with-small-cove-ingmar-wesemann.jpg',
+        profile: '',
+        cover: '',
         displayName: 'Markos',
-        about: 'I am a computer engineer student',
+        about: 'i am mark yasser, computer eng student',
         nsfw: true,
-        allowPeopleToFollowYou: false,
+        allowPeopleToFollowYou: true,
         activeInCommunitiesVisibility: true,
-        contentVisibility: false);
+        contentVisibility: true);
+    patchResponse1 = {'coverPhoto': ''};
+    patchResponse2 = {'profilePhoto': ''};
+    UserData.user = testUser;
+    UserData.profileSettings = settingsFromRepository;
   });
 
   group("State test", () {
     setUp(() {
-      mockAccountSettingsWebService = MockAccountSettingsWebService();
-      accountSettingsRepository =
-          SettingsRepository(mockAccountSettingsWebService);
-      accountSettingsCubit = SettingsCubit(accountSettingsRepository);
+      mockProfileSettingsWebService = MockAccountSettingsWebService();
+      profileSettingsRepository =
+          SettingsRepository(mockProfileSettingsWebService);
+      profileSettingsCubit = SettingsCubit(profileSettingsRepository);
     });
-    // Calling getAccountSettings() function returns the correct state
-    // AccountSettingsLoading means that the request is sent and we are waiting for the response
-    // AccountSettingsLoaded means that the response is received and UI is built based on this responce
     blocTest<SettingsCubit, SettingsState>(
       'Settings loaded state is emitted correctly after getting settings data from server',
       setUp: () {
-        when(() => mockAccountSettingsWebService.getUserSettings()).thenAnswer(
+        when(() => mockProfileSettingsWebService.getUserSettings()).thenAnswer(
           (_) async => settingsFromWebServices,
         );
       },
       build: () {
-        return accountSettingsCubit;
+        return profileSettingsCubit;
       },
       act: (SettingsCubit cubit) => cubit.getUserSettings(),
       expect: () => [isA<SettingsAvailable>()],
     );
     blocTest<SettingsCubit, SettingsState>(
-      'Settings loaded state is emitted correctly after updating settings',
+      'Settings loaded state is emitted correctly after updating cover photo from mobile',
       setUp: () {
-        when(() => mockAccountSettingsWebService.updateImage(
-                file.path, 'coverphoto'))
+        when(() =>
+                mockProfileSettingsWebService.updateImage(file.path, 'cover'))
             .thenAnswer(
-                (_) async => {"coverphoto": "$patchResponse['coverphoto']"});
+                (_) async => {"coverPhoto": "$patchResponse1['coverPhoto']"});
       },
       build: () {
-        return accountSettingsCubit;
+        return profileSettingsCubit;
       },
       act: (SettingsCubit cubit) =>
           cubit.changeCoverphoto(settingsFromRepository!, file.path),
+      expect: () => [isA<SettingsChanged>()],
+    );
+    blocTest<SettingsCubit, SettingsState>(
+      'Settings loaded state is emitted correctly after updating profile photo from mobile',
+      setUp: () {
+        when(() =>
+                mockProfileSettingsWebService.updateImage(file.path, 'profile'))
+            .thenAnswer((_) async =>
+                {"profilePhoto": "$patchResponse2['profilePhoto']"});
+      },
+      build: () {
+        return profileSettingsCubit;
+      },
+      act: (SettingsCubit cubit) =>
+          cubit.changeProfilephoto(settingsFromRepository!, file.path),
+      expect: () => [isA<SettingsChanged>()],
+    );
+    blocTest<SettingsCubit, SettingsState>(
+      'Settings loaded state is emitted correctly after updating profile photo from web',
+      setUp: () {
+        when(() =>
+                mockProfileSettingsWebService.updateImageWeb(webImg, 'profile'))
+            .thenAnswer((_) async =>
+                {"profilePhoto": "$patchResponse2['profilePhoto']"});
+      },
+      build: () {
+        return profileSettingsCubit;
+      },
+      act: (SettingsCubit cubit) =>
+          cubit.changeProfilephotoWeb(settingsFromRepository!, webImg),
+      expect: () => [isA<SettingsChanged>()],
+    );
+    blocTest<SettingsCubit, SettingsState>(
+      'Settings loaded state is emitted correctly after updating cover photo from web',
+      setUp: () {
+        when(() =>
+                mockProfileSettingsWebService.updateImageWeb(webImg, 'cover'))
+            .thenAnswer(
+                (_) async => {"coverPhoto": "$patchResponse1['coverPhoto']"});
+      },
+      build: () {
+        return profileSettingsCubit;
+      },
+      act: (SettingsCubit cubit) =>
+          cubit.changeCoverphotoWeb(settingsFromRepository!, webImg),
       expect: () => [isA<SettingsChanged>()],
     );
   });
   // Test if mapping from Json to model is correct
   group('Model test', () {
     setUp(() {
-      mockAccountSettingsWebService = MockAccountSettingsWebService();
-      accountSettingsRepository =
-          SettingsRepository(mockAccountSettingsWebService);
-      accountSettingsCubit = SettingsCubit(accountSettingsRepository);
+      mockProfileSettingsWebService = MockAccountSettingsWebService();
+      profileSettingsRepository =
+          SettingsRepository(mockProfileSettingsWebService);
+      profileSettingsCubit = SettingsCubit(profileSettingsRepository);
     });
     test('Model is generated correctly', () {
-      expect(
-        ProfileSettings.fromjson(settingsFromWebServices!),
-        settingsFromRepository,
-      );
+      expect(ProfileSettings.fromjson(settingsFromWebServices!),
+          settingsFromRepository);
     });
   });
 }

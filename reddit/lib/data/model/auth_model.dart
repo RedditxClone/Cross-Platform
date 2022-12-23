@@ -30,6 +30,24 @@ class User {
   late bool? isFollowed;
   late bool? isBlocked;
   late String date;
+
+  User(
+      {this.type,
+      this.userId,
+      this.username,
+      this.email,
+      this.profilePic,
+      this.token,
+      this.displayName,
+      this.interests,
+      this.cakeDay,
+      this.about,
+      this.allowFollow,
+      this.followed,
+      required this.coverPhoto,
+      this.createdAt,
+      this.isFollowed,
+      this.isBlocked});
   User.fromJson(Map<String, dynamic> json) {
     debugPrint("user id is: ${json['_id']}");
     debugPrint("user username is: ${json['username']}");
@@ -111,14 +129,17 @@ class UserData {
     return userToken != '';
   }
 
-  static logout() {
-    if (UserData.user!.type == 'google') {
+  static logout() async {
+    if (await GoogleSingInApi.checkIfSignedIn()) {
       if (kIsWeb) {
         GoogleSingInApi.logoutWeb();
       } else {
         GoogleSingInApi.logoutMob();
       }
+    } else if (UserData.user!.type == 'github') {
+      // GithubAuthenticator.logout();
     }
+
     PreferenceUtils.setString(SharedPrefKeys.token, '');
     PreferenceUtils.setString(SharedPrefKeys.userId, '');
     UserData.user = null;
@@ -129,6 +150,6 @@ class UserData {
     UserData.accountSettings = null;
     UserData.isLoggedIn = false;
     debugPrint(
-        'user logged out user is ${PreferenceUtils.getString(SharedPrefKeys.token)}');
+        'user logged out user is and token  =  ${PreferenceUtils.getString(SharedPrefKeys.token)}');
   }
 }

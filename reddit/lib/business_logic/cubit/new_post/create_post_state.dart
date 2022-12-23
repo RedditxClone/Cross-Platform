@@ -19,9 +19,9 @@ class PostButtonPressed extends CreatePostState{
 
 class CreatePostFailedToCreate extends CreatePostState {}
 
-class UserJoinedSubredditsUploaded extends CreatePostState {
-  final List<SubredditModel> userJoinedSubreddits;
+// class UserJoinedSubredditsUploaded extends CreatePostState {
+//   final List<SubredditModel> userJoinedSubreddits;
 
-  UserJoinedSubredditsUploaded(this.userJoinedSubreddits);
+//   UserJoinedSubredditsUploaded(this.userJoinedSubreddits);
   
-}
+// }

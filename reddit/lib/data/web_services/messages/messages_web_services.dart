@@ -19,14 +19,16 @@ class MessagesWebServices {
     dio = Dio(options);
   }
 
+  /// [messageData] : [Map] that contains the subject and the body of the message to be sent
+  /// [username]    : username to sent the message to.
   /// Returns all user safety settings if the request is performend succefuly or an null if an exception
   /// occured while trying to perform the request.
   ///
   /// This function Performs get request to the endpoint `baseUrl/user/me/prefs` to get all user settings from the API.
   Future<dynamic> sendMessage(
-      Map<String, dynamic> messageData, String userID) async {
+      Map<String, dynamic> messageData, String username) async {
     try {
-      Response response = await dio.post('message/$userID',
+      Response response = await dio.post('message/$username',
           data: messageData,
           options: Options(
             headers: {"Authorization": "Bearer  ${UserData.user!.token}"},

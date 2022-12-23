@@ -13,7 +13,7 @@ class ModToolsRepository {
   late List<TrafficStats> trafficStats;
 
   /// [subredditName] is the Name of subreddit to get the edited posts
-  /// [subredditName] is the name of subreddit to get the edited posts
+  ///
   /// Returns [List] of [PostsModel] object that contains the list of edited posts
   /// after getting it from [ModToolsWebServices] and mapping it to the model list.
   Future<List<PostsModel>> getEditedPosts(String subredditName) async {
@@ -25,8 +25,8 @@ class ModToolsRepository {
     }));
   }
 
-  /// [subredditName] is the Name of subreddit to get the spammed posts
-  /// [subredditName] is the name of subreddit to get the spammed posts
+  /// [subredditName] is the Name of subreddit to get the spammed posts.
+  ///
   /// Returns [List] of [PostsModel] object that contains the list of spammed posts
   /// after getting it from [ModToolsWebServices] and mapping it to the model list.
   Future<List<PostsModel>> getSpammedPosts(String subredditName) async {
@@ -38,8 +38,9 @@ class ModToolsRepository {
     }));
   }
 
-  /// [subredditName] is the name of subreddit to get the unmoderated posts
-  /// Returns [List] of [PostsModel] object that contains the list of unmoderated posts
+  /// [subredditName] is the name of subreddit to get the unmoderated posts.
+  ///
+  /// Returns [List] of [PostsModel] object that contains the list of unmoderated posts.
   /// after getting it from [ModToolsWebServices] and mapping it to the model list.
   Future<List<PostsModel>> getUnmoderatedPosts(String subredditName) async {
     final posts = await webServices.getUnmoderatedPosts(subredditName);
@@ -51,6 +52,7 @@ class ModToolsRepository {
   }
 
   /// [subredditName] is the Name of subreddit to which we get the traffic stats
+  ///
   /// Returns [List] of the approved users in modtools
   Future<List<TrafficStats>> getStatistics(String subredditName) async {
     final statistics = await webServices.getStatistics(subredditName);
@@ -59,6 +61,7 @@ class ModToolsRepository {
   }
 
   /// [subredditId] is the id of subreddit to which we get the approved list
+  ///
   /// Returns [List] of the approved users in modtools
   Future<List<dynamic>> getAprroved(String subredditId) async {
     final approvedList = await webServices.getApproved(subredditId);
@@ -67,6 +70,7 @@ class ModToolsRepository {
 
   /// [subredditId] is the id of subreddit to insert an approved user
   /// [username] is the username of the user to be inserted in the approved list
+  ///
   /// Returns status code 201 if insert is successfull
   Future<int> addApprovedUser(String subredditId, String username) async {
     final statusCode = await webServices.addApprovedUser(subredditId, username);
@@ -75,6 +79,7 @@ class ModToolsRepository {
 
   /// [subredditId] is the id of subreddit to remove an approved user
   /// [username] is the username of the user to be removed from the approved list
+  ///
   /// Returns status code 201 if remove is successfull
   Future<int> removeApprovedUser(String subredditId, String username) async {
     final statusCode =
@@ -84,7 +89,6 @@ class ModToolsRepository {
 
   /// [subredditId] is the id of subreddit to which we get the moderators list
   ///
-  /// This function calls [getModerators] from [ModToolsWebServices] and maps the response to [User] model
   /// Returns [List] of [User] object that contains the list of moderators
   Future<List<User>> getModerators(String subredditId) async {
     Response res = await webServices.getModerators(subredditId);
@@ -103,7 +107,6 @@ class ModToolsRepository {
   Future<int> addModerator(String subredditId, String username) async {
     Response res = await webServices.addModerator(subredditId, username);
     debugPrint("rsponse code ${res.statusCode}");
-
     return res.statusCode ?? 0;
   }
 

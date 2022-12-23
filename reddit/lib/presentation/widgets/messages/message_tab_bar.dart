@@ -19,8 +19,9 @@ class MessagesTabBar extends StatelessWidget {
           20),
       child: Row(children: [
         TextButton(
-            onPressed: () =>
-                Navigator.pushReplacementNamed(context, sendMessageRoute),
+            onPressed: () => Navigator.pushReplacementNamed(
+                context, sendMessageRoute,
+                arguments: ''),
             child: Text(
               'Send A Private Messge',
               style: TextStyle(
