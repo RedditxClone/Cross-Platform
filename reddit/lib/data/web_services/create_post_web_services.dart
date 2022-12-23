@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:reddit/constants/strings.dart';
 
 import '../model/auth_model.dart';
@@ -40,6 +41,22 @@ class CreatePostWebServices {
     }
   }
 
+  Future<dynamic> submitPostWeb(Map<String, dynamic> postData) async {
+    try {
+      if (kDebugMode) {
+        print(postData);
+      }
+      Response response = await dio.post('post/submit',
+          data: postData,
+          options: Options(
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+          ));
+      return response;
+    } catch (e) {
+      return e;
+    }
+  }
+
   /// `Returns` [Map] contains key `subreddits` with value as a [List] of subreddits the user joined and `[]` (empty list) if an exception
   /// occured while trying to perform the request.
   ///
@@ -71,6 +88,26 @@ class CreatePostWebServices {
       return response.data;
     } catch (e) {
       return [];
+    }
+  }
+
+  Future<dynamic> postImageAndVideo(String postId, Uint8List media) async {
+    try {
+      FormData formData = FormData.fromMap({
+        "icon": MultipartFile.fromBytes(media,
+            contentType: MediaType('application', 'json'), filename: 'photo')
+      });
+      Response response = await dio.post('post/$postId/upload-media',
+          data: formData,
+          options: Options(
+            headers: {"Authorization": "Bearer ${UserData.user!.token}"},
+          ));
+      debugPrint(
+          "update picture status code ${response.statusCode.toString()} new image link : ${response.data}");
+      return response;
+    } catch (e) {
+      debugPrint(e.toString());
+      return e;
     }
   }
 }

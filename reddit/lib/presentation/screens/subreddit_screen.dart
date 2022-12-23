@@ -1067,12 +1067,9 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
       body: BlocConsumer<SubredditPageCubit, SubredditPageState>(
           builder: (context, state) {
         if (state is SubredditIconUpdated) {
-          _displayMsg(
-              context, Colors.blue, "Sucessfully updated community icon!");
+          _subredditModel!.icon = (state).subredditIcon;
         }
-        if (state is SubredditIconUpdateFailed) {
-          _displayMsg(context, Colors.red, "Failed to updated community icon!");
-        }
+
         if (state is SubredditPageLoaded) {
           _subredditModel = state.subredditModel;
           _joinedSubreddit = state.isJoined;
@@ -1133,7 +1130,11 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
         // return Container();
       }, listener: (context, state) {
         if (state is SubredditIconUpdated) {
-          _subredditModel!.icon = (state).subredditIcon;
+          _displayMsg(
+              context, Colors.blue, "Sucessfully updated community icon!");
+        }
+        if (state is SubredditIconUpdateFailed) {
+          _displayMsg(context, Colors.red, "Failed to updated community icon!");
         }
       }),
       endDrawer: kIsWeb

@@ -76,7 +76,7 @@ class SubredditWebServices {
     try {
       FormData formData = FormData.fromMap({
         "icon": MultipartFile.fromBytes(updatedIcon,
-            contentType: MediaType('application', 'json'), filename: 'photo')
+            contentType: MediaType('application', 'json'), filename: 'icon')
       });
       Response response = await dio.post('subreddit/$subredditId/icon',
           data: formData,

@@ -94,7 +94,7 @@ class SubredditModel {
             : imagesUrl + json['icon'])
         : json['icon'];
     description = json['description'];
-    memberCount = json['memberCount'];
+    memberCount = kIsWeb ? json['users'] ?? 0 : json['memberCount'];
     name = json['name'];
     type = json['type'];
     usersPermissions = json['usersPermissions'];
@@ -135,7 +135,7 @@ class SubredditModel {
         : DateTime.now();
     rules = json['rules'] as List<dynamic>?;
     joinList = json['joinList'] as List<dynamic>?;
-    memberCount = joinList == null ? 0 : joinList!.length;
+    if (!kIsWeb) memberCount = joinList == null ? 0 : joinList!.length;
     bannedUsers = json['bannedUsers'] as List<dynamic>?;
     mutedUsers = json['mutedUsers'] as List<dynamic>?;
     approvedUsers = json['approvedUsers'] as List<dynamic>?;
@@ -187,4 +187,8 @@ class SubredditModel {
     data['__v'] = iV;
     return data;
   }
+
+//used to convert list to set for web only
+  bool operator ==(Object other) =>
+      identical(this, other) || other is SubredditModel && other.sId == sId;
 }
