@@ -111,8 +111,8 @@ class UserData {
     return userToken != '';
   }
 
-  static logout() {
-    if (UserData.user!.type == 'google') {
+  static logout() async {
+    if (await GoogleSingInApi.checkIfSignedIn()) {
       if (kIsWeb) {
         GoogleSingInApi.logoutWeb();
       } else {
