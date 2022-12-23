@@ -130,6 +130,8 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
           imgUrl: UserData.user!.profilePic!),
       dropDownMenuItem('Messages', Icons.person,
           imgUrl: UserData.user!.profilePic!),
+      dropDownMenuItem('Saved', Icons.person,
+          imgUrl: UserData.user!.profilePic!),
       dropDownMenuItem('Create Post', Icons.add),
     ];
   }
