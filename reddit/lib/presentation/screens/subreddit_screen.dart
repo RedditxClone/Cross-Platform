@@ -1132,13 +1132,15 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
           _subredditModel!.icon = (state).subredditIcon;
         }
       }),
-      endDrawer: BlocProvider(
-          create: (context) =>
-              EndDrawerCubit(EndDrawerRepository(SettingsWebServices())),
-          child: EndDrawer(
-            2,
-            35,
-          )),
+      endDrawer: kIsWeb
+          ? null
+          : BlocProvider(
+              create: (context) =>
+                  EndDrawerCubit(EndDrawerRepository(SettingsWebServices())),
+              child: EndDrawer(
+                2,
+                35,
+              )),
     );
   }
 
