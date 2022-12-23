@@ -192,7 +192,7 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 5),
                     child: Column(
                       children: [
-                        SizedBox(
+                        const SizedBox(
                           height: 2,
                         ),
                         Row(
@@ -733,7 +733,7 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
             ),
           )
         : (subredditModel.name == null)
-            ? Center(
+            ? const Center(
                 child: Text("an error occurred, please try again"),
               )
             : SingleChildScrollView(
@@ -770,11 +770,11 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 50,
                                         ),
                                         TextButton.icon(
-                                          label: Text(''),
+                                          label: const Text(''),
                                           icon: CircleAvatar(
                                               radius: 45,
                                               backgroundColor: Colors.white,
@@ -885,7 +885,7 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                                                   ],
                                                 ),
                                               ),
-                                              SizedBox(width: 10),
+                                              const SizedBox(width: 10),
                                               Padding(
                                                 padding: const EdgeInsets.only(
                                                     top: 10.0),
@@ -994,8 +994,12 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               3)),
-                                                  child: const TextField(
-                                                    decoration: InputDecoration(
+                                                  child: TextField(
+                                                    onTap: () =>
+                                                        Navigator.pushNamed(
+                                                            context,
+                                                            createPostScreenRoute),
+                                                    decoration: const InputDecoration(
                                                         fillColor:
                                                             textFeildColor,
                                                         icon: Icon(Icons.reddit,
