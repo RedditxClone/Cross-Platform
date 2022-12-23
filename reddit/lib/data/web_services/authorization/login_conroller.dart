@@ -46,9 +46,9 @@ class GoogleSingInApi {
 
   static Future<bool> checkIfSignedIn() async {
     if (kIsWeb) {
-      return googleSignInWeb.isSignedIn();
+      return await googleSignInWeb.isSignedIn();
     }
-    return _googleSignInMob.isSignedIn();
+    return await _googleSignInMob.isSignedIn();
   }
 
   static Future<String?> getGoogleToken() async {

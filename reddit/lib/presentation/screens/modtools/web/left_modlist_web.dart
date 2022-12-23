@@ -86,6 +86,8 @@ class _LeftModListState extends State<LeftModList> {
             leftListTitle('USER MANAGEMENT', Icons.person_outline),
             leftListElement('Approved', approvedRoute),
             leftListElement('Moderators', moderatorsRoute),
+            leftListElement('Banned', bannedUsersRoute),
+            leftListElement('Mutted', mutedUsersRoute),
             const SizedBox(height: 40),
             //---------------------------RULES AND REGULATIONS-----------------------------------
             leftListTitle('RULES AND REGULATIONS', Icons.list_alt),
