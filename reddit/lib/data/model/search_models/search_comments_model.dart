@@ -5,7 +5,7 @@ import 'package:reddit/data/model/search_models/search_post_model.dart';
 import '../auth_model.dart';
 
 class SearchCommentsModel {
-  String? _id;
+  String? id;
   String? text;
   int? upvotes;
   DateTime? creationDate;
@@ -16,12 +16,21 @@ class SearchCommentsModel {
   Duration? durantion;
   String? commentFrom;
 
+  SearchCommentsModel({
+    required this.id,
+    required this.text,
+    required this.upvotes,
+    required this.creationDate,
+    required this.user,
+    required this.postOwner,
+    required this.post,
+  });
   SearchCommentsModel.fromJson(Map<String, dynamic> json) {
-    _id = json['_id']??'';
-    debugPrint("comment id: $_id");
-    text = json['text']??'';
+    id = json['_id'] ?? '';
+    debugPrint("comment id: $id");
+    text = json['text'] ?? '';
     debugPrint("comment text: $text");
-    upvotes = json['votesCount']??0;
+    upvotes = json['votesCount'] ?? 0;
     debugPrint("comment upvotes: $upvotes");
     user = User.fromJson(json['user'] ?? {});
     debugPrint("comment user: ${user!.username}");

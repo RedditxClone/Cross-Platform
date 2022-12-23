@@ -17,6 +17,19 @@ class SearchPostModel {
   String? postedFrom;
   bool? nsfw;
   bool? spoiler;
+  SearchPostModel({
+    required this.id,
+    required this.title,
+    required this.commentsCount,
+    required this.votesCount,
+    required this.subreddit,
+    required this.user,
+    required this.images,
+    required this.creationDate,
+    required this.publishDate,
+    required this.nsfw,
+    required this.spoiler,
+  });
   SearchPostModel.fromJson(Map<String, dynamic> json) {
     id = json['_id'] ?? "";
     title = json['title'] ?? "";

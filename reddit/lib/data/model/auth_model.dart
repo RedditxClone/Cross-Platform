@@ -30,6 +30,24 @@ class User {
   late bool? isFollowed;
   late bool? isBlocked;
   late String date;
+
+  User(
+      {this.type,
+      this.userId,
+      this.username,
+      this.email,
+      this.profilePic,
+      this.token,
+      this.displayName,
+      this.interests,
+      this.cakeDay,
+      this.about,
+      this.allowFollow,
+      this.followed,
+      required this.coverPhoto,
+      this.createdAt,
+      this.isFollowed,
+      this.isBlocked});
   User.fromJson(Map<String, dynamic> json) {
     debugPrint("user id is: ${json['_id']}");
     debugPrint("user username is: ${json['username']}");
