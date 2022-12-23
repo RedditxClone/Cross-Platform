@@ -5,12 +5,12 @@ class MessagesRepository {
   MessagesRepository(this.webServices);
 
   /// [messageData] : [Map] that represent the JSON data to be sent.
-  /// [userID] :
+  /// [username] : username to sent the message to.
   ///
   /// Returns `statusCode` : 201 = Message created successfully, 403 = Unauthorized
   Future<dynamic> sendMessage(
-      Map<String, dynamic> messageData, String userID) async {
-    final statusCode = await webServices.sendMessage(messageData, userID);
+      Map<String, dynamic> messageData, String username) async {
+    final statusCode = await webServices.sendMessage(messageData, username);
     return statusCode;
   }
 }

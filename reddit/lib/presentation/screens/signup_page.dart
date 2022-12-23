@@ -145,54 +145,45 @@ class _SignupWebState extends State<SignupWeb> {
 //this an async fucntion to log in with github account and store the result in database
   Future signInWithGithub() async {
     try {
-      // var loginResult = await FacebookSignInApi.login();
-      // if (loginResult != null) {
-      //   var fbUser = await FacebookSignInApi
-      //       .getUserData(); //post request to add user data
-      //   DioHelper.postData(url: '/api/auth/signup', data: {
-      //     "name": fbUser['name'] as String,
-      //     "email": fbUser['email'] as String,
-      //     "imageUrl": fbUser['picture']['data']['url'] as String,
-      //     "userId": loginResult.accessToken?.userId,
-      //     "_type": "facebook",
-      //     "accessToken": loginResult.accessToken?.token,
-      //   }).then((value) {
-      //     if (value.statusCode == 201) {
-      //       newUser = User.fromJson(jsonDecode(value.data));
-      //       Navigator.of(context).pushReplacementNamed(
-      //         chooseGenderScreen,
-      //         arguments: newUser,
-      //       );
-      //     } else {
-      //       ScaffoldMessenger.of(context).showSnackBar(
-      //         SnackBar(
-      //           content: Row(
-      //             children: [
-      //               const Icon(
-      //                 Icons.error,
-      //                 color: Colors.red,
-      //               ),
-      //               SizedBox(
-      //                 width: MediaQuery.of(context).size.width * 0.01,
-      //               ),
-      //               const Text(
-      //                 "Error in Signing in with Facebook",
-      //                 style: TextStyle(
-      //                   color: Colors.red,
-      //                 ),
-      //               ),
-      //             ],
+      // launchUrl(
+      //   Uri.parse(
+      //       'https://github.com/login/oauth/authorize?client_id=$gitHubClientID'),
+      //   webOnlyWindowName: '_self',
+      // );
+      // GithubAuthenticator.createGrant();
+      // final authorizationUrl = GithubAuthenticator.getAuthorizationUrl();
+      // // await launchUrl(authorizationUrl, webOnlyWindowName: '_blank');
+      // debugPrint("authorizationUrl is ${authorizationUrl.queryParameters}");
+      // String? gitHubToken = await GithubAuthenticator.getAccessToken(
+      //   authorizationUrl.queryParameters,
+      // );
+      // if (gitHubToken != null) {
+      //   debugPrint("token is $gitHubToken");
+      //   BlocProvider.of<AuthCubit>(context).loginWithGithub(gitHubToken);
+      // } else {
+      //   debugPrint("token is null");
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     SnackBar(
+      //       content: Row(
+      //         children: [
+      //           const Icon(
+      //             Icons.error,
+      //             color: Colors.red,
       //           ),
-      //         ),
-      //       );
-      //     }
-      //   });
+      //           SizedBox(
+      //             width: MediaQuery.of(context).size.width * 0.01,
+      //           ),
+      //           const Text(
+      //             "Error in Signing in with github",
+      //             style: TextStyle(
+      //               color: Colors.red,
+      //             ),
+      //           ),
+      //         ],
+      //       ),
+      //     ),
+      //   );
       // }
-      launchUrl(
-        Uri.parse(
-            'https://github.com/login/oauth/authorize?client_id=$gitHubClientID'),
-        webOnlyWindowName: '_self',
-      );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
