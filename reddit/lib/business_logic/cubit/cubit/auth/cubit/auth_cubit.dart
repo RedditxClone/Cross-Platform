@@ -48,6 +48,18 @@ class AuthCubit extends Cubit<AuthState> {
     });
   }
 
+  /// [githubToken] : The token of the user from github.
+  ///
+  /// This function emits state [Login] after the user login with github.
+  /// This function calls the function [AuthRepo.loginWithGithub] which makes the request to the server.
+  void loginWithGithub(String githubToken) async {
+    if (isClosed) return;
+    authRepo.loginWithGithub(githubToken).then((value) {
+      emit(Login(value));
+      debugPrint("after emitting login ${value.toString()}");
+    });
+  }
+
   /// This function emits state [SuggestedUsername] in the initState of the signup_page2.
   /// This function calls the function [AuthRepo.getSuggestedUsernames] which makes the request to the server.
   void getSuggestedUsernames() async {
@@ -156,5 +168,10 @@ class AuthCubit extends Cubit<AuthState> {
       debugPrint("user is not logged in");
       emit(NotLoggedIn());
     }
+  }
+
+  void logout() {
+    UserData.logout();
+    emit(NotLoggedIn());
   }
 }

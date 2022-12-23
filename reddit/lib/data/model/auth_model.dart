@@ -118,7 +118,10 @@ class UserData {
       } else {
         GoogleSingInApi.logoutMob();
       }
+    } else if (UserData.user!.type == 'github') {
+      // GithubAuthenticator.logout();
     }
+
     PreferenceUtils.setString(SharedPrefKeys.token, '');
     PreferenceUtils.setString(SharedPrefKeys.userId, '');
     UserData.user = null;
@@ -129,6 +132,6 @@ class UserData {
     UserData.accountSettings = null;
     UserData.isLoggedIn = false;
     debugPrint(
-        'user logged out user is ${PreferenceUtils.getString(SharedPrefKeys.token)}');
+        'user logged out user is and token  =  ${PreferenceUtils.getString(SharedPrefKeys.token)}');
   }
 }
