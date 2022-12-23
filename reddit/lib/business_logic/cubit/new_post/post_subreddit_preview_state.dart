@@ -11,4 +11,15 @@ class UIChanged extends PostSubredditPreviewState {}
 
 class CreatePostFailedToCreate extends PostSubredditPreviewState {}
 
+class createdInWeb extends PostSubredditPreviewState {
+  final postId;
+
+  createdInWeb(this.postId);
+}
+
+class errorInCreationWeb extends PostSubredditPreviewState {
+
+  errorInCreationWeb();
+}
+
 class CreatePostCreated extends PostSubredditPreviewState {}

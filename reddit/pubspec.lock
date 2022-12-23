@@ -238,7 +238,7 @@ packages:
       name: file_picker
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.2.2"
+    version: "5.2.4"
   fixnum:
     dependency: transitive
     description:
@@ -279,6 +279,27 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "8.1.1"
+  flutter_dropzone:
+    dependency: "direct main"
+    description:
+      name: flutter_dropzone
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.5"
+  flutter_dropzone_platform_interface:
+    dependency: transitive
+    description:
+      name: flutter_dropzone_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.5"
+  flutter_dropzone_web:
+    dependency: transitive
+    description:
+      name: flutter_dropzone_web
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.8"
   flutter_launcher_icons:
     dependency: "direct dev"
     description:
@@ -569,6 +590,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.1"
+  notus:
+    dependency: "direct main"
+    description:
+      name: notus
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.5"
   notus_format:
     dependency: transitive
     description:
@@ -716,6 +744,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.2.1"
+  quill_delta:
+    dependency: transitive
+    description:
+      name: quill_delta
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.3"
   quill_format:
     dependency: transitive
     description:
@@ -723,6 +758,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.2"
+  quill_markdown:
+    dependency: "direct main"
+    description:
+      name: quill_markdown
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.0"
   quiver:
     dependency: transitive
     description:
@@ -730,6 +772,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.1.0"
+  quiver_hashcode:
+    dependency: transitive
+    description:
+      name: quiver_hashcode
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.0"
   shared_preferences:
     dependency: "direct main"
     description:

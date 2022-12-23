@@ -16,6 +16,8 @@ import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_Not_loggedin.da
 import 'package:reddit/presentation/widgets/nav_bars/app_bar_web_loggedin.dart';
 import 'package:reddit/presentation/widgets/posts/posts_web.dart';
 
+import '../../../constants/strings.dart';
+
 class PopularWeb extends StatefulWidget {
   const PopularWeb({Key? key}) : super(key: key);
 
