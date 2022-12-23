@@ -13,7 +13,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:quill_markdown/quill_markdown.dart';
-import 'package:reddit/business_logic/cubit/new_post/create_post_cubit.dart';
+import 'package:reddit/business_logic/cubit/new_post/create_post_cubit.dart'
+    as cpc;
 import 'package:reddit/business_logic/cubit/new_post/post_flair_cubit.dart';
 import 'package:reddit/business_logic/cubit/new_post/post_subreddit_preview_cubit.dart';
 import 'package:reddit/data/model/post_model.dart';
@@ -39,6 +40,8 @@ class CreatePostScreenWeb extends StatefulWidget {
 }
 
 class _CreatePostScreenWebState extends State<CreatePostScreenWeb> {
+  String? value;
+
   Set<SubredditModel>? _joinedSubreddits;
   SubredditModel? _selectedSubreddit;
   bool _validURL = false;
@@ -64,7 +67,7 @@ class _CreatePostScreenWebState extends State<CreatePostScreenWeb> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<CreatePostCubit>(context).createBloc();
+    BlocProvider.of<cpc.CreatePostCubit>(context).createBloc();
     BlocProvider.of<PostToCubit>(context).getUserJoinedSubreddits();
   }
 
@@ -74,109 +77,113 @@ class _CreatePostScreenWebState extends State<CreatePostScreenWeb> {
 
     return Scaffold(
       appBar: _buildAppBar(),
-      body: BlocConsumer<CreatePostCubit, CreatePostState>(
-          listener: (context, state) async {},
-          builder: (context, state) {
-            return SingleChildScrollView(
-                child: LayoutBuilder(builder: (context, constraints) {
-              var width = constraints.maxWidth;
-              return Row(
-                children: [
-                  const Expanded(flex: 1, child: SizedBox(width: 1)),
-                  Expanded(
-                    flex: 6,
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 10.0),
-                      child: Column(
+      body: BlocConsumer<cpc.CreatePostCubit, cpc.CreatePostState>(
+          listener: (context, state) async {
+        if (state is cpc.CreatePostCreated) {
+          Navigator.pushReplacementNamed(context, homePageRoute);
+        }
+      }, builder: (context, state) {
+        return SingleChildScrollView(
+            child: LayoutBuilder(builder: (context, constraints) {
+          var width = constraints.maxWidth;
+          return Row(
+            children: [
+              const Expanded(flex: 2, child: SizedBox(width: 1)),
+              Expanded(
+                flex: 7,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: Column(
+                    children: [
+                      Row(
                         children: [
-                          Row(
-                            children: [
-                              Text(
-                                "Create a post",
-                                style: GoogleFonts.ibmPlexSans(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w500),
-                              ),
-                            ],
-                          ),
-                          const Divider(
-                            thickness: 1,
-                            color: darkFontColor,
-                          ),
-                          Row(
-                            children: [_subredditsMenu()],
-                          ),
-                          DefaultTabController(
-                            length: 3,
-                            animationDuration: Duration.zero,
-                            child: Wrap(children: [
-                              Container(
-                                width: 700,
-                                height: 500,
-                                color: const Color(0xff1a1a1b),
-                                child: Scaffold(
-                                  backgroundColor: Colors.transparent,
-                                  appBar: TabBar(
-                                    indicator: const UnderlineTabIndicator(
-                                        borderSide: BorderSide(
-                                            width: 2, color: Colors.white),
-                                        insets: EdgeInsets.symmetric(
-                                            horizontal: 25)),
-                                    indicatorColor: Colors.white,
-                                    labelColor: Colors.white,
-                                    unselectedLabelColor: darkFontColor,
-                                    tabs: <Widget>[
-                                      _postTab(0, Icons.article,
-                                          Icons.article_outlined, 'Post'),
-                                      _postTab(
-                                          1,
-                                          Icons.photo,
-                                          Icons.photo_outlined,
-                                          'Images & Video'),
-                                      _postTab(2, Icons.link,
-                                          Icons.link_outlined, 'Link'),
-                                    ],
-                                  ),
-                                  body: Row(
-                                    children: [
-                                      Expanded(
-                                        flex: 3,
-                                        child: TabBarView(
-                                          children: <Widget>[
-                                            _textBody(),
-                                            _postImageAndVideo(),
-                                            _insertURL()
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ]),
+                          Text(
+                            "Create a post",
+                            style: GoogleFonts.ibmPlexSans(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w500),
                           ),
                         ],
                       ),
-                    ),
+                      const Divider(
+                        thickness: 1,
+                        color: darkFontColor,
+                      ),
+                      Row(
+                        children: [_subredditsMenu()],
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      DefaultTabController(
+                        length: 3,
+                        animationDuration: Duration.zero,
+                        child: Wrap(children: [
+                          Container(
+                            width: 700,
+                            height: 500,
+                            color: const Color(0xff1a1a1b),
+                            child: Scaffold(
+                              backgroundColor: Colors.transparent,
+                              appBar: TabBar(
+                                indicator: const UnderlineTabIndicator(
+                                    borderSide: BorderSide(
+                                        width: 2, color: Colors.white),
+                                    insets:
+                                        EdgeInsets.symmetric(horizontal: 25)),
+                                indicatorColor: Colors.white,
+                                labelColor: Colors.white,
+                                unselectedLabelColor: darkFontColor,
+                                tabs: <Widget>[
+                                  _postTab(0, Icons.article,
+                                      Icons.article_outlined, 'Post'),
+                                  _postTab(1, Icons.photo, Icons.photo_outlined,
+                                      'Images & Video'),
+                                  _postTab(2, Icons.link, Icons.link_outlined,
+                                      'Link'),
+                                ],
+                              ),
+                              body: Row(
+                                children: [
+                                  Expanded(
+                                    flex: 3,
+                                    child: TabBarView(
+                                      children: <Widget>[
+                                        _textBody(),
+                                        _postImageAndVideo(),
+                                        _insertURL()
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ]),
+                      ),
+                    ],
                   ),
-                ],
-              );
-            }));
-            // return
-            // Center(
-            //     child: Column(
-            //   children: [
-            //     ZefyrToolbar.basic(controller: _zefyrController),
-            //     Expanded(
-            //       child: ZefyrEditor(
-            //         controller: _zefyrController,
-            //       ),
-            //     ),
-            //   ],
-            // ))
-            // ;
-          }),
+                ),
+              ),
+              Expanded(flex: 4, child: SizedBox(width: 1)),
+            ],
+          );
+        }));
+        // return
+        // Center(
+        //     child: Column(
+        //   children: [
+        //     ZefyrToolbar.basic(controller: _zefyrController),
+        //     Expanded(
+        //       child: ZefyrEditor(
+        //         controller: _zefyrController,
+        //       ),
+        //     ),
+        //   ],
+        // ))
+        // ;
+      }),
     );
   }
 
@@ -208,7 +215,7 @@ class _CreatePostScreenWebState extends State<CreatePostScreenWeb> {
                 _enable = _titleController.text.isNotEmpty &&
                     _mediaContent != null &&
                     _postModel.subredditId != '';
-                BlocProvider.of<CreatePostCubit>(context).uIChanged();
+                BlocProvider.of<cpc.CreatePostCubit>(context).uIChanged();
               },
               style: GoogleFonts.ibmPlexSans(color: lightFontColor),
               controller: _titleController,
@@ -232,8 +239,10 @@ class _CreatePostScreenWebState extends State<CreatePostScreenWeb> {
                       ),
                       onPressed: () {
                         pickImageWeb(ImageSource.gallery).then((value) =>
-                            BlocProvider.of<CreatePostCubit>(context)
+                            BlocProvider.of<cpc.CreatePostCubit>(context)
                                 .uIChanged());
+                        BlocProvider.of<PostSubredditPreviewCubit>(context)
+                            .uIChanged();
                       },
                       child: Text(
                         "Upload",
@@ -244,7 +253,7 @@ class _CreatePostScreenWebState extends State<CreatePostScreenWeb> {
                       ))),
             ),
           ),
-          _preferences(),
+          _preferences(context),
           const Divider(),
           _postButton('media')
         ]));
@@ -269,14 +278,14 @@ class _CreatePostScreenWebState extends State<CreatePostScreenWeb> {
 
                 _enable = _titleController.text.isNotEmpty &&
                     _postModel.subredditId != '';
-                BlocProvider.of<CreatePostCubit>(context).uIChanged();
+                BlocProvider.of<cpc.CreatePostCubit>(context).uIChanged();
               },
               style: GoogleFonts.ibmPlexSans(color: lightFontColor),
               controller: _titleController,
             ),
           ),
           _buildTextEditor(context),
-          _preferences(),
+          _preferences(context),
           const Divider(),
           _postButton('text')
         ],
@@ -331,7 +340,7 @@ class _CreatePostScreenWebState extends State<CreatePostScreenWeb> {
                 _enable = _titleController.text.isNotEmpty &&
                     _validURL &&
                     _postModel.subredditId != '';
-                BlocProvider.of<CreatePostCubit>(context).uIChanged();
+                BlocProvider.of<cpc.CreatePostCubit>(context).uIChanged();
               },
               style: GoogleFonts.ibmPlexSans(color: lightFontColor),
               controller: _titleController,
@@ -360,14 +369,14 @@ class _CreatePostScreenWebState extends State<CreatePostScreenWeb> {
                       _postModel.subredditId != '';
 
                   if (_validURL) _postModel.text = _urlController.text;
-                  BlocProvider.of<CreatePostCubit>(context).uIChanged();
+                  BlocProvider.of<cpc.CreatePostCubit>(context).uIChanged();
                 },
                 style: GoogleFonts.ibmPlexSans(color: lightFontColor),
                 controller: _urlController,
               ),
             ),
           ),
-          _preferences(),
+          _preferences(context),
           const Divider(),
           _postButton('url')
         ],
@@ -473,7 +482,6 @@ class _CreatePostScreenWebState extends State<CreatePostScreenWeb> {
   }
 
   Widget _subredditsMenu() {
-    String? value;
     return BlocBuilder<PostToCubit, PostToState>(builder: ((context, state) {
       if (state is UserJoinedSubredditsUploading) {
         _joinedSubreddits = {};
@@ -523,14 +531,16 @@ class _CreatePostScreenWebState extends State<CreatePostScreenWeb> {
             onChanged: (val) {
               _postModel.subredditId = val as String;
               value = val;
+              BlocProvider.of<cpc.CreatePostCubit>(context).uIChanged();
 
+              BlocProvider.of<PostSubredditPreviewCubit>(context).uIChanged();
               BlocProvider.of<PostToCubit>(context).uIChanged();
             }),
       );
     }));
   }
 
-  Widget _preferences() {
+  Widget _preferences(BuildContext ctx) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
@@ -538,11 +548,12 @@ class _CreatePostScreenWebState extends State<CreatePostScreenWeb> {
           BlocConsumer<PostSubredditPreviewCubit, PostSubredditPreviewState>(
             listener: (context, state) {
               if (state is createdInWeb) {
-                _displayMsg(context, Colors.green, "post created successfully");
+                BlocProvider.of<cpc.CreatePostCubit>(context).forWeb;
+                _displayMsg(ctx, Colors.green, "post created successfully");
               }
               if (state is errorInCreationWeb) {
                 _displayMsg(
-                    context, Colors.red, state.errorMesssage.toString());
+                    ctx, Colors.red, "Failed to create post, please try again");
               }
             },
             builder: (context, state) {

@@ -28,29 +28,28 @@ class PostSubredditPreviewCubit extends Cubit<PostSubredditPreviewState> {
 
   void submitPostWeb(PostModel postModel) {
     if (isClosed) return;
-    createPostRepository.submitPostWeb(postModel).then((response) {
-      if (response.statusCode == 201) {
-        emit(createdInWeb(response.data['_id']));
+    createPostRepository.submitPostWeb(postModel).then((id) {
+      if (id != '') {
+        emit(createdInWeb(id));
         debugPrint("submitted successfully");
       } else {
-        emit(errorInCreationWeb(response.statusMessage()));
+        emit(errorInCreationWeb());
       }
     });
   }
 
   void postImageAndVideo(PostModel postModel, Uint8List media) {
     if (isClosed) return;
-    createPostRepository.submitPostWeb(postModel).then((response) {
-      if (response.statusCode == 201) {
+    createPostRepository.submitPostWeb(postModel).then((id) {
+      if (id != '') {
         createPostRepository
-            .postImageAndVideo(response.data['_id'], media)
-            .then((response) {
-          if (response.statusCode == 201 &&
-              response.data['status'] == 'success') {
-            emit(createdInWeb(response.data['_id']));
+            .postImageAndVideo(id, media)
+            .then((status) {
+              if(status == 'success') {
+            emit(createdInWeb(id));
             debugPrint("submitted successfully");
           } else {
-            emit(errorInCreationWeb(response.statusMessage()));
+            emit(errorInCreationWeb());
           }
         });
       }

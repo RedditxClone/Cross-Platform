@@ -91,7 +91,7 @@ class CreatePostWebServices {
     }
   }
 
-  Future<dynamic> postImageAndVideo(String postId, Uint8List media) async {
+  Future<String> postImageAndVideo(String postId, Uint8List media) async {
     try {
       FormData formData = FormData.fromMap({
         "icon": MultipartFile.fromBytes(media,
@@ -104,10 +104,10 @@ class CreatePostWebServices {
           ));
       debugPrint(
           "update picture status code ${response.statusCode.toString()} new image link : ${response.data}");
-      return response;
+      return response.data['status'] ?? 'failed';
     } catch (e) {
       debugPrint(e.toString());
-      return e;
+      return 'failed';
     }
   }
 }

@@ -51,4 +51,7 @@ class CreatePostCubit extends Cubit<CreatePostState> {
   }
 
   void postButtonPressed() {}
+  void forWeb() {
+    emit(CreatePostCreated());
+  }
 }

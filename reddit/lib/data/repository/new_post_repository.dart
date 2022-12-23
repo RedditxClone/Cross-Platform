@@ -28,8 +28,8 @@ class CreatePostRepository {
     Map<String, dynamic> data = newpostData.toJson();
     debugPrint("before call web services");
     debugPrint(data.toString());
-    final response = await postWebServices.submitPostWeb(data);
-    return response;
+    final id = await postWebServices.submitPostWeb(data);
+    return id;
   }
 
 
@@ -62,9 +62,9 @@ class CreatePostRepository {
 
     Future<dynamic> postImageAndVideo(
       String postId, Uint8List media) async {
-    final response = await postWebServices.postImageAndVideo(
+    final status = await postWebServices.postImageAndVideo(
         postId, media);
-    return response;
+    return status;
   }
 
 }

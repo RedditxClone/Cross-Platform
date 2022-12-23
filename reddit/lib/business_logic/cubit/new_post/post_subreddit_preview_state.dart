@@ -18,9 +18,8 @@ class createdInWeb extends PostSubredditPreviewState {
 }
 
 class errorInCreationWeb extends PostSubredditPreviewState {
-  final errorMesssage;
 
-  errorInCreationWeb(this.errorMesssage);
+  errorInCreationWeb();
 }
 
 class CreatePostCreated extends PostSubredditPreviewState {}
