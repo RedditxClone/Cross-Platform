@@ -23,12 +23,12 @@ class CreatePostCubit extends Cubit<CreatePostState> {
     }
   }
 
-  void getUserJoinedSubreddits() async {
-    if (isClosed) return;
-    final userJoinedSubreddits =
-        await createPostRepository.getUserJoinedSubreddits();
-    emit(UserJoinedSubredditsUploaded(userJoinedSubreddits));
-  }
+  // void getUserJoinedSubreddits() async {
+  //   if (isClosed) return;
+  //   final userJoinedSubreddits =
+  //       await createPostRepository.getUserJoinedSubreddits();
+  //   emit(UserJoinedSubredditsUploaded(userJoinedSubreddits));
+  // }
 
   void uIChanged() {
     if (isClosed) return;
