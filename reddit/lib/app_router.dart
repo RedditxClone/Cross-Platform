@@ -787,13 +787,28 @@ class AppRouter {
                   child: SendMessageWeb(username: username),
                 ));
       case createPostScreenRoute:
-        return MaterialPageRoute(
-            builder: (_) => BlocProvider(
-                  create: (BuildContext context) => createPostCubit,
-                  child: (kIsWeb)
-                      ? const CreatePostScreenWeb()
-                      : const CreatePostScreen(),
-                ));
+        return (kIsWeb)
+            ? MaterialPageRoute(
+                builder: (_) => MultiBlocProvider(providers: [
+                      BlocProvider(
+                        create: (BuildContext context) => createPostCubit,
+                      ),
+                      BlocProvider(
+                        create: (BuildContext context) => postToCubit,
+                      ),
+                      BlocProvider(
+                        create: (BuildContext context) =>
+                            postSubredditPreviewCubit,
+                      ),
+                      BlocProvider(
+                        create: (BuildContext context) => postFlairCubit,
+                      )
+                    ], child: const CreatePostScreenWeb()))
+            : MaterialPageRoute(
+                builder: (_) => BlocProvider(
+                      create: (BuildContext context) => createPostCubit,
+                      child: const CreatePostScreen(),
+                    ));
 
       case postToMobileScreenRoute:
         PostModel newPostModel = arguments as PostModel;
