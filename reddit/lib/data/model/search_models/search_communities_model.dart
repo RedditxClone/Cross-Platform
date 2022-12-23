@@ -7,7 +7,15 @@ class SearchComminityModel {
   List<dynamic>? categories;
   DateTime? creationDate;
 
-
+  SearchComminityModel({
+    required this.id,
+    required this.name,
+    required this.users,
+    required this.joined,
+    required this.flairList,
+    required this.categories,
+    required this.creationDate,
+  });
   SearchComminityModel.fromJson(Map<String, dynamic> json) {
     id = json['_id'] ?? "";
     name = json['name'] ?? "";

@@ -1,11 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
-
-import '../../../../../data/model/auth_model.dart';
-import '../../../../../data/model/search_models/search_comments_model.dart';
-import '../../../../../data/model/search_models/search_communities_model.dart';
-import '../../../../../data/model/search_models/search_post_model.dart';
 import '../../../../../data/repository/search_repo.dart';
 
 part 'search_state.dart';
