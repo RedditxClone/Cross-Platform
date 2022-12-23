@@ -13,6 +13,7 @@ import 'package:reddit/business_logic/cubit/posts/posts_popular_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_subreddit_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/posts_user_cubit.dart';
 import 'package:reddit/business_logic/cubit/posts/sort_cubit.dart';
+import 'package:reddit/business_logic/cubit/user_profile/block_cubit.dart';
 import 'package:reddit/data/model/comments/comment_model.dart';
 import 'package:reddit/business_logic/cubit/user_profile/follow_unfollow_cubit.dart';
 import 'package:reddit/data/repository/comments/comments_repository.dart';
@@ -199,6 +200,7 @@ class AppRouter {
   late ModToolsRepository modtoolsRepository;
   late ModtoolsCubit modtoolsCubit;
   late FollowUnfollowCubit followUnfollowCubit;
+  late BlockCubit blockCubit;
 
   late PostsWebServices postsWebServices;
   late PostsRepository postsRepository;
@@ -261,6 +263,7 @@ class AppRouter {
     userProfileRepository = UserProfileRepository(userProfileWebServices);
     userProfileCubit = UserProfileCubit(userProfileRepository);
     followUnfollowCubit = FollowUnfollowCubit(userProfileRepository);
+    blockCubit = BlockCubit(userProfileRepository);
     searchCubit = SearchCubit(SearchRepo(SearchWebService()));
     searchPostsCubit = SearchPostsCubit(SearchRepo(SearchWebService()));
     searchCommentsCubit = SearchCommentsCubit(SearchRepo(SearchWebService()));
@@ -398,6 +401,7 @@ class AppRouter {
               BlocProvider.value(value: sentScreenCubit),
               BlocProvider.value(value: postsUserCubit),
               BlocProvider.value(value: followUnfollowCubit),
+              BlocProvider.value(value: blockCubit),
               BlocProvider.value(value: otherProfileSortCubit),
             ],
             child: kIsWeb
