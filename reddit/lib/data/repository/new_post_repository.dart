@@ -28,16 +28,16 @@ class CreatePostRepository {
   /// If there are no subreddits it returns empty list.
   Future<List<SubredditModel>> getUserJoinedSubreddits() async {
     final joinedSubreddits = await postWebServices.getUserJoinedSubreddits();
-    print("newVal: " + joinedSubreddits.toString());
+    debugPrint("newVal: " + joinedSubreddits.toString());
     List<SubredditModel> subreddits = [];
     for (var subreddit in joinedSubreddits) {
       subreddits.add(SubredditModel.fromJson(subreddit));
-      print("subreddits:" + subreddits.toString());
+      debugPrint("subreddits:" + subreddits.toString());
     }
     final modSubreddits = await postWebServices.getUserModSubreddits();
     for (var subreddit in modSubreddits) {
       subreddits.add(SubredditModel.fromJson(subreddit));
-      print("subreddits:" + subreddits.toString());
+      debugPrint("subreddits:" + subreddits.toString());
     }
 
     return subreddits;
