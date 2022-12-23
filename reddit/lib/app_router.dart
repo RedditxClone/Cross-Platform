@@ -40,8 +40,11 @@ import 'package:reddit/presentation/screens/modtools/mobile/moderators.dart';
 import 'package:reddit/presentation/screens/modtools/mobile/mute_user_screen.dart';
 import 'package:reddit/presentation/screens/modtools/mobile/muted_users_screen.dart';
 import 'package:reddit/presentation/screens/modtools/web/approved_web.dart';
+import 'package:reddit/presentation/screens/modtools/web/banned_users_page.dart';
 import 'package:reddit/presentation/screens/modtools/web/edited_web.dart';
+import 'package:reddit/presentation/screens/modtools/web/moderators_page.dart';
 import 'package:reddit/presentation/screens/modtools/web/modqueue_web.dart';
+import 'package:reddit/presentation/screens/modtools/web/muted_users_page.dart';
 import 'package:reddit/presentation/screens/modtools/web/spam_web.dart';
 import 'package:reddit/presentation/screens/modtools/web/traffic_stats.dart';
 import 'package:reddit/presentation/screens/modtools/web/unmoderated.dart';
@@ -306,8 +309,8 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => MultiBlocProvider(
             providers: [
-              BlocProvider(
-                create: ((context) => authCubit),
+              BlocProvider.value(
+                value: authCubit,
               ),
               BlocProvider.value(
                 value: postsHomeCubit,
@@ -521,7 +524,7 @@ class AppRouter {
                       BlocProvider.value(value: modtoolsCubit),
                     ],
                     child: kIsWeb
-                        ? ApprovedWeb(
+                        ? ModeratorsPage(
                             subredditName: subreddit['name']!,
                             subredditId: subreddit['id']!)
                         : ModeratorsScreen(
@@ -535,7 +538,7 @@ class AppRouter {
                       BlocProvider.value(value: modtoolsCubit),
                     ],
                     child: kIsWeb
-                        ? ApprovedWeb(
+                        ? BannedUsersPage(
                             subredditName: subreddit['name']!,
                             subredditId: subreddit['id']!)
                         : BannedUsersScreen(
@@ -549,7 +552,7 @@ class AppRouter {
                       BlocProvider.value(value: modtoolsCubit),
                     ],
                     child: kIsWeb
-                        ? ApprovedWeb(
+                        ? MuttedUsersPage(
                             subredditName: subreddit['name']!,
                             subredditId: subreddit['id']!)
                         : MutedUsersScreen(
