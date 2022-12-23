@@ -312,9 +312,13 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => MultiBlocProvider(
             providers: [
-              BlocProvider.value(
-                value: authCubit,
-              ),
+              kIsWeb
+                  ? BlocProvider.value(
+                      value: authCubit,
+                    )
+                  : BlocProvider(
+                      create: (context) => authCubit,
+                    ),
               BlocProvider.value(
                 value: postsHomeCubit,
               ),
