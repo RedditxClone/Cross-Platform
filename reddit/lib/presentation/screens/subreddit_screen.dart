@@ -1066,10 +1066,10 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
       appBar: _buildAppBar(),
       body: BlocConsumer<SubredditPageCubit, SubredditPageState>(
           builder: (context, state) {
-        if (state is SubredditIconUpdated) {
-          _displayMsg(
-              context, Colors.blue, "Sucessfully updated community icon!");
-        }
+        // if (state is SubredditIconUpdated) {
+        //   // _displayMsg(
+        //   //     context, Colors.blue, "Sucessfully updated community icon!");
+        // }
         if (state is SubredditIconUpdateFailed) {
           _displayMsg(context, Colors.red, "Failed to updated community icon!");
         }
@@ -1133,6 +1133,8 @@ class _SubredditPageScreenState extends State<SubredditPageScreen> {
         // return Container();
       }, listener: (context, state) {
         if (state is SubredditIconUpdated) {
+          _displayMsg(
+              context, Colors.blue, "Sucessfully updated community icon!");
           _subredditModel!.icon = (state).subredditIcon;
         }
       }),
