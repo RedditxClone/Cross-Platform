@@ -42,7 +42,7 @@ class CreatePostScreenWeb extends StatefulWidget {
 class _CreatePostScreenWebState extends State<CreatePostScreenWeb> {
   String? value;
 
-  Set<SubredditModel>? _joinedSubreddits;
+  Map<String, SubredditModel>? _joinedSubreddits;
   SubredditModel? _selectedSubreddit;
   bool _validURL = false;
   Uint8List? _mediaContent;
@@ -471,11 +471,11 @@ class _CreatePostScreenWebState extends State<CreatePostScreenWeb> {
   }
 
   List<DropdownMenuItem<String>> _createItems(
-      BuildContext context, Set<SubredditModel> JoinedSubreddits) {
+      BuildContext context, Map<String, SubredditModel> JoinedSubreddits) {
     final List<DropdownMenuItem<String>> itemsList = [];
-    for (SubredditModel subreddit in JoinedSubreddits) {
-      itemsList.add(dropDownMenuItem(
-          subreddit.name!, Icons.reddit, subreddit.sId!,
+    for (String id in JoinedSubreddits.keys) {
+      SubredditModel subreddit = JoinedSubreddits[id]!;
+      itemsList.add(dropDownMenuItem(subreddit.name!, Icons.reddit, id,
           imgUrl: subreddit.icon ?? ''));
     }
     return itemsList;

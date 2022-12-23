@@ -12,11 +12,12 @@ class PostToCubit extends Cubit<PostToState> {
 
   void getUserJoinedSubreddits() async {
     if (isClosed) return;
+    var userJoinedSubreddits;
     emit(UserJoinedSubredditsUploading());
-    final userJoinedSubreddits =
-        await createPostRepository.getUserJoinedSubreddits();
-    emit(UserJoinedSubredditsUploaded(
-        kIsWeb ? userJoinedSubreddits.toSet() : userJoinedSubreddits));
+    userJoinedSubreddits = kIsWeb
+        ? await createPostRepository.getUserJoinedSubredditsWeb()
+        : await createPostRepository.getUserJoinedSubreddits();
+    emit(UserJoinedSubredditsUploaded(userJoinedSubreddits));
   }
 
   void uIChanged() {
