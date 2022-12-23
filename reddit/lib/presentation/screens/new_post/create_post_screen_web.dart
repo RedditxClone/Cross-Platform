@@ -211,10 +211,12 @@ class _CreatePostScreenWebState extends State<CreatePostScreenWeb> {
                   hintStyle: TextStyle(color: darkFontColor),
                   hintText: "Title"),
               onChanged: (value) {
+                // setState(() {
                 _postModel.title = _titleController.text;
                 _enable = _titleController.text.isNotEmpty &&
                     _mediaContent != null &&
                     _postModel.subredditId != '';
+                // });
                 BlocProvider.of<cpc.CreatePostCubit>(context).uIChanged();
               },
               style: GoogleFonts.ibmPlexSans(color: lightFontColor),
@@ -238,11 +240,12 @@ class _CreatePostScreenWebState extends State<CreatePostScreenWeb> {
                         )),
                       ),
                       onPressed: () {
-                        pickImageWeb(ImageSource.gallery).then((value) =>
-                            BlocProvider.of<cpc.CreatePostCubit>(context)
-                                .uIChanged());
-                        BlocProvider.of<PostSubredditPreviewCubit>(context)
-                            .uIChanged();
+                        pickImageWeb(ImageSource.gallery).then((value) {
+                          BlocProvider.of<cpc.CreatePostCubit>(context)
+                              .uIChanged();
+                          BlocProvider.of<PostSubredditPreviewCubit>(context)
+                              .uIChanged();
+                        });
                       },
                       child: Text(
                         "Upload",
