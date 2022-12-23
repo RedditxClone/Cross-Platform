@@ -107,7 +107,6 @@ class ModToolsRepository {
   Future<int> addModerator(String subredditId, String username) async {
     Response res = await webServices.addModerator(subredditId, username);
     debugPrint("rsponse code ${res.statusCode}");
-
     return res.statusCode ?? 0;
   }
 
