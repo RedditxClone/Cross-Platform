@@ -1,4 +1,4 @@
-/// Model for Getting Messages from  "/api/message/me/message".
+/// This class represents the data model of Inbox Messages from  "/api/message/me/message".
 class AllMessageInboxModel {
   late String id;
   late String authorName;
@@ -16,6 +16,9 @@ class AllMessageInboxModel {
 
   @override
   // ignore: hash_and_equals
+  /// [other] : is a [AllMessageInboxModel] object that we want to compare with
+  ///
+  /// Returns a [bool] that represent the equivilance of two [AllMessageInboxModel] objects
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is AllMessageInboxModel &&
@@ -25,6 +28,9 @@ class AllMessageInboxModel {
           body == other.body &&
           createdAt == other.createdAt;
 
+  /// [json] : [Map] of the Inbox Messages that was returned by the API.
+  ///
+  /// Returns [AllMessageInboxModel] object that contains the data of [json].
   AllMessageInboxModel.fromJson(Map<String, dynamic> json) {
     id = json['_id'];
     authorName = json['authorName'];
@@ -32,17 +38,25 @@ class AllMessageInboxModel {
     body = json['body'];
     createdAt = json['createdAt'];
   }
+
+  /// To Check Data of the Object from this Model Class [AllMessageInboxModel].
   printfunc() {
     print(
         'MassageModel: id =$id ,authorName=$authorName , subject =$subject ,body=$body ,createdAt=$createdAt');
   }
 }
 
+/// This class helping in return Object contain List of [InboxModelling] Recived from Server.
 class InboxModelling {
   List<AllMessageInboxModel>? messages;
   InboxModelling() {
     messages = [];
   }
+
+  /// [jsons] : [List] of the Inbox Messages that was returned by the API.
+  ///
+  /// intializing [messages]
+  /// Returns [InboxModelling] object that contains the List data of [jsons].
   copyMessagesFromJson(List<dynamic> jsons) {
     messages = [];
     if (messages != null) {
@@ -57,21 +71,30 @@ class InboxModelling {
     }
   }
 
+  /// [json] : [Map] of the messages Object that was returned by the API.
+  ///
+  /// intializing [messages] of [json] Data.
   fromJson(Map<String, dynamic> json) {
     copyMessagesFromJson(json['messages']);
   }
 
+  /// [json] : [List] of the data List that was returned by the API.
+  ///
+  /// intializing [json] of [jsons] Data.
   copydataFromJson(List<dynamic> jsons) {
     var json = jsons[0];
     fromJson(json);
   }
 
+  /// [json] : [Map] of the data Object that was returned by the API.
+  ///
+  /// intializing [data] of [json] Data.
   datafromJson(Map<String, dynamic> json) {
     copydataFromJson(json['data']);
   }
 }
 
-/// Model for Getting Messages from  "/api/message/me/sent".
+/// This class represents the data model of Sent Messages from  "/api/message/me/sent".
 class AllSentMessageModel {
   late String id;
   late String destName;
@@ -89,6 +112,9 @@ class AllSentMessageModel {
 
   @override
   // ignore: hash_and_equals
+  /// [other] : is a [AllSentMessageModel] object that we want to compare with
+  ///
+  /// Returns a [bool] that represent the equivilance of two [AllSentMessageModel] objects
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is AllSentMessageModel &&
@@ -98,6 +124,9 @@ class AllSentMessageModel {
           body == other.body &&
           createdAt == other.createdAt;
 
+  /// [json] : [Map] of the Sent Messages that was returned by the API.
+  ///
+  /// Returns [AllSentMessageModel] object that contains the data of [json].
   AllSentMessageModel.fromJson(Map<String, dynamic> json) {
     id = json['_id'];
     destName = json['destName'];
@@ -105,17 +134,25 @@ class AllSentMessageModel {
     body = json['body'];
     createdAt = json['createdAt'];
   }
+
+  /// To Check Data of the Object from this Model Class [AllSentMessageModel].
   printfunc() {
     print(
         'MassageModel: id =$id ,destName=$destName , subject =$subject ,body=$body ,createdAt=$createdAt');
   }
 }
 
+/// This class helping in return Object contain List of [AllSentMessageModel] Recived from Server.
 class SentModelling {
   List<AllSentMessageModel>? messages;
   SentModelling() {
     messages = [];
   }
+
+  /// [jsons] : [List] of the Sent Messages that was returned by the API.
+  ///
+  /// intializing [messages]
+  /// Returns [SentModelling] object that contains the List data of [jsons].
   copyMessagesFromJson(List<dynamic> jsons) {
     messages = [];
     if (messages != null) {
@@ -130,15 +167,24 @@ class SentModelling {
     }
   }
 
+  /// [json] : [Map] of the messages Object that was returned by the API.
+  ///
+  /// intializing [messages] of [json] Data.
   fromJson(Map<String, dynamic> json) {
     copyMessagesFromJson(json['messages']);
   }
 
+  /// [json] : [List] of the data List that was returned by the API.
+  ///
+  /// intializing [json] of [jsons] Data.
   copydataFromJson(List<dynamic> jsons) {
     var json = jsons[0];
     fromJson(json);
   }
 
+  /// [json] : [Map] of the data Object that was returned by the API.
+  ///
+  /// intializing [data] of [json] Data.
   datafromJson(Map<String, dynamic> json) {
     copydataFromJson(json['data']);
   }

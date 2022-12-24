@@ -114,3 +114,7 @@ const sentRoute = '/sent';
 // ----------Post Page Route-------------
 //---------------------------------------
 const postPageRoute = "/post_page";
+//---------------------------------------
+// ----------Saved Posts Route-----------
+//---------------------------------------
+const savedPostsRoute = "/saved_Posts";

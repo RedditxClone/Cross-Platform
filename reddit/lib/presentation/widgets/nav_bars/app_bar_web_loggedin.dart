@@ -66,6 +66,9 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
       case 'Messages':
         Navigator.pushNamed(context, sendMessageRoute, arguments: '');
         break;
+      case 'Saved':
+        Navigator.pushNamed(context, savedPostsRoute);
+        break;
       case 'Create Community':
         createCommunityDialog();
         break;
@@ -126,6 +129,8 @@ class _AppBarWebLoggedInState extends State<AppBarWebLoggedIn> {
       dropDownMenuItem('User settings', Icons.person,
           imgUrl: UserData.user!.profilePic!),
       dropDownMenuItem('Messages', Icons.person,
+          imgUrl: UserData.user!.profilePic!),
+      dropDownMenuItem('Saved', Icons.person,
           imgUrl: UserData.user!.profilePic!),
       dropDownMenuItem('Create Post', Icons.add),
     ];

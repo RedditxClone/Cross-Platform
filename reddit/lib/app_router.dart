@@ -148,6 +148,10 @@ import 'package:reddit/data/repository/message_screen_repository.dart';
 import 'package:reddit/data/web_services/message_screen_web_services.dart';
 import 'package:reddit/business_logic/cubit/cubit/inbox_screen_cubit.dart';
 import 'package:reddit/business_logic/cubit/cubit/sent_screen_cubit.dart';
+import 'package:reddit/presentation/screens/saved_posts.dart';
+import 'package:reddit/data/repository/saved_posts_repo.dart';
+import 'package:reddit/data/web_services/saved_posts_web_services.dart';
+import 'package:reddit/business_logic/cubit/cubit/saved_posts_cubit.dart';
 
 class AppRouter {
   // platform
@@ -223,6 +227,10 @@ class AppRouter {
   late PostFlairCubit postFlairCubit;
   late CreatePostWebServices postWebServices;
 
+  late SavedPostsWebServices savedPostsWebServices;
+  late SavedPostsRepository savedPostsRepository;
+  late SavedPostsCubit savedPostsCubit;
+
   late SortCubit subredditSortCubit;
   AppRouter() {
     // initialise repository and cubit objects
@@ -296,6 +304,10 @@ class AppRouter {
     postSubredditPreviewCubit = PostSubredditPreviewCubit(postRepository);
     postFlairCubit = PostFlairCubit(postRepository);
     subredditSortCubit = SortCubit();
+    savedPostsWebServices = SavedPostsWebServices();
+    savedPostsRepository =
+        SavedPostsRepository(savedPostsWebServices: savedPostsWebServices);
+    savedPostsCubit = SavedPostsCubit(savedPostsRepository);
   }
   Route? generateRoute(RouteSettings settings) {
     final arguments = settings.arguments;
@@ -830,6 +842,16 @@ class AppRouter {
               builder: (_) => BlocProvider(
                     create: (BuildContext context) => sentScreenCubit,
                     child: const SentWeb(),
+                  ));
+        } else {
+          break;
+        }
+      case savedPostsRoute:
+        if (true /*!isMobile*/) {
+          return MaterialPageRoute(
+              builder: (_) => BlocProvider(
+                    create: (BuildContext context) => savedPostsCubit,
+                    child: const SavedPosts(),
                   ));
         } else {
           break;

@@ -19,6 +19,10 @@ class MessageScreenRepository {
     required this.messageScreenWebServices,
   });
 
+  /// This function makes the request to the server to get All Inbox Messages .
+  ///
+  /// This function calls the function [MessageScreenWebServices.getAllMessagesInbox] which makes the request to the server.
+  /// Returns [InboxModelling] that conatins List<AllMessageInboxModel>? [savedPosts].
   Future<InboxModelling> getAllMessageInboxModel() async {
     final allMessages = await messageScreenWebServices.getAllMessagesInbox();
     print("All InboxMessages from repo:");
@@ -31,6 +35,10 @@ class MessageScreenRepository {
     }
   }
 
+  /// This function makes the request to the server to get All Sent Messages .
+  ///
+  /// This function calls the function [MessageScreenWebServices.getAllSentMessages] which makes the request to the server.
+  /// Returns [SentModelling] that conatins List<AllSentMessageModel>? [sentMessages].
   Future<SentModelling> getAllSentMessageModel() async {
     final sentMessages = await messageScreenWebServices.getAllSentMessages();
     print("All sent Messages from repo:");
