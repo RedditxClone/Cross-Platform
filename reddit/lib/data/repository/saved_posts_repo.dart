@@ -18,6 +18,10 @@ class SavedPostsRepository {
     required this.savedPostsWebServices,
   });
 
+  /// This function makes the request to the server to get All Saved Posts .
+  ///
+  /// This function calls the function [SearchWebService.getSuggestions] which makes the request to the server.
+  /// Returns [SavedPostsModelling] that conatins List<SavedPostsModel>? [savedPosts].
   Future<SavedPostsModelling> getAllSavedPosts() async {
     final savedPosts = await savedPostsWebServices.getAllSavedPosts();
     print("All saved Posts from repo:");

@@ -10,6 +10,7 @@ import 'package:http_parser/http_parser.dart';
 
 import '../model/auth_model.dart';
 
+/// This class is responsible of performing All Messages requests to the REST API
 class MessageScreenWebServices {
   late Dio dio;
   String mockUrl =
@@ -25,6 +26,11 @@ class MessageScreenWebServices {
     );
     dio = Dio(options);
   }
+
+  /// This function makes the request to the server to get All Sent Messages .
+  ///
+  /// This function calls the function [ dio.get ] which makes the request to the server.
+  /// Returns the response from the server.
   dynamic getAllSentMessages() async {
     try {
       // Response response = await dio.get('message/me/sent');
@@ -41,6 +47,10 @@ class MessageScreenWebServices {
     }
   }
 
+  /// This function makes the request to the server to get All Messages Inbox.
+  ///
+  /// This function calls the function [ dio.get ] which makes the request to the server.
+  /// Returns the response from the server.
   dynamic getAllMessagesInbox() async {
     try {
       //Response response = await dio.get('message/me/message');

@@ -10,6 +10,7 @@ import 'package:http_parser/http_parser.dart';
 
 import '../model/auth_model.dart';
 
+/// This class is responsible of performing Saved Posts requests to the REST API
 class SavedPostsWebServices {
   late Dio dio;
   String mockUrl =
@@ -25,6 +26,11 @@ class SavedPostsWebServices {
     );
     dio = Dio(options);
   }
+
+  /// This function makes the request to the server to get Saved Posts.
+  ///
+  /// This function calls the function [dio.get] which makes the request to the server.
+  /// Returns the response from the server.
   dynamic getAllSavedPosts() async {
     try {
       // Response response = await dio.get('user/post/save');

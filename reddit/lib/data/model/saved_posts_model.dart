@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-/// Model for Getting savedPosts from  "/api/user/post/save".
+
+/// This class represents the data model of Saved Posts from  "/api/user/post/save".
 class SavedPostsModel {
   late String id;
   late String text;
@@ -29,6 +30,9 @@ class SavedPostsModel {
 
   @override
   // ignore: hash_and_equals
+  /// [other] : is a [SavedPostsModel] object that we want to compare with
+  ///
+  /// Returns a [bool] that represent the equivilance of two [SavedPostsModel] objects
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is SavedPostsModel &&
@@ -44,6 +48,9 @@ class SavedPostsModel {
           userPhoto == other.userPhoto &&
           userId == other.userId;
 
+  /// [json] : [Map] of the Saved Posts that was returned by the API.
+  ///
+  /// Returns [SavedPostsModel] object that contains the data of [json].
   SavedPostsModel.fromJson(Map<String, dynamic> json) {
     id = json['_id'];
     text = json['text'];
@@ -55,11 +62,17 @@ class SavedPostsModel {
     userFromJson(json['user']);
   }
 
+  /// [json] : [Map] of the Subreddit Info that was returned by the API.
+  ///
+  /// intializing [subredditId] & [subredditName] of [json] Data.
   subredditFromJson(Map<String, dynamic> json) {
     subredditName = json['name'];
     subredditId = json['id'];
   }
 
+  /// [json] : [Map] of the User Info that was returned by the API.
+  ///
+  /// intializing [userName] & [userId] & []of [userPhoto] Data.
   userFromJson(Map<String, dynamic> json) {
     userName = json['username'];
     String tempUserPhoto = json['photo'];
@@ -67,17 +80,24 @@ class SavedPostsModel {
     userId = json['id'];
   }
 
+  /// To Check Data of the Object from this Model Class [SavedPostsModel].
   printfunc() {
     print(
         'Post: id =$id ,text=$text , commentCount =$commentCount ,title=$title ,publishedDate=$publishedDate , subredditId =$subredditId ,subredditName=$subredditName , votesCount =$votesCount ,userName=$userName ,userPhoto=$userPhoto,userId =$userId ');
   }
 }
 
+/// This class helping in return Object contain List of [SavedPostsModel] Recived from Server.
 class SavedPostsModelling {
   List<SavedPostsModel>? savedPosts;
   SavedPostsModelling() {
     savedPosts = [];
   }
+
+  /// [jsons] : [List] of the Saved Posts that was returned by the API.
+  ///
+  /// intializing [savedPosts]
+  /// Returns [SavedPostsModelling] object that contains the List data of [jsons].
   copysavedPostsFromJson(List<dynamic> jsons) {
     savedPosts = [];
     if (savedPosts != null) {
@@ -92,6 +112,9 @@ class SavedPostsModelling {
     }
   }
 
+  /// [json] : [Map] of the Saved Post Object that was returned by the API.
+  ///
+  /// intializing [data] of [json] Data.
   datafromJson(Map<String, dynamic> json) {
     copysavedPostsFromJson(json['data']);
   }

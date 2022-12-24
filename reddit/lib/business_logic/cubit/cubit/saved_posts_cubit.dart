@@ -5,12 +5,18 @@ import 'package:reddit/data/model/saved_posts_model.dart';
 
 part 'saved_posts_state.dart';
 
+/// This Class Send Saved Posts Data from  Repo to UI using request to the endpoint `baseUrl/user/post/save` From Real API.
 class SavedPostsCubit extends Cubit<SavedPostsState> {
   late List<SavedPostsModel> savedPosts;
   final SavedPostsRepository savedPostsRepository;
 
   SavedPostsCubit(this.savedPostsRepository) : super(SavedPostsInitial());
 
+  ///  This function Send Saved Posts Data from  Repo to UI.
+  ///
+  /// This function emits:
+  /// state [SavedPostsLoaded] after successfully Recieving the Data.
+  /// This function calls the function [SavedPostsRepository.getAllSavedPosts] to prepare the PATCH request.
   void getAllSavedPosts() {
     // To avoid state error when you leave the settings page
     if (isClosed) return;
