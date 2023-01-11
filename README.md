@@ -6,7 +6,7 @@ This repository is made for cross-platform subteam which is responsible for deve
 
 <div align="center">
 
-<img src="./readme_assets/dart.svg" alt="Dart" style="width: 100px;">
+<img src="./readme_assets/dart.png" alt="Dart" style="width: 100px;">
 <img src="./readme_assets/flutter.png" alt="Flutter" style="width: 100px;">
 <img src="./readme_assets/docker.png" alt="docker" style="width: 100px;">
 </div>
@@ -41,7 +41,7 @@ This repository is made for cross-platform subteam which is responsible for deve
 <img src="./readme_assets/Web/traffic.png" alt="Traffic" >
 <img src="./readme_assets/Web/search1.png" alt="Search" >
 <img src="./readme_assets/Web/settings1.png" alt="Search" >
-<img src="./readme_assets/Web/send_msg.png" alt="Search" >
+<img src="./readme_assets/Web/send_msg.png" alt="Send message" >
 
 </div>
 
