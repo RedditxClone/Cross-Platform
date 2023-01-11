@@ -9,10 +9,12 @@ This repository is made for cross-platform subteam which is responsible for deve
 <img src="./readme_assets/dart.svg" alt="Dart" style="width: 100px;">
 <img src="./readme_assets/flutter.png" alt="Flutter" style="width: 100px;">
 <img src="./readme_assets/docker.png" alt="docker" style="width: 100px;">
-
 </div>
+
 ## Features
+
 ### Android
+
 <div align="center">
 
 <img src="./readme_assets/Mobile/post_imgs.gif" alt="Post images" style="width: 250px;">
@@ -42,7 +44,9 @@ This repository is made for cross-platform subteam which is responsible for deve
 <img src="./readme_assets/Web/send_msg.png" alt="Search" >
 
 </div>
+
 ## Team members
+
 - <a href="https://github.com/bemoierian">Bemoi Erian</a>
 - <a href="https://github.com/markyasser">Mark Yasser</a>
 - <a href="https://github.com/EngPeterAtef">Peter Atef</a>
